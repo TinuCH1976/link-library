@@ -129,7 +129,7 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
  **   limit (default -1) - Limit to X entries. If not specified, all entries
  **     are shown.
  **   show_updated (default 0) - whether to show last updated timestamp
- **   show_notes - determines is notes should be used instead of descriptions
+ **   show_notes - determines if notes should be displayed in addition to description
  **   show_image_and_name (default false) - Show both image and name instead of only one or the other
  */
 function get_links_notes($category = -1, $before = '', $after = '<br />',
@@ -270,7 +270,7 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
  *   order (default 'name')  - Sort link categories by 'name' or 'id'
  *   hide_if_empty (default true)  - Supress listing empty link categories
  *   catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories
- *   shownotes (default false) - Shows notes instead of description for links (useful since notes field is larger than description)
+ *   shownotes (default false) - Shows notes in addition to description for links (useful since notes field is larger than description)
  *   categorylist (default null) - Only show links inside of selected categories. Enter category numbers in a string separated by commas
  *   show_image_and_name (default false) - Show both image and name instead of only one or the other
  */
