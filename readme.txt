@@ -1,5 +1,5 @@
 WordPress Plugin
-Link Library 0.1 (http://nayanna.biz)
+Link Library 0.2 (http://nayanna.biz)
 For WordPress 1.5.
 ------------------------------------------------------
 
