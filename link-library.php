@@ -3,8 +3,8 @@
 /*
 Plugin Name: Link Library
 Plugin URI: http://nayanna.biz/
-Description: Functions to generate link library page with a list of link categories with hyperlinks to the actual link lists.
-Version: 0.1
+Description: Functions to generate link library page with a list of link categories with hyperlinks to the actual link lists. Other options are the ability to display notes on top of descriptions, to only display selected categories and to display names of links at the same time as their related images.
+Version: 0.2
 Author: Yannick Lefebvre
 Author URI: http://nayanna.biz/
 
@@ -130,11 +130,12 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
  **     are shown.
  **   show_updated (default 0) - whether to show last updated timestamp
  **   show_notes - determines is notes should be used instead of descriptions
+ **   show_image_and_name (default false) - Show both image and name instead of only one or the other
  */
 function get_links_notes($category = -1, $before = '', $after = '<br />',
                    $between = ' ', $show_images = true, $orderby = 'name',
                    $show_description = true, $show_rating = false,
-                   $limit = -1, $show_updated = 1, $show_notes = false, $echo = true) {
+                   $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $echo = true) {
 
     global $wpdb;
 
@@ -204,10 +205,9 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
         if ($rel != '') {
             $rel = " rel='$rel'";
         }
-		if ($show_notes)
-			$desc = wp_specialchars($row->link_notes, ENT_QUOTES);
-		else
-			$desc = wp_specialchars($row->link_description, ENT_QUOTES);
+		
+		$descnotes = wp_specialchars($row->link_notes, ENT_QUOTES);
+		$desc = wp_specialchars($row->link_description, ENT_QUOTES);
         $name = wp_specialchars($row->link_name, ENT_QUOTES);
 
         $title = $desc;
@@ -236,6 +236,9 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
 				echo "<img src='$row->link_image' $alt $title />";
 			else // If it's a relative path
             	echo "<img src='" . get_settings('siteurl') . "$row->link_image' $alt $title />";
+			if ($show_image_and_name) {
+			    echo($between.$name);
+			}
         } else {
             echo($name);
         }
@@ -247,6 +250,9 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
         if ($show_description && ($desc != '')) {
             echo($between.$desc);
         }
+		if ($show_notes && ($descnotes != '')) {
+		    echo($between.$descnotes);
+		}
         echo("$after\n");
     } // end while
 }
@@ -265,9 +271,11 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
  *   hide_if_empty (default true)  - Supress listing empty link categories
  *   catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories
  *   shownotes (default false) - Shows notes instead of description for links (useful since notes field is larger than description)
+ *   categorylist (default null) - Only show links inside of selected categories. Enter category numbers in a string separated by commas
+ *   show_image_and_name (default false) - Show both image and name instead of only one or the other
  */
 
-function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false, $shownotes = false) {
+function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false, $shownotes = false, $categorylist = '', $show_image_and_name = false) {
 	global $wpdb;
 
 	$order = strtolower($order);
@@ -280,20 +288,28 @@ function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $c
 
 	// if 'name' wasn't specified, assume 'id':
 	$cat_order = ('name' == $order) ? 'cat_name' : 'cat_id';
-
+	
+	if ($categorylist != '')
+	   $catsearch = ' AND link_category in (' . $categorylist . ') ';
+	else
+	   $catsearch = '';
+	   
 	if (!isset($direction)) $direction = '';
+
 	// Fetch the link category data as an array of hashesa
-	$cats = $wpdb->get_results("
-		SELECT DISTINCT link_category, cat_name, show_images, 
+
+	$sql = "SELECT DISTINCT link_category, cat_name, show_images, 
 			show_description, show_rating, show_updated, sort_order, 
 			sort_desc, list_limit
-		FROM `$wpdb->links` 
+		FROM $wpdb->links
 		LEFT JOIN `$wpdb->linkcategories` ON (link_category = cat_id)
 		WHERE link_visible =  'Y'
-			AND list_limit <> 0
-		ORDER BY $cat_order $direction ", ARRAY_A);
-
-	// Display each category
+			AND list_limit <> 0" .
+			$catsearch;
+    $sql .= ' ORDER BY ' . $cat_order . $direction;
+    $cats = $wpdb->get_results($sql, ARRAY_A);
+	
+    // Display each category
 	if ($cats) {
 		echo '<div class="linklist">'."\n";
 		foreach ($cats as $cat) {
@@ -320,7 +336,8 @@ function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $c
 				bool_from_yn($cat['show_rating']),
 				$cat['list_limit'],
 				bool_from_yn($cat['show_updated']),
-				$shownotes);
+				$shownotes,
+				$show_image_and_name);
 
 			// Close the last category
 			echo "\t</ul>\n";
