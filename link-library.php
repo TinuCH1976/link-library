@@ -1,9 +1,12 @@
 <?
-
 /*
 Plugin Name: Link Library
 Plugin URI: http://nayanna.biz/
-Description: Functions to generate link library page with a list of link categories with hyperlinks to the actual link lists. Other options are the ability to display notes on top of descriptions, to only display selected categories and to display names of links at the same time as their related images.
+Description: Functions to generate link library page with a list of link
+categories with hyperlinks to the actual link lists. Other options are
+the ability to display notes on top of descriptions, to only display
+selected categories and to display names of links at the same time
+as their related images.
 Version: 0.2
 Author: Yannick Lefebvre
 Author URI: http://nayanna.biz/
@@ -108,7 +111,7 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 	echo "</div>\n";
 }
 
-/** function get_links()
+/** function get_links_notes()
  ** Gets the links associated with category n.
  ** Parameters:
  **   category (default -1)  - The category to use. If no category supplied
@@ -131,11 +134,16 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
  **   show_updated (default 0) - whether to show last updated timestamp
  **   show_notes - determines if notes should be displayed in addition to description
  **   show_image_and_name (default false) - Show both image and name instead of only one or the other
+ **   use_html_tags (default false) - Use HTML tags for formatting instead of just displaying them
+ **   show_rss (default false) - Display RSS URI if available in link description
+ **   beforenote (default <br />) - Code to print out between the description and notes
  */
 function get_links_notes($category = -1, $before = '', $after = '<br />',
                    $between = ' ', $show_images = true, $orderby = 'name',
                    $show_description = true, $show_rating = false,
-                   $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $echo = true) {
+                   $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
+				   $show_rss = false, $beforenote = '<br />', $echo = true
+				   ) {
 
     global $wpdb;
 
@@ -177,7 +185,7 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
 	}
 
     $sql = "SELECT link_url, link_name, link_image, link_target,
-            link_description, link_rating, link_rel, link_notes $length $recently_updated_test $get_updated
+            link_description, link_rating, link_rel, link_notes, link_rss $length $recently_updated_test $get_updated
             FROM $wpdb->links
             WHERE link_visible = 'Y' " .
            $category_query;
@@ -206,7 +214,12 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
             $rel = " rel='$rel'";
         }
 		
-		$descnotes = wp_specialchars($row->link_notes, ENT_QUOTES);
+		if ($use_html_tags) {
+			$descnotes = $row->link_notes;
+		}
+		else {
+			$descnotes = wp_specialchars($row->link_notes, ENT_QUOTES);
+		}
 		$desc = wp_specialchars($row->link_description, ENT_QUOTES);
         $name = wp_specialchars($row->link_name, ENT_QUOTES);
 
@@ -247,11 +260,23 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
             echo get_settings('links_recently_updated_append');
         }
 
+		if ($use_html_tags) {
+			$desc = $row->link_description;
+		}
+		else {
+			$desc = wp_specialchars($row->link_description, ENT_QUOTES);
+		}
+		
         if ($show_description && ($desc != '')) {
             echo($between.$desc);
         }
+
 		if ($show_notes && ($descnotes != '')) {
+			echo("$beforenote\n");
 		    echo($between.$descnotes);
+		}
+		if ($show_rss && ($row->link_rss != '')) {
+		    echo($between . '<a id="rss" href="'.$row->link_rss.'">RSS</a>');
 		}
         echo("$after\n");
     } // end while
@@ -273,9 +298,12 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
  *   shownotes (default false) - Shows notes in addition to description for links (useful since notes field is larger than description)
  *   categorylist (default null) - Only show links inside of selected categories. Enter category numbers in a string separated by commas
  *   show_image_and_name (default false) - Show both image and name instead of only one or the other
+ *   use_html_tags (default false) - Use HTML tags for formatting instead of just displaying them
+ *   show_rss (default false) - Display RSS URI if available in link description
+ *   beforenote (default <br />) - Code to print out between the description and notes
  */
 
-function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false, $shownotes = false, $categorylist = '', $show_image_and_name = false) {
+function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false, $shownotes = false, $categorylist = '', $show_image_and_name = false, $use_html_tags = false, $show_rss = false, $beforenote = '<br />') {
 	global $wpdb;
 
 	$order = strtolower($order);
@@ -337,7 +365,10 @@ function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $c
 				$cat['list_limit'],
 				bool_from_yn($cat['show_updated']),
 				$shownotes,
-				$show_image_and_name);
+				$show_image_and_name,
+			    $use_html_tags,
+				$show_rss,
+				$beforenote);
 
 			// Close the last category
 			echo "\t</ul>\n";
