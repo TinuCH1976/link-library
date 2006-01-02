@@ -33,7 +33,7 @@ Parameters:
  *   num_columns (default 1) - Number of columns in table
  *   catanchor (default false) - Determines if links to generated anchors should be created
 
-A few CSS classes have been inserted to enable formatting of the plugin output. For example, when the show_css parameter is enabled, a tag is inserted for class rss. This can be used to display an RSS button on the page completed created using a style sheet.
+A few CSS classes have been inserted to enable formatting of the plugin output. For example, when the show_css parameter is enabled, a link is created that uses a css class called rss. This can be used to display an RSS button on the page and to link that button to the rss link provided in the link description through css styles.
 
 <?php get_links_anchor_notes('name', 1, 1, 1); ?> 
 
@@ -50,7 +50,7 @@ Parameters:
  *   beforenote (default <br />) - Code to print out between the description and notes
  */
  
-The get_links_notes function adds the following parameters to the original Wordpress get_links: Even though this is an original template tag and the information is shown in the Codex, I think you should keep the same format of showing the actual tag with parameters after it.
+The get_links_notes function adds the following parameters to the original Wordpress get_links:
 
 Parameters:
 
