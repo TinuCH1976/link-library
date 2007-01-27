@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 0.2
+Version: 0.3, Updated to support Wordpress 2.1
 Author: Yannick Lefebvre
 Author URI: http://nayanna.biz/
 
@@ -57,25 +57,15 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 	$order = strtolower($order);
 
 	// Handle link category sorting
+	$direction = 'ASC';
 	if (substr($order,0,1) == '_') {
-		$direction = ' DESC';
+		$direction = 'DESC';
 		$order = substr($order,1);
 	}
 
-	// if 'name' wasn't specified, assume 'id':
-	$cat_order = ('name' == $order) ? 'cat_name' : 'cat_id';
-
 	if (!isset($direction)) $direction = '';
 	// Fetch the link category data as an array of hashesa
-	$cats = $wpdb->get_results("
-		SELECT DISTINCT link_category, cat_name, show_images, 
-			show_description, show_rating, show_updated, sort_order, 
-			sort_desc, list_limit
-		FROM `$wpdb->links` 
-		LEFT JOIN `$wpdb->linkcategories` ON (link_category = cat_id)
-		WHERE link_visible =  'Y'
-			AND list_limit <> 0
-		ORDER BY $cat_order $direction ", ARRAY_A);
+	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0");
 
 	// Display each category
 	
@@ -83,11 +73,11 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 	if ($cats) {
 		echo '<div class="linktable">';
 		echo '<table width="'. $table_width . '%">'."\n";
-		foreach ($cats as $cat) {
+		foreach ( (array) $cats as $cat) {
 			// Handle each category.
 			// First, fix the sort_order info
-			$orderby = $cat['sort_order'];
-			$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
+			//$orderby = $cat['sort_order'];
+			//$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
 
 			// Display the category name
 			$countcat += 1;
@@ -95,10 +85,10 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 						
 			$catfront = '	<td><a ';
 			if ($catanchor)
-				$cattext = 'href="#' . $cat['cat_name'] . '" ';
+				$cattext = 'href="#' . $cat->cat_name . '" ';
 			else
 			    $cattext = '';
-			$catitem = '>' . $cat['cat_name'] . "</a></td>\n";
+			$catitem = '>' . $cat->cat_name . "</a></td>\n";
 			
 			echo ($catfront . $cattext . $catitem);
 
@@ -138,7 +128,8 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
  **   show_rss (default false) - Display RSS URI if available in link description
  **   beforenote (default <br />) - Code to print out between the description and notes
  */
-function get_links_notes($category = -1, $before = '', $after = '<br />',
+ 
+function get_links_notes($category = '', $before = '', $after = '<br />',
                    $between = ' ', $show_images = true, $orderby = 'name',
                    $show_description = true, $show_rating = false,
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
@@ -147,72 +138,35 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
 
     global $wpdb;
 
-    $direction = ' ASC';
-    $category_query = "";
-    if ($category != -1) {
-        $category_query = " AND link_category = $category ";
-    }
-    if (get_settings('links_recently_updated_time')) {
-        $recently_updated_test = ", IF (DATE_ADD(link_updated, INTERVAL ".get_settings('links_recently_updated_time')." MINUTE) >= NOW(), 1,0) as recently_updated ";
-    } else {
-		$recently_updated_test = '';
-	}
-    if ($show_updated) {
-        $get_updated = ", UNIX_TIMESTAMP(link_updated) AS link_updated_f ";
-    }
-
-    $orderby=strtolower($orderby);
-    if ($orderby == '')
-        $orderby = 'id';
-    if (substr($orderby,0,1) == '_') {
-        $direction = ' DESC';
-        $orderby = substr($orderby,1);
-    }
-
-    switch($orderby) {
-        case 'length':
-        $length = ",CHAR_LENGTH(link_name) AS length";
-        break;
-        case 'rand':
-            $orderby = 'rand()';
-            break;
-        default:
-            $orderby = " link_" . $orderby;
-    }
-
-    if (!isset($length)) {
-		$length = "";
+	$order = 'ASC';
+	if ( substr($orderby, 0, 1) == '_' ) {
+		$order = 'DESC';
+		$orderby = substr($orderby, 1);
 	}
 
-    $sql = "SELECT link_url, link_name, link_image, link_target,
-            link_description, link_rating, link_rel, link_notes, link_rss $length $recently_updated_test $get_updated
-            FROM $wpdb->links
-            WHERE link_visible = 'Y' " .
-           $category_query;
-    $sql .= ' ORDER BY ' . $orderby;
-    $sql .= $direction;
-    /* The next 2 lines implement LIMIT TO processing */
-    if ($limit != -1)
-        $sql .= " LIMIT $limit";
-    //echo $sql;
-    $results = $wpdb->get_results($sql);
-    if (!$results) {
-        return;
-    }
-    foreach ($results as $row) {
+	if ( $category == -1 ) //get_bookmarks uses '' to signify all categories
+		$category = '';
+		
+    $results = get_bookmarks("category_name=$category&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
+
+	if ( !$results )
+		return;
+		
+	$output = '';
+	
+    foreach ( (array) $results as $row) {
 		if (!isset($row->recently_updated)) $row->recently_updated = false;
-        echo($before);
-        if ($show_updated && $row->recently_updated) {
-            echo get_settings('links_recently_updated_prepend');
-        }
+        $output .= $before;
+        if ($show_updated && $row->recently_updated)
+            $output .= get_option('links_recently_updated_prepend');
+			
         $the_link = '#';
-        if (($row->link_url != null) && ($row->link_url != '')) {
-            $the_link = $row->link_url;
-        }
+        if (!empty($row->link_url) )
+            $the_link = wp_specialchars($row->link_url);
+
         $rel = $row->link_rel;
-        if ($rel != '') {
-            $rel = " rel='$rel'";
-        }
+        if ('' != $rel )
+            $rel = ' rel="' . $rel . '"';
 		
 		if ($use_html_tags) {
 			$descnotes = $row->link_notes;
@@ -227,37 +181,34 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
 
         if ($show_updated) {
            if (substr($row->link_updated_f,0,2) != '00') {
-                $title .= ' (Last updated ' . date(get_settings('links_updated_date_format'), $row->link_updated_f + (get_settings('gmt_offset') * 3600)) .')';
+                $title .= ' ('.__('Last updated') . '  ' . date(get_option('links_updated_date_format'), $row->link_updated_f + (get_option('gmt_offset') * 3600)) .')';
             }
         }
 
-        if ('' != $title) {
-            $title = " title='$title'";
-        }
+        if ('' != $title)
+            $title = ' title="' . $title . '"';
 
-        $alt = " alt='$name'";
+        $alt = ' alt="' . $name . '"';
             
         $target = $row->link_target;
-        if ('' != $target) {
-            $target = " target='$target'";
-        }
-        echo("<a href='$the_link'");
-        echo($rel . $title . $target);
-        echo('>');
-        if (($row->link_image != null) && $show_images) {
-			if (strstr($row->link_image, 'http'))
-				echo "<img src='$row->link_image' $alt $title />";
+        if ('' != $target)
+            $target = ' target="' . $target . '"';
+
+        $output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
+		
+        if ( $row->link_image != null && $show_images ) {
+			if ( strpos($row->link_image, 'http') !== false )
+				$output .= "<img src=\"$row->link_image\" $alt $title />";
 			else // If it's a relative path
-            	echo "<img src='" . get_settings('siteurl') . "$row->link_image' $alt $title />";
-			if ($show_image_and_name) {
-			    echo($between.$name);
-			}
-        } else {
-            echo($name);
-        }
-        echo('</a>');
+				$output .= "<img src=\"" . get_option('siteurl') . "$row->link_image\" $alt $title />";
+		} else {
+			$output .= $name;
+		}
+		
+        $output .= '</a>';
+		
         if ($show_updated && $row->recently_updated) {
-            echo get_settings('links_recently_updated_append');
+            $output .= get_option('links_recently_updated_append');
         }
 
 		if ($use_html_tags) {
@@ -267,19 +218,21 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
 			$desc = wp_specialchars($row->link_description, ENT_QUOTES);
 		}
 		
-        if ($show_description && ($desc != '')) {
-            echo($between.$desc);
-        }
+        if ($show_description && ($desc != ''))
+            $output .= $between . $desc;
 
 		if ($show_notes && ($descnotes != '')) {
-			echo("$beforenote\n");
-		    echo($between.$descnotes);
+			$output .= $beforenote . $between . $descnotes;
 		}
 		if ($show_rss && ($row->link_rss != '')) {
-		    echo($between . '<a id="rss" href="'.$row->link_rss.'">RSS</a>');
+		    $output .= $between . '<a id="rss" href="' . $row->link_rss . '">RSS</a>';
 		}
-        echo("$after\n");
+        $output .= "$after\n";
     } // end while
+	
+	if ( !$echo )
+		return $output;
+	echo $output;
 }
 
 /*
@@ -294,29 +247,35 @@ function get_links_notes($category = -1, $before = '', $after = '<br />',
  * Parameters:
  *   order (default 'name')  - Sort link categories by 'name' or 'id'
  *   hide_if_empty (default true)  - Supress listing empty link categories
- *   catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories
+ *   catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories\
+ *   showdescription (default false) - Displays link descriptions. Added for 2.1 since link categories no longer have this setting
  *   shownotes (default false) - Shows notes in addition to description for links (useful since notes field is larger than description)
+ *   showrating (default false) - Displays link ratings. Added for 2.1 since link categories no longer have this setting
+ *   showupdated (default false) - Displays link updated date. Added for 2.1 since link categories no longer have this setting
  *   categorylist (default null) - Only show links inside of selected categories. Enter category numbers in a string separated by commas
+ *   showimages (default false) - Displays link images. Added for 2.1 since link categories no longer have this setting
  *   show_image_and_name (default false) - Show both image and name instead of only one or the other
  *   use_html_tags (default false) - Use HTML tags for formatting instead of just displaying them
  *   show_rss (default false) - Display RSS URI if available in link description
  *   beforenote (default <br />) - Code to print out between the description and notes
  */
 
-function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false, $shownotes = false, $categorylist = '', $show_image_and_name = false, $use_html_tags = false, $show_rss = false, $beforenote = '<br />') {
+function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
+                                $showdescription = false, $shownotes = false, $showrating = false,
+								$showupdated = false, $categorylist = '', $show_images = false, 
+								$show_image_and_name = false, $use_html_tags = false, 
+								$show_rss = false, $beforenote = '<br />') {
 	global $wpdb;
 
 	$order = strtolower($order);
 
 	// Handle link category sorting
-	if (substr($order,0,1) == '_') {
-		$direction = ' DESC';
+	$direction = 'ASC';	
+	if ('_' == substr($order,0,1)) {
+		$direction = 'DESC';
 		$order = substr($order,1);
 	}
 
-	// if 'name' wasn't specified, assume 'id':
-	$cat_order = ('name' == $order) ? 'cat_name' : 'cat_id';
-	
 	if ($categorylist != '')
 	   $catsearch = ' AND link_category in (' . $categorylist . ') ';
 	else
@@ -326,50 +285,37 @@ function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $c
 
 	// Fetch the link category data as an array of hashesa
 
-	$sql = "SELECT DISTINCT link_category, cat_name, show_images, 
-			show_description, show_rating, show_updated, sort_order, 
-			sort_desc, list_limit
-		FROM $wpdb->links
-		LEFT JOIN `$wpdb->linkcategories` ON (link_category = cat_id)
-		WHERE link_visible =  'Y'
-			AND list_limit <> 0" .
-			$catsearch;
-    $sql .= ' ORDER BY ' . $cat_order . $direction;
-    $cats = $wpdb->get_results($sql, ARRAY_A);
+	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0");
 	
     // Display each category
 	if ($cats) {
 		echo '<div class="linklist">'."\n";
-		foreach ($cats as $cat) {
-			// Handle each category.
-			// First, fix the sort_order info
-			$orderby = $cat['sort_order'];
-			$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
-
+		foreach ( (array) $cats as $cat) {
+		
 			// Display the category name
 			$catfront = '	';
 			if ($catanchor)
-				$cattext = '<a name="' . $cat['cat_name'] . '"></a>';
+				$cattext = '<a name="' . $cat->cat_name . '"></a>';
 			else
 			    $cattext = '';
-			$catlink = '<h2>' . $cat['cat_name'] . "</h2>\n\t<ul>\n";
+			$catlink = '<h2>' . $cat->cat_name . "</h2>\n\t<ul>\n";
 			
 			echo ($catfront . $cattext . $catlink);
 			// Call get_links() with all the appropriate params
-			get_links_notes($cat['link_category'],
+			get_links_notes($cat->cat_name,
 				'<li>',"</li><br />","\n",
-				bool_from_yn($cat['show_images']),
-				$orderby,
-				bool_from_yn($cat['show_description']),
-				bool_from_yn($cat['show_rating']),
-				$cat['list_limit'],
-				bool_from_yn($cat['show_updated']),
+				$show_images,
+				'name',
+				$showdescription,
+				$showrating,
+				-1,
+				$showupdated,
 				$shownotes,
 				$show_image_and_name,
 			    $use_html_tags,
 				$show_rss,
 				$beforenote);
-
+				
 			// Close the last category
 			echo "\t</ul>\n";
 		}
