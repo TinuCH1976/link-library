@@ -69,7 +69,6 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 
 	// Display each category
 	
-
 	if ($cats) {
 		echo '<div class="linktable">';
 		echo '<table width="'. $table_width . '%">'."\n";
@@ -78,7 +77,7 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 			// First, fix the sort_order info
 			//$orderby = $cat['sort_order'];
 			//$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
-
+			
 			// Display the category name
 			$countcat += 1;
 			if (($countcat % $num_columns == 1) or ($countcat == 1) ) echo "<tr>\n";
@@ -147,7 +146,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 	if ( $category == -1 ) //get_bookmarks uses '' to signify all categories
 		$category = '';
 		
-    $results = get_bookmarks("category_name=$category&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
+    $results = get_bookmarks("category=$category&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
 
 	if ( !$results )
 		return;
@@ -302,7 +301,7 @@ function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $c
 			
 			echo ($catfront . $cattext . $catlink);
 			// Call get_links() with all the appropriate params
-			get_links_notes($cat->cat_name,
+			get_links_notes($cat->cat_ID,
 				'<li>',"</li><br />","\n",
 				$show_images,
 				'name',
