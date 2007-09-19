@@ -7,12 +7,12 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 0.3, Updated to support Wordpress 2.1
+Version: 0.5, Updated to support Wordpress 2.3 and XHTML 1.1
 Author: Yannick Lefebvre
 Author URI: http://nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright © 2005 Yannick Lefebvre
+Copyright © 2007 Yannick Lefebvre
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -48,10 +48,12 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
  *   table_witdh (default 100) - Width of table, percentage
  *   num_columns (default 1) - Number of columns in table
  *   catanchor (default false) - Determines if links to generated anchors should be created
+ *   flatlist (default false) - When set to true, displays an unordered list instead of a table
+ *   categorylist (default null) - Specifies a comma-separate list of the only categories that should be displayed
+ *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
  */
 
-function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = false) {
-	global $wpdb;
+function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = false, $flatlist = false, $categorylist = '', $excludecategorylist = '') {
 	$countcat = 0;
 
 	$order = strtolower($order);
@@ -65,38 +67,62 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
 
 	if (!isset($direction)) $direction = '';
 	// Fetch the link category data as an array of hashesa
-	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0");
+	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
 
 	// Display each category
-	
+
 	if ($cats) {
 		echo '<div class="linktable">';
-		echo '<table width="'. $table_width . '%">'."\n";
+		if (!$flatlist)
+			echo '<table width="'. $table_width . '%">'."\n";
+		else
+			echo "<ul>\n";
+			
 		foreach ( (array) $cats as $cat) {
 			// Handle each category.
 			// First, fix the sort_order info
 			//$orderby = $cat['sort_order'];
 			//$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
 			
-			// Display the category name
-			$countcat += 1;
-			if (($countcat % $num_columns == 1) or ($countcat == 1) ) echo "<tr>\n";
-						
-			$catfront = '	<td><a ';
-			if ($catanchor)
-				$cattext = 'href="#' . $cat->cat_name . '" ';
-			else
-			    $cattext = '';
-			$catitem = '>' . $cat->cat_name . "</a></td>\n";
-			
-			echo ($catfront . $cattext . $catitem);
+			if ($cat->category_parent == 0)
+			{
 
-			
-			if ($countcat % $num_columns == 0) echo "</tr>\n";			
+				// Display the category name
+				$countcat += 1;
+				if (!$flatlist and (($countcat % $num_columns == 1) or ($countcat == 1) )) echo "<tr>\n";
+							
+				if (!$flatlist)
+					$catfront = '	<td><a ';
+				else
+					$catfront = '	<li><a ';
+				$linkcatnospaces = str_replace ( ' ', '', $cat->cat_name );
+	
+				if ($catanchor)
+					$cattext = 'href="#' . $linkcatnospaces . '" ';
+				else
+					$cattext = '';
+	
+				$catitem = '>' . $cat->cat_name . "</a>";
+				
+				echo ($catfront . $cattext . $catitem );
+					
+				if (!$flatlist)
+					$catterminator = "	</td>\n";
+				else
+					$catterminator = "	</li>\n";
+				
+				echo ($catterminator);
+	
+				
+				if (!$flatlist and ($countcat % $num_columns == 0)) echo "</tr>\n";
+			}
 		}
 	}
-	if (($countcat % $num_columns = 3) or ($countcat == 1)) echo "</tr>\n";
-	echo "</table>\n";
+	if (!$flatlist and (($countcat % $num_columns = 3) or ($countcat == 1))) echo "</tr>\n";
+	if (!$flatlist)
+		echo "</table>\n";
+	else
+		echo "</ul>";
 	echo "</div>\n";
 }
 
@@ -126,16 +152,15 @@ function get_links_cats_anchor($order = 'name', $hide_if_empty = 'obsolete', $ta
  **   use_html_tags (default false) - Use HTML tags for formatting instead of just displaying them
  **   show_rss (default false) - Display RSS URI if available in link description
  **   beforenote (default <br />) - Code to print out between the description and notes
+ **   nofollow (default false) - Adds no follow tag to outgoing links
  */
  
 function get_links_notes($category = '', $before = '', $after = '<br />',
                    $between = ' ', $show_images = true, $orderby = 'name',
                    $show_description = true, $show_rating = false,
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
-				   $show_rss = false, $beforenote = '<br />', $echo = true
+				   $show_rss = false, $beforenote = '<br />', $nofollow = false, $echo = true
 				   ) {
-
-    global $wpdb;
 
 	$order = 'ASC';
 	if ( substr($orderby, 0, 1) == '_' ) {
@@ -146,7 +171,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 	if ( $category == -1 ) //get_bookmarks uses '' to signify all categories
 		$category = '';
 		
-    $results = get_bookmarks("category=$category&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
+    $results = get_bookmarks("category_name=$category&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
 
 	if ( !$results )
 		return;
@@ -164,8 +189,12 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
             $the_link = wp_specialchars($row->link_url);
 
         $rel = $row->link_rel;
-        if ('' != $rel )
+		if ('' != $rel and $nofollow)
             $rel = ' rel="' . $rel . '"';
+		else if ('' != $rel and $nofollow)
+            $rel = ' rel="' . $rel . ' nofollow"';
+		else if ('' == $rel and $nofollow)
+			$rel = ' rel="nofollow"';
 		
 		if ($use_html_tags) {
 			$descnotes = $row->link_notes;
@@ -257,15 +286,15 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
  *   use_html_tags (default false) - Use HTML tags for formatting instead of just displaying them
  *   show_rss (default false) - Display RSS URI if available in link description
  *   beforenote (default <br />) - Code to print out between the description and notes
+ *   nofollow (default false) - Adds nofollow tag to outgoing links
+ *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
  */
 
 function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
                                 $showdescription = false, $shownotes = false, $showrating = false,
 								$showupdated = false, $categorylist = '', $show_images = false, 
 								$show_image_and_name = false, $use_html_tags = false, 
-								$show_rss = false, $beforenote = '<br />') {
-	global $wpdb;
-
+								$show_rss = false, $beforenote = '<br />', $nofollow = false, $excludecategorylist = '') {
 	$order = strtolower($order);
 
 	// Handle link category sorting
@@ -275,48 +304,56 @@ function get_links_anchor_notes($order = 'name', $hide_if_empty = 'obsolete', $c
 		$order = substr($order,1);
 	}
 
-	if ($categorylist != '')
-	   $catsearch = ' AND link_category in (' . $categorylist . ') ';
-	else
-	   $catsearch = '';
-	   
 	if (!isset($direction)) $direction = '';
 
 	// Fetch the link category data as an array of hashesa
 
-	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0");
+	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
 	
     // Display each category
 	if ($cats) {
 		echo '<div class="linklist">'."\n";
 		foreach ( (array) $cats as $cat) {
 		
-			// Display the category name
-			$catfront = '	';
-			if ($catanchor)
-				$cattext = '<a name="' . $cat->cat_name . '"></a>';
-			else
-			    $cattext = '';
-			$catlink = '<h2>' . $cat->cat_name . "</h2>\n\t<ul>\n";
+			if ($cat->category_parent == 0)
+			{
+
+				$linkcatnospaces = str_replace ( ' ', '', $cat->cat_name );
 			
-			echo ($catfront . $cattext . $catlink);
-			// Call get_links() with all the appropriate params
-			get_links_notes($cat->cat_ID,
-				'<li>',"</li><br />","\n",
-				$show_images,
-				'name',
-				$showdescription,
-				$showrating,
-				-1,
-				$showupdated,
-				$shownotes,
-				$show_image_and_name,
-			    $use_html_tags,
-				$show_rss,
-				$beforenote);
+				// Display the category name
+				$catfront = '	';
+				if ($catanchor)
+					$cattext = '<div id="' . $linkcatnospaces . '">';
+				else
+					$cattext = '';
+				$catlink = '<h2>' . $cat->cat_name . "</h2>";
+				if ($catanchor)
+					$catenddiv = '</div>';
+				else
+					$catenddiv = '';
+				$catstartlist = "\n\t<ul>\n";
 				
-			// Close the last category
-			echo "\t</ul>\n";
+				echo ($catfront . $cattext . $catlink . $catenddiv . $catstartlist );
+				
+				// Call get_links() with all the appropriate params
+				get_links_notes($cat->cat_name,
+					'<li>',"</li>","\n",
+					$show_images,
+					'name',
+					$showdescription,
+					$showrating,
+					-1,
+					$showupdated,
+					$shownotes,
+					$show_image_and_name,
+					$use_html_tags,
+					$show_rss,
+					$beforenote,
+					$nofollow);
+								
+				// Close the last category
+				echo "\t</ul>\n";
+			}
 		}
 		echo "</div>\n";
 	}
