@@ -253,7 +253,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 			$output .= $beforenote . $between . $descnotes;
 		}
 		if ($show_rss && ($row->link_rss != '')) {
-		    $output .= $between . '<a id="rss" href="' . $row->link_rss . '">RSS</a>';
+		    $output .= $between . '<a class="rss" href="' . $row->link_rss . '">RSS</a>';
 		}
         $output .= "$after\n";
     } // end while
