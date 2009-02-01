@@ -13,6 +13,8 @@ This plugin is used to be able to create a page on your web site that will conta
 
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs.
 
+You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/).
+
 == Installation ==
 
 1. Download the plugin
@@ -25,4 +27,8 @@ The latest version of this plugin has been completely re-vamped to use the filte
 
 == Frequently Asked Questions ==
 
+There are no FAQs at this time.
+
 == Screenshots ==
+
+There are no screenshots available at this time.
