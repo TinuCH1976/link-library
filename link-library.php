@@ -1,7 +1,7 @@
 <?
 /*
 Plugin Name: Link Library
-Plugin URI: http://yannickcorner.nayanna.biz/wordpress-plugins/wordpress-plugin-link-library/
+Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Functions to generate link library page with a list of link
 categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
