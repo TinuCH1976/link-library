@@ -15,12 +15,12 @@ The latest version of this plugin has been completely re-vamped to use the filte
 
 == Installation ==
 
-   1. Download the plugin
-   2. Upload link-library.php to the /wp-content/plugins/ directory
-   3. Activate the plugin in the Wordpress Admin
-   4. In the Wordpress Admin, create a new page containing, in the HTML view mode, the following codes:
-   <!--Link Library Categories-->
-   <!--Link Library-->
+1. Download the plugin
+1. Upload link-library.php to the /wp-content/plugins/ directory
+1. Activate the plugin in the Wordpress Admin
+1. In the Wordpress Admin, create a new page containing, in the HTML view mode, the following codes:<br/>
+   `&lt;!--Link Library Categories--&gt;`<br/>
+   `&lt;<!--Link Library-->&gt;`
 
 
 == Frequently Asked Questions ==
