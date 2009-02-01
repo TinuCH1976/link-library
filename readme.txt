@@ -22,7 +22,7 @@ You can see a demonstration of the output of the plugin [here](http://yannickcor
 1. Activate the plugin in the Wordpress Admin
 1. In the Wordpress Admin, create a new page containing, in the HTML view mode, the following codes:<br/>
    `&lt;!--Link Library Categories--&gt;`<br/>
-   `&lt;<!--Link Library-->&gt;`
+   `&lt;!--Link Library-->&gt;`
 
 
 == Frequently Asked Questions ==
