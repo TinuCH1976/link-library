@@ -31,4 +31,5 @@ There are no FAQs at this time.
 
 == Screenshots ==
 
-There are no screenshots available at this time.
+1. The Settings Panel used to configure the output of Link Library
+2. A sample output page, displaying a list of categories and the links for all categories.
