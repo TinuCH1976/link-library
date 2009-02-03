@@ -20,10 +20,39 @@ You can see a demonstration of the output of the plugin [here](http://yannickcor
 1. Download the plugin
 1. Upload link-library.php to the /wp-content/plugins/ directory
 1. Activate the plugin in the Wordpress Admin
-1. In the Wordpress Admin, create a new page containing, in the HTML view mode, the following codes:<br/>
-   `&lt;!--Link Library Categories--&gt;`<br/>
-   `&lt;!--Link Library--&gt;`
+1. In the Wordpress Admin, create a new page containing the following codes:<br/>
+   [link-library-cats]<br/>
+   [link-library]
 
+To override the settings specified inside of the plugin settings page, the two commands can be called with options. Here is the syntax to call these options:
+
+[link-library-cats categorylistoverride="28"]
+
+Overrides the list of categories to be displayed in the category list
+
+[link-library-cats excludecategoryoverride="28"]
+
+Overrides the list of categories to be excluded in the category list
+
+[link-library categorylistoverride="28"]
+
+Overrides the list of categories to be displayed in the link list
+
+[link-library excludecategoryoverride="28"]
+
+Overrides the list of categories to be excluded in the link list
+
+[link-library notesoverride=0]
+
+Set to 0 or 1 to display or not display link notes
+
+[link-library descoverride=0]
+
+Set to 0 or 1 to display or not display link descriptions
+
+[link-library rssoverride=0]
+
+Set to 0 or 1 to display or not display rss information
 
 == Frequently Asked Questions ==
 

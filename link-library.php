@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.0
+Version: 1.0.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -473,7 +473,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 } //endif
 
 
-function get_links_cats_anchor() {
+function get_links_cats_anchor($categorylistoverride = '', $excludecategoryoverride = '') {
 
 	$options  = get_option('LinkLibraryPP');
 	
@@ -491,8 +491,16 @@ function get_links_cats_anchor() {
 	if (!isset($direction)) $direction = '';
 	// Fetch the link category data as an array of hashesa
 	
-	$selectedcategorylist = $options['categorylist'];
-	$excludedcategorylist = $options['excludecategorylist'];
+	if ($categorylistoverride != '')
+		$selectedcategorylist = $categorylistoverride;
+	else
+		$selectedcategorylist = $options['categorylist'];
+		
+	if ($excludecategoryoverride != '')
+		$excludedcategorylist = $excludecategoryoverride;
+	else
+		$excludedcategorylist = $options['excludecategorylist'];
+	
 	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
 
 	// Display each category
@@ -664,7 +672,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 	return $output;
 }
 
-function get_links_anchor_notes() {
+function get_links_anchor_notes($categorylistoverride = '', $excludecategoryoverride = '', $notesoverride = '', $descoverride = '', $rssoverride = '') {
 								
 	$options = get_option('LinkLibraryPP');
 								
@@ -680,9 +688,16 @@ function get_links_anchor_notes() {
 	if (!isset($direction)) $direction = '';
 
 	// Fetch the link category data as an array of hashesa
-
-	$selectedcategorylist = $options['categorylist'];
-	$excludedcategorylist = $options['excludecategorylist'];
+	
+	if ($categorylistoverride != '')
+		$selectedcategorylist = $categorylistoverride;
+	else
+		$selectedcategorylist = $options['categorylist'];
+		
+	if ($excludecategoryoverride != '')
+		$excludedcategorylist = $excludecategoryoverride;
+	else
+		$excludedcategorylist = $options['excludecategorylist'];
 
 	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
 	
@@ -725,19 +740,34 @@ function get_links_anchor_notes() {
 				
 				$output .= $catfront . $cattext . $catlink . $catenddiv . $catstartlist; 
 				
+				if ($notesoverride != '')
+					$selectedshownotes = $notesoverride;
+				else
+					$selectedshownotes = $options['shownotes'];
+				
+				if ($descoverride != '')
+					$selectedshowdescription = $descoverride;
+				else
+					$selectedshowdescription = $options['showdescription'];
+
+				if (rssoverride != '')
+					$selectedshowrss = $rssoverride;
+				else
+					$selectedshowrss = $options['show_rss'];					
+				
 				// Call get_links() with all the appropriate params
 				$linklist = get_links_notes($cat->cat_name,
 					$options['beforeitem'],$options['afteritem'],"\n",
 					$options['show_images'],
 					$options['order'],
-					$options['showdescription'],
-					$options['$showrating'],
+					$selectedshowdescription,
+					$options['showrating'],
 					-1,
 					$options['showupdated'],
-					$options['shownotes'],
+					$selectedshownotes,
 					$options['show_image_and_name'],
 					$options['use_html_tags'],
-					$options['show_rss'],
+					$selectedshowrss,
 					$options['beforenote'],
 					$options['afternote'],
 					$options['nofollow'],
@@ -763,25 +793,7 @@ function get_links_anchor_notes() {
 	return $output;
 }
 
-function link_library_callback($content)
-{	
-	if(!preg_match('<!--Link Library Categories-->', $content) && !preg_match('<!--Link Library-->', $content)) {
-		return $content;
-	}
-	
-	//$linklibrarycats = get_links_cats_anchor('name', 1, 100, 3, 1, 0, '', '');
-	$linklibrarycats = get_links_cats_anchor();
-	
-	//$linklibrary = get_links_anchor_notes('name', 1, 1, 1, 1, 0, 0, '', 0, 0, 1, 1, '<td>', '</td>', 1, '', '<tr>', '</tr>', '<td>', '</td>', 1, '<td>', '</td>', 1, "Application", "Description", "Similar to");
-	$linklibrary = get_links_anchor_notes();
-	
-	$tempcontent = str_replace('<!--Link Library Categories-->', $linklibrarycats, $content);
-	
-	return str_replace('<!--Link Library-->', $linklibrary, $tempcontent);
-}
-
-
-$version = "1.0";
+$version = "1.0.1";
 
 $options  = get_option('LinkLibraryPP',"");
 
@@ -821,9 +833,35 @@ if ($options == "") {
 	update_option('LinkLibraryPP',$options);
 } 
 
+
+function link_library_cats_func($atts) {
+	extract(shortcode_atts(array(
+	    'categorylistoverride' => '',
+		'excludecategoryoverride' => ''
+	), $atts));
+
+	return get_links_cats_anchor($categorylistoverride, $excludecategoryoverride);
+}
+
+
+function link_library_func($atts) {
+	extract(shortcode_atts(array(
+	    'categorylistoverride' => '',
+		'excludecategoryoverride' => '',
+		'notesoverride' => '',
+		'descoverride' => '',
+		'rssoverride' => ''
+	), $atts));
+
+	return get_links_anchor_notes($categorylistoverride, $excludecategoryoverride, $notesoverride, $descoverride, $rssoverride);
+}
+
+add_shortcode('link-library-cats', 'link_library_cats_func');
+
+add_shortcode('link-library', 'link_library_func');
+
+
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));
-
-add_filter('the_content', 'link_library_callback', 50);
 
 ?>
