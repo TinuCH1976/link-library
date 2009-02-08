@@ -20,6 +20,7 @@ You can see a demonstration of the output of the plugin [here](http://yannickcor
 1. Download the plugin
 1. Upload link-library.php to the /wp-content/plugins/ directory
 1. Activate the plugin in the Wordpress Admin
+1. Configure the desired output in the Link Library plugin configuration page.
 1. In the Wordpress Admin, create a new page containing the following codes:<br/>
    [link-library-cats]<br/>
    [link-library]
