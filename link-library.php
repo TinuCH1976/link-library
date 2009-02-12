@@ -1,13 +1,13 @@
 <?
 /*
 Plugin Name: Link Library
-Plugin URI: http://yannickcorner.nayanna.biz/wordpress-plugins/
+Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Functions to generate link library page with a list of link
 categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.0.1
+Version: 1.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -120,9 +120,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				check_admin_referer('linklibrarypp-config');
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
-							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink','linkheader', 'descheader', 'notesheader') as $option_name) {
+							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
+					}
+				}
+				
+				foreach (array('linkheader', 'descheader', 'notesheader') as $option_name) {
+					if (isset($_POST[$option_name])) {
+						$options[$option_name] = $_POST[$option_name];
 					}
 				}
 				
@@ -192,7 +198,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							</select>
 						</td>
 					</tr>				
-					<?php if ($options['flatlist'] == false) { ?>		
 					<tr>
 						<th scope="row" valign="top">
 							<label for="table_width">Width of Categories Table in Percents</label>
@@ -209,7 +214,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="num_columns" name="num_columns" size="10" value="<?php echo strval($options['num_columns']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
-					<?php } ?>
 					<tr>
 						<th scope="row" valign="top">
 							<label for="catanchor">Embed HTML anchors</label>
@@ -245,7 +249,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							</select>
 						</td>
 					</tr>				
-					<?php if ($options['displayastable'] == true) { ?>		
 					<tr>
 						<th scope="row" valign="top">
 							<label for="showcolumnheaders">Show Column Headers</label>
@@ -254,7 +257,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="checkbox" id="showcolumnheaders" name="showcolumnheaders" <?php if ($options['showcolumnheaders']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>
-					<?php if ($options['showcolumnheaders'] == true) { ?>	
 					<tr>
 						<th scope="row" valign="top">
 							<label for="linkheader">Link Column Header</label>
@@ -279,8 +281,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="notesheader" name="notesheader" size="40" value="<?php echo $options['notesheader']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
-					<?php } ?>						
-					<?php } ?>						
 					<tr>
 						<th scope="row" valign="top">
 							<label for="beforeitem">Output before complete link item</label>
@@ -321,7 +321,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="checkbox" id="showdescription" name="showdescription" <?php if ($options['showdescription']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>
-					<?php if ($options['showdescription'] == true) { ?>		
 					<tr>
 						<th scope="row" valign="top">
 							<label for="beforedesc">Output before Link Description</label>
@@ -338,7 +337,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="afternote" name="afternote" size="40" value="<?php echo $options['afternote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
-					<?php } ?>						
 					<tr>
 						<th scope="row" valign="top">
 							<label for="shownotes">Show Link Notes</label>
@@ -347,7 +345,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="checkbox" id="shownotes" name="shownotes" <?php if ($options['shownotes']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>
-					<?php if ($options['shownotes'] == true) { ?>		
 					<tr>
 						<th scope="row" valign="top">
 							<label for="beforenote">Output before Link Note</label>
@@ -364,7 +361,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="afternote" name="afternote" size="40" value="<?php echo $options['afternote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
-					<?php } ?>	
 					<tr>
 						<th scope="row" valign="top">
 							<label for="showrating">Show Link Rating</label>
@@ -473,13 +469,31 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 } //endif
 
 
-function get_links_cats_anchor($categorylistoverride = '', $excludecategoryoverride = '') {
+/*
+ * function LinkLibraryCategories()
+ *
+ * added by Yannick Lefebvre
+ *
+ * Output a list of all links categories, listed by category, using the
+ * settings in $wpdb->linkcategories and output it as table
+ *
+ * Parameters:
+ *   order (default 'name')  - Sort link categories by 'name' or 'id'
+ *   hide_if_empty (default true)  - Supress listing empty link categories
+ *   table_witdh (default 100) - Width of table, percentage
+ *   num_columns (default 1) - Number of columns in table
+ *   catanchor (default false) - Determines if links to generated anchors should be created
+ *   flatlist (default false) - When set to true, displays an unordered list instead of a table
+ *   categorylist (default null) - Specifies a comma-separate list of the only categories that should be displayed
+ *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
+ */
 
-	$options  = get_option('LinkLibraryPP');
+function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = false, 
+							   $flatlist = false, $categorylist = '', $excludecategorylist = '') {
 	
 	$countcat = 0;
 
-	$order = strtolower($options['order']);
+	$order = strtolower($order);
 
 	// Handle link category sorting
 	$direction = 'ASC';
@@ -491,25 +505,15 @@ function get_links_cats_anchor($categorylistoverride = '', $excludecategoryoverr
 	if (!isset($direction)) $direction = '';
 	// Fetch the link category data as an array of hashesa
 	
-	if ($categorylistoverride != '')
-		$selectedcategorylist = $categorylistoverride;
-	else
-		$selectedcategorylist = $options['categorylist'];
-		
-	if ($excludecategoryoverride != '')
-		$excludedcategorylist = $excludecategoryoverride;
-	else
-		$excludedcategorylist = $options['excludecategorylist'];
-	
-	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
+	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
 
 	// Display each category
 
 	if ($cats) {
 		$output =  "<div class=\"linktable\">";
 		
-		if (!$options['flatlist'])
-			$output .= "<table width=\"" . $options['table_width'] . "%\">\n";
+		if (!$flatlist)
+			$output .= "<table width=\"" . $table_width . "%\">\n";
 		else
 			$output .= "<ul>\n";
 			
@@ -524,15 +528,15 @@ function get_links_cats_anchor($categorylistoverride = '', $excludecategoryoverr
 
 				// Display the category name
 				$countcat += 1;
-				if (!$options['flatlist'] and (($countcat % $options['num_columns'] == 1) or ($countcat == 1) )) $output .= "<tr>\n";
+				if (!$flatlist and (($countcat % $num_columns == 1) or ($countcat == 1) )) $output .= "<tr>\n";
 							
-				if (!$options['flatlist'])
+				if (!$flatlist)
 					$catfront = '	<td><a ';
 				else
 					$catfront = '	<li><a ';
 				$linkcatnospaces = str_replace ( ' ', '', $cat->cat_name );
 	
-				if ($options['catanchor'])
+				if ($catanchor)
 					$cattext = 'href="#' . $linkcatnospaces . '" ';
 				else
 					$cattext = '';
@@ -541,7 +545,7 @@ function get_links_cats_anchor($categorylistoverride = '', $excludecategoryoverr
 				
 				$output .= ($catfront . $cattext . $catitem );
 					
-				if (!$options['flatlist'])
+				if (!$flatlist)
 					$catterminator = "	</td>\n";
 				else
 					$catterminator = "	</li>\n";
@@ -549,12 +553,12 @@ function get_links_cats_anchor($categorylistoverride = '', $excludecategoryoverr
 				$output .= ($catterminator);
 	
 				
-				if (!$options['flatlist'] and ($countcat % $options['num_columns'] == 0)) $output .= "</tr>\n";
+				if (!$flatlist and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
 			}
 		}
 	}
-	if (!$options['flatlist'] and (($countcat % $options['num_columns'] = 3) or ($countcat == 1))) $output .= "</tr>\n";
-	if (!$options['flatlist'])
+	if (!$flatlist and (($countcat % $num_columns = 3) or ($countcat == 1))) $output .= "</tr>\n";
+	if (!$flatlist)
 		$output .= "</table>\n";
 	else
 		$output .= "</ul>";
@@ -672,11 +676,55 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 	return $output;
 }
 
-function get_links_anchor_notes($categorylistoverride = '', $excludecategoryoverride = '', $notesoverride = '', $descoverride = '', $rssoverride = '') {
-								
-	$options = get_option('LinkLibraryPP');
-								
-	$order = strtolower($options['order']);
+/*
+ * function LinkLibrary()
+ *
+ * added by Yannick Lefebvre
+ *
+ * Output a list of all links, listed by category, using the
+ * settings in $wpdb->linkcategories and output it as a nested
+ * HTML unordered list. Can also insert anchors for categories
+ *
+ * Parameters:
+ *   order (default 'name')  - Sort link categories by 'name' or 'id'
+ *   hide_if_empty (default true)  - Supress listing empty link categories
+ *   catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories\
+ *   showdescription (default false) - Displays link descriptions. Added for 2.1 since link categories no longer have this setting
+ *   shownotes (default false) - Shows notes in addition to description for links (useful since notes field is larger than description)
+ *   showrating (default false) - Displays link ratings. Added for 2.1 since link categories no longer have this setting
+ *   showupdated (default false) - Displays link updated date. Added for 2.1 since link categories no longer have this setting
+ *   categorylist (default null) - Only show links inside of selected categories. Enter category numbers in a string separated by commas
+ *   showimages (default false) - Displays link images. Added for 2.1 since link categories no longer have this setting
+ *   show_image_and_name (default false) - Show both image and name instead of only one or the other
+ *   use_html_tags (default false) - Use HTML tags for formatting instead of just displaying them
+ *   show_rss (default false) - Display RSS URI if available in link description
+ *   beforenote (default <br />) - Code to print out between the description and notes
+ *   nofollow (default false) - Adds nofollow tag to outgoing links
+ *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
+ *   afternote (default null) - Code / Text to be displayed after note
+ *   beforeitem (default null) - Code / Text to be displayed before item
+ *   afteritem (default null) - Code / Text to be displayed after item
+ *   beforedesc (default null) - Code / Text to be displayed before description
+ *   afterdesc (default null) - Code / Text to be displayed after description
+ *   displayastable (default false) - Display lists of links as a table (when true) or as an unordered list (when false)
+ *   beforelink (default null) - Code / Text to be displayed before link
+ *   afterlink (default null) - Code / Text to be displayed after link
+ *   showcolumnheaders (default false) - Show column headers if rendering in table mode
+ *   linkheader (default null) - Text to be shown in link column when displaying as table
+ *   descheader (default null) - Text to be shown in desc column when displaying as table
+ *   notesheader (default null) - Text to be shown in notes column when displaying as table
+ */
+
+function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
+                                $showdescription = false, $shownotes = false, $showrating = false,
+                                $showupdated = false, $categorylist = '', $show_images = false, 
+                                $show_image_and_name = false, $use_html_tags = false, 
+                                $show_rss = false, $beforenote = '<br />', $nofollow = false, $excludecategorylist = '',
+								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
+								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
+								$linkheader = '', $descheader = '', $notesheader = '') {
+
+	$order = strtolower($order);
 
 	// Handle link category sorting
 	$direction = 'ASC';	
@@ -687,19 +735,9 @@ function get_links_anchor_notes($categorylistoverride = '', $excludecategoryover
 
 	if (!isset($direction)) $direction = '';
 
-	// Fetch the link category data as an array of hashesa
-	
-	if ($categorylistoverride != '')
-		$selectedcategorylist = $categorylistoverride;
-	else
-		$selectedcategorylist = $options['categorylist'];
-		
-	if ($excludecategoryoverride != '')
-		$excludedcategorylist = $excludecategoryoverride;
-	else
-		$excludedcategorylist = $options['excludecategorylist'];
+	// Fetch the link category data as an array of hashes
 
-	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
+	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
 	
     // Display each category
 	if ($cats) {
@@ -726,11 +764,11 @@ function get_links_anchor_notes($categorylistoverride = '', $excludecategoryover
 					
 					
 					
-				if ($options['displayastable'] == true)
+				if ($displayastable == true)
 				{
 					$catstartlist = "\n\t<table class='linklisttable'>\n";
-					if ($options['showcolumnheaders'] == true)
-						$catstartlist .= '<tr><td><h3>'.$options['linkheader'].'</h3></td><td><h3>'.$options['descheader'].'</h3></td><td><h3>'.$options['notesheader'].'</h3></td></tr>'."\n";
+					if ($showcolumnheaders == true)
+						$catstartlist .= '<tr><td><h3>'.$linkheader.'</h3></td><td><h3>'.$descheader.'</h3></td><td><h3>'.$notesheader.'</h3></td></tr>'."\n";
 					else
 						$catstartlist .= '';
 				}
@@ -740,47 +778,33 @@ function get_links_anchor_notes($categorylistoverride = '', $excludecategoryover
 				
 				$output .= $catfront . $cattext . $catlink . $catenddiv . $catstartlist; 
 				
-				if ($notesoverride != '')
-					$selectedshownotes = $notesoverride;
-				else
-					$selectedshownotes = $options['shownotes'];
-				
-				if ($descoverride != '')
-					$selectedshowdescription = $descoverride;
-				else
-					$selectedshowdescription = $options['showdescription'];
-
-				if (rssoverride != '')
-					$selectedshowrss = $rssoverride;
-				else
-					$selectedshowrss = $options['show_rss'];					
 				
 				// Call get_links() with all the appropriate params
 				$linklist = get_links_notes($cat->cat_name,
-					$options['beforeitem'],$options['afteritem'],"\n",
-					$options['show_images'],
-					$options['order'],
-					$selectedshowdescription,
-					$options['showrating'],
+					$beforeitem,$afteritem,"\n",
+					$show_images,
+					$order,
+					$showdescription,
+					$showrating,
 					-1,
-					$options['showupdated'],
-					$selectedshownotes,
-					$options['show_image_and_name'],
-					$options['use_html_tags'],
-					$selectedshowrss,
-					$options['beforenote'],
-					$options['afternote'],
-					$options['nofollow'],
+					$showupdated,
+					$shownotes,
+					$show_image_and_name,
+					$use_html_tags,
+					$show_rss,
+					$beforenote,
+					$afternote,
+					$nofollow,
 					1,
-					$options['beforedesc'],
-					$options['afterdesc'],
-					$options['beforelink'],
-					$options['afterlink']);
+					$beforedesc,
+					$afterdesc,
+					$beforelink,
+					$afterlink);
 					
 				$output .= $linklist;
 								
 				// Close the last category
-				if ($options['displayastable'])
+				if ($displayastable)
 					$output .= "\t</table>\n";
 				else
 					$output .= "\t</ul>\n";
@@ -839,8 +863,21 @@ function link_library_cats_func($atts) {
 	    'categorylistoverride' => '',
 		'excludecategoryoverride' => ''
 	), $atts));
+	
+	$options  = get_option('LinkLibraryPP');
+	
+	if ($categorylistoverride != '')
+		$selectedcategorylist = $categorylistoverride;
+	else
+		$selectedcategorylist = $options['categorylist'];
+		
+	if ($excludecategoryoverride != '')
+		$excludedcategorylist = $excludecategoryoverride;
+	else
+		$excludedcategorylist = $options['excludecategorylist'];
 
-	return get_links_cats_anchor($categorylistoverride, $excludecategoryoverride);
+	return LinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
+								 $selectedcategorylist, $excludedcategorylist);
 }
 
 
@@ -853,7 +890,40 @@ function link_library_func($atts) {
 		'rssoverride' => ''
 	), $atts));
 
-	return get_links_anchor_notes($categorylistoverride, $excludecategoryoverride, $notesoverride, $descoverride, $rssoverride);
+	$options = get_option('LinkLibraryPP');
+	
+	if ($notesoverride != '')
+		$selectedshownotes = $notesoverride;
+	else
+		$selectedshownotes = $options['shownotes'];
+	
+	if ($descoverride != '')
+		$selectedshowdescription = $descoverride;
+	else
+		$selectedshowdescription = $options['showdescription'];
+
+	if ($rssoverride != '')
+		$selectedshowrss = $rssoverride;
+	else
+		$selectedshowrss = $options['show_rss'];					
+		
+	if ($categorylistoverride != '')
+		$selectedcategorylist = $categorylistoverride;
+	else
+		$selectedcategorylist = $options['categorylist'];
+		
+	if ($excludecategoryoverride != '')
+		$excludedcategorylist = $excludecategoryoverride;
+	else
+		$excludedcategorylist = $options['excludecategorylist'];	
+
+	return LinkLibrary($options['order'], TRUE, $options['catanchor'], $selectedshowdescription, $selectedshownotes,
+								  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
+								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
+								  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
+								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
+								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
+								  $options['descheader'], $options['notesheader']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
