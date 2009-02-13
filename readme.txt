@@ -61,7 +61,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 For legacy users of Link Library (pre-1.0), it is still possible to call the back-end functions of the plugin from PHP code to display the contents of your library directly from a page template.
 
-The main differences are that the function names have been changed to reflect the plugin name. However, the parameters are compatible with the previous function, with a few additions having been made. Also, it is important to note that the function does not output the Link Library content by themselves as they did. You now need to print the return value of these functions, which can be simply done with the echo command.
+The main differences are that the function names have been changed to reflect the plugin name. However, the parameters are compatible with the previous function, with a few additions having been made. Also, it is important to note that the function does not output the Link Library content by themselves as they did. You now need to print the return value of these functions, which can be simply done with the echo command. Finally, it is possible to call these PHP functions with a single argument ('AdminSettings') so that the settings used in the Admin section are used.
 
 Here would be the installation procedure:
 
@@ -79,7 +79,7 @@ Here would be the installation procedure:
  Output a list of all links categories, listed by category, using the settings in $wpdb->linkcategories and output it as table
 
  Parameters:<br/>
-   order (default 'name')  - Sort link categories by 'name' or 'id'<br/>
+   order (default 'name')  - Sort link categories by 'name' or 'id'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.<br/>
    hideifempty (default true)  - Supress listing empty link categories<br/>
    tablewitdh (default 100) - Width of table, percentage<br/>
    numcolumns (default 1) - Number of columns in table<br/>
@@ -93,7 +93,7 @@ Here would be the installation procedure:
  Output a list of all links, listed by category, using the settings in $wpdb->linkcategories and output it as a nested HTML unordered list. Can also insert anchors for categories
 
  Parameters:<br/>
-   order (default 'name')  - Sort link categories by 'name' or 'id'<br/>
+   order (default 'name')  - Sort link categories by 'name' or 'id'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.<br/>
    hideifempty (default true)  - Supress listing empty link categories<br/>
    catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories<br/>
    showdescription (default false) - Displays link descriptions. Added for 2.1 since link categories no longer have this setting<br/>
