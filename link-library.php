@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.1
+Version: 1.1.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -113,6 +113,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linkheader'] = '';
 					$options['descheader'] = '';
 					$options['notesheader'] = '';
+					$options['catlistwrappers'] = 1;
+					$options['beforecatlist1'] = '';
+					$options['beforecatlist2'] = '';
+					$options['beforecatlist3'] = '';
+					
 				update_option('LinkLibraryPP',$options);
 			}
 			if ( isset($_POST['submit']) ) {
@@ -120,7 +125,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				check_admin_referer('linklibrarypp-config');
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
-							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink') as $option_name) {
+							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'catlistwrappers', 'beforecatlist1',
+							   'beforecatlist2', 'beforecatlist3') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -159,15 +165,16 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			}
 
 			$options  = get_option('LinkLibraryPP');
-			?>
+			?>		
 			<div class="wrap">
 				<h2>Link Library Configuration</h2>
-				<form action="" method="post" id="analytics-conf">
+				<form name="lladminform" action="" method="post" id="analytics-conf">
 					<table class="form-table" style="width:100%;">
 					<?php
 					if ( function_exists('wp_nonce_field') )
 						wp_nonce_field('linklibrarypp-config');
 					?>
+					<tr><td><h3>Common Parameters</h3></td></tr>
 					<tr>
 						<th scope="row" valign="top">
 							<label for="order">Results Order</label>
@@ -181,12 +188,30 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
+							<label for="categorylist">Categories to be displayed (comma-separated numeric category IDs)</label>
+						</th>
+						<td>
+							<input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="excludecategorylist">Categories to be excluded (comma-separated numeric category IDs)</label>
+						</th>
+						<td>
+							<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>
+					
+					<tr>
+						<th scope="row" valign="top">
 							<label for="hide_if_empty">Hide Results if Empty</label>
 						</th>
 						<td>
 							<input type="checkbox" id="hide_if_empty" name="hide_if_empty" <?php if ($options['hide_if_empty']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>
+					<tr><td><h3>Link Categories Settings</h3></td></tr>
 					<tr>
 						<th scope="row" valign="top">
 							<label for="flatlist">Link Categories Display Format</label>
@@ -214,30 +239,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="num_columns" name="num_columns" size="10" value="<?php echo strval($options['num_columns']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
+					<tr><td><h3>Link Element Settings</h3></td></tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="catanchor">Embed HTML anchors</label>
+							<label for="catanchor">Embed HTML anchors (need to be active for Link Categories to work)</label>
 						</th>
 						<td>
 							<input type="checkbox" id="catanchor" name="catanchor" <?php if ($options['catanchor']) echo ' checked="checked" '; ?>/>
 						</td>
-					</tr>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="categorylist">Categories to be displayed (comma-separated)</label>
-						</th>
-						<td>
-							<input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>
-					<tr>
-						<th scope="row" valign="top">
-							<label for="excludecategorylist">Categories to be excluded (comma-separated)</label>
-						</th>
-						<td>
-							<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>
+					</tr>					
 					<tr>
 						<th scope="row" valign="top">
 							<label for="displayastable">Link Display Format</label>
@@ -281,6 +291,38 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="notesheader" name="notesheader" size="40" value="<?php echo $options['notesheader']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="catlistwrappers">Number of different sets of alternating div classes to be placed before and after each link category section</label>
+						</th>
+						<td>
+							<input type="text" id="catlistwrappers" name="catlistwrappers" size="40" value="<?php echo $options['catlistwrappers']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist1">First div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist1" name="beforecatlist1" size="40" value="<?php echo $options['beforecatlist1']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist2">Second div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist2" name="beforecatlist2" size="40" value="<?php echo $options['beforecatlist2']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist3">Third div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist3" name="beforecatlist3" size="40" value="<?php echo $options['beforecatlist3']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
 					<tr>
 						<th scope="row" valign="top">
 							<label for="beforeitem">Output before complete link item</label>
@@ -460,6 +502,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['linkheader'] = '';
 				$options['descheader'] = '';
 				$options['notesheader'] = '';
+				$options['catlistwrappers'] = 1;
+				$options['beforecatlist1'] = '';
+				$options['beforecatlist2'] = '';
+				$options['beforecatlist3'] = '';
 	
 			update_option('LinkLibraryPP',$options);
 		}
@@ -664,7 +710,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
                                 $show_rss = false, $beforenote = '<br />', $nofollow = false, $excludecategorylist = '',
 								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
-								$linkheader = '', $descheader = '', $notesheader = '') {
+								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
+								$beforecatlist2 = '', $beforecatlist3 = '') {
 
 	$order = strtolower($order);
 
@@ -676,6 +723,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	}
 
 	if (!isset($direction)) $direction = '';
+	
+	$output .= "<!-- Link Library Output -->\n\n";
+	
+	$currentcategory = 1;
 
 	// Fetch the link category data as an array of hashes
 
@@ -683,12 +734,47 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	
     // Display each category
 	if ($cats) {
-		$output = "<div class=\"linklist\">\n";
+		$output .= "<div class=\"linklist\">\n";
 		
 		foreach ( (array) $cats as $cat) {
 		
 			if ($cat->category_parent == 0)
 			{
+			
+				if ($catlistwrappers == 1)
+					$output .= "<div class=\"" . $beforecatlist1 . "\">";
+				else if ($catlistwrappers == 2)
+				{
+					$remainder = $currentcategory % $catlistwrappers;
+					switch ($remainder) {
+
+						case 0:
+							$output .= "<div class=\"" . $beforecatlist2 . "\">";;						
+							break;
+							
+						case 1:
+							$output .= "<div class=\"" . $beforecatlist1 . "\">";;
+							break;				
+					}
+				}
+				else if ($catlistwrappers == 3)
+				{
+					$remainder = $currentcategory % $catlistwrappers;
+					switch ($remainder) {
+
+						case 0:
+							$output .= "<div class=\"" . $beforecatlist3 . "\">";;						
+							break;
+							
+						case 2:
+							$output .= "<div class=\"" . $beforecatlist2 . "\">";;
+							break;
+							
+						case 1:
+							$output .= "<div class=\"" . $beforecatlist1 . "\">";;
+							break;				
+					}				
+				}
 
 				$linkcatnospaces = str_replace ( ' ', '', $cat->cat_name );
 			
@@ -703,8 +789,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$catenddiv = '</div>';
 				else
 					$catenddiv = '';
-					
-					
 					
 				if ($displayastable == true)
 				{
@@ -750,11 +834,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$output .= "\t</table>\n";
 				else
 					$output .= "\t</ul>\n";
+					
+				$output .= "</div>";
+				
+				$currentcategory = $currentcategory + 1;
 			}
 		}
 		$output .= "</div>\n";
 		
 	}
+	
+	$output .= "\n<!-- End of Link Library Output -->\n\n";
 	
 	return $output;
 }
@@ -794,6 +884,10 @@ if ($options == "") {
 	$options['linkheader'] = '';
 	$options['descheader'] = '';
 	$options['notesheader'] = '';
+	$options['catlistwrappers'] = 1;
+	$options['beforecatlist1'] = '';
+	$options['beforecatlist2'] = '';
+	$options['beforecatlist3'] = '';
 	
 	
 	update_option('LinkLibraryPP',$options);
@@ -869,6 +963,10 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   linkheader (default null) - Text to be shown in link column when displaying as table
  *   descheader (default null) - Text to be shown in desc column when displaying as table
  *   notesheader (default null) - Text to be shown in notes column when displaying as table
+ *   catlistwrappers (default 1) - Number of different sets of alternating elements to be placed before and after each link category section
+ *   beforecatlist1 (default null) - First element to be placed before a link category section
+ *   beforecatlist2 (default null) - Second element to be placed before a link category section
+ *   beforecatlist3 (default null) - Third element to be placed before a link category section
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
@@ -878,7 +976,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
                                 $show_rss = false, $beforenote = '<br />', $nofollow = false, $excludecategorylist = '',
 								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
-								$linkheader = '', $descheader = '', $notesheader = '') {
+								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
+								$beforecatlist2 = '', $beforecatlist3 = '') {
 								
 	if ($order == 'AdminSettings')
 	{
@@ -889,7 +988,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['nofollow'], $options['excludecategorylist'], $options['afternote'], $options['beforeitem'],
 								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
-								  $options['descheader'], $options['notesheader']);
+								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
+								  $options['beforecatlist2'], $options['beforecatlist3']);
 	
 	}
 	else
@@ -897,7 +997,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
                                 $showupdated, $categorylist, $show_images, $show_image_and_name, $use_html_tags, 
                                 $show_rss, $beforenote, $nofollow, $excludecategorylist, $afternote, $beforeitem, $afteritem,
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
-								$linkheader, $descheader, $notesheader);
+								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
+								$beforecatlist2, $beforecatlist3);
 
 }
 
@@ -968,7 +1069,8 @@ function link_library_func($atts) {
 								  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
 								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
-								  $options['descheader'], $options['notesheader']);
+								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
+								  $options['beforecatlist2'], $options['beforecatlist3']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
