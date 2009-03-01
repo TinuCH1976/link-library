@@ -1,5 +1,6 @@
 === Link Library ===
 Contributors: jackdewey
+Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/
 Tags: link, list, page
 Requires at least: 2.7
 Tested up to: 2.7
@@ -79,7 +80,7 @@ Here would be the installation procedure:
  Output a list of all links categories, listed by category, using the settings in $wpdb->linkcategories and output it as table
 
  Parameters:<br/>
-   order (default 'name')  - Sort link categories by 'name' or 'id'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.<br/>
+   order (default 'name')  - Sort link categories by 'name', 'id', 'catlist'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.<br/>
    hideifempty (default true)  - Supress listing empty link categories<br/>
    tablewitdh (default 100) - Width of table, percentage<br/>
    numcolumns (default 1) - Number of columns in table<br/>
@@ -93,7 +94,7 @@ Here would be the installation procedure:
  Output a list of all links, listed by category, using the settings in $wpdb->linkcategories and output it as a nested HTML unordered list. Can also insert anchors for categories
 
  Parameters:<br/>
-   order (default 'name')  - Sort link categories by 'name' or 'id'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.<br/>
+   order (default 'name')  - Sort link categories by 'name', 'id' or 'catlist'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.<br/>
    hideifempty (default true)  - Supress listing empty link categories<br/>
    catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories<br/>
    showdescription (default false) - Displays link descriptions. Added for 2.1 since link categories no longer have this setting<br/>

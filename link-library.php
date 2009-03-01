@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.3
+Version: 1.1.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -169,6 +169,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			<div class="wrap">
 				<h2>Link Library Configuration</h2>
 				<form name="lladminform" action="" method="post" id="analytics-conf">
+					<p style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></p>
 					<table class="form-table" style="width:100%;">
 					<?php
 					if ( function_exists('wp_nonce_field') )
@@ -180,9 +181,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<label for="order">Results Order</label>
 						</th>
 						<td>
-							<select name="order" id="order" style="width:200px;">
+							<select name="order" id="order" style="width:350px;">
 								<option value="name"<?php if ($options['order'] == 'name') { echo ' selected="selected"';} ?>>Order by Name</option>
 								<option value="id"<?php if ($options['order'] == 'id') { echo ' selected="selected"';} ?>>Order by ID</option>
+								<option value="catlist"<?php if ($options['order'] == 'catlist') { echo ' selected="selected"';} ?>>Order based on list of categories to be displayed</option>
 							</select>
 						</td>
 					</tr>
@@ -521,6 +523,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 	$countcat = 0;
 
 	$order = strtolower($order);
+	
+	$output .= "<!-- Link Library Categories Output -->\n\n";
 
 	// Handle link category sorting
 	$direction = 'ASC';
@@ -531,57 +535,85 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 
 	if (!isset($direction)) $direction = '';
 	// Fetch the link category data as an array of hashesa
-	
-	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
+
+	if ($order == "catlist")
+		{
+			$displaycategories = explode(",",$categorylist);
+			
+			$catnames = array();
+			
+			foreach ( $displaycategories as $displaycategory ) {
+			
+				$currentcat = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory");
+				
+				foreach ( (array) $currentcat as $cat) {
+				
+					$catnames[] = $cat->cat_name;
+				
+				}
+						
+			}
+			
+		}
+	else
+	{
+		$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
+		
+		$catnames = array();
+		
+		foreach ( (array) $cats as $cat) {
+		
+			$catnames[] = $cat -> cat_name;
+		
+		}
+		
+	}
 
 	// Display each category
 
-	if ($cats) {
-		$output =  "<div class=\"linktable\">";
+	if ($catnames) {
+		
+		$output .=  "<div class=\"linktable\">";
 		
 		if (!$flatlist)
 			$output .= "<table width=\"" . $table_width . "%\">\n";
 		else
 			$output .= "<ul>\n";
 			
-		foreach ( (array) $cats as $cat) {
+		foreach ( (array) $catnames as $catname) {
 			// Handle each category.
 			// First, fix the sort_order info
 			//$orderby = $cat['sort_order'];
 			//$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
 			
-			if ($cat->category_parent == 0)
-			{
-
-				// Display the category name
-				$countcat += 1;
-				if (!$flatlist and (($countcat % $num_columns == 1) or ($countcat == 1) )) $output .= "<tr>\n";
+			// Display the category name
+			$countcat += 1;
+			if (!$flatlist and (($countcat % $num_columns == 1) or ($countcat == 1) )) $output .= "<tr>\n";
 							
-				if (!$flatlist)
-					$catfront = '	<td><a ';
-				else
-					$catfront = '	<li><a ';
-				$linkcatnospaces = str_replace ( ' ', '', $cat->cat_name );
+			if (!$flatlist)
+				$catfront = '	<td><a ';
+			else
+				$catfront = '	<li><a ';
+			$linkcatnospaces = str_replace ( ' ', '', $catname );
 	
-				if ($catanchor)
-					$cattext = 'href="#' . $linkcatnospaces . '" ';
-				else
-					$cattext = '';
+			if ($catanchor)
+				$cattext = 'href="#' . $linkcatnospaces . '" ';
+			else
+				$cattext = '';
 	
-				$catitem = '>' . $cat->cat_name . "</a>";
-				
-				$output .= ($catfront . $cattext . $catitem );
+			$catitem = '>' . $catname . "</a>";
+			
+			$output .= ($catfront . $cattext . $catitem );
 					
-				if (!$flatlist)
-					$catterminator = "	</td>\n";
-				else
-					$catterminator = "	</li>\n";
+			if (!$flatlist)
+				$catterminator = "	</td>\n";
+			else
+				$catterminator = "	</li>\n";
 				
-				$output .= ($catterminator);
+			$output .= ($catterminator);
 	
 				
-				if (!$flatlist and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
-			}
+			if (!$flatlist and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
 		}
 	}
 	if (!$flatlist and (($countcat % $num_columns = 3) or ($countcat == 1))) $output .= "</tr>\n";
@@ -590,6 +622,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 	else
 		$output .= "</ul>";
 	$output .= "</div>\n";
+	
+	$output .= "\n<!-- End of Link Library Categories Output -->\n\n";
 	
 	return $output;
 }
@@ -729,18 +763,49 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	$currentcategory = 1;
 
 	// Fetch the link category data as an array of hashes
-
-	$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
 	
-    // Display each category
-	if ($cats) {
-		$output .= "<div class=\"linklist\">\n";
+	if ($order == "catlist")
+		{
+			$displaycategories = explode(",",$categorylist);
+			
+			$catnames = array();
+			
+			foreach ( $displaycategories as $displaycategory ) {
+			
+				$currentcat = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory");
+				
+				foreach ( (array) $currentcat as $cat) {
+				
+					$catnames[] = $cat->cat_name;
+				
+				}
+						
+			}
+			
+			$order = "name";
+			
+		}
+	else
+	{
+		$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
+		
+		$catnames = array();
 		
 		foreach ( (array) $cats as $cat) {
 		
-			if ($cat->category_parent == 0)
-			{
-			
+			$catnames[] = $cat -> cat_name;
+		
+		}
+		
+	}
+		
+    // Display each category
+	if ($catnames) {
+		$output .= "<div class=\"linklist\">\n";
+		
+		foreach ( (array) $catnames as $catname) {
+		
+		
 				if ($catlistwrappers == 1 || $catlistwrappers == '')
 					$output .= "<div class=\"" . $beforecatlist1 . "\">";
 				else if ($catlistwrappers == 2)
@@ -776,7 +841,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					}				
 				}
 
-				$linkcatnospaces = str_replace ( ' ', '', $cat->cat_name );
+				$linkcatnospaces = str_replace ( ' ', '', $catname );
 			
 				// Display the category name
 				$catfront = '	';
@@ -784,7 +849,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$cattext = '<div id="' . $linkcatnospaces . '">';
 				else
 					$cattext = '';
-				$catlink = '<h2>' . $cat->cat_name . "</h2>";
+				$catlink = '<h2>' . $catname . "</h2>";
 				if ($catanchor)
 					$catenddiv = '</div>';
 				else
@@ -806,7 +871,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				
 				
 				// Call get_links() with all the appropriate params
-				$linklist = get_links_notes($cat->cat_name,
+				$linklist = get_links_notes($catname,
 					$beforeitem,$afteritem,"\n",
 					$show_images,
 					$order,
@@ -838,7 +903,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				$output .= "</div>";
 				
 				$currentcategory = $currentcategory + 1;
-			}
 		}
 		$output .= "</div>\n";
 		
@@ -887,8 +951,7 @@ if ($options == "") {
 	$options['catlistwrappers'] = 1;
 	$options['beforecatlist1'] = '';
 	$options['beforecatlist2'] = '';
-	$options['beforecatlist3'] = '';
-	
+	$options['beforecatlist3'] = '';	
 	
 	update_option('LinkLibraryPP',$options);
 } 
@@ -902,7 +965,7 @@ if ($options == "") {
  * settings in $wpdb->linkcategories and output it as table
  *
  * Parameters:
- *   order (default 'name')  - Sort link categories by 'name' or 'id'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.
+ *   order (default 'name')  - Sort link categories by 'name' or 'id' or 'category-list'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.
  *   hide_if_empty (default true)  - Supress listing empty link categories
  *   table_witdh (default 100) - Width of table, percentage
  *   num_columns (default 1) - Number of columns in table
