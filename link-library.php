@@ -636,6 +636,8 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
 				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = ''
 				   ) {
+				   
+	global $wpdb;
 
 	$order = 'ASC';
 	if ( substr($orderby, 0, 1) == '_' ) {
@@ -646,7 +648,18 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 	if ( $category == -1 ) //get_bookmarks uses '' to signify all categories
 		$category = '';
 		
-    $results = get_bookmarks("category_name=$category&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
+	$catidquery = "select term_id from " . $wpdb->prefix . "terms where name = '" . $category . "'";
+	
+	$catids = $wpdb->get_results($catidquery);
+	
+	if ($catids)
+	{
+		foreach ( (array) $catids as $catid)
+		{
+			$catidnumber = $catid->term_id;
+			$results = get_bookmarks("category=$catidnumber&orderby=$orderby&order=$order&show_updated=$show_updated&limit=$limit");
+		}
+	}
 
 	if ( !$results )
 		return;
