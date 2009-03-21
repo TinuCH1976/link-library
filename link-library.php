@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.4
+Version: 1.1.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -327,7 +327,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>					
 					<tr>
 						<th scope="row" valign="top">
-							<label for="beforeitem">Output before complete link item</label>
+							<label for="beforeitem">Output before complete link group (link, notes, desc, etc...)</label>
 						</th>
 						<td>
 							<input type="text" id="beforeitem" name="beforeitem" size="40" value="<?php echo $options['beforeitem']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -335,7 +335,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>	
 					<tr>
 						<th scope="row" valign="top">
-							<label for="afteritem">Output after complete link item</label>
+							<label for="afteritem">Output after complete link group (link, notes, desc, etc...)</label>
 						</th>
 						<td>
 							<input type="text" id="afteritem" name="afteritem" size="40" value="<?php echo $options['afteritem']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -343,7 +343,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="beforelink">Output before individual link item</label>
+							<label for="beforelink">Output before Link</label>
 						</th>
 						<td>
 							<input type="text" id="beforelink" name="beforelink" size="40" value="<?php echo $options['beforelink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -351,7 +351,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>	
 					<tr>
 						<th scope="row" valign="top">
-							<label for="afterlink">Output after individual link item</label>
+							<label for="afterlink">Output after Link</label>
 						</th>
 						<td>
 							<input type="text" id="afterlink" name="afterlink" size="40" value="<?php echo $options['afterlink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -378,7 +378,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<label for="afterdesc">Output after Link Description</label>
 						</th>
 						<td>
-							<input type="text" id="afternote" name="afternote" size="40" value="<?php echo $options['afternote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+							<input type="text" id="afternote" name="afterdesc" size="40" value="<?php echo $options['afterdesc']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>	
 					<tr>
@@ -801,12 +801,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		
     // Display each category
 	if ($catnames) {
-		$output .= "<div class=\"linklist\">\n";
+		$output .= "<div class=\'linklist\'>\n";
 		
 		foreach ( (array) $catnames as $catname) {
 		
 		
-				if ($catlistwrappers == 1 || $catlistwrappers == '')
+				if ($catlistwrappers == 1)
 					$output .= "<div class=\"" . $beforecatlist1 . "\">";
 				else if ($catlistwrappers == 2)
 				{
@@ -849,7 +849,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$cattext = '<div id="' . $linkcatnospaces . '">';
 				else
 					$cattext = '';
-				$catlink = '<h2>' . $catname . "</h2>";
+				$catlink = '<div class=\'linklistcatname\'>' . $catname . "</div>";
 				if ($catanchor)
 					$catenddiv = '</div>';
 				else
@@ -859,7 +859,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				{
 					$catstartlist = "\n\t<table class='linklisttable'>\n";
 					if ($showcolumnheaders == true)
-						$catstartlist .= '<tr><td><h3>'.$linkheader.'</h3></td><td><h3>'.$descheader.'</h3></td><td><h3>'.$notesheader.'</h3></td></tr>'."\n";
+						$catstartlist .= '<tr><td><div class=\'linklistcolumnheader\'>'.$linkheader.'</div></td><td><div class=\'linklistcolumnheader\'>'.$descheader.'</div></td><td><div class=\'linklistcolumnheader\'>'.$notesheader.'</div></td></tr>'."\n";
 					else
 						$catstartlist .= '';
 				}
@@ -900,7 +900,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				else
 					$output .= "\t</ul>\n";
 					
-				$output .= "</div>";
+				if ($catlistwrappers != '')
+					$output .= "</div>";
 				
 				$currentcategory = $currentcategory + 1;
 		}
@@ -1096,7 +1097,8 @@ function link_library_func($atts) {
 		'excludecategoryoverride' => '',
 		'notesoverride' => '',
 		'descoverride' => '',
-		'rssoverride' => ''
+		'rssoverride' => '',
+		'tableoverride' => ''
 	), $atts));
 
 	$options = get_option('LinkLibraryPP');
@@ -1125,12 +1127,17 @@ function link_library_func($atts) {
 		$excludedcategorylist = $excludecategoryoverride;
 	else
 		$excludedcategorylist = $options['excludecategorylist'];	
+		
+	if ($tableoverride != '')
+		$overridedisplayastable = $tableoverride;
+	else
+		$overridedisplayastable = $options['displayastable'];
 
 	return PrivateLinkLibrary($options['order'], TRUE, $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 								  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
 								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 								  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
-								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
+								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $overridedisplayastable,
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3']);

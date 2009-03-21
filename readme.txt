@@ -56,6 +56,10 @@ Set to 0 or 1 to display or not display link descriptions
 
 Set to 0 or 1 to display or not display rss information
 
+[link-library tableoverride=0]
+
+Set to 0 or 1 to display links in an unordered list or a table.
+
 For legacy users, please see the Other Notes section for usage information.
 
 == Other Notes ==
