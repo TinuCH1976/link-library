@@ -127,9 +127,9 @@ Here would be the installation procedure:
    notesheader (default null) - Text to be shown in notes column when displaying as table<br/>
  
 
-== Frequently Asked Questions ==
+== Update Notes ==
 
-There are no FAQs at this time.
+Version 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.
 
 == Screenshots ==
 
