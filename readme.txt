@@ -125,7 +125,6 @@ Here would be the installation procedure:
    linkheader (default null) - Text to be shown in link column when displaying as table<br/>
    descheader (default null) - Text to be shown in desc column when displaying as table<br/>
    notesheader (default null) - Text to be shown in notes column when displaying as table<br/>
- 
 
 == Update Notes ==
 
