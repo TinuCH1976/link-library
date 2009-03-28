@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.7.2
+Version: 1.1.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -194,7 +194,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<select name="order" id="order" style="width:350px;">
 								<option value="name"<?php if ($options['order'] == 'name') { echo ' selected="selected"';} ?>>Order by Name</option>
 								<option value="id"<?php if ($options['order'] == 'id') { echo ' selected="selected"';} ?>>Order by ID</option>
-								<option value="catlist"<?php if ($options['order'] == 'catlist') { echo ' selected="selected"';} ?>>Order based on list of categories to be displayed</option>
+								<option value="catlist"<?php if ($options['order'] == 'catlist') { echo ' selected="selected"';} ?>>Order of categories based on included category list</option>
+								<option value="order"<?php if ($options['order'] == 'order') { echo ' selected="selected"';} ?>>Order set by 'My Link Order' Wordpress Plugin</option>
 							</select>
 						</td>
 					</tr>

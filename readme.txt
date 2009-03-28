@@ -62,13 +62,15 @@ Set to 0 or 1 to display links in an unordered list or a table.
 
 For legacy users, please see the Other Notes section for usage information.
 
-== Other Notes ==
+== Changelog ==
 
-= Update Notes =
+1. 1.1.8: Added new ordering option to follow order set by [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin
+1. 1.1.7: Added new options to give users flexibility to choose between div class tags and heading tags. Users upgrading need to select the desired output and set the value of the class name (e.g. linklistcatname) or desired heading style (e.g. h2).
+1. 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.
 
-version 1.1.7: Added new options to give users flexibility to choose between div class tags and heading tags. Users upgrading will need to select the desired output and set the value of the class name (e.g. linklistcatname) or desired heading style (e.g. h2).
+== Frequently Asked Questions ==
 
-Version 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.
+= Can Link Library be used as before by calling PHP functions? =
 
 For legacy users of Link Library (pre-1.0), it is still possible to call the back-end functions of the plugin from PHP code to display the contents of your library directly from a page template.
 
@@ -136,8 +138,7 @@ Here would be the installation procedure:
    beforecatlist2 (default null) - Second element to be placed before a link category section<br/>
    beforecatlist3 (default null) - Third element to be placed before a link category section<br/>
    divorheader (default false) - Output div before and after cat name if false, output heading tag if true<br/>
-   catnameoutput (default linklistcatname) - Name of div class or heading to output<br/>
-   
+   catnameoutput (default linklistcatname) - Name of div class or heading to output<br/>   
 
 == Screenshots ==
 
