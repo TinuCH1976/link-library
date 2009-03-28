@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.7.1
+Version: 1.1.7.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
