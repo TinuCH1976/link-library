@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.6
+Version: 1.1.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -117,6 +117,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['beforecatlist1'] = '';
 					$options['beforecatlist2'] = '';
 					$options['beforecatlist3'] = '';
+					$options['divorheader'] = false;
+					$options['catnameoutput'] = 'linklistcatname';
+					
 					
 				update_option('LinkLibraryPP',$options);
 			}
@@ -126,7 +129,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'catlistwrappers', 'beforecatlist1',
-							   'beforecatlist2', 'beforecatlist3') as $option_name) {
+							   'beforecatlist2', 'beforecatlist3','catnameoutput') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -159,6 +162,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				} 
 				else if ($_POST['displayastable'] == 'false') {
 					$options['displayastable'] = false;
+				}
+				
+				if ($_POST['divorheader'] == 'true') {
+					$options['divorheader'] = true;
+				} 
+				else if ($_POST['divorheader'] == 'false') {
+					$options['divorheader'] = false;
 				}
 
 				update_option('LinkLibraryPP', $options);
@@ -240,7 +250,26 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="text" id="num_columns" name="num_columns" size="10" value="<?php echo strval($options['num_columns']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="divorheader">Use Div Class or Heading tag around Category Names</label>
+						</th>
+						<td>
+							<select name="divorheader" id="divorheader" style="width:200px;">
+								<option value="false"<?php if ($options['divorheader'] == false) { echo ' selected="selected"';} ?>>Div Class</option>
+								<option value="true"<?php if ($options['divorheader'] == true) { echo ' selected="selected"';} ?>>Heading Tag</option>
+							</select>
+						</td>
 					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="catnameoutput">Div Class Name (e.g. linklistcatname) or Heading label (e.g h3)</label>
+						</th>
+						<td>
+							<input type="text" id="catnameoutput" name="catnameoutput" size="30" value="<?php echo strval($options['catnameoutput']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>
 					<tr><td><h3>Link Element Settings</h3></td></tr>
 					<tr>
 						<th scope="row" valign="top">
@@ -508,6 +537,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['beforecatlist1'] = '';
 				$options['beforecatlist2'] = '';
 				$options['beforecatlist3'] = '';
+				$options['divorheader'] = false;
+				$options['catnameoutput'] = 'linklistcatname';
+
 	
 			update_option('LinkLibraryPP',$options);
 		}
@@ -616,12 +648,11 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 			if (!$flatlist and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
 		}
 	}
-	if (!$flatlist and (($countcat % $num_columns = 3) or ($countcat == 1))) $output .= "</tr>\n";
-	if (!$flatlist)
-		$output .= "</table>\n";
-	else
-		$output .= "</ul>";
-	$output .= "</div>\n";
+	if (!$flatlist and ($countcat % $num_columns == 3)) $output .= "</tr>\n";
+	if (!$flatlist && $catnames)
+		$output .= "</table>\n</div>\n";
+	else if ($catnames)
+		$output .= "</ul>\n</div>\n";
 	
 	$output .= "\n<!-- End of Link Library Categories Output -->\n\n";
 	
@@ -758,7 +789,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
-								$beforecatlist2 = '', $beforecatlist3 = '') {
+								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname') {
 
 	$order = strtolower($order);
 
@@ -862,7 +893,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$cattext = '<div id="' . $linkcatnospaces . '">';
 				else
 					$cattext = '';
-				$catlink = '<div class=\'linklistcatname\'>' . $catname . "</div>";
+				
+				if ($divorheader == false)
+					$catlink = '<div class="' . $catnameoutput . '">' . $catname . "</div>";
+				else if ($divorheader == true)
+					$catlink = '<'. $catnameoutput . '>' . $catname . '</' . $catnameoutput . '>';
+				
 				if ($catanchor)
 					$catenddiv = '</div>';
 				else
@@ -965,7 +1001,9 @@ if ($options == "") {
 	$options['catlistwrappers'] = 1;
 	$options['beforecatlist1'] = '';
 	$options['beforecatlist2'] = '';
-	$options['beforecatlist3'] = '';	
+	$options['beforecatlist3'] = '';
+	$options['divorheader'] = false;
+	$options['catnameoutput'] = 'linklistcatname';
 	
 	update_option('LinkLibraryPP',$options);
 } 
@@ -1044,6 +1082,8 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   beforecatlist1 (default null) - First element to be placed before a link category section
  *   beforecatlist2 (default null) - Second element to be placed before a link category section
  *   beforecatlist3 (default null) - Third element to be placed before a link category section
+ *   divorheader (default false) - Output div before and after cat name if false, output heading tag if true
+ *   catnameoutput (default linklistcatname) - Name of div class or heading to output
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
@@ -1054,7 +1094,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
-								$beforecatlist2 = '', $beforecatlist3 = '') {
+								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname') {
 								
 	if ($order == 'AdminSettings')
 	{
@@ -1066,7 +1106,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
-								  $options['beforecatlist2'], $options['beforecatlist3']);
+								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput']);
 	
 	}
 	else
@@ -1075,7 +1115,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
                                 $show_rss, $beforenote, $nofollow, $excludecategorylist, $afternote, $beforeitem, $afteritem,
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
-								$beforecatlist2, $beforecatlist3);
+								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput);
 
 }
 
@@ -1153,7 +1193,7 @@ function link_library_func($atts) {
 								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $overridedisplayastable,
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
-								  $options['beforecatlist2'], $options['beforecatlist3']);
+								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');

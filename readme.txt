@@ -3,7 +3,7 @@ Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/
 Tags: link, list, page
 Requires at least: 2.7
-Tested up to: 2.7
+Tested up to: 2.7.1
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -63,6 +63,12 @@ Set to 0 or 1 to display links in an unordered list or a table.
 For legacy users, please see the Other Notes section for usage information.
 
 == Other Notes ==
+
+= Update Notes =
+
+version 1.1.7: Added new options to give users flexibility to choose between div class tags and heading tags. Users upgrading will need to select the desired output and set the value of the class name (e.g. linklistcatname) or desired heading style (e.g. h2).
+
+Version 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.
 
 For legacy users of Link Library (pre-1.0), it is still possible to call the back-end functions of the plugin from PHP code to display the contents of your library directly from a page template.
 
@@ -125,10 +131,13 @@ Here would be the installation procedure:
    linkheader (default null) - Text to be shown in link column when displaying as table<br/>
    descheader (default null) - Text to be shown in desc column when displaying as table<br/>
    notesheader (default null) - Text to be shown in notes column when displaying as table<br/>
-
-== Update Notes ==
-
-Version 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.
+   catlistwrappers (default 1) - Number of different sets of alternating elements to be placed before and after each link category section<br/>
+   beforecatlist1 (default null) - First element to be placed before a link category section<br/>
+   beforecatlist2 (default null) - Second element to be placed before a link category section<br/>
+   beforecatlist3 (default null) - Third element to be placed before a link category section<br/>
+   divorheader (default false) - Output div before and after cat name if false, output heading tag if true<br/>
+   catnameoutput (default linklistcatname) - Name of div class or heading to output<br/>
+   
 
 == Screenshots ==
 
