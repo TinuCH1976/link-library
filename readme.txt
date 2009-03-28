@@ -14,7 +14,9 @@ This plugin is used to be able to create a page on your web site that will conta
 
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
-You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/).
+You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/). Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
+
+[Changelog](http://wordpress.org/extend/plugins/link-library/other_notes/)
 
 == Installation ==
 
