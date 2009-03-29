@@ -66,6 +66,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 1.1.8.1: Fixed bug with Show Image and Name option. Now works as expected.
 1. 1.1.8: Added new ordering option to follow order set by [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin
 1. 1.1.7: Added new options to give users flexibility to choose between div class tags and heading tags. Users upgrading need to select the desired output and set the value of the class name (e.g. linklistcatname) or desired heading style (e.g. h2).
 1. 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.

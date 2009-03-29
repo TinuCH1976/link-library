@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.8
+Version: 1.1.8.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -666,8 +666,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
                    $show_description = true, $show_rating = false,
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
-				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = ''
-				   ) {
+				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '') {
 				   
 	global $wpdb;
 
@@ -745,11 +744,14 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 
         $output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 		
-        if ( $row->link_image != null && $show_images ) {
+        if ( $row->link_image != null && ($show_images || $show_image_and_name)) {
 			if ( strpos($row->link_image, 'http') !== false )
 				$output .= "<img src=\"$row->link_image\" $alt $title />";
 			else // If it's a relative path
 				$output .= "<img src=\"" . get_option('siteurl') . "$row->link_image\" $alt $title />";
+				
+			if ($show_image_and_name)
+				$output .= $name;
 		} else {
 			$output .= $name;
 		}
