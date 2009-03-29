@@ -16,7 +16,8 @@ The latest version of this plugin has been completely re-vamped to use the filte
 
 You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/). Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
 
-[Changelog](http://wordpress.org/extend/plugins/link-library/other_notes/)
+- [Changelog](http://wordpress.org/extend/plugins/link-library/other_notes/)
+- [Support Forum](http://wordpress.org/tags/link-library)
 
 == Installation ==
 
