@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.8.1
+Version: 1.1.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -35,17 +35,6 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 */
 
 
-// Pre-2.6 compatibility
-if ( !defined('WP_CONTENT_URL') )
-    define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
-if ( !defined('WP_CONTENT_DIR') )
-    define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
-
-// Guess the location
-$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
- 
- 
- 
 if ( ! class_exists( 'LL_Admin' ) ) {
 
 	class LL_Admin {
@@ -119,6 +108,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['beforecatlist3'] = '';
 					$options['divorheader'] = false;
 					$options['catnameoutput'] = 'linklistcatname';
+					$options['show_rss_icon'] = false;
 					
 					
 				update_option('LinkLibraryPP',$options);
@@ -142,7 +132,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				}
 				
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
-								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders') as $option_name) {
+								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -477,12 +467,20 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="show_rss">Show RSS Link</label>
+							<label for="show_rss">Show RSS Link using Text</label>
 						</th>
 						<td>
 							<input type="checkbox" id="show_rss" name="show_rss" <?php if ($options['show_rss']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="show_rss_icon">Show RSS Link using Standard Icon</label>
+						</th>
+						<td>
+							<input type="checkbox" id="show_rss_icon" name="show_rss_icon" <?php if ($options['show_rss_icon']) echo ' checked="checked" '; ?>/>
+						</td>
+					</tr>				
 					<tr>
 						<th scope="row" valign="top">
 							<label for="nofollow">Add nofollow tag to outgoing links</label>
@@ -540,6 +538,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['beforecatlist3'] = '';
 				$options['divorheader'] = false;
 				$options['catnameoutput'] = 'linklistcatname';
+				$options['show_rss_icon'] = false;
 
 	
 			update_option('LinkLibraryPP',$options);
@@ -666,9 +665,18 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
                    $show_description = true, $show_rating = false,
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
-				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '') {
+				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false) {
 				   
 	global $wpdb;
+	
+	// Pre-2.6 compatibility
+if ( !defined('WP_CONTENT_URL') )
+    define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+if ( !defined('WP_CONTENT_DIR') )
+    define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+
+// Guess the location
+$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
 
 	$order = 'ASC';
 	if ( substr($orderby, 0, 1) == '_' ) {
@@ -778,6 +786,9 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 		if ($show_rss && ($row->link_rss != '')) {
 		    $output .= $between . '<a class="rss" href="' . $row->link_rss . '">RSS</a>';
 		}
+		if ($show_rss_icon && ($row->link_rss != '')) {
+		    $output .= $between . '<a class="rssicon" href="' . $row->link_rss . '"><img src="' . $llpluginpath . '/feed-icon-14x14.png" /></a>';
+		}		
         $output .= "$after\n";
     } // end while
 	
@@ -792,7 +803,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
-								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname') {
+								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
+								$show_rss_icon = false) {
 
 	$order = strtolower($order);
 
@@ -942,7 +954,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$beforedesc,
 					$afterdesc,
 					$beforelink,
-					$afterlink);
+					$afterlink,
+					$show_rss_icon);
 					
 				$output .= $linklist;
 								
@@ -1007,6 +1020,7 @@ if ($options == "") {
 	$options['beforecatlist3'] = '';
 	$options['divorheader'] = false;
 	$options['catnameoutput'] = 'linklistcatname';
+	$options['show_rss_icon'] = false;
 	
 	update_option('LinkLibraryPP',$options);
 } 
@@ -1087,6 +1101,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   beforecatlist3 (default null) - Third element to be placed before a link category section
  *   divorheader (default false) - Output div before and after cat name if false, output heading tag if true
  *   catnameoutput (default linklistcatname) - Name of div class or heading to output
+ *   showrssicon (default false) - Output RSS URI if available and assign to standard RSS icon
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
@@ -1097,7 +1112,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$afternote = '', $beforeitem = '<li>', $afteritem = '</li>', $beforedesc = '', $afterdesc = '',
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
-								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname') {
+								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
+								$show_rss_icon = false) {
 								
 	if ($order == 'AdminSettings')
 	{
@@ -1109,7 +1125,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
-								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput']);
+								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
+								  $options['show_rss_icon']);
 	
 	}
 	else
@@ -1118,7 +1135,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
                                 $show_rss, $beforenote, $nofollow, $excludecategorylist, $afternote, $beforeitem, $afteritem,
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
-								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput);
+								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon);
 
 }
 
@@ -1196,7 +1213,8 @@ function link_library_func($atts) {
 								  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $overridedisplayastable,
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
-								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput']);
+								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
+								  $options['show_rss_icon']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
