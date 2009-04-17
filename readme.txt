@@ -67,6 +67,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 1.2: Added new options to output extra code before and after complete link groups after a user-defined number of links. Enables the display of links are data cells in a table row.
 1. 1.1.9: Added new option to show RSS link using standard icon instead of only textual link.
 1. 1.1.8.1: Fixed bug with Show Image and Name option. Now works as expected.
 1. 1.1.8: Added new ordering option to follow order set by [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin
@@ -144,7 +145,10 @@ Here would be the installation procedure:
    beforecatlist3 (default null) - Third element to be placed before a link category section<br/>
    divorheader (default false) - Output div before and after cat name if false, output heading tag if true<br/>
    catnameoutput (default linklistcatname) - Name of div class or heading to output<br/>   
-   showrssicon (default false) - Output RSS URI if available and assign to standard RSS icon
+   showrssicon (default false) - Output RSS URI if available and assign to standard RSS icon<br />
+   linkaddfrequency (default 0) - Frequency at which extra before and after output should be placed around links<br />
+   addbeforelink (default null) - Addition output to be placed before link<br />
+   addafterlink (default null) - Addition output to be placed after link
 
 == Screenshots ==
 

@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.1.9
+Version: 1.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -109,6 +109,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['divorheader'] = false;
 					$options['catnameoutput'] = 'linklistcatname';
 					$options['show_rss_icon'] = false;
+					$options['linkaddfrequency'] = 0;
+					$options['addbeforelink'] = '';
+					$options['addafterlink'] = '';
 					
 					
 				update_option('LinkLibraryPP',$options);
@@ -118,8 +121,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				check_admin_referer('linklibrarypp-config');
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
-							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'catlistwrappers', 'beforecatlist1',
-							   'beforecatlist2', 'beforecatlist3','catnameoutput') as $option_name) {
+							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
+							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -159,6 +162,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				} 
 				else if ($_POST['divorheader'] == 'false') {
 					$options['divorheader'] = false;
+				}
+				
+				foreach (array('catlistwrappers') as $option_name)
+				{
+					if (isset($_POST[$option_name])) {
+						$options[$option_name] = (int)($_POST[$option_name]);
+					}
+				
 				}
 
 				update_option('LinkLibraryPP', $options);
@@ -261,6 +272,43 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="catnameoutput" name="catnameoutput" size="30" value="<?php echo strval($options['catnameoutput']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="catlistwrappers">Number of different sets of alternating div classes to be placed before and after each link category section</label>
+						</th>
+						<td>
+							<select name="catlistwrappers" id="catlistwrappers" style="width:200px;">
+								<option value="1"<?php if ($options['catlistwrappers'] == 1) { echo ' selected="selected"';} ?>>1</option>
+								<option value="2"<?php if ($options['catlistwrappers'] == 2) { echo ' selected="selected"';} ?>>2</option>
+								<option value="3"<?php if ($options['catlistwrappers'] == 3) { echo ' selected="selected"';} ?>>3</option>
+							</select>
+						</td>
+						
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist1">First div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist1" name="beforecatlist1" size="40" value="<?php echo $options['beforecatlist1']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist2">Second div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist2" name="beforecatlist2" size="40" value="<?php echo $options['beforecatlist2']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>		
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist3">Third div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist3" name="beforecatlist3" size="40" value="<?php echo $options['beforecatlist3']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>							
 					<tr><td><h3>Link Element Settings</h3></td></tr>
 					<tr>
 						<th scope="row" valign="top">
@@ -312,39 +360,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="text" id="notesheader" name="notesheader" size="40" value="<?php echo $options['notesheader']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
-					</tr>	
-					<tr>
-						<th scope="row" valign="top">
-							<label for="catlistwrappers">Number of different sets of alternating div classes to be placed before and after each link category section</label>
-						</th>
-						<td>
-							<input type="text" id="catlistwrappers" name="catlistwrappers" size="40" value="<?php echo $options['catlistwrappers']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>					
-					<tr>
-						<th scope="row" valign="top">
-							<label for="beforecatlist1">First div class name</label>
-						</th>
-						<td>
-							<input type="text" id="beforecatlist1" name="beforecatlist1" size="40" value="<?php echo $options['beforecatlist1']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>					
-					<tr>
-						<th scope="row" valign="top">
-							<label for="beforecatlist2">Second div class name</label>
-						</th>
-						<td>
-							<input type="text" id="beforecatlist2" name="beforecatlist2" size="40" value="<?php echo $options['beforecatlist2']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>					
-					<tr>
-						<th scope="row" valign="top">
-							<label for="beforecatlist3">Third div class name</label>
-						</th>
-						<td>
-							<input type="text" id="beforecatlist3" name="beforecatlist3" size="40" value="<?php echo $options['beforecatlist3']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>					
+					</tr>						
 					<tr>
 						<th scope="row" valign="top">
 							<label for="beforeitem">Output before complete link group (link, notes, desc, etc...)</label>
@@ -361,6 +377,30 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="afteritem" name="afteritem" size="40" value="<?php echo $options['afteritem']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="linkaddfrequency">Frequency of additional output before and after complete link group</label>
+						</th>
+						<td>
+							<input type="text" id="linkaddfrequency" name="linkaddfrequency" size="10" value="<?php echo strval($options['linkaddfrequency']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>				
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="addbeforelink">Additional Output before complete link group</label>
+						</th>
+						<td>
+							<input type="text" id="addbeforelink" name="addbeforelink" size="40" value="<?php echo $options['addbeforelink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="addafterlink">Additional Output after link group</label>
+						</th>
+						<td>
+							<input type="text" id="addafterlink" name="addafterlink" size="40" value="<?php echo $options['addafterlink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>						
 					<tr>
 						<th scope="row" valign="top">
 							<label for="beforelink">Output before Link</label>
@@ -424,7 +464,23 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="text" id="afternote" name="afternote" size="40" value="<?php echo $options['afternote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
-					</tr>	
+					</tr>			
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist1">First div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist1" name="beforecatlist1" size="40" value="<?php echo $options['beforecatlist1']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforecatlist2">Second div class name</label>
+						</th>
+						<td>
+							<input type="text" id="beforecatlist2" name="beforecatlist2" size="40" value="<?php echo $options['beforecatlist2']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>							
 					<tr>
 						<th scope="row" valign="top">
 							<label for="showrating">Show Link Rating</label>
@@ -539,6 +595,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['divorheader'] = false;
 				$options['catnameoutput'] = 'linklistcatname';
 				$options['show_rss_icon'] = false;
+				$options['linkaddfrequency'] = 0;
+				$options['addbeforelink'] = '';
+				$options['addafterlink'] = '';
 
 	
 			update_option('LinkLibraryPP',$options);
@@ -665,7 +724,8 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
                    $show_description = true, $show_rating = false,
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
-				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false) {
+				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false,
+				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '') {
 				   
 	global $wpdb;
 	
@@ -703,9 +763,18 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 	if ( !$results )
 		return;
 		
+	$linkcount = 0;
+		
 	$output = '';
 	
     foreach ( (array) $results as $row) {
+	
+		$linkcount = $linkcount + 1;
+		
+		if ($linkaddfrequency > 0)
+			if (($linkcount - 1) % $linkaddfrequency == 0)
+				$output .= $addbeforelink;
+		
 		if (!isset($row->recently_updated)) $row->recently_updated = false;
         $output .= $before;
 		$output .= $beforelink;
@@ -790,6 +859,11 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 		    $output .= $between . '<a class="rssicon" href="' . $row->link_rss . '"><img src="' . $llpluginpath . '/feed-icon-14x14.png" /></a>';
 		}		
         $output .= "$after\n";
+		
+		if ($linkaddfrequency > 0)
+			if ($linkcount % $linkaddfrequency == 0)
+				$output .= $addafterlink;
+			
     } // end while
 	
 	return $output;
@@ -804,7 +878,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
-								$show_rss_icon = false) {
+								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '') {
 
 	$order = strtolower($order);
 
@@ -955,7 +1029,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$afterdesc,
 					$beforelink,
 					$afterlink,
-					$show_rss_icon);
+					$show_rss_icon,
+					$linkaddfrequency,
+					$addbeforelink,
+					$addafterlink);
 					
 				$output .= $linklist;
 								
@@ -1021,6 +1098,9 @@ if ($options == "") {
 	$options['divorheader'] = false;
 	$options['catnameoutput'] = 'linklistcatname';
 	$options['show_rss_icon'] = false;
+	$options['linkaddfrequency'] = 0;
+	$options['addbeforelink'] = '';
+	$options['addafterlink'] = '';	
 	
 	update_option('LinkLibraryPP',$options);
 } 
@@ -1102,6 +1182,9 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   divorheader (default false) - Output div before and after cat name if false, output heading tag if true
  *   catnameoutput (default linklistcatname) - Name of div class or heading to output
  *   showrssicon (default false) - Output RSS URI if available and assign to standard RSS icon
+ *   linkaddfrequency (default 0) - Frequency at which extra before and after output should be placed around links
+ *   addbeforelink (default null) - Addition output to be placed before link
+ *   addafterlink (default null) - Addition output to be placed after link
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
@@ -1113,7 +1196,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
-								$show_rss_icon = false) {
+								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '') {
 								
 	if ($order == 'AdminSettings')
 	{
@@ -1126,7 +1209,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
-								  $options['show_rss_icon']);
+								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink']);
 	
 	}
 	else
@@ -1135,7 +1218,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
                                 $show_rss, $beforenote, $nofollow, $excludecategorylist, $afternote, $beforeitem, $afteritem,
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
-								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon);
+								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
+								$linkaddfrequency, $addbeforelink, $addafterlink);
 
 }
 
@@ -1214,7 +1298,7 @@ function link_library_func($atts) {
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
-								  $options['show_rss_icon']);
+								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
