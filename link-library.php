@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.2
+Version: 1.2.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -174,6 +174,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 				update_option('LinkLibraryPP', $options);
 			}
+			
+			// Pre-2.6 compatibility
+			if ( !defined('WP_CONTENT_URL') )
+				define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+			if ( !defined('WP_CONTENT_DIR') )
+				define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+
+			// Guess the location
+			$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
 
 			$options  = get_option('LinkLibraryPP');
 			?>		
@@ -360,10 +369,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="text" id="notesheader" name="notesheader" size="40" value="<?php echo $options['notesheader']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
-					</tr>						
+					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="beforeitem">Output before complete link group (link, notes, desc, etc...)</label>
+							<label for="helpline1">Map of user-customizable fields</label>
+						</th>
+						<td>
+							<img src="<?php echo $llpluginpath; ?>/HelpLine1.jpg"/>
+						</td>
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="beforeitem">1A - Output before complete link group (link, notes, desc, etc...)</label>
 						</th>
 						<td>
 							<input type="text" id="beforeitem" name="beforeitem" size="40" value="<?php echo $options['beforeitem']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -371,7 +388,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>	
 					<tr>
 						<th scope="row" valign="top">
-							<label for="afteritem">Output after complete link group (link, notes, desc, etc...)</label>
+							<label for="afteritem">1B - Output after complete link group (link, notes, desc, etc...)</label>
 						</th>
 						<td>
 							<input type="text" id="afteritem" name="afteritem" size="40" value="<?php echo $options['afteritem']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -387,7 +404,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="addbeforelink">Additional Output before complete link group</label>
+							<label for="helpline1">Map of user-customizable fields with additional output</label>
+						</th>
+						<td>
+							<img src="<?php echo $llpluginpath; ?>/HelpLine2.jpg"/>
+						</td>
+					</tr>						
+					<tr>
+						<th scope="row" valign="top">
+							<label for="addbeforelink">5A - Additional Output before complete link group</label>
 						</th>
 						<td>
 							<input type="text" id="addbeforelink" name="addbeforelink" size="40" value="<?php echo $options['addbeforelink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -395,7 +420,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="addafterlink">Additional Output after link group</label>
+							<label for="addafterlink">5B - Additional Output after link group</label>
 						</th>
 						<td>
 							<input type="text" id="addafterlink" name="addafterlink" size="40" value="<?php echo $options['addafterlink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -403,7 +428,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>						
 					<tr>
 						<th scope="row" valign="top">
-							<label for="beforelink">Output before Link</label>
+							<label for="beforelink">2A - Output before Link</label>
 						</th>
 						<td>
 							<input type="text" id="beforelink" name="beforelink" size="40" value="<?php echo $options['beforelink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -411,7 +436,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>	
 					<tr>
 						<th scope="row" valign="top">
-							<label for="afterlink">Output after Link</label>
+							<label for="afterlink">2B - Output after Link</label>
 						</th>
 						<td>
 							<input type="text" id="afterlink" name="afterlink" size="40" value="<?php echo $options['afterlink']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -427,7 +452,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="beforedesc">Output before Link Description</label>
+							<label for="beforedesc">3A - Output before Link Description</label>
 						</th>
 						<td>
 							<input type="text" id="beforedesc" name="beforedesc" size="40" value="<?php echo $options['beforedesc']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -435,7 +460,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>	
 					<tr>
 						<th scope="row" valign="top">
-							<label for="afterdesc">Output after Link Description</label>
+							<label for="afterdesc">3B - Output after Link Description</label>
 						</th>
 						<td>
 							<input type="text" id="afternote" name="afterdesc" size="40" value="<?php echo $options['afterdesc']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -451,7 +476,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
-							<label for="beforenote">Output before Link Note</label>
+							<label for="beforenote">4A - Output before Link Note</label>
 						</th>
 						<td>
 							<input type="text" id="beforenote" name="beforenote" size="40" value="<?php echo $options['beforenote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
@@ -459,7 +484,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>	
 					<tr>
 						<th scope="row" valign="top">
-							<label for="afternote">Output after Link Note</label>
+							<label for="afternote">4B - Output after Link Note</label>
 						</th>
 						<td>
 							<input type="text" id="afternote" name="afternote" size="40" value="<?php echo $options['afternote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
