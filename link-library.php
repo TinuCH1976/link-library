@@ -464,23 +464,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="text" id="afternote" name="afternote" size="40" value="<?php echo $options['afternote']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
-					</tr>			
-					<tr>
-						<th scope="row" valign="top">
-							<label for="beforecatlist1">First div class name</label>
-						</th>
-						<td>
-							<input type="text" id="beforecatlist1" name="beforecatlist1" size="40" value="<?php echo $options['beforecatlist1']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>					
-					<tr>
-						<th scope="row" valign="top">
-							<label for="beforecatlist2">Second div class name</label>
-						</th>
-						<td>
-							<input type="text" id="beforecatlist2" name="beforecatlist2" size="40" value="<?php echo $options['beforecatlist2']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
-						</td>
-					</tr>							
+					</tr>									
 					<tr>
 						<th scope="row" valign="top">
 							<label for="showrating">Show Link Rating</label>
