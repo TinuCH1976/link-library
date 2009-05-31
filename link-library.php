@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.2.1
+Version: 1.2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -756,7 +756,7 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 	if ( $category == -1 ) //get_bookmarks uses '' to signify all categories
 		$category = '';
 		
-	$catidquery = "select term_id from " . $wpdb->prefix . "terms where name = '" . $category . "'";
+	$catidquery = "select term_id from " . $wpdb->prefix . "terms where name = '" . $wpdb->escape($category) . "'";
 	
 	$catids = $wpdb->get_results($catidquery);
 	
@@ -795,7 +795,7 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
             $the_link = wp_specialchars($row->link_url);
 
         $rel = $row->link_rel;
-		if ('' != $rel and $nofollow)
+		if ('' != $rel and !$nofollow)
             $rel = ' rel="' . $rel . '"';
 		else if ('' != $rel and $nofollow)
             $rel = ' rel="' . $rel . ' nofollow"';

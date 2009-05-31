@@ -67,6 +67,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 1.2.2: Correct a few issues with escape characters and the nofollow condition
 1. 1.2: Added new options to output extra code before and after complete link groups after a user-defined number of links. Enables the display of links are data cells in a table row.
 1. 1.1.9: Added new option to show RSS link using standard icon instead of only textual link.
 1. 1.1.8.1: Fixed bug with Show Image and Name option. Now works as expected.
