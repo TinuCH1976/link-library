@@ -67,6 +67,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 1.2.5: Adds new option to specify a target window for all links
 1. 1.2.4: Corrects second issue related to exclusion list and category order set to included list
 1. 1.2.3: Corrects a bug between the exclusion list and setting category order to included list with no included list defined
 1. 1.2.2: Correct a few issues with escape characters and the nofollow condition

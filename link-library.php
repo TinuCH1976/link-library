@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.2.4
+Version: 1.2.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -112,6 +112,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linkaddfrequency'] = 0;
 					$options['addbeforelink'] = '';
 					$options['addafterlink'] = '';
+					$options['linktarget'] = '';
 					
 					
 				update_option('LinkLibraryPP',$options);
@@ -128,7 +129,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				}
 				
-				foreach (array('linkheader', 'descheader', 'notesheader') as $option_name) {
+				foreach (array('linkheader', 'descheader', 'notesheader','linktarget') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -326,7 +327,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="checkbox" id="catanchor" name="catanchor" <?php if ($options['catanchor']) echo ' checked="checked" '; ?>/>
 						</td>
-					</tr>					
+					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="linktarget">Link Target (sets default link target window, does not override specific targets set in links)</label>
+						</th>
+						<td>
+							<input type="text" id="linktarget" name="linktarget" size="40" value="<?php echo $options['linktarget']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>	
 					<tr>
 						<th scope="row" valign="top">
 							<label for="displayastable">Link Display Format</label>
@@ -607,6 +616,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['linkaddfrequency'] = 0;
 				$options['addbeforelink'] = '';
 				$options['addafterlink'] = '';
+				$options['linktarget'] = '';
 
 	
 			update_option('LinkLibraryPP',$options);
@@ -734,7 +744,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
 				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false,
-				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '') {
+				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '') {
 				   
 	global $wpdb;
 	
@@ -827,6 +837,12 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
         $target = $row->link_target;
         if ('' != $target)
             $target = ' target="' . $target . '"';
+		else 
+		{
+			$target = $linktarget;
+			if ('' != $target)
+				$target = ' target="' . $target . '"';
+		}
 
         $output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 		
@@ -887,7 +903,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
-								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '') {
+								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '') {
 
 	$order = strtolower($order);
 
@@ -1041,7 +1057,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$show_rss_icon,
 					$linkaddfrequency,
 					$addbeforelink,
-					$addafterlink);
+					$addafterlink,
+					$linktarget);
 					
 				$output .= $linklist;
 								
@@ -1110,6 +1127,7 @@ if ($options == "") {
 	$options['linkaddfrequency'] = 0;
 	$options['addbeforelink'] = '';
 	$options['addafterlink'] = '';	
+	$options['linktarget'] = '';
 	
 	update_option('LinkLibraryPP',$options);
 } 
@@ -1205,7 +1223,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$displayastable = false, $beforelink = '', $afterlink = '', $showcolumnheaders = false, 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
-								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '') {
+								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '') {
 								
 	if ($order == 'AdminSettings')
 	{
@@ -1218,7 +1236,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
-								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink']);
+								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
+								  $options['linktarget']);
 	
 	}
 	else
@@ -1228,7 +1247,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
 								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
-								$linkaddfrequency, $addbeforelink, $addafterlink);
+								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget);
 
 }
 
@@ -1307,7 +1326,8 @@ function link_library_func($atts) {
 								  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
-								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink']);
+								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
+								  $options['linktarget']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
