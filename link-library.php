@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.2.5
+Version: 1.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -102,6 +102,52 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linkheader'] = '';
 					$options['descheader'] = '';
 					$options['notesheader'] = '';
+					$options['catlistwrappers'] = 1;
+					$options['beforecatlist1'] = '';
+					$options['beforecatlist2'] = '';
+					$options['beforecatlist3'] = '';
+					$options['divorheader'] = false;
+					$options['catnameoutput'] = 'linklistcatname';
+					$options['show_rss_icon'] = false;
+					$options['linkaddfrequency'] = 0;
+					$options['addbeforelink'] = '';
+					$options['addafterlink'] = '';
+					$options['linktarget'] = '';
+					
+					
+				update_option('LinkLibraryPP',$options);
+			}
+					if ( isset($_GET['resettable']) && $_GET['resettable'] == "true") {
+					$options['order'] = 'name';
+					$options['hide_if_empty'] = true;
+					$options['table_width'] = 100;
+					$options['num_columns'] = 3;
+					$options['catanchor'] = true;
+					$options['flatlist'] = false;
+					$options['categorylist'] = null;
+					$options['excludecategorylist'] = null;
+					$options['showdescription'] = true;
+					$options['shownotes'] = true;
+					$options['showrating'] = false;
+					$options['showupdated'] = false;
+					$options['show_images'] = false;
+					$options['show_image_and_name'] = false;
+					$options['use_html_tags'] = false;
+					$options['show_rss'] = false;
+					$options['beforenote'] = '<td>';
+					$options['afternote'] = '</td>';
+					$options['nofollow'] = false;
+					$options['beforeitem'] = '<tr>';
+					$options['afteritem'] = '</tr>';
+					$options['beforedesc'] = '<td>';
+					$options['afterdesc'] = '</td>';
+					$options['displayastable'] = true;
+					$options['beforelink'] = '<td>';
+					$options['afterlink'] = '</td>';
+					$options['showcolumnheaders'] = true;
+					$options['linkheader'] = 'Application';
+					$options['descheader'] = 'Description';
+					$options['notesheader'] = 'Similar to';
 					$options['catlistwrappers'] = 1;
 					$options['beforecatlist1'] = '';
 					$options['beforecatlist2'] = '';
@@ -569,6 +615,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<p style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></p>
 					
 					<p><a href="?page=link-library.php&amp;reset=true">Reset all settings</a></p>
+					
+					<p><a href="?page=link-library.php&amp;resettable=true">Reset all settings for table layout</a></p>
 				</form>
 			</div>
 			<?php
@@ -1329,6 +1377,12 @@ function link_library_func($atts) {
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
 								  $options['linktarget']);
 }
+
+function link_library_header() {
+	echo '<link rel="stylesheet" type="text/css" media="screen" href="'. WP_PLUGIN_URL . '/link-library/stylesheet.css"/>';	
+}
+
+add_action('wp_head', 'link_library_header');
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
 
