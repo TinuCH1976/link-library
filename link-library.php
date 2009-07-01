@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.3
+Version: 1.3.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -700,31 +700,15 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 			
 			$catnames = array();
 			
-			foreach ( $displaycategories as $displaycategory ) {
-			
-				$currentcat = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory&exclude=$excludecategorylist");
-				
-				foreach ( (array) $currentcat as $cat) {
-				
-					$catnames[] = $cat->cat_name;
-				
-				}
-						
+			foreach ( $displaycategories as $displaycategory ) {			
+				$temp = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory");
+				$catnames = array_merge($catnames,$temp);							
 			}
 			
 		}
 	else
 	{
-		$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
-		
-		$catnames = array();
-		
-		foreach ( (array) $cats as $cat) {
-		
-			$catnames[] = $cat -> cat_name;
-		
-		}
-		
+		$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");		
 	}
 
 	// Display each category
@@ -752,14 +736,13 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 				$catfront = '	<td><a ';
 			else
 				$catfront = '	<li><a ';
-			$linkcatnospaces = str_replace ( ' ', '', $catname );
-	
+				
 			if ($catanchor)
-				$cattext = 'href="#' . $linkcatnospaces . '" ';
+				$cattext = 'href="#' . $catname->category_nicename . '" ';
 			else
 				$cattext = '';
 	
-			$catitem = '>' . $catname . "</a>";
+			$catitem = '>' . $catname->name . "</a>";
 			
 			$output .= ($catfront . $cattext . $catitem );
 					
@@ -977,34 +960,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 			$catnames = array();
 			
 			foreach ( $displaycategories as $displaycategory ) {
-			
-				$currentcat = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory&exclude=$excludecategorylist");
-				
-				foreach ( (array) $currentcat as $cat) {
-				
-					$catnames[] = $cat->cat_name;
-				
-				}
-						
+				$temp = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory");
+				$catnames = array_merge($catnames,$temp);	
 			}
-			
 			$order = "name";
-			
 		}
 	else
 	{
-		$cats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
-		
-		$catnames = array();
-		
-		foreach ( (array) $cats as $cat) {
-		
-			$catnames[] = $cat -> cat_name;
-		
-		}
-		
+		$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");
+	
 	}
-		
+
     // Display each category
 	if ($catnames) {
 		$output .= "<div class='linklist'>\n";
@@ -1020,11 +986,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					switch ($remainder) {
 
 						case 0:
-							$output .= "<div class=\"" . $beforecatlist2 . "\">";;						
+							$output .= "<div class=\"" . $beforecatlist2 . "\">";						
 							break;
 							
 						case 1:
-							$output .= "<div class=\"" . $beforecatlist1 . "\">";;
+							$output .= "<div class=\"" . $beforecatlist1 . "\">";
 							break;				
 					}
 				}
@@ -1034,32 +1000,29 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					switch ($remainder) {
 
 						case 0:
-							$output .= "<div class=\"" . $beforecatlist3 . "\">";;						
+							$output .= "<div class=\"" . $beforecatlist3 . "\">";						
 							break;
 							
 						case 2:
-							$output .= "<div class=\"" . $beforecatlist2 . "\">";;
+							$output .= "<div class=\"" . $beforecatlist2 . "\">";
 							break;
 							
 						case 1:
-							$output .= "<div class=\"" . $beforecatlist1 . "\">";;
+							$output .= "<div class=\"" . $beforecatlist1 . "\">";
 							break;				
 					}				
 				}
 
-				$linkcatnospaces = str_replace ( ' ', '', $catname );
-			
 				// Display the category name
-				$catfront = '	';
 				if ($catanchor)
-					$cattext = '<div id="' . $linkcatnospaces . '">';
+					$cattext = '<div id="' . $catname->category_nicename . '">';
 				else
 					$cattext = '';
 				
 				if ($divorheader == false)
-					$catlink = '<div class="' . $catnameoutput . '">' . $catname . "</div>";
+					$catlink = '<div class="' . $catnameoutput . '">' . $catname->name . "</div>";
 				else if ($divorheader == true)
-					$catlink = '<'. $catnameoutput . '>' . $catname . '</' . $catnameoutput . '>';
+					$catlink = '<'. $catnameoutput . '>' . $catname->name . '</' . $catnameoutput . '>';
 				
 				if ($catanchor)
 					$catenddiv = '</div>';
@@ -1078,11 +1041,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$catstartlist = "\n\t<ul>\n";
 					
 				
-				$output .= $catfront . $cattext . $catlink . $catenddiv . $catstartlist; 
+				$output .= $cattext . $catlink . $catenddiv . $catstartlist; 
 				
 				
 				// Call get_links() with all the appropriate params
-				$linklist = get_links_notes($catname,
+				$linklist = get_links_notes($catname->name,
 					$beforeitem,$afteritem,"\n",
 					$show_images,
 					$order,
