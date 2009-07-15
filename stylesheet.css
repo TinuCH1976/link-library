@@ -2,23 +2,25 @@ table.linklisttable {
 	width:100%; 
 	border-width: 0px 0px 0px 0px;
 	border-spacing: 5px;
-	border-style: outset outset outset outset;
-	border-color: gray gray gray gray;
+	/* border-style: outset outset outset outset;
+	border-color: gray gray gray gray; */
 	border-collapse: separate;
 }
 table.linklisttable th {
 	border-width: 1px 1px 1px 1px;
 	padding: 3px 3px 3px 3px;
-	border-style: none none none none;
+	background-color: #f4f5f3;
+	/* border-style: none none none none;
 	border-color: gray gray gray gray;
-	-moz-border-radius: 3px 3px 3px 3px;
+	-moz-border-radius: 3px 3px 3px 3px; */
 }
 table.linklisttable td {
 	border-width: 1px 1px 1px 1px;
 	padding: 3px 3px 3px 3px;
-	border-style: dotted dotted dotted dotted;
+	background-color: #dee1d8;
+	/* border-style: dotted dotted dotted dotted;
 	border-color: gray gray gray gray;
-	-moz-border-radius: 3px 3px 3px 3px;
+	-moz-border-radius: 3px 3px 3px 3px; */
 }
 
 .linklistcatname{
@@ -33,5 +35,5 @@ table.linklisttable td {
 
 
 .linklistcolumnheader{
-	font-weight: bold;
+	font-weight: bold;	
 }
