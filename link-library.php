@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 1.3.2
+Version: 2.0
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -71,7 +71,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 		
 		function config_page() {
 			global $dlextensions;
-			if ( isset($_GET['reset']) && $_GET['reset'] == "true") {
+			if ( isset($_GET['reset1'])  || isset($_GET['reset2']) || isset($_GET['reset3']) || isset($_GET['reset4']) || isset($_GET['reset5'])) {
+			
 					$options['order'] = 'name';
 					$options['hide_if_empty'] = true;
 					$options['table_width'] = 100;
@@ -115,11 +116,35 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linktarget'] = '';
 					$options['showcategorydescheaders'] = false;
 					$options['showcategorydesclinks'] = false;
-				
+					$options['settingssetname'] = 'Default';				
 					
-				update_option('LinkLibraryPP',$options);
+					if (isset($_GET['reset1']))
+					{
+						update_option('LinkLibraryPP1', $options);
+						$settings = 1;
+					}
+					else if (isset($_GET['reset2']))
+					{
+						update_option('LinkLibraryPP2', $options);
+						$settings = 2;
+					}
+					else if (isset($_GET['reset3']))
+					{
+						update_option('LinkLibraryPP3', $options);
+						$settings = 3;
+					}
+					else if (isset($_GET['reset4']))
+					{
+						update_option('LinkLibraryPP4', $options);
+						$settings = 4;
+					}
+					else if (isset($_GET['reset5']))
+					{
+						update_option('LinkLibraryPP5', $options);
+						$settings = 5;
+					}
 			}
-					if ( isset($_GET['resettable']) && $_GET['resettable'] == "true") {
+			if ( isset($_GET['reset1table']) || isset($_GET['reset2table']) || isset($_GET['reset3table']) || isset($_GET['reset4table']) || isset($_GET['reset5table'])) {
 					$options['order'] = 'name';
 					$options['hide_if_empty'] = true;
 					$options['table_width'] = 100;
@@ -163,10 +188,60 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linktarget'] = '';
 					$options['showcategorydescheaders'] = false;
 					$options['showcategorydesclinks'] = false;
+					$options['settingssetname'] = 'Default';
 					
-				update_option('LinkLibraryPP',$options);
+					if (isset($_GET['reset1table']))
+						update_option('LinkLibraryPP1', $options);
+					else if (isset($_GET['reset2table']))
+						update_option('LinkLibraryPP2', $options);
+					else if (isset($_GET['reset3table']))
+						update_option('LinkLibraryPP3', $options);
+					else if (isset($_GET['reset4table']))
+						update_option('LinkLibraryPP4', $options);
+					else if (isset($_GET['reset5table']))
+						update_option('LinkLibraryPP5', $options);
 			}
-			if ( isset($_POST['submit']) ) {
+			if ( isset($_GET['settings1']) && $_GET['settings1'] == "true") {
+				$settings = 1;				
+			}
+			if ( isset($_GET['settings2']) && $_GET['settings2'] == "true") {
+				$settings = 2;				
+			}
+			if ( isset($_GET['settings3']) && $_GET['settings3'] == "true") {
+				$settings = 3;				
+			}
+			if ( isset($_GET['settings4']) && $_GET['settings4'] == "true") {
+				$settings = 4;				
+			}
+			if ( isset($_GET['settings5']) && $_GET['settings5'] == "true") {
+				$settings = 5;				
+			}
+			if ( isset($_GET['deletesettings2']) && $_GET['deletesettings2'] == "true") {
+				$settings = 2;				
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = delete_option($settingsname);
+				$settings = 1;
+			}
+			if ( isset($_GET['deletesettings3']) && $_GET['deletesettings3'] == "true") {
+				$settings = 3;				
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = delete_option($settingsname);
+				$settings = 1;
+			}
+			if ( isset($_GET['deletesettings4']) && $_GET['deletesettings4'] == "true") {
+				$settings = 4;				
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = delete_option($settingsname);
+				$settings = 1;
+			}
+			if ( isset($_GET['deletesettings5']) && $_GET['deletesettings5'] == "true") {
+				$settings = 5;				
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = delete_option($settingsname);
+				$settings = 1;
+			}
+
+			if ( isset($_POST['submit1']) || isset($_POST['submit2']) || isset($_POST['submit3']) || isset($_POST['submit4']) || isset($_POST['submit5'])) {
 				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.'));
 				check_admin_referer('linklibrarypp-config');
 				
@@ -178,7 +253,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				}
 				
-				foreach (array('linkheader', 'descheader', 'notesheader','linktarget') as $option_name) {
+				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -222,8 +297,17 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				
 				}
-
-				update_option('LinkLibraryPP', $options);
+				
+				if (isset($_POST['submit1']))
+					update_option('LinkLibraryPP1', $options);
+				else if (isset($_POST['submit2']))
+					update_option('LinkLibraryPP2', $options);
+				else if (isset($_POST['submit3']))
+					update_option('LinkLibraryPP3', $options);
+				else if (isset($_POST['submit4']))
+					update_option('LinkLibraryPP4', $options);
+				else if (isset($_POST['submit5']))
+					update_option('LinkLibraryPP5', $options);
 			}
 			
 			// Pre-2.6 compatibility
@@ -235,18 +319,104 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			// Guess the location
 			$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
 
-			$options  = get_option('LinkLibraryPP');
+			if ($settings == '')
+			{
+				$options = get_option('LinkLibraryPP1');
+				$settings = 1;
+			}
+			else
+			{
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = get_option($settingsname);
+				
+				if ($options == "")
+				{
+					$options['order'] = 'name';
+					$options['hide_if_empty'] = true;
+					$options['table_width'] = 100;
+					$options['num_columns'] = 1;
+					$options['catanchor'] = false;
+					$options['flatlist'] = false;
+					$options['categorylist'] = null;
+					$options['excludecategorylist'] = null;
+					$options['showdescription'] = false;
+					$options['shownotes'] = false;
+					$options['showrating'] = false;
+					$options['showupdated'] = false;
+					$options['show_images'] = false;
+					$options['show_image_and_name'] = false;
+					$options['use_html_tags'] = false;
+					$options['show_rss'] = false;
+					$options['beforenote'] = '<br />';
+					$options['afternote'] = '';
+					$options['nofollow'] = false;
+					$options['beforeitem'] = '<li>';
+					$options['afteritem'] = '</li>';
+					$options['beforedesc'] = '';
+					$options['afterdesc'] = '';
+					$options['displayastable'] = false;
+					$options['beforelink'] = '';
+					$options['afterlink'] = '';
+					$options['showcolumnheaders'] = false;
+					$options['linkheader'] = '';
+					$options['descheader'] = '';
+					$options['notesheader'] = '';
+					$options['catlistwrappers'] = 1;
+					$options['beforecatlist1'] = '';
+					$options['beforecatlist2'] = '';
+					$options['beforecatlist3'] = '';
+					$options['divorheader'] = false;
+					$options['catnameoutput'] = 'linklistcatname';
+					$options['show_rss_icon'] = false;
+					$options['linkaddfrequency'] = 0;
+					$options['addbeforelink'] = '';
+					$options['addafterlink'] = '';	
+					$options['linktarget'] = '';
+					$options['showcategorydescheaders'] = false;
+					$options['showcategorydesclinks'] = false;
+					$options['settingssetname'] = 'Default';
+					
+					update_option($settingsname,$options);
+				}	
+				
+			}
+					
+			$options1 = get_option('LinkLibraryPP1');
+			$options2 = get_option('LinkLibraryPP2');
+			$options3 = get_option('LinkLibraryPP3');
+			$options4 = get_option('LinkLibraryPP4');
+			$options5 = get_option('LinkLibraryPP5');
 			?>		
 			<div class="wrap">
 				<h2>Link Library Configuration</h2>
 				<form name="lladminform" action="" method="post" id="analytics-conf">
-					<p style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></p>
+					<div>Link Library supports the creation of 5 different setting sets to display links on your pages.</div>
+					<div>A single set of settings is created by default, with the user being able to create up to five sets.</div>
+					<div>The first set cannot be deleted.</div>
+					<div>To use a specific settings set on a page, use the syntax [link-library-cats settings=1] [link-library settings=1], changing 1 for the right set number.</div>
+					<br />
+					<ul>
+						<li><?php if ($settings == 1) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?><a href="?page=link-library.php&amp;settings1=true"> Settings Set #1<?php if ($options1 != "") echo ' - ' . $options1['settingssetname']; ?></a></li>
+						<li><?php if ($settings == 2) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options2 != "") {echo '<a href="?page=link-library.php&amp;settings2=true">';} else {echo '<a href="?page=link-library.php&amp;settings2=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #2<?php if ($options2 != "") echo ' - ' . $options2['settingssetname']; ?><?php if ($options2 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings2=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}   ?></li>
+						<li><?php if ($settings == 3) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options3 != "") {echo '<a href="?page=link-library.php&amp;settings3=true">';} else {echo '<a href="?page=link-library.php&amp;settings3=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #3<?php if ($options3 != "") echo ' - ' . $options3['settingssetname']; ?><?php if ($options3 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings3=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+						<li><?php if ($settings == 4) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options4 != "") {echo '<a href="?page=link-library.php&amp;settings4=true">';} else {echo '<a href="?page=link-library.php&amp;settings4=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #4<?php if ($options4 != "") echo ' - ' . $options4['settingssetname']; ?><?php if ($options4 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings4=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+						<li><?php if ($settings == 5) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options5 != "") {echo '<a href="?page=link-library.php&amp;settings5=true">';} else {echo '<a href="?page=link-library.php&amp;settings5=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #5<?php if ($options5 != "") echo ' - ' . $options5['settingssetname']; ?><?php if ($options5 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings5=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+					</ul>
+					<p style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></p>
 					<table class="form-table" style="width:100%;">
 					<?php
 					if ( function_exists('wp_nonce_field') )
 						wp_nonce_field('linklibrarypp-config');
 					?>
 					<tr><td><h3>Common Parameters</h3></td></tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="settingssetname">Settings Set Name</label>
+						</th>
+						<td>
+							<input type="text" id="settingssetname" name="settingssetname" size="40" value="<?php echo $options['settingssetname']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>
 					<tr>
 						<th scope="row" valign="top">
 							<label for="order">Results Order</label>
@@ -632,65 +802,17 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 					
 					</table>
-					<p style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></p>
+					<p style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></p>
 					
-					<p><a href="?page=link-library.php&amp;reset=true">Reset all settings</a></p>
+					<p><a href="?page=link-library.php&amp;reset<?php echo $settings; ?>=true">Reset current Settings Set</a></p>
 					
-					<p><a href="?page=link-library.php&amp;resettable=true">Reset all settings for table layout</a></p>
+					<p><a href="?page=link-library.php&amp;reset<?php echo $settings; ?>table=true">Reset current Setting Set for table layout</a></p>
 				</form>
 			</div>
 			<?php
 
 		} // end config_page()
-
-		function restore_defaults() {
-				$options['order'] = 'name';
-				$options['hide_if_empty'] = true;
-				$options['table_width'] = 100;
-				$options['num_columns'] = 1;
-				$options['catanchor'] = false;
-				$options['flatlist'] = false;
-				$options['categorylist'] = null;
-				$options['excludecategorylist'] = null;
-				$options['showdescription'] = false;
-				$options['shownotes'] = false;
-				$options['showrating'] = false;
-				$options['showupdated'] = false;
-				$options['show_images'] = false;
-				$options['show_image_and_name'] = false;
-				$options['use_html_tags'] = false;
-				$options['show_rss'] = false;
-				$options['beforenote'] = '<br />';
-				$options['afternote'] = '';
-				$options['nofollow'] = false;
-				$options['beforeitem'] = '<li>';
-				$options['afteritem'] = '</li>';
-				$options['beforedesc'] = '';
-				$options['afterdesc'] = '';
-				$options['displayastable'] = false;
-				$options['beforelink'] = '';
-				$options['afterlink'] = '';
-				$options['showcolumnheaders'] = false;
-				$options['linkheader'] = '';
-				$options['descheader'] = '';
-				$options['notesheader'] = '';
-				$options['catlistwrappers'] = 1;
-				$options['beforecatlist1'] = '';
-				$options['beforecatlist2'] = '';
-				$options['beforecatlist3'] = '';
-				$options['divorheader'] = false;
-				$options['catnameoutput'] = 'linklistcatname';
-				$options['show_rss_icon'] = false;
-				$options['linkaddfrequency'] = 0;
-				$options['addbeforelink'] = '';
-				$options['addafterlink'] = '';
-				$options['linktarget'] = '';
-				$options['showcategorydescheaders'] = false;
-				$options['showcategorydesclinks'] = false;
 	
-			update_option('LinkLibraryPP',$options);
-		}
-		
 	} // end class LL_Admin
 
 } //endif
@@ -1056,16 +1178,29 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					
 					if ($showcategorydesclinks)
 					{
+						$catlink .= "<span class='linklistcatnamedesc'>";
 						$catname->category_description = str_replace("[", "<", $catname->category_description);
 						$catname->category_description = str_replace("]", ">", $catname->category_description);
 						$catlink .= $catname->category_description;				
+						$catlink .= '</span>';
 					}
 					
 					$catlink .= "</div>";
 				}
 				else if ($divorheader == true)
 				{
-					$catlink = '<'. $catnameoutput . '>' . $catname->name . '</' . $catnameoutput . '>';
+					$catlink = '<'. $catnameoutput . '>' . $catname->name;
+					
+					if ($showcategorydesclinks)
+					{
+						$catlink .= "<span class='linklistcatnamedesc'>";
+						$catname->category_description = str_replace("[", "<", $catname->category_description);
+						$catname->category_description = str_replace("]", ">", $catname->category_description);
+						$catlink .= $catname->category_description;				
+						$catlink .= '</span>';
+					}
+					
+					$catlink .= '</' . $catnameoutput . '>';
 				}
 				
 				if ($catanchor)
@@ -1142,52 +1277,66 @@ $version = "1.0.1";
 $options  = get_option('LinkLibraryPP',"");
 
 if ($options == "") {
-	$options['order'] = 'name';
-	$options['hide_if_empty'] = true;
-	$options['table_width'] = 100;
-	$options['num_columns'] = 1;
-	$options['catanchor'] = false;
-	$options['flatlist'] = false;
-	$options['categorylist'] = null;
-	$options['excludecategorylist'] = null;
-	$options['showdescription'] = false;
-	$options['shownotes'] = false;
-	$options['showrating'] = false;
-	$options['showupdated'] = false;
-	$options['show_images'] = false;
-	$options['show_image_and_name'] = false;
-	$options['use_html_tags'] = false;
-	$options['show_rss'] = false;
-	$options['beforenote'] = '<br />';
-	$options['afternote'] = '';
-	$options['nofollow'] = false;
-    $options['beforeitem'] = '<li>';
-	$options['afteritem'] = '</li>';
-	$options['beforedesc'] = '';
-	$options['afterdesc'] = '';
-	$options['displayastable'] = false;
-	$options['beforelink'] = '';
-	$options['afterlink'] = '';
-	$options['showcolumnheaders'] = false;
-	$options['linkheader'] = '';
-	$options['descheader'] = '';
-	$options['notesheader'] = '';
-	$options['catlistwrappers'] = 1;
-	$options['beforecatlist1'] = '';
-	$options['beforecatlist2'] = '';
-	$options['beforecatlist3'] = '';
-	$options['divorheader'] = false;
-	$options['catnameoutput'] = 'linklistcatname';
-	$options['show_rss_icon'] = false;
-	$options['linkaddfrequency'] = 0;
-	$options['addbeforelink'] = '';
-	$options['addafterlink'] = '';	
-	$options['linktarget'] = '';
-	$options['showcategorydescheaders'] = false;
-	$options['showcategorydesclinks'] = false;
+	$newoptions = get_option('LinkLibraryPP1', "");
 	
-	update_option('LinkLibraryPP',$options);
+	if ($newoptions == "")
+	{
+		$options['order'] = 'name';
+		$options['hide_if_empty'] = true;
+		$options['table_width'] = 100;
+		$options['num_columns'] = 1;
+		$options['catanchor'] = false;
+		$options['flatlist'] = false;
+		$options['categorylist'] = null;
+		$options['excludecategorylist'] = null;
+		$options['showdescription'] = false;
+		$options['shownotes'] = false;
+		$options['showrating'] = false;
+		$options['showupdated'] = false;
+		$options['show_images'] = false;
+		$options['show_image_and_name'] = false;
+		$options['use_html_tags'] = false;
+		$options['show_rss'] = false;
+		$options['beforenote'] = '<br />';
+		$options['afternote'] = '';
+		$options['nofollow'] = false;
+		$options['beforeitem'] = '<li>';
+		$options['afteritem'] = '</li>';
+		$options['beforedesc'] = '';
+		$options['afterdesc'] = '';
+		$options['displayastable'] = false;
+		$options['beforelink'] = '';
+		$options['afterlink'] = '';
+		$options['showcolumnheaders'] = false;
+		$options['linkheader'] = '';
+		$options['descheader'] = '';
+		$options['notesheader'] = '';
+		$options['catlistwrappers'] = 1;
+		$options['beforecatlist1'] = '';
+		$options['beforecatlist2'] = '';
+		$options['beforecatlist3'] = '';
+		$options['divorheader'] = false;
+		$options['catnameoutput'] = 'linklistcatname';
+		$options['show_rss_icon'] = false;
+		$options['linkaddfrequency'] = 0;
+		$options['addbeforelink'] = '';
+		$options['addafterlink'] = '';	
+		$options['linktarget'] = '';
+		$options['showcategorydescheaders'] = false;
+		$options['showcategorydesclinks'] = false;
+		$options['settingssetname'] = 'Default';
+		
+		update_option('LinkLibraryPP1',$options);
+	}
 } 
+else
+{
+	/* Upgrading Options to Link Library 2.0 Format from 1.x */
+	$options['settingssetname'] = "Imported Set 1";
+	update_option('LinkLibraryPP1', $options);
+	
+	delete_option('LinkLibraryPP');
+}
 
 /*
  * function LinkLibraryCategories()
@@ -1211,9 +1360,19 @@ if ($options == "") {
 function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = false, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false) {
 	
-	if ($order == 'AdminSettings')
+	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
-		$options  = get_option('LinkLibraryPP');
+		if ($order == 'AdminSettings1')
+			$options = get_option('LinkLibraryPP1');
+		else if ($order == 'AdminSettings2')
+			$options = get_option('LinkLibraryPP2');
+		else if ($order == 'AdminSettings3')
+			$options = get_option('LinkLibraryPP3');			
+		else if ($order == 'AdminSettings4')
+			$options = get_option('LinkLibraryPP4');			
+		else if ($order == 'AdminSettings5')
+			$options = get_option('LinkLibraryPP5');
+
 		return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders']);   
 	}
@@ -1286,9 +1445,19 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 								$showcategorydesclinks = false) {
 								
-	if ($order == 'AdminSettings')
+	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
-		$options = get_option('LinkLibraryPP');
+		if ($order == 'AdminSettings1')
+			$options = get_option('LinkLibraryPP1');
+		else if ($order == 'AdminSettings2')
+			$options = get_option('LinkLibraryPP2');
+		else if ($order == 'AdminSettings3')
+			$options = get_option('LinkLibraryPP3');			
+		else if ($order == 'AdminSettings4')
+			$options = get_option('LinkLibraryPP4');			
+		else if ($order == 'AdminSettings5')
+			$options = get_option('LinkLibraryPP5');			
+
 		return PrivateLinkLibrary($options['order'], TRUE, $options['catanchor'], $options['showdescription'], $options['shownotes'],
 								  $options['showrating'], $options['showupdated'], $options['categorylist'], $options['show_images'],
 								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
@@ -1317,10 +1486,17 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 function link_library_cats_func($atts) {
 	extract(shortcode_atts(array(
 	    'categorylistoverride' => '',
-		'excludecategoryoverride' => ''
+		'excludecategoryoverride' => '',
+		'settings' => ''
 	), $atts));
 	
-	$options  = get_option('LinkLibraryPP');
+	if ($settings == '')
+		$options = get_option('LinkLibraryPP1');
+	else
+	{
+		$settingsname = 'LinkLibraryPP' . $settings;
+		$options = get_option($settingsname);
+	}
 	
 	if ($categorylistoverride != '')
 		$selectedcategorylist = $categorylistoverride;
@@ -1344,10 +1520,17 @@ function link_library_func($atts) {
 		'notesoverride' => '',
 		'descoverride' => '',
 		'rssoverride' => '',
-		'tableoverride' => ''
+		'tableoverride' => '',
+		'settings' => ''
 	), $atts));
 
-	$options = get_option('LinkLibraryPP');
+	if ($settings == '')
+		$options = get_option('LinkLibraryPP1');
+	else
+	{
+		$settingsname = 'LinkLibraryPP' . $settings;
+		$options = get_option($settingsname);
+	}
 	
 	if ($notesoverride != '')
 		$selectedshownotes = $notesoverride;

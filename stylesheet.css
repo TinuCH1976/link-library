@@ -33,6 +33,16 @@ table.linklisttable td {
 	padding-top: 10px;
 }
 
+.linklistcatnamedesc{
+	font-family: arial;
+	font-size: 12px;
+	font-weight: normal;
+	border: 0;
+	color: #000000;
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
 
 .linklistcolumnheader{
 	font-weight: bold;	

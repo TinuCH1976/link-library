@@ -3,7 +3,7 @@ Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/
 Tags: link, list, page
 Requires at least: 2.7
-Tested up to: 2.8
+Tested up to: 2.8.1
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -12,9 +12,9 @@ The purpose of this plugin is to add the ability to output a list of link catego
 
 This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories.
 
-The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
+The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for up to five different configurations to be created to display links on different pages of a Wordpress site. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
-You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/). Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
+You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/) and [here](http://yannickcorner.nayanna.biz/favorite-links/) on my personal site. Both pages are generated using different configurations all managed by Link Library. Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
 
 - [Changelog](http://wordpress.org/extend/plugins/link-library/other_notes/)
 - [Support Forum](http://wordpress.org/tags/link-library)
@@ -25,9 +25,9 @@ You can see a demonstration of the output of the plugin [here](http://yannickcor
 1. Upload link-library.php to the /wp-content/plugins/ directory
 1. Activate the plugin in the Wordpress Admin
 1. Configure the desired output in the Link Library plugin configuration page.
-1. In the Wordpress Admin, create a new page containing the following codes:<br/>
-   [link-library-cats]<br/>
-   [link-library]
+1. In the Wordpress Admin, create a new page containing the following codes, where # should be replaced by the Settings Set number:<br/>
+   [link-library-cats settings=#]<br/>
+   [link-library settings = #]
 
 To override the settings specified inside of the plugin settings page, the two commands can be called with options. Here is the syntax to call these options:
 
@@ -67,6 +67,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 2.0: Added ability to define multiple groups of settings to use Link Library on different pages with different configurations.
 1. 1.3.2: Added option to display link category descriptions, with option to embed HTML code in description.
 1. 1.3.1: Optimized some of the code for category parsing and corrected a few syntax errors. Categories with special characters will also be handled better.
 1. 1.3: Created a new stylesheet for Link Library styles. Added new reset settings link for a table layout.
@@ -87,7 +88,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 For legacy users of Link Library (pre-1.0), it is still possible to call the back-end functions of the plugin from PHP code to display the contents of your library directly from a page template.
 
-The main differences are that the function names have been changed to reflect the plugin name. However, the parameters are compatible with the previous function, with a few additions having been made. Also, it is important to note that the function does not output the Link Library content by themselves as they did. You now need to print the return value of these functions, which can be simply done with the echo command. Finally, it is possible to call these PHP functions with a single argument ('AdminSettings') so that the settings used in the Admin section are used.
+The main differences are that the function names have been changed to reflect the plugin name. However, the parameters are compatible with the previous function, with a few additions having been made. Also, it is important to note that the function does not output the Link Library content by themselves as they did. You now need to print the return value of these functions, which can be simply done with the echo command. Finally, it is possible to call these PHP functions with a single argument ('AdminSettings1', 'AdminSettings2', 'AdminSettings3', 'AdminSettings4' or 'AdminSettings5') so that the settings defined in the Admin section are used.
 
 Here would be the installation procedure:
 
