@@ -67,6 +67,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 2.1: Added ability to display edit links next to links in page for editors and administrators that are logged in.
 1. 2.0: Added ability to define multiple groups of settings to use Link Library on different pages with different configurations.
 1. 1.3.2: Added option to display link category descriptions, with option to embed HTML code in description.
 1. 1.3.1: Optimized some of the code for category parsing and corrected a few syntax errors. Categories with special characters will also be handled better.

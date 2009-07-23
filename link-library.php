@@ -7,12 +7,12 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.0
+Version: 2.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright © 2007 Yannick Lefebvre
+Copyright © 2009 Yannick Lefebvre
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -77,7 +77,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['hide_if_empty'] = true;
 					$options['table_width'] = 100;
 					$options['num_columns'] = 1;
-					$options['catanchor'] = false;
+					$options['catanchor'] = true;
 					$options['flatlist'] = false;
 					$options['categorylist'] = null;
 					$options['excludecategorylist'] = null;
@@ -116,7 +116,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linktarget'] = '';
 					$options['showcategorydescheaders'] = false;
 					$options['showcategorydesclinks'] = false;
-					$options['settingssetname'] = 'Default';				
+					$options['settingssetname'] = 'Default';
+					$options['showadmineditlinks'] = true;
 					
 					if (isset($_GET['reset1']))
 					{
@@ -189,6 +190,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showcategorydescheaders'] = false;
 					$options['showcategorydesclinks'] = false;
 					$options['settingssetname'] = 'Default';
+					$options['showadmineditlinks'] = true;
 					
 					if (isset($_GET['reset1table']))
 						update_option('LinkLibraryPP1', $options);
@@ -261,7 +263,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
-								'showcategorydesclinks') as $option_name) {
+								'showcategorydesclinks', 'showadmineditlinks') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -335,7 +337,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['hide_if_empty'] = true;
 					$options['table_width'] = 100;
 					$options['num_columns'] = 1;
-					$options['catanchor'] = false;
+					$options['catanchor'] = true;
 					$options['flatlist'] = false;
 					$options['categorylist'] = null;
 					$options['excludecategorylist'] = null;
@@ -375,6 +377,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showcategorydescheaders'] = false;
 					$options['showcategorydesclinks'] = false;
 					$options['settingssetname'] = 'Default';
+					$options['showadmineditlinks'] = true;
 					
 					update_option($settingsname,$options);
 				}	
@@ -798,6 +801,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="checkbox" id="nofollow" name="nofollow" <?php if ($options['nofollow']) echo ' checked="checked" '; ?>/>
 						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="showadmineditlinks">Show edit links when logged in as editor or administrator</label>
+						</th>
+						<td>
+							<input type="checkbox" id="showadmineditlinks" name="showadmineditlinks" <?php if ($options['showadmineditlinks'] || $options['showadmineditlinks'] == '') echo ' checked="checked" '; ?>/>
+						</td>
 					</tr>					
 
 					
@@ -818,7 +829,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 } //endif
 
 
-function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = false, 
+function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false) {
 	
 	$countcat = 0;
@@ -927,13 +938,17 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
 				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false,
-				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '') {
+				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '', $showadmineditlinks = true) {
 				   
 	global $wpdb;
 	
 	// Pre-2.6 compatibility
 if ( !defined('WP_CONTENT_URL') )
     define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+
+if ( !defined('WP_ADMIN_URL') )
+    define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
+	
 if ( !defined('WP_CONTENT_DIR') )
     define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
 
@@ -1065,7 +1080,11 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 		}
 		if ($show_rss_icon && ($row->link_rss != '')) {
 		    $output .= $between . '<a class="rssicon" href="' . $row->link_rss . '"><img src="' . $llpluginpath . '/feed-icon-14x14.png" /></a>';
+		}	
+		if (($showadmineditlinks || $showadmineditlinks == '') && current_user_can("manage_links")) {
+			$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $row->link_id .'">Edit</a>';
 		}		
+		
         $output .= "$after\n";
 		
 		if ($linkaddfrequency > 0)
@@ -1077,7 +1096,7 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 	return $output;
 }
 
-function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
+function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
                                 $showdescription = false, $shownotes = false, $showrating = false,
                                 $showupdated = false, $categorylist = '', $show_images = false, 
                                 $show_image_and_name = false, $use_html_tags = false, 
@@ -1087,7 +1106,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
-								$showcategorydesclinks = false) {
+								$showcategorydesclinks = false, $showadmineditlinks = true) {
 
 	$order = strtolower($order);
 
@@ -1248,7 +1267,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$linkaddfrequency,
 					$addbeforelink,
 					$addafterlink,
-					$linktarget);
+					$linktarget,
+					$showadmineditlinks);
 					
 				$output .= $linklist;
 								
@@ -1272,7 +1292,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	return $output;
 }
 
-$version = "1.0.1";
+$version = "2.1";
 
 $options  = get_option('LinkLibraryPP',"");
 
@@ -1285,7 +1305,7 @@ if ($options == "") {
 		$options['hide_if_empty'] = true;
 		$options['table_width'] = 100;
 		$options['num_columns'] = 1;
-		$options['catanchor'] = false;
+		$options['catanchor'] = true;
 		$options['flatlist'] = false;
 		$options['categorylist'] = null;
 		$options['excludecategorylist'] = null;
@@ -1325,6 +1345,7 @@ if ($options == "") {
 		$options['showcategorydescheaders'] = false;
 		$options['showcategorydesclinks'] = false;
 		$options['settingssetname'] = 'Default';
+		$options['showadmineditlinks'] = true;
 		
 		update_option('LinkLibraryPP1',$options);
 	}
@@ -1351,13 +1372,13 @@ else
  *   hide_if_empty (default true)  - Supress listing empty link categories
  *   table_witdh (default 100) - Width of table, percentage
  *   num_columns (default 1) - Number of columns in table
- *   catanchor (default false) - Determines if links to generated anchors should be created
+ *   catanchor (default true) - Determines if links to generated anchors should be created
  *   flatlist (default false) - When set to true, displays an unordered list instead of a table
  *   categorylist (default null) - Specifies a comma-separate list of the only categories that should be displayed
  *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
  */
 
-function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = false, 
+function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false) {
 	
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
@@ -1393,7 +1414,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  * Parameters:
  *   order (default 'name')  - Sort link categories by 'name' or 'id'. When set to 'AdminSettings', will use parameters set in Admin Settings Panel.
  *   hide_if_empty (default true)  - Supress listing empty link categories
- *   catanchor (default false) - Adds name anchors to categorie links to be able to link directly to categories\
+ *   catanchor (default true) - Adds name anchors to categorie links to be able to link directly to categories\
  *   showdescription (default false) - Displays link descriptions. Added for 2.1 since link categories no longer have this setting
  *   shownotes (default false) - Shows notes in addition to description for links (useful since notes field is larger than description)
  *   showrating (default false) - Displays link ratings. Added for 2.1 since link categories no longer have this setting
@@ -1431,9 +1452,10 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   linktarget (default null) - Specifies the link target window
  *   showcategorydescheaders (default false) - Display link category description when printing category list
  *   showcategorydesclinks (default false) - Display link category description when printing links
+ *   showadmineditlinks (default false) - Display edit links in output if logged in as administrator
  */
 
-function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = false,
+function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
                                 $showdescription = false, $shownotes = false, $showrating = false,
                                 $showupdated = false, $categorylist = '', $show_images = false, 
                                 $show_image_and_name = false, $use_html_tags = false, 
@@ -1443,7 +1465,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
-								$showcategorydesclinks = false) {
+								$showcategorydesclinks = false, $showadmineditlinks = true) {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -1467,7 +1489,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
-								  $options['linktarget'], $options['showcategorydesclinks']);
+								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks']);
 	
 	}
 	else
@@ -1477,7 +1499,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
 								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
-								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks);
+								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks);
 
 }
 
@@ -1571,7 +1593,7 @@ function link_library_func($atts) {
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
-								  $options['linktarget'], $options['showcategorydesclinks']);
+								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks']);
 }
 
 function link_library_header() {
