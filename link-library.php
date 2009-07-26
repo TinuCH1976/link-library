@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.1
+Version: 2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -71,7 +71,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 		
 		function config_page() {
 			global $dlextensions;
-			if ( isset($_GET['reset1'])  || isset($_GET['reset2']) || isset($_GET['reset3']) || isset($_GET['reset4']) || isset($_GET['reset5'])) {
+			if ( isset($_GET['reset'])) {
 			
 					$options['order'] = 'name';
 					$options['hide_if_empty'] = true;
@@ -118,34 +118,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showcategorydesclinks'] = false;
 					$options['settingssetname'] = 'Default';
 					$options['showadmineditlinks'] = true;
+					$options['showonecatonly'] = false;
+					$options['loadingicon'] = '/icons/Ajax-loader.gif';
+					$options['defaultsinglecat'] = '';
 					
-					if (isset($_GET['reset1']))
-					{
-						update_option('LinkLibraryPP1', $options);
-						$settings = 1;
-					}
-					else if (isset($_GET['reset2']))
-					{
-						update_option('LinkLibraryPP2', $options);
-						$settings = 2;
-					}
-					else if (isset($_GET['reset3']))
-					{
-						update_option('LinkLibraryPP3', $options);
-						$settings = 3;
-					}
-					else if (isset($_GET['reset4']))
-					{
-						update_option('LinkLibraryPP4', $options);
-						$settings = 4;
-					}
-					else if (isset($_GET['reset5']))
-					{
-						update_option('LinkLibraryPP5', $options);
-						$settings = 5;
-					}
+					$settings = $_GET['reset'];
+					$settingsname = 'LinkLibraryPP' . $settings;
+					update_option($settingsname, $options);					
 			}
-			if ( isset($_GET['reset1table']) || isset($_GET['reset2table']) || isset($_GET['reset3table']) || isset($_GET['reset4table']) || isset($_GET['reset5table'])) {
+			if ( isset($_GET['resettable']) ) {
 					$options['order'] = 'name';
 					$options['hide_if_empty'] = true;
 					$options['table_width'] = 100;
@@ -191,53 +172,33 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showcategorydesclinks'] = false;
 					$options['settingssetname'] = 'Default';
 					$options['showadmineditlinks'] = true;
+					$options['showonecatonly'] = false;
+					$options['loadingicon'] = '';
+					$options['loadingicon'] = '/icons/Ajax-loader.gif';
+					$options['defaultsinglecat'] = '';
 					
-					if (isset($_GET['reset1table']))
-						update_option('LinkLibraryPP1', $options);
-					else if (isset($_GET['reset2table']))
-						update_option('LinkLibraryPP2', $options);
-					else if (isset($_GET['reset3table']))
-						update_option('LinkLibraryPP3', $options);
-					else if (isset($_GET['reset4table']))
-						update_option('LinkLibraryPP4', $options);
-					else if (isset($_GET['reset5table']))
-						update_option('LinkLibraryPP5', $options);
+					$settings = $_GET['resettable'];
+					$settingsname = 'LinkLibraryPP' . $settings;
+					update_option($settingsname, $options);		
 			}
-			if ( isset($_GET['settings1']) && $_GET['settings1'] == "true") {
-				$settings = 1;				
+			if ( isset($_GET['settings'])) {
+				$settings = $_GET['settings'];				
 			}
-			if ( isset($_GET['settings2']) && $_GET['settings2'] == "true") {
-				$settings = 2;				
+			if ( isset($_GET['copy']))
+			{
+				$destination = $_GET['copy'];
+				$source = $_GET['source'];
+				
+				$sourcesettingsname = 'LinkLibraryPP' . $source;
+				$sourceoptions = get_option($sourcesettingsname);
+				
+				$destinationsettingsname = 'LinkLibraryPP' . $destination;
+				update_option($destinationsettingsname, $sourceoptions);
+				
+				$settings = $destination;
 			}
-			if ( isset($_GET['settings3']) && $_GET['settings3'] == "true") {
-				$settings = 3;				
-			}
-			if ( isset($_GET['settings4']) && $_GET['settings4'] == "true") {
-				$settings = 4;				
-			}
-			if ( isset($_GET['settings5']) && $_GET['settings5'] == "true") {
-				$settings = 5;				
-			}
-			if ( isset($_GET['deletesettings2']) && $_GET['deletesettings2'] == "true") {
-				$settings = 2;				
-				$settingsname = 'LinkLibraryPP' . $settings;
-				$options = delete_option($settingsname);
-				$settings = 1;
-			}
-			if ( isset($_GET['deletesettings3']) && $_GET['deletesettings3'] == "true") {
-				$settings = 3;				
-				$settingsname = 'LinkLibraryPP' . $settings;
-				$options = delete_option($settingsname);
-				$settings = 1;
-			}
-			if ( isset($_GET['deletesettings4']) && $_GET['deletesettings4'] == "true") {
-				$settings = 4;				
-				$settingsname = 'LinkLibraryPP' . $settings;
-				$options = delete_option($settingsname);
-				$settings = 1;
-			}
-			if ( isset($_GET['deletesettings5']) && $_GET['deletesettings5'] == "true") {
-				$settings = 5;				
+			if ( isset($_GET['deletesettings']) ) {
+				$settings = $_GET['deletesettings'];				
 				$settingsname = 'LinkLibraryPP' . $settings;
 				$options = delete_option($settingsname);
 				$settings = 1;
@@ -249,13 +210,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
-							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink') as $option_name) {
+							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
+							   'defaultsinglecat') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
 				}
 				
-				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname') as $option_name) {
+				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -263,7 +225,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
-								'showcategorydesclinks', 'showadmineditlinks') as $option_name) {
+								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -378,6 +340,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showcategorydesclinks'] = false;
 					$options['settingssetname'] = 'Default';
 					$options['showadmineditlinks'] = true;
+					$options['showonecatonly'] = false;
+					$options['loadingicon'] = '/icons/Ajax-loader.gif';
+					$options['defaultsinglecat'] = '';
 					
 					update_option($settingsname,$options);
 				}	
@@ -399,11 +364,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<div>To use a specific settings set on a page, use the syntax [link-library-cats settings=1] [link-library settings=1], changing 1 for the right set number.</div>
 					<br />
 					<ul>
-						<li><?php if ($settings == 1) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?><a href="?page=link-library.php&amp;settings1=true"> Settings Set #1<?php if ($options1 != "") echo ' - ' . $options1['settingssetname']; ?></a></li>
-						<li><?php if ($settings == 2) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options2 != "") {echo '<a href="?page=link-library.php&amp;settings2=true">';} else {echo '<a href="?page=link-library.php&amp;settings2=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #2<?php if ($options2 != "") echo ' - ' . $options2['settingssetname']; ?><?php if ($options2 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings2=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}   ?></li>
-						<li><?php if ($settings == 3) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options3 != "") {echo '<a href="?page=link-library.php&amp;settings3=true">';} else {echo '<a href="?page=link-library.php&amp;settings3=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #3<?php if ($options3 != "") echo ' - ' . $options3['settingssetname']; ?><?php if ($options3 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings3=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
-						<li><?php if ($settings == 4) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options4 != "") {echo '<a href="?page=link-library.php&amp;settings4=true">';} else {echo '<a href="?page=link-library.php&amp;settings4=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #4<?php if ($options4 != "") echo ' - ' . $options4['settingssetname']; ?><?php if ($options4 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings4=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
-						<li><?php if ($settings == 5) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options5 != "") {echo '<a href="?page=link-library.php&amp;settings5=true">';} else {echo '<a href="?page=link-library.php&amp;settings5=true"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #5<?php if ($options5 != "") echo ' - ' . $options5['settingssetname']; ?><?php if ($options5 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings5=true"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+						<li><?php if ($settings == 1) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?><a href="?page=link-library.php&amp;settings=1"> Settings Set #1<?php if ($options1 != "") echo ' - ' . $options1['settingssetname']; ?></a></li>
+						<li><?php if ($settings == 2) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options2 != "") {echo '<a href="?page=link-library.php&amp;settings=2">';} else {echo '<a href="?page=link-library.php&amp;settings=2"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #2<?php if ($options2 != "") echo ' - ' . $options2['settingssetname']; ?><?php if ($options2 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings=2"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+						<li><?php if ($settings == 3) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options3 != "") {echo '<a href="?page=link-library.php&amp;settings=3">';} else {echo '<a href="?page=link-library.php&amp;settings=3"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #3<?php if ($options3 != "") echo ' - ' . $options3['settingssetname']; ?><?php if ($options3 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings=3"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+						<li><?php if ($settings == 4) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options4 != "") {echo '<a href="?page=link-library.php&amp;settings=4">';} else {echo '<a href="?page=link-library.php&amp;settings=4"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #4<?php if ($options4 != "") echo ' - ' . $options4['settingssetname']; ?><?php if ($options4 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings=4"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
+						<li><?php if ($settings == 5) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} if ($options5 != "") {echo '<a href="?page=link-library.php&amp;settings=5">';} else {echo '<a href="?page=link-library.php&amp;settings=5"><img src="' . $llpluginpath . '/icons/add-16x16.png" /></a>';} ?> Settings Set #5<?php if ($options5 != "") echo ' - ' . $options5['settingssetname']; ?><?php if ($options5 != "") {echo '</a> <a href="?page=link-library.php&amp;deletesettings=5"><img src="' . $llpluginpath . '/icons/delete-16x16.png" /></a>';}  ?></li>
 					</ul>
 					<p style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></p>
 					<table class="form-table" style="width:100%;">
@@ -449,7 +414,30 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
 					</tr>
-					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="showonecatonly">Only show one category at a time (using AJAX queries)</label>
+						</th>
+						<td>
+							<input type="checkbox" id="showonecatonly" name="showonecatonly" <?php if ($options['showonecatonly']) echo ' checked="checked" '; ?>/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="defaultsinglecat">Default category to be shown when only showing one at a time (numeric ID)</label>
+						</th>
+						<td>
+							<input type="text" id="defaultsinglecat" name="defaultsinglecat" size="4" value="<?php echo $options['defaultsinglecat']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							Icon to display when performing AJAX queries (relative to Tune Library plugin directory)
+						</th>
+						<td>
+							<input type="text" id="loadingicon" name="loadingicon" size="40" value="<?php if ($options['loadingicon'] == '') {echo '/icons/Ajax-loader.gif';} else {echo strval($options['loadingicon']);} ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
 					<tr>
 						<th scope="row" valign="top">
 							<label for="hide_if_empty">Hide Results if Empty</label>
@@ -815,9 +803,16 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</table>
 					<p style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></p>
 					
-					<p><a href="?page=link-library.php&amp;reset<?php echo $settings; ?>=true">Reset current Settings Set</a></p>
+					<p><a href="?page=link-library.php&amp;reset=<?php echo $settings; ?>">Reset current Settings Set</a></p>
 					
-					<p><a href="?page=link-library.php&amp;reset<?php echo $settings; ?>table=true">Reset current Setting Set for table layout</a></p>
+					<p><a href="?page=link-library.php&amp;resettable=<?php echo $settings; ?>">Reset current Setting Set for table layout</a></p>
+					
+					<p>Copy settings from: <?php if ($settings != 1) { echo '<a href="?page=link-library.php&amp;copy=' . $settings . '&source=1">Settings Set 1</a> ';} ?>
+					<?php if ($settings != 2) { echo '<a href="?page=link-library.php&amp;copy=' . $settings . '&source=2">Settings Set 2</a> ';} ?>
+					<?php if ($settings != 3) { echo '<a href="?page=link-library.php&amp;copy=' . $settings . '&source=3">Settings Set 3</a> ';} ?>
+					<?php if ($settings != 4) { echo '<a href="?page=link-library.php&amp;copy=' . $settings . '&source=4">Settings Set 4</a> ';} ?>
+					<?php if ($settings != 5) { echo '<a href="?page=link-library.php&amp;copy=' . $settings . '&source=5">Settings Set 5</a> ';} ?>
+					</p>
 				</form>
 			</div>
 			<?php
@@ -830,14 +825,27 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
-							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false) {
+							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif') {
 	
 	$countcat = 0;
 
 	$order = strtolower($order);
 	
-	$output .= "<!-- Link Library Categories Output -->\n\n";
-
+	// Guess the location
+	$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
+		
+	$output = "<!-- Link Library Categories Output -->\n\n";
+	
+	$output .= "<SCRIPT LANGUAGE=\"JavaScript\">\n";
+		
+	$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
+	$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
+	$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist').replaceWith(data);initTree();jQuery('#contentLoading').toggle();});\n";
+	$output .= "}\n";
+		
+	$output .= "</SCRIPT>\n\n";
+	
 	// Handle link category sorting
 	$direction = 'ASC';
 	if (substr($order,0,1) == '_') {
@@ -869,7 +877,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 
 	if ($catnames) {
 		
-		$output .=  "<div class=\"linktable\">";
+		$output .=  "<div id=\"linktable\" class=\"linktable\">";
 		
 		if (!$flatlist)
 			$output .= "<table width=\"" . $table_width . "%\">\n";
@@ -884,19 +892,21 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 			
 			// Display the category name
 			$countcat += 1;
-			if (!$flatlist and (($countcat % $num_columns == 1) or ($countcat == 1) )) $output .= "<tr>\n";
+			if (!$flatlist and (($countcat % $num_columns == 1) or ($num_columns == 1) )) $output .= "<tr>\n";
 							
 			if (!$flatlist)
-				$catfront = '	<td><a ';
+				$catfront = '	<td>';
 			else
-				$catfront = '	<li><a ';
+				$catfront = '	<li>';
 				
-			if ($catanchor)
-				$cattext = 'href="#' . $catname->category_nicename . '" ';
+			if ($showonecatonly)
+				$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "');\" >";
+			else if ($catanchor)
+				$cattext = '<a href="#' . $catname->category_nicename . '">';
 			else
 				$cattext = '';
 	
-			$catitem = '>' . $catname->name;
+			$catitem =  $catname->name;
 			
 			if ($showcategorydescheaders)
 			{
@@ -905,7 +915,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 				$catitem .= $catname->category_description;				
 			}
 			
-			$catitem .= "</a>";
+			if ($catanchor)
+				$catitem .= "</a>";
 			
 			$output .= ($catfront . $cattext . $catitem );
 					
@@ -925,6 +936,13 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 		$output .= "</table>\n</div>\n";
 	else if ($catnames)
 		$output .= "</ul>\n</div>\n";
+		
+	if ($showonecatonly)
+	{
+		if ($loadingicon == '') $loadingicon = '/icons/Ajax-loader.gif';
+		$output .= "<span class='contentLoading' id='contentLoading' style='display: none;'><img src='" . WP_PLUGIN_URL . "/link-library" . $loadingicon . "' alt='Loading data, please wait...'></span>\n";
+	}
+
 	
 	$output .= "\n<!-- End of Link Library Categories Output -->\n\n";
 	
@@ -1072,6 +1090,10 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
         if ($show_description && ($desc != ''))
             $output .= $between . $beforedesc . $desc . $afterdesc;
 
+		if (!$show_notes || ($descnotes == '')) {
+			$output .= $beforenote;
+		}
+
 		if ($show_notes && ($descnotes != '')) {
 			$output .= $beforenote . $between . $descnotes;
 		}
@@ -1084,8 +1106,11 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 		if (($showadmineditlinks || $showadmineditlinks == '') && current_user_can("manage_links")) {
 			$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $row->link_id .'">Edit</a>';
 		}		
-		
-        $output .= "$after\n";
+		if ($show_notes && ($descnotes != '')) {
+			$output .= $afternote;
+		}
+				
+        $output .= $after . "\n";
 		
 		if ($linkaddfrequency > 0)
 			if ($linkcount % $linkaddfrequency == 0)
@@ -1106,8 +1131,14 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
-								$showcategorydesclinks = false, $showadmineditlinks = true) {
+								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
+								$defaultsinglecat = '') {
 
+	if ( !defined('WP_CONTENT_URL') )
+		define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
+	if ( !defined('WP_CONTENT_DIR') )
+		define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+	
 	$order = strtolower($order);
 
 	// Handle link category sorting
@@ -1119,9 +1150,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 
 	if (!isset($direction)) $direction = '';
 	
-	$output .= "<!-- Link Library Output -->\n\n";
-	
 	$currentcategory = 1;
+	
+	if ($showonecatonly && $AJAXcatid != '')
+		$categorylist = $AJAXcatid;
+	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '')
+		$categorylist = $defaultsinglecat;
 
 	// Fetch the link category data as an array of hashes
 	
@@ -1145,7 +1179,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 
     // Display each category
 	if ($catnames) {
-		$output .= "<div class='linklist'>\n";
+		$output .= "<div id='linklist' class='linklist'>\n";
+				
+		if ($showonecatonly)
+		{
+			$catnames = array($catnames[0]);		
+		}
 		
 		foreach ( (array) $catnames as $catname) {
 		
@@ -1346,6 +1385,9 @@ if ($options == "") {
 		$options['showcategorydesclinks'] = false;
 		$options['settingssetname'] = 'Default';
 		$options['showadmineditlinks'] = true;
+		$options['showonecatonly'] = false;
+		$options['loadingicon'] = '/icons/Ajax-loader.gif';
+		$options['defaultsinglecat'] = '';
 		
 		update_option('LinkLibraryPP1',$options);
 	}
@@ -1376,10 +1418,15 @@ else
  *   flatlist (default false) - When set to true, displays an unordered list instead of a table
  *   categorylist (default null) - Specifies a comma-separate list of the only categories that should be displayed
  *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
+ *   showcategorydescheaders (default null) - Show category descriptions in category list
+ *   showonecatonly (default false) - Enable AJAX mode showing only one category at a time
+ *   settings (default NULL) - Settings Set ID, only used when showonecatonly is true
+ *   loadingicon (default NULL) - Path to icon to display when only show one category at a time
  */
 
 function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
-							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false) {
+							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif') {
 	
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -1395,10 +1442,12 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
 			$options = get_option('LinkLibraryPP5');
 
 		return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
-								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders']);   
+								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
+								 $options['loadingicon']);   
 	}
 	else
-		return PrivateLinkLibraryCategories($order, true, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders);   
+		return PrivateLinkLibraryCategories($order, true, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
+		$showonecatonly, $settings, $loadingicon);   
 	
 }
 
@@ -1453,6 +1502,9 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   showcategorydescheaders (default false) - Display link category description when printing category list
  *   showcategorydesclinks (default false) - Display link category description when printing links
  *   showadmineditlinks (default false) - Display edit links in output if logged in as administrator
+ *   showonecatonly (default false) - Only show one category at a time
+ *   AJAXcatid (default null) - Category ID for AJAX sub-queries
+ *   defaultsinglecat (default null) - ID of first category to be shown in single category mode
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -1465,7 +1517,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkheader = '', $descheader = '', $notesheader = '', $catlistwrappers = 1, $beforecatlist1 = '', 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
-								$showcategorydesclinks = false, $showadmineditlinks = true) {
+								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
+								$defaultsinglecat = '') {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -1489,7 +1542,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['descheader'], $options['notesheader'], $options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
-								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks']);
+								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'], $options['showonecatonly'],
+								  $AJAXcatid, $options['defaultsinglecat']);
 	
 	}
 	else
@@ -1499,7 +1553,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
 								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
-								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks);
+								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
+								$showonecatonly, '', $defaultsinglecat);
 
 }
 
@@ -1513,7 +1568,10 @@ function link_library_cats_func($atts) {
 	), $atts));
 	
 	if ($settings == '')
+	{
+		$settings = 1;
 		$options = get_option('LinkLibraryPP1');
+	}
 	else
 	{
 		$settingsname = 'LinkLibraryPP' . $settings;
@@ -1531,7 +1589,8 @@ function link_library_cats_func($atts) {
 		$excludedcategorylist = $options['excludecategorylist'];
 
 	return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
-								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders']);
+								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
+								 $options['loadingicon']);
 }
 
 
@@ -1593,7 +1652,8 @@ function link_library_func($atts) {
 								  $options['descheader'], $options['notesheader'], 	$options['catlistwrappers'], $options['beforecatlist1'], 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
-								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks']);
+								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'],
+								  $options['showonecatonly'], '', $options['defaultsinglecat']);
 }
 
 function link_library_header() {
@@ -1606,6 +1666,7 @@ add_shortcode('link-library-cats', 'link_library_cats_func');
 
 add_shortcode('link-library', 'link_library_func');
 
+wp_enqueue_script('jquery');
 
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));

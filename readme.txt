@@ -1,7 +1,7 @@
 === Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/
-Tags: link, list, page
+Tags: link, list, page, library, AJAX
 Requires at least: 2.7
 Tested up to: 2.8.1
 Stable tag: trunk
@@ -10,11 +10,18 @@ The purpose of this plugin is to add the ability to output a list of link catego
 
 == Description ==
 
-This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories.
+This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX queries to load other categories based on user input.
 
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for up to five different configurations to be created to display links on different pages of a Wordpress site. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
-You can see a demonstration of the output of the plugin [here](http://yannickcorner.nayanna.biz/freeware-database/) and [here](http://yannickcorner.nayanna.biz/favorite-links/) on my personal site. Both pages are generated using different configurations all managed by Link Library. Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
+You can see a few examples of pages using Link Library on my personal site:
+- [Library in table form](http://yannickcorner.nayanna.biz/freeware-database/)
+- [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)
+- [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)
+
+More examples can be found on my [site](http://yannickcorner.nayanna.biz/wordpress-plugins/).
+
+All pages are generated using different configurations all managed by Link Library. Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
 
 - [Changelog](http://wordpress.org/extend/plugins/link-library/other_notes/)
 - [Support Forum](http://wordpress.org/tags/link-library)
@@ -67,6 +74,7 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+1. 2.2: Added new mode that only shows one category at a time. New category can be selected through category list. Default first category can be selected by user. Uses AJAX to fetch data.
 1. 2.1: Added ability to display edit links next to links in page for editors and administrators that are logged in.
 1. 2.0: Added ability to define multiple groups of settings to use Link Library on different pages with different configurations.
 1. 1.3.2: Added option to display link category descriptions, with option to embed HTML code in description.
@@ -98,9 +106,9 @@ Here would be the installation procedure:
 1. Activate the plugin in the Wordpress Admin
 1. Use the following functions in a [new template](http://codex.wordpress.org/Pages#Page_Templates) and select this template for your page that should display your Link Library.
 
-`&lt;?php echo LinkLibraryCategories('name', 1, 100, 3, 1, 0, '', ''); ?&gt;<br />
+`&lt;?php echo LinkLibraryCategories('name', 1, 100, 3, 1, 0, '', '', '', false, '', ''); ?&gt;<br />
 `&lt;br /&gt;<br />
-&lt;?php echo LinkLibrary('name', 1, 1, 1, 1, 0, 0, '', 0, 0, 1, 1, '&lt;td>', '&lt;/td&gt;', 1, '', '&lt;tr&gt;', '&lt;/tr&gt;', '&lt;td&gt;', '&lt;/td&gt;', 1, '&lt;td&gt;', '&lt;/td&gt;', 1, "Application", "Description", "Similar to"); ?&gt;
+&lt;?php echo LinkLibrary('name', 1, 1, 1, 1, 0, 0, '', 0, 0, 1, 1, '&lt;td>', '&lt;/td&gt;', 1, '', '&lt;tr&gt;', '&lt;/tr&gt;', '&lt;td&gt;', '&lt;/td&gt;', 1, '&lt;td&gt;', '&lt;/td&gt;', 1, "Application", "Description", "Similar to", 1, '', '', '', false, 'linklistcatname', false, 0, null, null, null, false, false, false, false, '', ''); ?&gt;
 
 =function LinkLibraryCategories()=
 
@@ -115,6 +123,10 @@ Here would be the installation procedure:
    flatlist (default false) - When set to true, displays an unordered list instead of a table<br/>
    categorylist (default null) - Specifies a comma-separate list of the only categories that should be displayed<br/>
    excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed<br/>
+   showcategorydescheaders (default null) - Show category descriptions in category list<br/>
+   showonecatonly (default false) - Enable AJAX mode showing only one category at a time<br/>
+   settings (default NULL) - Settings Set ID, only used when showonecatonly is true<br/>
+   loadingicon (default NULL) - Path to icon to display when only show one category at a time<br/>
 
 =function LinkCategory()=
 
@@ -157,7 +169,14 @@ Here would be the installation procedure:
    showrssicon (default false) - Output RSS URI if available and assign to standard RSS icon<br />
    linkaddfrequency (default 0) - Frequency at which extra before and after output should be placed around links<br />
    addbeforelink (default null) - Addition output to be placed before link<br />
-   addafterlink (default null) - Addition output to be placed after link
+   addafterlink (default null) - Addition output to be placed after link<br />
+   linktarget (default null) - Specifies the link target window<br />
+   showcategorydescheaders (default false) - Display link category description when printing category list<br />
+   showcategorydesclinks (default false) - Display link category description when printing links<br />
+   showadmineditlinks (default false) - Display edit links in output if logged in as administrator<br />
+   showonecatonly (default false) - Only show one category at a time<br />
+   AJAXcatid (default null) - Category ID for AJAX sub-queries<br />
+   defaultsinglecat (default null) - ID of first category to be shown in single category mode<br />
 
 == Screenshots ==
 
