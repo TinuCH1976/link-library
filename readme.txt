@@ -1,9 +1,9 @@
 === Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/
-Tags: link, list, page, library, AJAX
+Tags: link, list, page, library, AJAX, RSS, feeds, inline
 Requires at least: 2.7
-Tested up to: 2.8.1
+Tested up to: 2.8.3
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -12,14 +12,17 @@ The purpose of this plugin is to add the ability to output a list of link catego
 
 This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX queries to load other categories based on user input.
 
+For links that carry RSS feed information, Link Library can display a preview of the latest feed items inline with the all links or in a separate preview window.
+
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for up to five different configurations to be created to display links on different pages of a Wordpress site. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
 You can see a few examples of pages using Link Library on my personal site:<br/>
 - [Library in table form](http://yannickcorner.nayanna.biz/freeware-database/)<br/>
 - [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)<br/>
 - [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)<br/>
+- [Library in unordered list form with 1 full RSS item per feed inline and 5 RSS item full previews when selecting preview icon](http://yannickcorner.nayanna.biz/links-page-with-preview/)<br/>
 
-More examples can be found on my [site](http://yannickcorner.nayanna.biz/wordpress-plugins/).
+Examples from actual users can be found on my [site](http://yannickcorner.nayanna.biz/wordpress-plugins/).
 
 All pages are generated using different configurations all managed by Link Library. Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
 
@@ -74,22 +77,64 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
-1. 2.2: Added new mode that only shows one category at a time. New category can be selected through category list. Default first category can be selected by user. Uses AJAX to fetch data.
-1. 2.1: Added ability to display edit links next to links in page for editors and administrators that are logged in.
-1. 2.0: Added ability to define multiple groups of settings to use Link Library on different pages with different configurations.
-1. 1.3.2: Added option to display link category descriptions, with option to embed HTML code in description.
-1. 1.3.1: Optimized some of the code for category parsing and corrected a few syntax errors. Categories with special characters will also be handled better.
-1. 1.3: Created a new stylesheet for Link Library styles. Added new reset settings link for a table layout.
-1. 1.2.5: Adds new option to specify a target window for all links
-1. 1.2.4: Corrects second issue related to exclusion list and category order set to included list
-1. 1.2.3: Corrects a bug between the exclusion list and setting category order to included list with no included list defined
-1. 1.2.2: Correct a few issues with escape characters and the nofollow condition
-1. 1.2: Added new options to output extra code before and after complete link groups after a user-defined number of links. Enables the display of links are data cells in a table row.
-1. 1.1.9: Added new option to show RSS link using standard icon instead of only textual link.
-1. 1.1.8.1: Fixed bug with Show Image and Name option. Now works as expected.
-1. 1.1.8: Added new ordering option to follow order set by [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin
-1. 1.1.7: Added new options to give users flexibility to choose between div class tags and heading tags. Users upgrading need to select the desired output and set the value of the class name (e.g. linklistcatname) or desired heading style (e.g. h2).
-1. 1.1.6: The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname. This allows for more flexibility in formatting the element using your blog’s stylesheet.
+= 2.3 =
+* Added messages in admin panel to show that data is saved or potential errors.
+* Added new ability to show RSS feed previews in a preview box or inline with links.
+
+= 2.2 =
+* Added new mode that only shows one category at a time.
+* New category can be selected through category list.
+* Default first category can be selected by user.
+* Uses AJAX to fetch data.
+
+= 2.1 =
+* Added ability to display edit links next to links in page for editors and administrators that are logged in.
+
+= 2.0 =
+* Added ability to define multiple groups of settings to use Link Library on different pages with different configurations.
+
+= 1.3.2 =
+* Added option to display link category descriptions, with option to embed HTML code in description.
+
+= 1.3.1 =
+* Optimized some of the code for category parsing and corrected a few syntax errors.
+* Categories with special characters will also be handled better.
+
+= 1.3 =
+* Created a new stylesheet for Link Library styles. Added new reset settings link for a table layout.
+
+= 1.2.5 =
+* Adds new option to specify a target window for all links
+
+= 1.2.4 =
+* Corrects second issue related to exclusion list and category order set to included list
+
+= 1.2.3=
+* Corrects a bug between the exclusion list and setting category order to included list with no included list defined
+
+= 1.2.2 =
+* Correct a few issues with escape characters and the nofollow condition
+
+= 1.2 =
+* Added new options to output extra code before and after complete link groups after a user-defined number of links.
+* Enables the display of links are data cells in a table row.
+
+= 1.1.9 =
+* Added new option to show RSS link using standard icon instead of only textual link.
+
+= 1.1.8.1 =
+* Fixed bug with Show Image and Name option. Now works as expected.
+
+= 1.1.8 =
+* Added new ordering option to follow order set by [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin
+
+= 1.1.7 = 
+* Added new options to give users flexibility to choose between div class tags and heading tags.
+* Users upgrading need to select the desired output and set the value of the class name (e.g. linklistcatname) or desired heading style (e.g. h2).
+
+= 1.1.6 =
+* The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname.
+* This allows for more flexibility in formatting the element using your blog’s stylesheet.
 
 == Frequently Asked Questions ==
 
@@ -177,6 +222,14 @@ Here would be the installation procedure:
    showonecatonly (default false) - Only show one category at a time<br />
    AJAXcatid (default null) - Category ID for AJAX sub-queries<br />
    defaultsinglecat (default null) - ID of first category to be shown in single category mode<br />
+   rsspreview (default false) - Add preview links after RSS feed addresses<br />
+   rssfeedpreviewcount(default 3) - Number of RSS feed items to show in preview<br />
+   rssfeedinline (default false) - Shows latest feed items inline with link list<br />
+   rssfeedinlinecontent (default false) - Shows latest feed items contents inline with link list<br />
+   rssfeedinlinecount (default 1) - Number of RSS feed items to show inline<br />
+   beforerss (default null) - String to output before RSS block<br />
+   afterrss (default null) - String to output after RSS block<br />
+
 
 == Screenshots ==
 

@@ -47,3 +47,18 @@ table.linklisttable td {
 .linklistcolumnheader{
 	font-weight: bold;	
 }
+
+div.rsscontent{color: #333333; font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;font-size: 11px;line-height: 1.25em (16px);
+vertical-align: baseline;letter-spacing: normal;word-spacing: normal;font-weight: normal;font-style: normal;font-variant: normal;text-transform: none;
+text-decoration: none;text-align: left;text-indent: 0px;max-width:500px;}
+
+#ll_rss_results { border-style:solid;border-width:1px;margin-left:10px;margin-top:10px;padding-top:3px;background-color:#f4f5f3;}
+.rsstitle{font-weight:400;font-size:0.8em;color:#33352C;font-family:Georgia,"Times New Roman",Times,serif;}
+.rsstitle a{color:#33352C}
+
+#ll_rss_results img {
+    max-width: 400px; /* Adjust this value according to your content area size*/
+    height: auto;
+}
+
+.rsselements {float: right;}

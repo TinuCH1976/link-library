@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.2
+Version: 2.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -34,6 +34,7 @@ License at http://www.gnu.org/copyleft/gpl.html
 I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 */
 
+define('LLDIR', dirname(__FILE__) . '/');                
 
 if ( ! class_exists( 'LL_Admin' ) ) {
 
@@ -121,6 +122,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showonecatonly'] = false;
 					$options['loadingicon'] = '/icons/Ajax-loader.gif';
 					$options['defaultsinglecat'] = '';
+					$options['rsspreview'] = false;
+					$options['rsspreviewcount'] = 3;
+					$options['rssfeedinline'] = false;
+					$options['rssfeedinlinecontent'] = false;
+					$options['rssfeedinlinecount'] = 1;
+					$options['beforerss'] = '';
+					$options['afterrss'] = '';
 					
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -176,6 +184,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['loadingicon'] = '';
 					$options['loadingicon'] = '/icons/Ajax-loader.gif';
 					$options['defaultsinglecat'] = '';
+					$options['rsspreview'] = false;
+					$options['rsspreviewcount'] = 3;
+					$options['rssfeedinline'] = false;
+					$options['rssfeedinlinecontent'] = false;
+					$options['rssfeedinlinecount'] = 1;
+					$options['beforerss'] = '';
+					$options['afterrss'] = '';
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -211,7 +226,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
-							   'defaultsinglecat') as $option_name) {
+							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -225,7 +240,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
-								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly') as $option_name) {
+								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -263,15 +278,57 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				}
 				
 				if (isset($_POST['submit1']))
+				{
 					update_option('LinkLibraryPP1', $options);
+					echo '<div id="message" class="updated fade"><p><strong>Settings Set 1 Updated!</strong>';
+				}
 				else if (isset($_POST['submit2']))
+				{
 					update_option('LinkLibraryPP2', $options);
+					echo '<div id="message" class="updated fade"><p><strong>Settings Set 2 Updated!</strong>';
+				}
 				else if (isset($_POST['submit3']))
+				{
 					update_option('LinkLibraryPP3', $options);
+					echo '<div id="message" class="updated fade"><p><strong>Settings Set 3 Updated!</strong>';
+				}
 				else if (isset($_POST['submit4']))
+				{
 					update_option('LinkLibraryPP4', $options);
+					echo '<div id="message" class="updated fade"><p><strong>Settings Set 4 Updated!</strong>';
+				}
 				else if (isset($_POST['submit5']))
+				{
 					update_option('LinkLibraryPP5', $options);
+					echo '<div id="message" class="updated fade"><p><strong>Settings Set 5 Updated!</strong>';
+				}				
+					
+				$categoryids = explode(',', $options['categorylist']);
+				
+				foreach($categoryids as $categoryid)
+				{
+					$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categoryid");
+					if (!$catnames)
+					{
+						echo '<br /><br />Included Category ID ' . $categoryid . ' is invalid. Please check the ID in the Link Category editor.';
+					}
+				}
+				
+				$categoryids = explode(',', $options['excludecategorylist']);
+				
+				foreach($categoryids as $categoryid)
+				{
+					$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categoryid");
+					if (!$catnames)
+					{
+						echo '<br /><br />Excluded Category ID ' . $categoryid . ' is invalid. Please check the ID in the Link Category editor.';
+					}
+				}
+				
+				echo '</p></div>';
+					
+				
+				
 			}
 			
 			// Pre-2.6 compatibility
@@ -343,7 +400,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showonecatonly'] = false;
 					$options['loadingicon'] = '/icons/Ajax-loader.gif';
 					$options['defaultsinglecat'] = '';
-					
+					$options['rsspreview'] = false;
+					$options['rsspreviewcount'] = 3;
+					$options['rssfeedinline'] = false;
+					$options['rssfeedinlinecontent'] = false;
+					$options['rssfeedinlinecount'] = 1;
+					$options['beforerss'] = '';
+					$options['afterrss'] = '';
+
 					update_option($settingsname,$options);
 				}	
 				
@@ -768,6 +832,22 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<th scope="row" valign="top">
+							<label for="beforerss">Output before RSS Section</label>
+						</th>
+						<td>
+							<input type="text" id="beforerss" name="beforerss" size="40" value="<?php echo $options['beforerss']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="afterrss">Output after RSS Section</label>
+						</th>
+						<td>
+							<input type="text" id="afterrss" name="afterrss" size="40" value="<?php echo $options['afterrss']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>						
+					<tr>
+						<th scope="row" valign="top">
 							<label for="show_rss">Show RSS Link using Text</label>
 						</th>
 						<td>
@@ -781,7 +861,47 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="checkbox" id="show_rss_icon" name="show_rss_icon" <?php if ($options['show_rss_icon']) echo ' checked="checked" '; ?>/>
 						</td>
-					</tr>				
+					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="rsspreview">Show RSS Preview Link</label>
+						</th>
+						<td>
+							<input type="checkbox" id="rsspreview" name="rsspreview" <?php if ($options['rsspreview']) echo ' checked="checked" '; ?>/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="rsspreviewcount">Number of articles shown in RSS Preview</label>
+						</th>
+						<td>
+							<input type="text" id="rsspreviewcount" name="rsspreviewcount" size="2" value="<?php if ($options['rsspreviewcount'] == '') echo '3'; else echo strval($options['rsspreviewcount']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>				
+					</tr>					
+					<tr>
+						<th scope="row" valign="top">
+							<label for="rssfeedinline">Show RSS Feed Headers in Link Library output</label>
+						</th>
+						<td>
+							<input type="checkbox" id="rssfeedinline" name="rssfeedinline" <?php if ($options['rssfeedinline']) echo ' checked="checked" '; ?>/>
+						</td>
+					</tr>			
+					<tr>
+						<th scope="row" valign="top">
+							<label for="rssfeedinlinecontent">Show RSS Feed Content in Link Library output</label>
+						</th>
+						<td>
+							<input type="checkbox" id="rssfeedinlinecontent" name="rssfeedinlinecontent" <?php if ($options['rssfeedinlinecontent']) echo ' checked="checked" '; ?>/>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row" valign="top">
+							<label for="rssfeedinlinecount">Number of RSS articles shown in Link Library Output</label>
+						</th>
+						<td>
+							<input type="text" id="rssfeedinlinecount" name="rssfeedinlinecount" size="2" value="<?php if ($options['rssfeedinlinecount'] == '') echo '1'; else echo strval($options['rssfeedinlinecount']); ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>				
+					</tr>					
 					<tr>
 						<th scope="row" valign="top">
 							<label for="nofollow">Add nofollow tag to outgoing links</label>
@@ -930,19 +1050,23 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 				
 			if (!$flatlist and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
 		}
-	}
-	if (!$flatlist and ($countcat % $num_columns == 3)) $output .= "</tr>\n";
-	if (!$flatlist && $catnames)
-		$output .= "</table>\n</div>\n";
-	else if ($catnames)
-		$output .= "</ul>\n</div>\n";
 		
-	if ($showonecatonly)
-	{
-		if ($loadingicon == '') $loadingicon = '/icons/Ajax-loader.gif';
-		$output .= "<span class='contentLoading' id='contentLoading' style='display: none;'><img src='" . WP_PLUGIN_URL . "/link-library" . $loadingicon . "' alt='Loading data, please wait...'></span>\n";
+		if (!$flatlist and ($countcat % $num_columns == 3)) $output .= "</tr>\n";
+		if (!$flatlist && $catnames)
+			$output .= "</table>\n</div>\n";
+		else if ($catnames)
+			$output .= "</ul>\n</div>\n";
+		
+		if ($showonecatonly)
+		{
+			if ($loadingicon == '') $loadingicon = '/icons/Ajax-loader.gif';
+			$output .= "<span class='contentLoading' id='contentLoading' style='display: none;'><img src='" . WP_PLUGIN_URL . "/link-library" . $loadingicon . "' alt='Loading data, please wait...'></span>\n";
+		}
 	}
-
+	else
+	{
+		$output .= "<div>No categories were found that match the parameters entered in the Link Library Settings Panel! Please notify the blog author.</div>";	
+	}
 	
 	$output .= "\n<!-- End of Link Library Categories Output -->\n\n";
 	
@@ -956,7 +1080,9 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
                    $limit = -1, $show_updated = 1, $show_notes = false, $show_image_and_name = false, $use_html_tags = false, 
 				   $show_rss = false, $beforenote = '<br />', $afternote = '', $nofollow = false, $echo = true,
 				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false,
-				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '', $showadmineditlinks = true) {
+				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '', $showadmineditlinks = true,
+				   $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false, $rssfeedinlinecount = 1,
+				   $beforerss = '', $afterrss = '') {
 				   
 	global $wpdb;
 	
@@ -972,6 +1098,33 @@ if ( !defined('WP_CONTENT_DIR') )
 
 // Guess the location
 $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
+
+	$feed = NULL;
+	
+	if ($rssfeedinline)
+	{	
+	
+		if( !class_exists('SimplePie'))
+		{
+			require_once( 'simplepie.inc' );
+		}
+	
+		$feed = new SimplePie();
+		
+		// We'll enable the discovering and caching of favicons.
+		$feed->set_favicon_handler('./handler_image.php');
+		
+		$feed->set_item_limit($rssfeedinlinecount);
+		
+		$feed->enable_cache(true);
+		$feed->set_cache_location('/home/amcyel/public_html/yannickcorner/wp-content/cache/link-library');
+		
+		$feed->set_stupidly_fast(true);
+		
+		// We'll make sure that the right content type and character encoding gets set automatically.
+		// This function will grab the proper character encoding, as well as set the content type to text/html.
+		$feed->handle_content_type();
+	}
 
 	$order = 'ASC';
 	if ( substr($orderby, 0, 1) == '_' ) {
@@ -996,7 +1149,10 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 	}
 
 	if ( !$results )
-		return;
+	{
+		$output = "<div>This category does not contain any links</div>";
+		return $output;
+	}
 		
 	$linkcount = 0;
 		
@@ -1074,7 +1230,13 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 			$output .= $name;
 		}
 		
-        $output .= '</a>' . $afterlink;
+        $output .= '</a>';
+		
+		if (($showadmineditlinks || $showadmineditlinks == '') && current_user_can("manage_links")) {
+			$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $row->link_id .'">(Edit)</a>';
+		}
+		
+		$output .= $afterlink;
 		
         if ($show_updated && $row->recently_updated) {
             $output .= get_option('links_recently_updated_append');
@@ -1095,20 +1257,54 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 		}
 
 		if ($show_notes && ($descnotes != '')) {
-			$output .= $beforenote . $between . $descnotes;
+			$output .= $beforenote . $between . $descnotes . $afternote;
 		}
+		if ($show_rss || $show_rss_icon || $rsspreview)
+			$output .= $beforerss . '<div class="rsselements">';
+			
 		if ($show_rss && ($row->link_rss != '')) {
 		    $output .= $between . '<a class="rss" href="' . $row->link_rss . '">RSS</a>';
 		}
 		if ($show_rss_icon && ($row->link_rss != '')) {
-		    $output .= $between . '<a class="rssicon" href="' . $row->link_rss . '"><img src="' . $llpluginpath . '/feed-icon-14x14.png" /></a>';
+		    $output .= $between . '<a class="rssicon" href="' . $row->link_rss . '"><img src="' . $llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
 		}	
-		if (($showadmineditlinks || $showadmineditlinks == '') && current_user_can("manage_links")) {
-			$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $row->link_id .'">Edit</a>';
-		}		
-		if ($show_notes && ($descnotes != '')) {
-			$output .= $afternote;
+		if ($rsspreview && $row->link_rss != '')
+		{
+			$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $row->link_id . '&previewcount=' . $rsspreviewcount . '&TB_iframe=true&height=500&width=700" title="Preview of RSS feed for ' . $name . '" class="thickbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
 		}
+		
+		if ($show_rss || $show_rss_icon || $rsspreview)
+			$output .= '</div>' . $afterrss;
+
+		
+		if ($rssfeedinline)
+		{
+			$feed->set_feed_url($row->link_rss);
+			
+			$feed->init();
+			
+				
+				
+				if ($feed->data && $feed->get_item_quantity() > 0)
+				{
+					$output .= '<div id="ll_rss_results">';
+					
+					$items = $feed->get_items(0, $rssfeedinlinecount);
+					foreach($items as $item)
+					{
+						$output .= '<div class="chunk" style="padding:0 5px 5px;">';
+						$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item->get_permalink() . '">' . $item->get_title() . '</a> - ' . $item->get_date("j M Y") . '</div>';
+						if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item->get_content() . '</div>';
+						$output .= '</div>';
+						$output .= '<br />';
+					}
+					
+					$output .= '</div>';
+				}
+					
+				
+		}
+		
 				
         $output .= $after . "\n";
 		
@@ -1132,7 +1328,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
-								$defaultsinglecat = '') {
+								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false,
+								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '') {
 
 	if ( !defined('WP_CONTENT_URL') )
 		define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
@@ -1161,7 +1358,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	
 	if ($order == "catlist")
 		{
-			$displaycategories = explode(",",$categorylist);
+			$displaycategories = explode(",", $categorylist);
 			
 			$catnames = array();
 			
@@ -1307,7 +1504,14 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$addbeforelink,
 					$addafterlink,
 					$linktarget,
-					$showadmineditlinks);
+					$showadmineditlinks,
+					$rsspreview,
+					$rsspreviewcount,
+					$rssfeedinline,
+					$rssfeedinlinecontent,
+					$rssfeedinlinecount,
+					$beforerss,
+					$afterrss);
 					
 				$output .= $linklist;
 								
@@ -1325,13 +1529,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		$output .= "</div>\n";
 		
 	}
+	else
+	{
+		$output .= "<div>No categories were found that match the parameters entered in the Link Library Settings Panel! Please notify the blog author.</div>";	
+	}
 	
 	$output .= "\n<!-- End of Link Library Output -->\n\n";
 	
 	return $output;
 }
 
-$version = "2.1";
+$version = "2.2";
 
 $options  = get_option('LinkLibraryPP',"");
 
@@ -1388,6 +1596,13 @@ if ($options == "") {
 		$options['showonecatonly'] = false;
 		$options['loadingicon'] = '/icons/Ajax-loader.gif';
 		$options['defaultsinglecat'] = '';
+		$options['rsspreview'] = false;
+		$options['rsspreviewcount'] = 3;
+		$options['rssfeedinline'] = false;
+		$options['rssfeedinlinecontent'] = false;
+		$options['rssfeedinlinecount'] = 1;
+		$options['beforerss'] = '';
+		$options['aftertss'] = '';
 		
 		update_option('LinkLibraryPP1',$options);
 	}
@@ -1505,6 +1720,13 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   showonecatonly (default false) - Only show one category at a time
  *   AJAXcatid (default null) - Category ID for AJAX sub-queries
  *   defaultsinglecat (default null) - ID of first category to be shown in single category mode
+ *   rsspreview (default false) - Add preview links after RSS feed addresses
+ *   rssfeedpreviewcount(default 3) - Number of RSS feed items to show in preview
+ *   rssfeedinline (default false) - Shows latest feed items inline with link list
+ *   rssfeedinlinecontent (default false) - Shows latest feed items contents inline with link list
+ *   rssfeedinlinecount (default 1) - Number of RSS feed items to show inline
+ *   beforerss (default null) - String to output before RSS block
+ *   afterrss (default null) - String to output after RSS block
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -1518,7 +1740,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$beforecatlist2 = '', $beforecatlist3 = '', $divorheader = false, $catnameoutput = 'linklistcatname',
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
-								$defaultsinglecat = '') {
+								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
+								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '') {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -1543,7 +1766,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
 								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'], $options['showonecatonly'],
-								  $AJAXcatid, $options['defaultsinglecat']);
+								  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
+								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss']);
 	
 	}
 	else
@@ -1554,7 +1778,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
 								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
 								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
-								$showonecatonly, '', $defaultsinglecat);
+								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
+								$beforerss, $afterrss);
 
 }
 
@@ -1653,14 +1878,19 @@ function link_library_func($atts) {
 								  $options['beforecatlist2'], $options['beforecatlist3'], $options['divorheader'], $options['catnameoutput'],
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
 								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'],
-								  $options['showonecatonly'], '', $options['defaultsinglecat']);
+								  $options['showonecatonly'], '', $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], 
+								  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
+								  $options['beforerss'], $options['afterrss']);
 }
 
 function link_library_header() {
-	echo '<link rel="stylesheet" type="text/css" media="screen" href="'. WP_PLUGIN_URL . '/link-library/stylesheet.css"/>';	
+	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/stylesheet.css"/>';	
+	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/thickbox/thickbox.css"/>';
 }
 
-add_action('wp_head', 'link_library_header');
+function link_library_init() {
+	wp_enqueue_script('thickbox', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/thickbox/thickbox.js');
+}  
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
 
@@ -1668,7 +1898,11 @@ add_shortcode('link-library', 'link_library_func');
 
 wp_enqueue_script('jquery');
 
+add_action('wp_head', 'link_library_header');
+
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));
+
+add_action('init', 'link_library_init');
 
 ?>
