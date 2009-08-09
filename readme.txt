@@ -77,6 +77,9 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+= 2.3.2 =
+* Fixed bug with RSS feeds which tried to load RSS feeds even if no feed address was specified
+
 = 2.3.1 =
 * Added configuration field to specify RSS library cache directory. Had been hard-coded by error in version 2.3
 

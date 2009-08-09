@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.3.1
+Version: 2.3.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1290,13 +1290,11 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 			$output .= '</div>' . $afterrss;
 
 		
-		if ($rssfeedinline)
+		if ($rssfeedinline && $row->link_rss)
 		{
 			$feed->set_feed_url($row->link_rss);
 			
-			$feed->init();
-			
-				
+			$feed->init();				
 				
 				if ($feed->data && $feed->get_item_quantity() > 0)
 				{
