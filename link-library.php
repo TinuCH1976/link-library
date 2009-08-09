@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.3
+Version: 2.3.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -129,6 +129,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['rssfeedinlinecount'] = 1;
 					$options['beforerss'] = '';
 					$options['afterrss'] = '';
+					$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
 					
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -191,6 +192,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['rssfeedinlinecount'] = 1;
 					$options['beforerss'] = '';
 					$options['afterrss'] = '';
+					$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -232,7 +234,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				}
 				
-				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon') as $option_name) {
+				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -407,6 +409,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['rssfeedinlinecount'] = 1;
 					$options['beforerss'] = '';
 					$options['afterrss'] = '';
+					$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
 
 					update_option($settingsname,$options);
 				}	
@@ -845,7 +848,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td>
 							<input type="text" id="afterrss" name="afterrss" size="40" value="<?php echo $options['afterrss']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
 						</td>
-					</tr>						
+					</tr>					
 					<tr>
 						<th scope="row" valign="top">
 							<label for="show_rss">Show RSS Link using Text</label>
@@ -862,6 +865,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="checkbox" id="show_rss_icon" name="show_rss_icon" <?php if ($options['show_rss_icon']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>	
+					<tr>
+						<th scope="row" valign="top">
+							<label for="rsscachedir">RSS Cache Directory (used for RSS Preview and RSS Inline Articles below). Must have write access to directory.</label>
+						</th>
+						<td>
+							<input type="text" id="rsscachedir" name="rsscachedir" size="80" value="<?php if ($options['rsscachedir'] == '') echo ABSPATH . 'wp-content/cache/link-library'; else echo $options['rsscachedir']; ?>" style="font-family: 'Courier New', Courier, mono; font-size: 1.5em;"/>
+						</td>
+					</tr>					
 					<tr>
 						<th scope="row" valign="top">
 							<label for="rsspreview">Show RSS Preview Link</label>
@@ -1082,7 +1093,7 @@ function get_links_notes($category = '', $before = '', $after = '<br />',
 				   $beforedesc = '', $afterdesc = '', $beforelink = '', $afterlink = '', $show_rss_icon = false,
 				   $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '', $showadmineditlinks = true,
 				   $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false, $rssfeedinlinecount = 1,
-				   $beforerss = '', $afterrss = '') {
+				   $beforerss = '', $afterrss = '', $rsscachedir = '') {
 				   
 	global $wpdb;
 	
@@ -1117,7 +1128,9 @@ $llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/
 		$feed->set_item_limit($rssfeedinlinecount);
 		
 		$feed->enable_cache(true);
-		$feed->set_cache_location('/home/amcyel/public_html/yannickcorner/wp-content/cache/link-library');
+		if ($rsscachedir == '')
+			$rsscachedir = ABSPATH . 'wp-content/cache/link-library';
+		$feed->set_cache_location($rsscachedir);
 		
 		$feed->set_stupidly_fast(true);
 		
@@ -1329,7 +1342,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false,
-								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '') {
+								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
+								$rsscachedir = '') {
 
 	if ( !defined('WP_CONTENT_URL') )
 		define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
@@ -1511,7 +1525,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$rssfeedinlinecontent,
 					$rssfeedinlinecount,
 					$beforerss,
-					$afterrss);
+					$afterrss,
+					$rsscachedir);
 					
 				$output .= $linklist;
 								
@@ -1603,6 +1618,7 @@ if ($options == "") {
 		$options['rssfeedinlinecount'] = 1;
 		$options['beforerss'] = '';
 		$options['aftertss'] = '';
+		$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
 		
 		update_option('LinkLibraryPP1',$options);
 	}
@@ -1727,6 +1743,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   rssfeedinlinecount (default 1) - Number of RSS feed items to show inline
  *   beforerss (default null) - String to output before RSS block
  *   afterrss (default null) - String to output after RSS block
+ *   rsscachedir (default null) - Path for SimplePie library to store RSS cache information
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -1741,7 +1758,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
-								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '') {
+								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir) {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -1767,7 +1784,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['show_rss_icon'], $options['linkaddfrequency'], $options['addbeforelink'], $options['addafterlink'],
 								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'], $options['showonecatonly'],
 								  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
-								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss']);
+								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
+								  $options['rsscachedir']);
 	
 	}
 	else
@@ -1779,7 +1797,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
 								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
-								$beforerss, $afterrss);
+								$beforerss, $afterrss, $rsscachedir);
 
 }
 
@@ -1880,7 +1898,7 @@ function link_library_func($atts) {
 								  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'],
 								  $options['showonecatonly'], '', $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], 
 								  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
-								  $options['beforerss'], $options['afterrss']);
+								  $options['beforerss'], $options['afterrss'], $options['rsscachedir']);
 }
 
 function link_library_header() {

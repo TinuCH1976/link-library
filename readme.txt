@@ -77,6 +77,9 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+= 2.3.1 =
+* Added configuration field to specify RSS library cache directory. Had been hard-coded by error in version 2.3
+
 = 2.3 =
 * Added messages in admin panel to show that data is saved or potential errors.
 * Added new ability to show RSS feed previews in a preview box or inline with links.
