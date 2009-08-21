@@ -12,5 +12,5 @@
 	
 	echo LinkLibrary($settingsname, 'obsolete', true, false, false, false, false, '', false, false, false, false, '<br />', false, 
 					'', '', '<li>', '</li>', '', '', false, '', '', false, '', '', '', 1, '', '', '', false, 'linklistcatname', false,
-					0, '', '', '', false, true, false, $catID);		
+					0, '', '', '', false, true, false, $catID, '', false, 3, false, false, 1, '', '', "");		
 ?>

@@ -77,6 +77,9 @@ For legacy users, please see the Other Notes section for usage information.
 
 == Changelog ==
 
+= 2.3.3 =
+* Fixed bug with AJAX mode to display one category at a time
+
 = 2.3.2 =
 * Fixed bug with RSS feeds which tried to load RSS feeds even if no feed address was specified
 
