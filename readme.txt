@@ -20,7 +20,7 @@ For links that carry RSS feed information, Link Library can display a preview of
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for up to five different configurations to be created to display links on different pages of a Wordpress site. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
 You can see a few examples of pages using Link Library on my personal site:<br/>
-- [Library in table form](http://yannickcorner.nayanna.biz/freeware-database/)<br/>
+- [Library in table form with search box](http://yannickcorner.nayanna.biz/freeware-database/)<br/>
 - [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)<br/>
 - [Library in unordered list form with RSS feed icons and Pagination](http://yannickcorner.nayanna.biz/links-page-with-pagination/)<br/>
 - [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)<br/>
@@ -52,6 +52,9 @@ To get a basic Link Library list showing on one of your Wordpress pages:<br/>
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 2.5.1 =
+* Fixed bug with One Category at a time mode if no default category is set
 
 = 2.5 =
 * Redesigned administration panel
@@ -261,4 +264,5 @@ Here would be the installation procedure:
 == Screenshots ==
 
 1. The Settings Panel used to configure the output of Link Library
-2. A sample output page, displaying a list of categories and the links for all categories.
+2. A sample output page, displaying a list of categories and the links for all categories in a table form.
+2. A second sample output showing a list of links with RSS feed icons and RSS preview link.

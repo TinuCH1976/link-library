@@ -1344,12 +1344,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		{
 			$output .= "<div class='resulttitle'>Search Results for '" . $_GET['searchll'] . "'</div>";
 		}
-
-				
-		/* if ($showonecatonly)
-		{
-			$catnames = array($catnames[0]);		
-		} */
 		
 		$currentcategoryid = -1;
 		
@@ -1357,6 +1351,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	
 			if ($currentcategoryid != $linkitem->term_id)
 			{
+				if ($currentcategoryid != -1 && $showonecatonly)
+				{
+					break;
+				}
 				if ($currentcategoryid != -1)
 				{
 					// Close the last category
