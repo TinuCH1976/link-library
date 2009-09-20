@@ -1,3 +1,5 @@
+.linktable {margin-top: 15px}
+
 table.linklisttable {
 	width:100%; 
 	border-width: 0px 0px 0px 0px;
@@ -62,3 +64,13 @@ text-decoration: none;text-align: left;text-indent: 0px;max-width:500px;}
 }
 
 .rsselements {float: right;}
+
+.highlight_word {background-color: #FFFF00}
+
+.previouspage {float:left;margin-top:10px;font-weight:bold}
+
+.nextpage {float: right;margin-top:10px;font-weight:bold}
+
+.resulttitle {padding-top:10px;}
+
+#llsearch {padding-top:10px;}

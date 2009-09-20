@@ -1,14 +1,17 @@
 === Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
-Tags: link, list, page, library, AJAX, RSS, feeds, inline
+Tags: link, list, page, library, AJAX, RSS, feeds, inline, search, paging
 Requires at least: 2.7
-Tested up to: 2.8.3
+Tested up to: 2.8.4
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
 
 == Description ==
+
+** New to version 2.5: The Configuration Panel is now under the Settings section of the Wordpress Admin. **
+** Version 2.5 also adds the ability to search through your links and to display results using pagination **
 
 This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX queries to load other categories based on user input.
 
@@ -19,6 +22,7 @@ The latest version of this plugin has been completely re-vamped to use the filte
 You can see a few examples of pages using Link Library on my personal site:<br/>
 - [Library in table form](http://yannickcorner.nayanna.biz/freeware-database/)<br/>
 - [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)<br/>
+- [Library in unordered list form with RSS feed icons and Pagination](http://yannickcorner.nayanna.biz/links-page-with-pagination/)<br/>
 - [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)<br/>
 - [Library in unordered list form with 1 full RSS item per feed inline and 5 RSS item full previews when selecting preview icon](http://yannickcorner.nayanna.biz/links-page-with-preview/)<br/>
 
@@ -34,48 +38,26 @@ All pages are generated using different configurations all managed by Link Libra
 1. Download the plugin
 1. Upload link-library.php to the /wp-content/plugins/ directory
 1. Activate the plugin in the Wordpress Admin
-1. Configure the desired output in the Link Library plugin configuration page.
-1. In the Wordpress Admin, create a new page containing the following codes, where # should be replaced by the Settings Set number:<br/>
+
+To get a basic Link Library list showing on one of your Wordpress pages:<br/>
+1. In the Wordpress Admin, create a new page and type the following text, where # should be replaced by the Settings Set number:<br/>
+   [link-library settings=#]
+   
+1. To add a list of categories to jump to a certain point in the list, add the following text to your page:<br/>
    [link-library-cats settings=#]<br/>
-   [link-library settings = #]
-
-To override the settings specified inside of the plugin settings page, the two commands can be called with options. Here is the syntax to call these options:
-
-[link-library-cats categorylistoverride="28"]
-
-Overrides the list of categories to be displayed in the category list
-
-[link-library-cats excludecategoryoverride="28"]
-
-Overrides the list of categories to be excluded in the category list
-
-[link-library categorylistoverride="28"]
-
-Overrides the list of categories to be displayed in the link list
-
-[link-library excludecategoryoverride="28"]
-
-Overrides the list of categories to be excluded in the link list
-
-[link-library notesoverride=0]
-
-Set to 0 or 1 to display or not display link notes
-
-[link-library descoverride=0]
-
-Set to 0 or 1 to display or not display link descriptions
-
-[link-library rssoverride=0]
-
-Set to 0 or 1 to display or not display rss information
-
-[link-library tableoverride=0]
-
-Set to 0 or 1 to display links in an unordered list or a table.
-
-For legacy users, please see the Other Notes section for usage information.
+   
+1. To add a search box to your Link Library list, add the following text to your page:<br/>
+   [link-library-search]
+   
+Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 2.5 =
+* Redesigned administration panel
+* Moved configuration settings under Settings section in Wordpress admin
+* Added new ability to display search box and highlight keywords in results
+* Added new ability to limit number of results per page and add links to navigate between pages
 
 = 2.3.3 =
 * Fixed bug with AJAX mode to display one category at a time
@@ -146,6 +128,42 @@ For legacy users, please see the Other Notes section for usage information.
 * This allows for more flexibility in formatting the element using your blog’s stylesheet.
 
 == Frequently Asked Questions ==
+
+= How can I override some of the options when using shortcodes in my pages =
+
+To override the settings specified inside of the plugin settings page, the two commands can be called with options. Here is the syntax to call these options:
+
+[link-library-cats categorylistoverride="28"]
+
+Overrides the list of categories to be displayed in the category list
+
+[link-library-cats excludecategoryoverride="28"]
+
+Overrides the list of categories to be excluded in the category list
+
+[link-library categorylistoverride="28"]
+
+Overrides the list of categories to be displayed in the link list
+
+[link-library excludecategoryoverride="28"]
+
+Overrides the list of categories to be excluded in the link list
+
+[link-library notesoverride=0]
+
+Set to 0 or 1 to display or not display link notes
+
+[link-library descoverride=0]
+
+Set to 0 or 1 to display or not display link descriptions
+
+[link-library rssoverride=0]
+
+Set to 0 or 1 to display or not display rss information
+
+[link-library tableoverride=0]
+
+Set to 0 or 1 to display links in an unordered list or a table.
 
 = Can Link Library be used as before by calling PHP functions? =
 
