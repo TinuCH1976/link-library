@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.2 = 
+* Bug fix to make Link Library accessible from Plugins Page
+* Corrected path to jquery plugin
+
 = 2.5.1 =
 * Fixed bug with One Category at a time mode if no default category is set
 

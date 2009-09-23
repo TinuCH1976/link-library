@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5
+Version: 2.5.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -64,7 +64,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			if ( ! $this_plugin ) $this_plugin = plugin_basename(__FILE__);
 
 			if ( $file == $this_plugin ){
-				$settings_link = '<a href="plugins.php?page=link-library.php">' . __('Settings') . '</a>';
+				$settings_link = '<a href="options-general.php?page=link-library.php">' . __('Settings') . '</a>';
 				array_unshift( $links, $settings_link ); // before other links
 			}
 			return $links;
@@ -502,18 +502,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
-							Categories to be displayed
+						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
+							Categories to be displayed (Empty=All)
 						</td>
-						<td tooltip="Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
+						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
 							<input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>"/>
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 5,34,43">
+						<td tooltip="Enter list of comma-separated<br />numeric category IDs that should not be shown<br /><br />For example: 5,34,43">
 							Categories to be excluded
 						</td>
-						<td tooltip="Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 5,34,43">
+						<td tooltip="Enter list of comma-separated<br />numeric category IDs that should not be shown<br /><br />For example: 5,34,43">
 							<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>"/>
 						</td>
 					</tr>
@@ -2102,7 +2102,7 @@ function link_library_header() {
 
 function link_library_init() {
 	wp_enqueue_script('thickbox', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/thickbox/thickbox.js');
-	wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/weekly-schedule/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
+	wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
 }  
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
