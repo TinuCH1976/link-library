@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.2
+Version: 2.5.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -135,7 +135,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linkorder'] = 'name';
 					$options['pagination'] = false;
 					$options['linksperpage'] = 5;
-					$options['showcategorynames'] = true;
+					$options['hidecategorynames'] = false;
 					
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -204,7 +204,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linkorder'] = 'name';
 					$options['pagination'] = false;
 					$options['linksperpage'] = 5;
-					$options['showcategorynames'] = true;
+					$options['hidecategorynames'] = false;
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -256,7 +256,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-								'pagination', 'showcategorynames') as $option_name) {
+								'pagination', 'hidecategorynames') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -772,10 +772,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>
 						<td>
-							Show Category Names
+							Hide Category Names
 						</td>
 						<td>
-							<input type="checkbox" id="showcategorynames" name="showcategorynames" <?php if ($options['showcategorynames'] == true || $options['showcategorynames'] == '') echo ' checked="checked" '; ?>/>
+							<input type="checkbox" id="hidecategorynames" name="hidecategorynames" <?php if ($options['hidecategorynames'] == true) echo ' checked="checked" '; ?>/>
 						</td>
 						<td></td>
 						<td>
@@ -1081,7 +1081,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 			
 		$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
 		$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
-		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist').replaceWith(data);initTree();jQuery('#contentLoading').toggle();});\n";
+		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);initTree();jQuery('#contentLoading').toggle();});\n";
 		$output .= "}\n";
 			
 		$output .= "</SCRIPT>\n\n";
@@ -1222,7 +1222,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false,
 								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
 								$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
-								$pagination = false, $linksperpage = 5, $showcategorynames = true) {
+								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '') {
 								
 	global $wpdb;
 
@@ -1274,7 +1274,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$linkquery .= " OR link_name like '%" . $searchterm . "%' ";
 				}
 				
-				if ($showcategorynames)
+				if ($hidecategorynames == false)
 					$linkquery .= " OR name like '%" . $searchterm . "%' ";
 				if ($shownotes)
 					$linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
@@ -1338,7 +1338,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 
     // Display links
 	if ($linkitems) {
-		$output .= "<div id='linklist' class='linklist'>\n";
+		$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
 		
 		if ($mode == "search")
 		{
@@ -1408,7 +1408,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				}
 
 				// Display the category name
-				if ($showcategorynames == true || $showcategorynames == "")
+				if ($hidecategorynames == false || $hidecategorynames == "")
 				{
 					if ($catanchor)
 						$cattext = '<div id="' . $linkitem->slug . '">';
@@ -1794,7 +1794,7 @@ if ($options == "") {
 		$options['linkorder'] = 'name';
 		$options['pagination'] = false;
 		$options['linksperpage'] = 5;
-		$options['showcategorynames'] = true;
+		$options['hidecategorynames'] = false;
 		
 		update_option('LinkLibraryPP1',$options);
 	}
@@ -1925,7 +1925,8 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   linkorder (default 'name') - Sort order for Links within each category
  *   pagination (default false) - Limit number of links displayed per page
  *   linksperpage (default 5) - Number of links to be shown per page in Pagination Mode
- *   showcategorynames (default true) - Show category names in Link Library list
+ *   hidecategorynames (default false) - Show category names in Link Library list
+ *   settings (default NULL) - Setting Set ID
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -1941,20 +1942,36 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
-								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $showcategorynames = true) {
+								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
+								$settings = '') {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
 		if ($order == 'AdminSettings1')
+		{
 			$options = get_option('LinkLibraryPP1');
+			$settings = 1;
+		}
 		else if ($order == 'AdminSettings2')
+		{
 			$options = get_option('LinkLibraryPP2');
+			$settings = 2;
+		}
 		else if ($order == 'AdminSettings3')
+		{
 			$options = get_option('LinkLibraryPP3');			
+			$settings = 3;
+		}
 		else if ($order == 'AdminSettings4')
+		{
 			$options = get_option('LinkLibraryPP4');			
+			$settings = 4;
+		}
 		else if ($order == 'AdminSettings5')
+		{
 			$options = get_option('LinkLibraryPP5');			
+			$settings = 5;
+		}
 
 		return PrivateLinkLibrary($options['order'], TRUE, $options['catanchor'], $options['showdescription'], $options['shownotes'],
 								  $options['showrating'], $options['showupdated'], $options['categorylist'], $options['show_images'],
@@ -1969,7 +1986,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
 								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
-								  $options['pagination'], $options['linksperpage'], $options['showcategorynames']);
+								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings);
 	
 	}
 	else
@@ -1982,7 +1999,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
-								$pagination, $linksperpage, $showcategorynames);
+								$pagination, $linksperpage, $hidecategorynames, $settings);
 
 }
 
@@ -2092,7 +2109,7 @@ function link_library_func($atts) {
 								  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
 								  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
-								  $options['showcategorynames']);
+								  $options['hidecategorynames'], $settings);
 }
 
 function link_library_header() {
