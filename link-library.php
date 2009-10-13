@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.3
+Version: 2.5.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -231,8 +231,21 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$settingsname = 'LinkLibraryPP' . $settings;
 				$options = delete_option($settingsname);
 				$settings = 1;
+			}			
+			if (isset($_POST['submitgen']))
+			{
+				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.'));
+				check_admin_referer('linklibrarypp-config');
+				
+				foreach (array('stylesheet') as $option_name) {
+					if (isset($_POST[$option_name])) {
+						$genoptions[$option_name] = $_POST[$option_name];
+					}
+				}
+				
+				update_option('LinkLibraryGeneral', $genoptions);
+				
 			}
-
 			if ( isset($_POST['submit1']) || isset($_POST['submit2']) || isset($_POST['submit3']) || isset($_POST['submit4']) || isset($_POST['submit5'])) {
 				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.'));
 				check_admin_referer('linklibrarypp-config');
@@ -365,76 +378,83 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			{
 				$settingsname = 'LinkLibraryPP' . $settings;
 				$options = get_option($settingsname);
-				
-				if ($options == "")
-				{
-					$options['order'] = 'name';
-					$options['hide_if_empty'] = true;
-					$options['table_width'] = 100;
-					$options['num_columns'] = 1;
-					$options['catanchor'] = true;
-					$options['flatlist'] = false;
-					$options['categorylist'] = null;
-					$options['excludecategorylist'] = null;
-					$options['showdescription'] = false;
-					$options['shownotes'] = false;
-					$options['showrating'] = false;
-					$options['showupdated'] = false;
-					$options['show_images'] = false;
-					$options['show_image_and_name'] = false;
-					$options['use_html_tags'] = false;
-					$options['show_rss'] = false;
-					$options['beforenote'] = '<br />';
-					$options['afternote'] = '';
-					$options['nofollow'] = false;
-					$options['beforeitem'] = '<li>';
-					$options['afteritem'] = '</li>';
-					$options['beforedesc'] = '';
-					$options['afterdesc'] = '';
-					$options['displayastable'] = false;
-					$options['beforelink'] = '';
-					$options['afterlink'] = '';
-					$options['showcolumnheaders'] = false;
-					$options['linkheader'] = '';
-					$options['descheader'] = '';
-					$options['notesheader'] = '';
-					$options['catlistwrappers'] = 1;
-					$options['beforecatlist1'] = '';
-					$options['beforecatlist2'] = '';
-					$options['beforecatlist3'] = '';
-					$options['divorheader'] = false;
-					$options['catnameoutput'] = 'linklistcatname';
-					$options['show_rss_icon'] = false;
-					$options['linkaddfrequency'] = 0;
-					$options['addbeforelink'] = '';
-					$options['addafterlink'] = '';	
-					$options['linktarget'] = '';
-					$options['showcategorydescheaders'] = false;
-					$options['showcategorydesclinks'] = false;
-					$options['settingssetname'] = 'Default';
-					$options['showadmineditlinks'] = true;
-					$options['showonecatonly'] = false;
-					$options['loadingicon'] = '/icons/Ajax-loader.gif';
-					$options['defaultsinglecat'] = '';
-					$options['rsspreview'] = false;
-					$options['rsspreviewcount'] = 3;
-					$options['rssfeedinline'] = false;
-					$options['rssfeedinlinecontent'] = false;
-					$options['rssfeedinlinecount'] = 1;
-					$options['beforerss'] = '';
-					$options['afterrss'] = '';
-					$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
-					$options['direction'] = 'ASC';
-					$options['linkdirection'] = 'ASC';
-					$options['linkorder'] = 'name';
-					$options['pagination'] = false;
-					$options['linksperpage'] = 5;
-
-					update_option($settingsname,$options);
-				}	
-				
 			}
-					
+				
+			if ($options == "")
+			{
+				$options['order'] = 'name';
+				$options['hide_if_empty'] = true;
+				$options['table_width'] = 100;
+				$options['num_columns'] = 1;
+				$options['catanchor'] = true;
+				$options['flatlist'] = false;
+				$options['categorylist'] = null;
+				$options['excludecategorylist'] = null;
+				$options['showdescription'] = false;
+				$options['shownotes'] = false;
+				$options['showrating'] = false;
+				$options['showupdated'] = false;
+				$options['show_images'] = false;
+				$options['show_image_and_name'] = false;
+				$options['use_html_tags'] = false;
+				$options['show_rss'] = false;
+				$options['beforenote'] = '<br />';
+				$options['afternote'] = '';
+				$options['nofollow'] = false;
+				$options['beforeitem'] = '<li>';
+				$options['afteritem'] = '</li>';
+				$options['beforedesc'] = '';
+				$options['afterdesc'] = '';
+				$options['displayastable'] = false;
+				$options['beforelink'] = '';
+				$options['afterlink'] = '';
+				$options['showcolumnheaders'] = false;
+				$options['linkheader'] = '';
+				$options['descheader'] = '';
+				$options['notesheader'] = '';
+				$options['catlistwrappers'] = 1;
+				$options['beforecatlist1'] = '';
+				$options['beforecatlist2'] = '';
+				$options['beforecatlist3'] = '';
+				$options['divorheader'] = false;
+				$options['catnameoutput'] = 'linklistcatname';
+				$options['show_rss_icon'] = false;
+				$options['linkaddfrequency'] = 0;
+				$options['addbeforelink'] = '';
+				$options['addafterlink'] = '';	
+				$options['linktarget'] = '';
+				$options['showcategorydescheaders'] = false;
+				$options['showcategorydesclinks'] = false;
+				$options['settingssetname'] = 'Default';
+				$options['showadmineditlinks'] = true;
+				$options['showonecatonly'] = false;
+				$options['loadingicon'] = '/icons/Ajax-loader.gif';
+				$options['defaultsinglecat'] = '';
+				$options['rsspreview'] = false;
+				$options['rsspreviewcount'] = 3;
+				$options['rssfeedinline'] = false;
+				$options['rssfeedinlinecontent'] = false;
+				$options['rssfeedinlinecount'] = 1;
+				$options['beforerss'] = '';
+				$options['afterrss'] = '';
+				$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
+				$options['direction'] = 'ASC';
+				$options['linkdirection'] = 'ASC';
+				$options['linkorder'] = 'name';
+				$options['pagination'] = false;
+				$options['linksperpage'] = 5;
+
+				update_option($settingsname,$options);
+			}	
+			
+			$genoptions = get_option('LinkLibraryGeneral');
+				
+			if ($genoptions == "")
+			{
+				$genoptions['stylesheet'] = 'stylesheet.css';
+				update_option('LinkLibraryGeneral', $genoptions);
+			}
+				
 			$options1 = get_option('LinkLibraryPP1');
 			$options2 = get_option('LinkLibraryPP2');
 			$options3 = get_option('LinkLibraryPP3');
@@ -444,6 +464,25 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
 				Help: <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>Frequently Asked Questions (FAQ)</a> | Help is also available as tooltips on fields | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
+				
+				
+				<form name='lladmingenform' action="" method="post" id="ll-conf">
+				<?php
+				if ( function_exists('wp_nonce_field') )
+						wp_nonce_field('linklibrarypp-config');
+					?>
+				<fieldset style='border:1px solid #CCC;padding:10px'>
+				<legend tooltip='These apply to all Settings Sets' style='padding: 0 5px 0 5px;'><strong>General Settings <span style="border:0;padding-left: 15px;" class="submit"><input type="submit" name="submitgen" value="Update General Settings &raquo;" /></span></strong></legend>
+				<table>
+				<tr>
+				<td style='width:200px'>Stylesheet File Name</td>
+				<td><input type="text" id="stylesheet" name="stylesheet" size="40" value="<?php echo $genoptions['stylesheet']; ?>"/></td>
+				</tr>
+				</table>
+				</fieldset>
+				<br />
+				</form><br />
+				
 				<form name="lladminform" action="" method="post" id="analytics-conf">
 				<?php
 					if ( function_exists('wp_nonce_field') )
@@ -1032,6 +1071,23 @@ jQuery(document).ready(function()
 	});
 	
 		jQuery('#lladmin th[tooltip]').each(function()
+		{
+		jQuery(this).qtip({
+			content: jQuery(this).attr('tooltip'), // Use the tooltip attribute of the element for the content
+			style: {
+				width: 300,
+				name: 'cream', // Give it a crea mstyle to make it stand out
+			},
+			position: {
+				corner: {
+					target: 'bottomLeft',
+					tooltip: 'topLeft'
+				}
+			}
+		});
+	});
+	
+			jQuery('#lladmin legend[tooltip]').each(function()
 		{
 		jQuery(this).qtip({
 			content: jQuery(this).attr('tooltip'), // Use the tooltip attribute of the element for the content
@@ -1797,6 +1853,10 @@ if ($options == "") {
 		$options['hidecategorynames'] = false;
 		
 		update_option('LinkLibraryPP1',$options);
+		
+		$genoptions['stylesheet'] = 'stylesheet.css';
+		
+		update_option('LinkLibraryGeneral', $genoptions);
 	}
 } 
 else
@@ -2113,7 +2173,12 @@ function link_library_func($atts) {
 }
 
 function link_library_header() {
-	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/stylesheet.css"/>';	
+	$genoptions = get_option('LinkLibraryGeneral');
+	
+	if ($genoptions == "")
+		$genoptions['stylesheet'] = 'stylesheet.css';
+		
+	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/' . $genoptions['stylesheet'] . '"/>';	
 	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/thickbox/thickbox.css"/>';
 }
 

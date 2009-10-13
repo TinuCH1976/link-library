@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.4 =
+* Added new general options section for settings that apply to all configuration
+* Added field to specify custom stylesheet name to avoid getting your settings overridden with each update
+
 = 2.5.3 =
 * Corrects bug in Ajax mode (display one category at a time) when two instances of Link Library are displayed on the same page
 * Corrects bug in admin page for new option to show/hide category names. Also renamed from Show Category Names to Hide Category Names
