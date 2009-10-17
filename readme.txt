@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.5 =
+* Corrected bug with Show Edit Links option in admin panel
+* Fixed issue with AJAX mode (Show one category at a time) where page would always go back to top when clicking on category links
+
 = 2.5.4 =
 * Added new general options section for settings that apply to all configuration
 * Added field to specify custom stylesheet name to avoid getting your settings overridden with each update

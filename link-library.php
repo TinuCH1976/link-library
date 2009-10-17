@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.4
+Version: 2.5.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -971,7 +971,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							Show edit links when logged in as editor or administrator
 						</td>
 						<td style='width=75px;padding:0px 20px 0px 20px'>
-							<input type="checkbox" id="showadmineditlinks" name="showadmineditlinks" <?php if ($options['showadmineditlinks'] || $options['showadmineditlinks'] == '') echo ' checked="checked" '; ?>/>
+							<input type="checkbox" id="showadmineditlinks" name="showadmineditlinks" <?php if ($options['showadmineditlinks']) echo ' checked="checked" '; ?>/>
 						</td>
 						<td></td>
 						<td></td>
@@ -1196,7 +1196,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 					$catfront = '	<li>';
 					
 				if ($showonecatonly)
-					$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "');\" >";
+					$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "');return false;\" >";
 				else if ($catanchor)
 					$cattext = '<a href="#' . $catname->category_nicename . '">';
 				else
@@ -1651,7 +1651,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 			
 			$output .= '</a>';
 			
-			if (($showadmineditlinks || $showadmineditlinks == '') && current_user_can("manage_links")) {
+			if (($showadmineditlinks) && current_user_can("manage_links")) {
 				$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
 			}
 			
