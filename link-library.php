@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.5
+Version: 2.5.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1137,7 +1137,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 			
 		$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
 		$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
-		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);initTree();jQuery('#contentLoading').toggle();});\n";
+		$output .= "\tjQuery(’#contentLoading’).toggle();jQuery.get(’” . WP_PLUGIN_URL . “/link-library/link-library-ajax.php’, map, function(data){jQuery(’#linklist” . $settings. “‘).replaceWith(data);jQuery(’#contentLoading’).toggle();initTree();});\n";
 		$output .= "}\n";
 			
 		$output .= "</SCRIPT>\n\n";
@@ -1668,15 +1668,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
 			}
 			
-			if ($showdescription && ($desc != ''))
+			if ($showdescription)
 				$output .= $between . $beforedesc . $desc . $afterdesc;
 
-			if (!$shownotes || ($descnotes == '')) {
-				$output .= $beforenote . $between . $afternote;
-			}
-
-			if ($shownotes && ($descnotes != '')) {
-				$output .= $beforenote . $between . $descnotes . $afternote;
+			if ($shownotes) {
+				$output .= $between . $beforenote . $descnotes . $afternote;
 			}
 			if ($show_rss || $show_rss_icon || $rsspreview)
 				$output .= $beforerss . '<div class="rsselements">';
@@ -1777,6 +1773,38 @@ function PrivateLinkLibrarySearchForm() {
 	$output .= "</div>\n";
 	$output .= "</form>\n\n";
 	
+	return $output;
+}
+
+function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '') {
+
+	$output = "<form method='post' id='lladdlink'>\n";
+	$output .= "<div class='lladdlink'>\n";
+	$output .= "<div>Add new link</div>\n";
+	$output .= "<table>\n";
+	$output .= "<tr><td class='lladdlinkheader'>Link Name</td><td><input type='text' name='linkname' id='linkname' /></td></tr><br />\n";
+	$output .= "<tr><td>Link Address</td><td><input type='text' name='linkaddress' id='linkaddress' /></td></tr><br />\n";
+	$output .= "<tr><td>Link RSS</td><td><input type='text' name='linkrss' id='linkrss' /></td></tr><br />\n";
+	
+	$linkcats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
+	
+	if ($linkcats)
+	{
+		$output .= "<tr><td>Link Category</td><td><SELECT name='linkcategory' id='linkcategory'>";
+		foreach ($linkcats as $linkcat)
+		{
+			$output .= "<OPTION VALUE='" . $linkcat->category_nicename . "'>" . $linkcat->category_nicename;
+		}
+		
+		$output .= "</SELECT></td></tr>";
+	}
+	
+	$output .= "<tr><td>Link Description</td><td><input type='text' name='linkdesc' id='linkdesc' /></td></tr><br />\n";
+	$output .= "<tr><td>Link Notes</td><td><input type='text' name='linknotes' id='linknotes' /></td></tr><br />\n";
+	$output .= "</table>\n";
+	$output .= "</div>\n";
+	$output .= "</form>\n\n";
+
 	return $output;
 }
 
@@ -2105,6 +2133,34 @@ function link_library_search_func($atts) {
 	return PrivateLinkLibrarySearchForm();
 }
 
+function link_library_addlink_func($atts) {
+	extract(shortcode_atts(array(
+		'settings' => '',
+		'categorylistoverride' => '',
+		'excludecategoryoverride' => ''
+	), $atts));
+	
+	if ($settings == '')
+		$options = get_option('LinkLibraryPP1');
+	else
+	{
+		$settingsname = 'LinkLibraryPP' . $settings;
+		$options = get_option($settingsname);
+	}
+	
+	if ($categorylistoverride != '')
+		$selectedcategorylist = $categorylistoverride;
+	else
+		$selectedcategorylist = $options['categorylist'];
+		
+	if ($excludecategoryoverride != '')
+		$excludedcategorylist = $excludecategoryoverride;
+	else
+		$excludedcategorylist = $options['excludecategorylist'];
+	
+	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist);	
+}
+
 
 function link_library_func($atts) {
 	extract(shortcode_atts(array(
@@ -2190,6 +2246,8 @@ function link_library_init() {
 add_shortcode('link-library-cats', 'link_library_cats_func');
 
 add_shortcode('link-library-search', 'link_library_search_func');
+
+add_shortcode('link-library-addlink', 'link_library_addlink_func');
 
 add_shortcode('link-library', 'link_library_func');
 

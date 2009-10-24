@@ -3,7 +3,7 @@ Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
 Tags: link, list, page, library, AJAX, RSS, feeds, inline, search, paging
 Requires at least: 2.7
-Tested up to: 2.8.4
+Tested up to: 2.8.5
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -52,6 +52,10 @@ To get a basic Link Library list showing on one of your Wordpress pages:<br/>
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 2.5.6 =
+* Corrected bug with Ajax loading icon not disappearing after data is loaded
+* Added fix so that the notes and description outout can be correctly hidden if desired.
 
 = 2.5.5 =
 * Corrected bug with Show Edit Links option in admin panel
