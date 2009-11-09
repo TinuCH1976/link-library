@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.6
+Version: 2.5.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1137,7 +1137,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 			
 		$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
 		$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
-		$output .= "\tjQuery(’#contentLoading’).toggle();jQuery.get(’” . WP_PLUGIN_URL . “/link-library/link-library-ajax.php’, map, function(data){jQuery(’#linklist” . $settings. “‘).replaceWith(data);jQuery(’#contentLoading’).toggle();initTree();});\n";
+		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
 		$output .= "}\n";
 			
 		$output .= "</SCRIPT>\n\n";

@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.7 =
+* Corrected bug with bad quote in Ajax statement which prevented that mode from working correctly.
+
 = 2.5.6 =
 * Corrected bug with Ajax loading icon not disappearing after data is loaded
 * Added fix so that the notes and description outout can be correctly hidden if desired.
