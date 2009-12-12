@@ -54,7 +54,7 @@ Further configuration is available under the Link Library Settings panel.
 == Changelog ==
 
 = 2.5.7 =
-* Corrected bug with bad quote in Ajax statement which prevented that mode from working correctly.
+* Modified search and pagination features to work with Permalinks config set to Default
 
 = 2.5.6 =
 * Corrected bug with Ajax loading icon not disappearing after data is loaded

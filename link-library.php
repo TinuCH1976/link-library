@@ -34,6 +34,8 @@ License at http://www.gnu.org/copyleft/gpl.html
 I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 */
 
+require_once(ABSPATH . 'wp-admin/includes/bookmark.php');
+
 define('LLDIR', dirname(__FILE__) . '/');                
 
 if ( ! class_exists( 'LL_Admin' ) ) {
@@ -1742,10 +1744,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 			$nextpagenumber = $pagenumber + 1;
 			
 			if ($pagenumber > 1)
-				$output .= "<div class='previouspage'><a href='?page=" . $previouspagenumber . "'>&laquo; Page " . $previouspagenumber . "</a></div>";
+				$output .= "<div class='previouspage'><a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>&laquo; Page " . $previouspagenumber . "</a></div>";
 			
 			if ($nextpage)
-				$output .= "<div class='nextpage'><a href='?page=" . $nextpagenumber . "'>Page " . $nextpagenumber . " &raquo;</a></div>";
+				$output .= "<div class='nextpage'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Page " . $nextpagenumber . " &raquo;</a></div>";
 			
 		}
 		
@@ -1769,6 +1771,7 @@ function PrivateLinkLibrarySearchForm() {
 	$output = "<form method='get' id='llsearch'>\n";
 	$output .= "<div>\n";
 	$output .= "<input type='text' onfocus=\"this.value=''\" value='Search...' name='searchll' id='searchll' />\n";
+	$output .= "<input type='hidden' value='" .  get_the_ID() . "' name='page_id' id='page_id' />\n";
 	$output .= "<input type='submit' value='Search' />\n";
 	$output .= "</div>\n";
 	$output .= "</form>\n\n";
@@ -1782,26 +1785,27 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 	$output .= "<div class='lladdlink'>\n";
 	$output .= "<div>Add new link</div>\n";
 	$output .= "<table>\n";
-	$output .= "<tr><td class='lladdlinkheader'>Link Name</td><td><input type='text' name='linkname' id='linkname' /></td></tr><br />\n";
-	$output .= "<tr><td>Link Address</td><td><input type='text' name='linkaddress' id='linkaddress' /></td></tr><br />\n";
-	$output .= "<tr><td>Link RSS</td><td><input type='text' name='linkrss' id='linkrss' /></td></tr><br />\n";
+	$output .= "<tr><td class='lladdlinkheader'>Link Name</td><td><input type='text' name='link_name' id='link_name' /></td></tr><br />\n";
+	$output .= "<tr><td>Link Address</td><td><input type='text' name='link_url' id='link_url' /></td></tr><br />\n";
+	$output .= "<tr><td>Link RSS</td><td><input type='text' name='link_rss' id='link_rss' /></td></tr><br />\n";
 	
 	$linkcats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
 	
 	if ($linkcats)
 	{
-		$output .= "<tr><td>Link Category</td><td><SELECT name='linkcategory' id='linkcategory'>";
+		$output .= "<tr><td>Link Category</td><td><SELECT name='link_category' id='link_category'>";
 		foreach ($linkcats as $linkcat)
 		{
-			$output .= "<OPTION VALUE='" . $linkcat->category_nicename . "'>" . $linkcat->category_nicename;
+			$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->category_nicename;
 		}
 		
 		$output .= "</SELECT></td></tr>";
 	}
 	
-	$output .= "<tr><td>Link Description</td><td><input type='text' name='linkdesc' id='linkdesc' /></td></tr><br />\n";
-	$output .= "<tr><td>Link Notes</td><td><input type='text' name='linknotes' id='linknotes' /></td></tr><br />\n";
+	$output .= "<tr><td>Link Description</td><td><input type='text' name='link_description' id='link_description' /></td></tr><br />\n";
+	$output .= "<tr><td>Link Notes</td><td><input type='text' name='link_notes' id='link_notes' /></td></tr><br />\n";
 	$output .= "</table>\n";
+	$output .= '<span style="border:0;" class="submit"><input type="submit" name="submit" value="Add Link" /></span>';
 	$output .= "</div>\n";
 	$output .= "</form>\n\n";
 
@@ -2172,6 +2176,16 @@ function link_library_func($atts) {
 		'tableoverride' => '',
 		'settings' => ''
 	), $atts));
+	
+	if ($_POST['link_name'])
+	{
+		echo "Processing incoming data\n";
+		
+		$newlinkcat = array($_POST['link_category']);
+		$newlink = array("link_name" => $_POST['link_name'], "link_url" => $_POST['link_url'], "link_rss" => $_POST['link_rss'],
+			"link_description" => $_POST['link_description'], "link_notes" => $_POST['link_notes'], "link_category" => $newlinkcat);
+		wp_insert_link($newlink);
+	}
 
 	if ($settings == '')
 		$options = get_option('LinkLibraryPP1');
