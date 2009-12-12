@@ -53,7 +53,7 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
-= 2.5.7 =
+= 2.5.8 =
 * Modified search and pagination features to work with Permalinks config set to Default
 
 = 2.5.6 =
