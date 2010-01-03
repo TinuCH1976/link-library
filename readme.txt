@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.9 =
+* Stopped showing links sets as private by default
+* Added option to show links even if they are hidden (false by default)
+
 = 2.5.8 =
 * Modified search and pagination features to work with Permalinks config set to Default
 

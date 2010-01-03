@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.8
+Version: 2.5.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -138,6 +138,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['pagination'] = false;
 					$options['linksperpage'] = 5;
 					$options['hidecategorynames'] = false;
+					$options['showinvisible'] = false;
 					
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -207,6 +208,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['pagination'] = false;
 					$options['linksperpage'] = 5;
 					$options['hidecategorynames'] = false;
+					$options['showinvisible'] = false;
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -271,7 +273,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-								'pagination', 'hidecategorynames') as $option_name) {
+								'pagination', 'hidecategorynames', 'showinvisible') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -445,6 +447,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['linkorder'] = 'name';
 				$options['pagination'] = false;
 				$options['linksperpage'] = 5;
+				$options['showinvisible'] = false;
 
 				update_option($settingsname,$options);
 			}	
@@ -820,8 +823,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 						<td></td>
 						<td>
+							Show Hidden Links
 						</td>
 						<td>
+							<input type="checkbox" id="showinvisible" name="showinvisible" <?php if ($options['showinvisible'] == true) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>	
 					</table>
@@ -1280,10 +1285,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false,
 								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
 								$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
-								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '') {
+								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
+								$showinvisible = false) {
 								
 	global $wpdb;
-
+	
 	if ( !defined('WP_CONTENT_URL') )
 		define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
 	if ( !defined('WP_CONTENT_DIR') )
@@ -1406,7 +1412,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		$currentcategoryid = -1;
 		
 		foreach ( (array) $linkitems as $linkitem) {	
-	
+			
 			if ($currentcategoryid != $linkitem->term_id)
 			{
 				if ($currentcategoryid != -1 && $showonecatonly)
@@ -1570,163 +1576,167 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				// This function will grab the proper character encoding, as well as set the content type to text/html.
 				$feed->handle_content_type();
 			}
-							
-			$linkcount = $linkcount + 1;
-				
-			if ($linkaddfrequency > 0)
-				if (($linkcount - 1) % $linkaddfrequency == 0)
-					$output .= $addbeforelink;
 			
-			if (!isset($linkitem->recently_updated)) $linkitem->recently_updated = false; 
-			$output .= $beforeitem;
-			$output .= $beforelink;
-			if ($showupdated && $linkitem->recently_updated)
-				$output .= get_option('links_recently_updated_prepend'); 
-				
-			$the_link = '#';
-			if (!empty($linkitem->link_url) )
-				$the_link = wp_specialchars($linkitem->link_url);
-
-			$rel = $linkitem->link_rel;
-			if ('' != $rel and !$nofollow)
-				$rel = ' rel="' . $rel . '"';
-			else if ('' != $rel and $nofollow)
-				$rel = ' rel="' . $rel . ' nofollow"';
-			else if ('' == $rel and $nofollow)
-				$rel = ' rel="nofollow"';
-			
-			if ($use_html_tags) {
-				$descnotes = $linkitem->link_notes;
-			}
-			else {
-				$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
-			}
-			$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
-			$cleanname = wp_specialchars($linkitem->link_name, ENT_QUOTES);
-			
-			if ($mode == "search")
+			if ($linkitem->link_visible == 'Y' || $showinvisible == true)
 			{
-				$descnotes = highlightWords($linkitem->link_notes, $searchterms);
-				$desc = highlightWords($linkitem->link_description, $searchterms);
-				$name = highlightWords($linkitem->link_name, $searchterms);
-			}
-			else
-				$name = $cleanname;
+				$linkcount = $linkcount + 1;
 				
+				if ($linkaddfrequency > 0)
+					if (($linkcount - 1) % $linkaddfrequency == 0)
+						$output .= $addbeforelink;
+				
+				if (!isset($linkitem->recently_updated)) $linkitem->recently_updated = false; 
+				$output .= $beforeitem;
+				$output .= $beforelink;
+				if ($showupdated && $linkitem->recently_updated)
+					$output .= get_option('links_recently_updated_prepend'); 
+					
+				$the_link = '#';
+				if (!empty($linkitem->link_url) )
+					$the_link = wp_specialchars($linkitem->link_url);
 
-			$title = wp_specialchars($linkitem->link_description, ENT_QUOTES);;
-
-			if ($showupdated) {
-			   if (substr($linkitem->link_updated_f,0,2) != '00') {
-					$title .= ' ('.__('Last updated') . '  ' . date(get_option('links_updated_date_format'), $linkitem->link_updated_f + (get_option('gmt_offset') * 3600)) .')';
+				$rel = $linkitem->link_rel;
+				if ('' != $rel and !$nofollow)
+					$rel = ' rel="' . $rel . '"';
+				else if ('' != $rel and $nofollow)
+					$rel = ' rel="' . $rel . ' nofollow"';
+				else if ('' == $rel and $nofollow)
+					$rel = ' rel="nofollow"';
+				
+				if ($use_html_tags) {
+					$descnotes = $linkitem->link_notes;
 				}
-			}
-
-			if ('' != $title)
-				$title = ' title="' . $title . '"';
-
-			$alt = ' alt="' . $cleanname . '"';
+				else {
+					$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
+				}
+				$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
+				$cleanname = wp_specialchars($linkitem->link_name, ENT_QUOTES);
 				
-			$target = $linkitem->link_target;
-			if ('' != $target)
-				$target = ' target="' . $target . '"';
-			else 
-			{
-				$target = $linktarget;
+				if ($mode == "search")
+				{
+					$descnotes = highlightWords($linkitem->link_notes, $searchterms);
+					$desc = highlightWords($linkitem->link_description, $searchterms);
+					$name = highlightWords($linkitem->link_name, $searchterms);
+				}
+				else
+					$name = $cleanname;
+					
+
+				$title = wp_specialchars($linkitem->link_description, ENT_QUOTES);;
+
+				if ($showupdated) {
+				   if (substr($linkitem->link_updated_f,0,2) != '00') {
+						$title .= ' ('.__('Last updated') . '  ' . date(get_option('links_updated_date_format'), $linkitem->link_updated_f + (get_option('gmt_offset') * 3600)) .')';
+					}
+				}
+
+				if ('' != $title)
+					$title = ' title="' . $title . '"';
+
+				$alt = ' alt="' . $cleanname . '"';
+					
+				$target = $linkitem->link_target;
 				if ('' != $target)
 					$target = ' target="' . $target . '"';
-			}
+				else 
+				{
+					$target = $linktarget;
+					if ('' != $target)
+						$target = ' target="' . $target . '"';
+				}
 
-			$output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
-			
-			if ( $linkitem->link_image != null && ($show_images || $show_image_and_name)) {
-				if ( strpos($linkitem->link_image, 'http') !== false )
-					$output .= "<img src=\"$linkitem->link_image\" $alt $title />";
-				else // If it's a relative path
-					$output .= "<img src=\"" . get_option('siteurl') . "$linkitem->link_image\" $alt $title />";
-					
-				if ($show_image_and_name)
+				$output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
+				
+				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name)) {
+					if ( strpos($linkitem->link_image, 'http') !== false )
+						$output .= "<img src=\"$linkitem->link_image\" $alt $title />";
+					else // If it's a relative path
+						$output .= "<img src=\"" . get_option('siteurl') . "$linkitem->link_image\" $alt $title />";
+						
+					if ($show_image_and_name)
+						$output .= $name;
+				} else {
 					$output .= $name;
-			} else {
-				$output .= $name;
-			}
-			
-			$output .= '</a>';
-			
-			if (($showadmineditlinks) && current_user_can("manage_links")) {
-				$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
-			}
-			
-			$output .= $afterlink;
-			
-			if ($showupdated && $linkitem->recently_updated) {
-				$output .= get_option('links_recently_updated_append');
-			}
-
-			if ($use_html_tags || $mode == "search") {
-				$desc = $linkitem->link_description;
-			}
-			else {
-				$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
-			}
-			
-			if ($showdescription)
-				$output .= $between . $beforedesc . $desc . $afterdesc;
-
-			if ($shownotes) {
-				$output .= $between . $beforenote . $descnotes . $afternote;
-			}
-			if ($show_rss || $show_rss_icon || $rsspreview)
-				$output .= $beforerss . '<div class="rsselements">';
+				}
 				
-			if ($show_rss && ($linkitem->link_rss != '')) {
-				$output .= $between . '<a class="rss" href="' . $linkitem->link_rss . '">RSS</a>';
-			}
-			if ($show_rss_icon && ($linkitem->link_rss != '')) {
-				$output .= $between . '<a class="rssicon" href="' . $linkitem->link_rss . '"><img src="' . $llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
-			}	
-			if ($rsspreview && $linkitem->link_rss != '')
-			{
-				$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->link_id . '&previewcount=' . $rsspreviewcount . '&TB_iframe=true&height=500&width=700" title="Preview of RSS feed for ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
-			}
-			
-			if ($show_rss || $show_rss_icon || $rsspreview)
-				$output .= '</div>' . $afterrss;
-
-			
-			if ($rssfeedinline && $linkitem->link_rss)
-			{
-				$feed->set_feed_url($linkitem->link_rss);
+				$output .= '</a>';
 				
-				$feed->init();				
+				if (($showadmineditlinks) && current_user_can("manage_links")) {
+					$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
+				}
+				
+				$output .= $afterlink;
+				
+				if ($showupdated && $linkitem->recently_updated) {
+					$output .= get_option('links_recently_updated_append');
+				}
+
+				if ($use_html_tags || $mode == "search") {
+					$desc = $linkitem->link_description;
+				}
+				else {
+					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
+				}
+				
+				if ($showdescription)
+					$output .= $between . $beforedesc . $desc . $afterdesc;
+
+				if ($shownotes) {
+					$output .= $between . $beforenote . $descnotes . $afternote;
+				}
+				if ($show_rss || $show_rss_icon || $rsspreview)
+					$output .= $beforerss . '<div class="rsselements">';
 					
-					if ($feed->data && $feed->get_item_quantity() > 0)
-					{
-						$output .= '<div id="ll_rss_results">';
+				if ($show_rss && ($linkitem->link_rss != '')) {
+					$output .= $between . '<a class="rss" href="' . $linkitem->link_rss . '">RSS</a>';
+				}
+				if ($show_rss_icon && ($linkitem->link_rss != '')) {
+					$output .= $between . '<a class="rssicon" href="' . $linkitem->link_rss . '"><img src="' . $llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
+				}	
+				if ($rsspreview && $linkitem->link_rss != '')
+				{
+					$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->link_id . '&previewcount=' . $rsspreviewcount . '&TB_iframe=true&height=500&width=700" title="Preview of RSS feed for ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
+				}
+				
+				if ($show_rss || $show_rss_icon || $rsspreview)
+					$output .= '</div>' . $afterrss;
+
+				
+				if ($rssfeedinline && $linkitem->link_rss)
+				{
+					$feed->set_feed_url($linkitem->link_rss);
+					
+					$feed->init();				
 						
-						$items = $feed->get_items(0, $rssfeedinlinecount);
-						foreach($items as $item)
+						if ($feed->data && $feed->get_item_quantity() > 0)
 						{
-							$output .= '<div class="chunk" style="padding:0 5px 5px;">';
-							$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item->get_permalink() . '">' . $item->get_title() . '</a> - ' . $item->get_date("j M Y") . '</div>';
-							if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item->get_content() . '</div>';
+							$output .= '<div id="ll_rss_results">';
+							
+							$items = $feed->get_items(0, $rssfeedinlinecount);
+							foreach($items as $item)
+							{
+								$output .= '<div class="chunk" style="padding:0 5px 5px;">';
+								$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item->get_permalink() . '">' . $item->get_title() . '</a> - ' . $item->get_date("j M Y") . '</div>';
+								if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item->get_content() . '</div>';
+								$output .= '</div>';
+								$output .= '<br />';
+							}
+							
 							$output .= '</div>';
-							$output .= '<br />';
 						}
+							
 						
-						$output .= '</div>';
-					}
+				}
+				
 						
+				$output .= $afteritem . "\n";
+				
+				if ($linkaddfrequency > 0)
+					if ($linkcount % $linkaddfrequency == 0)
+						$output .= $addafterlink;
 					
 			}
-			
-					
-			$output .= $afteritem . "\n";
-			
-			if ($linkaddfrequency > 0)
-				if ($linkcount % $linkaddfrequency == 0)
-					$output .= $addafterlink;
-				
+							
 		} // end while
 		
 		// Close the last category
@@ -1883,6 +1893,7 @@ if ($options == "") {
 		$options['pagination'] = false;
 		$options['linksperpage'] = 5;
 		$options['hidecategorynames'] = false;
+		$options['showinvisible'] = false;
 		
 		update_option('LinkLibraryPP1',$options);
 		
@@ -2019,6 +2030,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   linksperpage (default 5) - Number of links to be shown per page in Pagination Mode
  *   hidecategorynames (default false) - Show category names in Link Library list
  *   settings (default NULL) - Setting Set ID
+ *   showinvisible (default false) - Shows links that are set to be invisible
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -2035,7 +2047,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
-								$settings = '') {
+								$settings = '', $showinvisible = false) {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -2078,7 +2090,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
 								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
-								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings);
+								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible']);
 	
 	}
 	else
@@ -2091,7 +2103,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
-								$pagination, $linksperpage, $hidecategorynames, $settings);
+								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible);
 
 }
 
@@ -2239,7 +2251,7 @@ function link_library_func($atts) {
 								  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
 								  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
-								  $options['hidecategorynames'], $settings);
+								  $options['hidecategorynames'], $settings, $options['showinvisible']);
 }
 
 function link_library_header() {
