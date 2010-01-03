@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.9.1 =
+* Modified code only to display table column headers if they contain text
+
 = 2.5.9 =
 * Stopped showing links sets as private by default
 * Added option to show links even if they are hidden (false by default)

@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.9
+Version: 2.5.9.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1526,7 +1526,20 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				{
 					$catstartlist = "\n\t<table class='linklisttable'>\n";
 					if ($showcolumnheaders == true)
-						$catstartlist .= "<div class='linklisttableheaders'><tr><th><div class='linklistcolumnheader'>".$linkheader."</div></th><th><div class='linklistcolumnheader'>".$descheader."</div></th><th><div class='linklistcolumnheader'>".$notesheader."</div></th></tr></div>\n";
+					{
+						$catstartlist .= "<div class='linklisttableheaders'><tr>";
+						
+						if ($linkheader != "")
+							$catstartlist .= "<th><div class='linklistcolumnheader'>".$linkheader."</div></th>";
+						
+						if ($descheader != "")
+							$catstartlist .= "<th><div class='linklistcolumnheader'>".$descheader."</div></th>";
+							
+						if ($notesheader != "")
+							$catstartlist .= "<th><div class='linklistcolumnheader'>".$notesheader."</div></th>";
+							
+						$catstartlist .= "</tr></div>\n";
+					}
 					else
 						$catstartlist .= '';
 				}
