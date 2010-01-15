@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.9.1
+Version: 2.5.9.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -139,6 +139,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linksperpage'] = 5;
 					$options['hidecategorynames'] = false;
 					$options['showinvisible'] = false;
+					$options['showdate'] = false;
+					$options['beforedate'] = '';
+					$options['afterdate'] = '';
+					$options['catdescpos'] = 'right';
+					$options['catlistdescpos'] = 'right';					
 					
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -209,6 +214,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['linksperpage'] = 5;
 					$options['hidecategorynames'] = false;
 					$options['showinvisible'] = false;
+					$options['showdate'] = false;
+					$options['beforedate'] = '';
+					$options['afterdate'] = '';
+					$options['catdescpos'] = 'right';
+					$options['catlistdescpos'] = 'right';					
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -257,7 +267,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
-							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss','linksperpage') as $option_name) {
+							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss','linksperpage', 'catdescpos',
+							   'beforedate', 'afterdate', 'catlistdescpos') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -273,7 +284,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-								'pagination', 'hidecategorynames', 'showinvisible') as $option_name) {
+								'pagination', 'hidecategorynames', 'showinvisible', 'showdate') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -448,6 +459,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['pagination'] = false;
 				$options['linksperpage'] = 5;
 				$options['showinvisible'] = false;
+				$options['showdate'] = false;
+				$options['beforedate'] = '';
+				$options['afterdate'] = '';
+				$options['catdescpos'] = 'right';	
+				$options['catlistdescpos'] = 'right';								
 
 				update_option($settingsname,$options);
 			}	
@@ -655,6 +671,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 						<td tooltip="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
 							<input type="checkbox" id="showcategorydescheaders" name="showcategorydescheaders" <?php if ($options['showcategorydescheaders']) echo ' checked="checked" '; ?>/>
+							<span style='margin-left: 17px'>Position:</span>							
+							<select name="catlistdescpos" id="catlistdescpos" style="width:100px;">
+								<option value="right"<?php if ($options['catlistdescpos'] == 'right') { echo ' selected="selected"';} ?>>Right</option>
+								<option value="left"<?php if ($options['catlistdescpos'] == 'left') { echo ' selected="selected"';} ?>>Left</option>
+							</select>							
 						</td>
 					</tr>			
 					<tr>
@@ -746,6 +767,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 						<td tooltip="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
 							<input type="checkbox" id="showcategorydesclinks" name="showcategorydesclinks" <?php if ($options['showcategorydesclinks']) echo ' checked="checked" '; ?>/>
+							<span style='margin-left: 17px'>Position:</span>							
+							<select name="catdescpos" id="catdescpos" style="width:100px;">
+								<option value="right"<?php if ($options['catdescpos'] == 'right') { echo ' selected="selected"';} ?>>Right</option>
+								<option value="left"<?php if ($options['catdescpos'] == 'left') { echo ' selected="selected"';} ?>>Left</option>
+							</select>
 						</td>
 					</tr>
 					<tr>
@@ -839,6 +865,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									<th tooltip='This column allows for the output of text/code before a number of links determined by the Display field'>Intermittent Before Link</th>
 									<th tooltip='This column allows for the output of text/code before each link'>Before Link</th>
 									<th tooltip='This column allows for the output of text/code before and after each link name'>Link</th>
+									<th tooltip='This column allows for the output of text/code before and after each link date stamp'>Link Date</th>
 									<th tooltip='This column allows for the output of text/code before and after each link description'>Link Description</th>
 									<th tooltip='This column allows for the output of text/code before and after each link notes'>Link Notes</th>
 									<th tooltip='This column allows for the output of text/code before and after the RSS icons'>RSS Icons</th>
@@ -856,6 +883,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'>
 								</td>
 								<td style='background: #FFF'>
+								</td>
+								<td style='background: #FFF' tooltip='Check to display link date'>
+									<input type="checkbox" id="showdate" name="showdate" <?php if ($options['showdate']) echo ' checked="checked" '; ?>/>
 								</td>
 								<td style='background: #FFF' tooltip='Check to display link descriptions'>
 									<input type="checkbox" id="showdescription" name="showdescription" <?php if ($options['showdescription']) echo ' checked="checked" '; ?>/>
@@ -884,11 +914,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before each link'>
 									<input type="text" id="beforelink" name="beforelink" size="12" value="<?php echo $options['beforelink']; ?>"/>
 								</td>
+								<td style='background: #FFF' tooltip='Code/Text to be displayed before each date'>
+									<input type="text" id="beforedate" name="beforedate" size="8" value="<?php echo $options['beforedate']; ?>"/>
+								</td>								
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before each description'>
-									<input type="text" id="beforedesc" name="beforedesc" size="12" value="<?php echo $options['beforedesc']; ?>"/>
+									<input type="text" id="beforedesc" name="beforedesc" size="8" value="<?php echo $options['beforedesc']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before each note'>
-									<input type="text" id="beforenote" name="beforenote" size="12" value="<?php echo $options['beforenote']; ?>"/>
+									<input type="text" id="beforenote" name="beforenote" size="8" value="<?php echo $options['beforenote']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before RSS Icons'>
 									<input type="text" id="beforerss" name="beforerss" size="12" value="<?php echo $options['beforerss']; ?>"/>
@@ -909,11 +942,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF' tooltip='Code/Text to be displayed after each link'>
 									<input type="text" id="afterlink" name="afterlink" size="12" value="<?php echo $options['afterlink']; ?>"/>
 								</td>
+								<td style='background: #FFF' tooltip='Code/Text to be displayed after each date'>
+									<input type="text" id="afterdate" name="afterdate" size="8" value="<?php echo $options['afterdate']; ?>"/>
+								</td>								
 								<td style='background: #FFF' tooltip='Code/Text to be displayed after each description'>
-									<input type="text" id="afterdesc" name="afterdesc" size="12" value="<?php echo $options['afterdesc']; ?>"/>
+									<input type="text" id="afterdesc" name="afterdesc" size="8" value="<?php echo $options['afterdesc']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Code/Text to be displayed after each note'>
-									<input type="text" id="afternote" name="afternote" size="12" value="<?php echo $options['afternote']; ?>"/>
+									<input type="text" id="afternote" name="afternote" size="8" value="<?php echo $options['afternote']; ?>"/>
 								</td>
 								<td  style='background: #FFF' tooltip='Code/Text to be displayed after RSS Icons'>
 									<input type="text" id="afterrss" name="afterrss" size="12" value="<?php echo $options['afterrss']; ?>"/>
@@ -1125,7 +1161,7 @@ jQuery(document).ready(function()
 
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
-							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif') {
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
 							   
 	$output = '';
 							   
@@ -1209,7 +1245,9 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 				else
 					$cattext = '';
 		
-				$catitem =  $catname->name;
+				$catitem = '';
+				if ($catlistdescpos == 'right' || $catlistdescpos == '')
+					$catitem .= $catname->name;
 				
 				if ($showcategorydescheaders)
 				{
@@ -1217,6 +1255,9 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 					$catname->category_description = str_replace("]", ">", $catname->category_description);
 					$catitem .= $catname->category_description;				
 				}
+				
+				if ($catlistdescpos == 'left' || $catlistdescpos == '')
+					$catitem .= $catname->name;
 				
 				if ($catanchor)
 					$catitem .= "</a>";
@@ -1286,7 +1327,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
 								$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
-								$showinvisible = false) {
+								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right') {
 								
 	global $wpdb;
 	
@@ -1484,7 +1525,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 						if ($mode == "search")
 							$linkitem->name = highlightWords($linkitem->name, $searchterms);
 							
-						$catlink = '<div class="' . $catnameoutput . '">' . $linkitem->name;
+						$catlink = '<div class="' . $catnameoutput . '">';
+						
+						if ($catdescpos == "right" || $catlistdescpos == '')
+							$catlink .= $linkitem->name;
 						
 						if ($showcategorydesclinks)
 						{
@@ -1494,6 +1538,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 							$catlink .= $linkitem->description;				
 							$catlink .= '</span>';
 						}
+						
+						if ($catdescpos == "left" || $catlistdescpos == '')
+							$catlink .= $linkitem->name;
 						
 						$catlink .= "</div>";
 					}
@@ -1502,7 +1549,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 						if ($mode == "search")
 							$linkitem->name = highlightWords($linkitem->name, $searchterms);
 							
-						$catlink = '<'. $catnameoutput . '>' . $linkitem->name;
+						$catlink = '<'. $catnameoutput . '>';
+						
+						if ($catdescpos == "right" || $catlistdescpos == '')
+							$catlink .= $linkitem->name;
 						
 						if ($showcategorydesclinks)
 						{
@@ -1512,6 +1562,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 							$catlink .= $linkitem->description;				
 							$catlink .= '</span>';
 						}
+						
+						if ($catdescpos == "left" || $catlistdescpos == '')
+							$catlink .= $linkitem->name;
 						
 						$catlink .= '</' . $catnameoutput . '>';
 					}
@@ -1690,6 +1743,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				else {
 					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
 				}
+				
+				$formatteddate = date("F d Y", $linkitem->link_updated);
+				
+				if ($showdate)
+					$output .= $between . $beforedate . $formatteddate . $afterdate;
 				
 				if ($showdescription)
 					$output .= $between . $beforedesc . $desc . $afterdesc;
@@ -1907,6 +1965,10 @@ if ($options == "") {
 		$options['linksperpage'] = 5;
 		$options['hidecategorynames'] = false;
 		$options['showinvisible'] = false;
+		$options['showdate'] = false;
+		$options['beforedate'] = '';
+		$options['afterdate'] = '';
+		$options['catdescpos'] = 'right';		
 		
 		update_option('LinkLibraryPP1',$options);
 		
@@ -1945,11 +2007,12 @@ else
  *   showonecatonly (default false) - Enable AJAX mode showing only one category at a time
  *   settings (default NULL) - Settings Set ID, only used when showonecatonly is true
  *   loadingicon (default NULL) - Path to icon to display when only show one category at a time
+ *   catlistdescpos (default 'right') - Position of category description relative to name
  */
 
 function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
-							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif') {
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
 	
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -1966,11 +2029,11 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
 
 		return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
-								 $options['loadingicon']);   
+								 $options['loadingicon'], $options['catlistdescpos']);   
 	}
 	else
 		return PrivateLinkLibraryCategories($order, true, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
-		$showonecatonly, $settings, $loadingicon);   
+		$showonecatonly, $settings, $loadingicon, $catlistdescpos);   
 	
 }
 
@@ -2044,6 +2107,10 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   hidecategorynames (default false) - Show category names in Link Library list
  *   settings (default NULL) - Setting Set ID
  *   showinvisible (default false) - Shows links that are set to be invisible
+ *   showdate (default false) - Determines is link update date should be displayed
+ *   beforedate (default null) - Code/Text to be displayed before link date
+ *   afterdate (default null) - Code/Text to be displated after link date
+ *   catdescpos (default 'right') - Position of link category description output
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -2060,7 +2127,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
-								$settings = '', $showinvisible = false) {
+								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right') {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -2103,7 +2170,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
 								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
-								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible']);
+								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible'],
+								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos']);
 	
 	}
 	else
@@ -2116,7 +2184,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
-								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible);
+								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos);
 
 }
 
@@ -2152,7 +2220,7 @@ function link_library_cats_func($atts) {
 
 	return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
-								 $options['loadingicon']);
+								 $options['loadingicon'], $options['catlistdescpos']);
 }
 
 function link_library_search_func($atts) {
@@ -2264,7 +2332,8 @@ function link_library_func($atts) {
 								  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
 								  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
-								  $options['hidecategorynames'], $settings, $options['showinvisible']);
+								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
+								  $options['afterdate'], $options['catdescpos']);
 }
 
 function link_library_header() {
