@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.5.9.3 =
+* Corrected a big with category names appearing twice after update 2.5.9.2
+
 = 2.5.9.2 =
 * Added option to specify category description position relative to category name
 * Added new option to display link date between link name and description
