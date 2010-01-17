@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.5.9.3
+Version: 2.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -143,8 +143,19 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['beforedate'] = '';
 					$options['afterdate'] = '';
 					$options['catdescpos'] = 'right';
-					$options['catlistdescpos'] = 'right';					
-					
+					$options['catlistdescpos'] = 'right';	
+					$options['showuserlinks'] = false;
+					$options['addnewlinkmsg'] = "Add new link";
+					$options['linknamelabel'] = "Link name";
+					$options['linkaddrlabel'] = "Link address";
+					$options['linkrsslabel'] = "Link RSS";
+					$options['linkcatlabel'] = "Link Category";
+					$options['linkdesclabel'] = "Link Description";
+					$options['linknoteslabel'] = "Link Notes";
+					$options['addlinkbtnlabel'] = "Add Link";
+					$options['newlinkmsg'] = "New link submitted";
+					$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
+										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
 					update_option($settingsname, $options);					
@@ -218,7 +229,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['beforedate'] = '';
 					$options['afterdate'] = '';
 					$options['catdescpos'] = 'right';
-					$options['catlistdescpos'] = 'right';					
+					$options['catlistdescpos'] = 'right';
+					$options['showuserlinks'] = false;	
+					$options['addnewlinkmsg'] = "Add new link";
+					$options['linknamelabel'] = "Link name";
+					$options['linkaddrlabel'] = "Link address";
+					$options['linkrsslabel'] = "Link RSS";
+					$options['linkcatlabel'] = "Link Category";
+					$options['linkdesclabel'] = "Link Description";
+					$options['linknoteslabel'] = "Link Notes";
+					$options['addlinkbtnlabel'] = "Add Link";
+					$options['newlinkmsg'] = "New link submitted";
+					$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";		
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -275,7 +297,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				}
 				
 				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir',
-								'direction', 'linkdirection', 'linkorder') as $option_name) {
+								'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
+								'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -284,7 +307,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-								'pagination', 'hidecategorynames', 'showinvisible', 'showdate') as $option_name) {
+								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -380,6 +403,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
 			if ( !defined('WP_CONTENT_DIR') )
 				define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
+			if ( !defined('WP_ADMIN_URL') )
+				define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
 
 			// Guess the location
 			$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
@@ -463,7 +488,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['beforedate'] = '';
 				$options['afterdate'] = '';
 				$options['catdescpos'] = 'right';	
-				$options['catlistdescpos'] = 'right';								
+				$options['catlistdescpos'] = 'right';
+				$options['showuserlinks'] = false;
+				$options['addnewlinkmsg'] = "Add new link";
+				$options['linknamelabel'] = "Link name";
+				$options['linkaddrlabel'] = "Link address";
+				$options['linkrsslabel'] = "Link RSS";
+				$options['linkcatlabel'] = "Link Category";
+				$options['linkdesclabel'] = "Link Description";
+				$options['linknoteslabel'] = "Link Notes";
+				$options['addlinkbtnlabel'] = "Add Link";
+				$options['newlinkmsg'] = "New link submitted";
+				$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
 
 				update_option($settingsname,$options);
 			}	
@@ -484,7 +520,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			?>		
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
-				Help: <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>Frequently Asked Questions (FAQ)</a> | Help is also available as tooltips on fields | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
+				Help: <a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">Links awaiting moderation</a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>Frequently Asked Questions (FAQ)</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
 				
 				
 				<form name='lladmingenform' action="" method="post" id="ll-conf">
@@ -518,24 +554,24 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<th style='width:40px' tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Set #
 							</th>
-							<th tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
+							<th style='width:130px' tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Set Name
 							</th>
 							<th tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Code to insert on a Wordpress page to see Link Library
 							</th>
-							<th>
-								Add/Delete
+							<th style='width: 30px'>
+								Add / Delete
 							</th>
-							<th>Copy Settings</th>
+							<th style='width: 30px'>Copy Settings</th>
 						</tr>
 						</thead>
 						<tr>
-						<td style='background: #FFF'><?php if ($settings == 1) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?></td><td style='background: #FFF'><a href="?page=link-library.php&amp;settings=1">1</a></td><td style='background: #FFF'><?php if ($options1 != "") echo '<a href="?page=link-library.php&amp;settings=1">' . $options1['settingssetname']; ?></a></td><td style='background: #FFF'><?php if ($options1 != "") echo "[link-library-cats settings=1] [link-library-search] [link-library settings=1]"; ?></td><td style='background: #FFF;text-align:center'></td><td style='background: #FFF;text-align:center'><?php if ($settings != 1) { echo "<a href='?page=link-library.php&amp;copy=" . $settings . "&source=1' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to overwrite current settings by copying from Settings Set '%s'\n  'Cancel' to stop, 'OK' to copy."), 1 )) . "') ) { return true;}return false;\"><img src='" . $llpluginpath . "/icons/page_copy.png' /></a> ";} ?></td>
+						<td style='background: #FFF'><?php if ($settings == 1) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?></td><td style='background: #FFF'><a href="?page=link-library.php&amp;settings=1">1</a></td><td style='background: #FFF'><?php if ($options1 != "") echo '<a href="?page=link-library.php&amp;settings=1">' . $options1['settingssetname']; ?></a></td><td style='background: #FFF'><?php if ($options1 != "") echo "[link-library-cats settings=1] [link-library-search] [link-library settings=1] [link-library-addlink settings=1]"; ?></td><td style='background: #FFF;text-align:center'></td><td style='background: #FFF;text-align:center'><?php if ($settings != 1) { echo "<a href='?page=link-library.php&amp;copy=" . $settings . "&source=1' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to overwrite current settings by copying from Settings Set '%s'\n  'Cancel' to stop, 'OK' to copy."), 1 )) . "') ) { return true;}return false;\"><img src='" . $llpluginpath . "/icons/page_copy.png' /></a> ";} ?></td>
 						</tr>
 						<?php for ($i = 2; $i <= 5; $i++): ?>
 						<tr>
-						<td style='background: #FFF'><?php if ($settings == $i) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?></td><td style='background: #FFF'><?php if (${"options$i"} != "") {echo "<a href='?page=link-library.php&amp;settings=" . $i . "'>" . $i . "</a>";} else { echo $i;}?></td><td style='background: #FFF'><?php if (${"options$i"} != "") echo '<a href="?page=link-library.php&amp;settings=' . $i . '">' . ${"options$i"}['settingssetname'] . '</a>'; else echo 'Empty';?></td><td style='background: #FFF'><?php if (${"options$i"} != "") echo "[link-library-cats settings=" . $i . "] [link-library-search] [link-library settings=" . $i . "]"; ?></td><td style='background: #FFF;text-align:center'><?php if (${"options$i"} != "") {echo "<a href='?page=link-library.php&amp;deletesettings=" . $i . "' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to delete Settings Set '%s'\n  'Cancel' to stop, 'OK' to delete."), $i )) . "') ) { return true;}return false;\"><img title='Delete Settings Set' src='" . $llpluginpath . "/icons/delete-16x16.png' /></a>";} else echo '<a href="?page=link-library.php&amp;settings=' . $i . '"><img title="Create Settings Set" src="' . $llpluginpath . '/icons/add-16x16.png" /></a>'; ?></td><td style='background: #FFF;text-align:center'><?php if ($settings != $i && ${"options$i"} != "") { echo "<a href='?page=link-library.php&amp;copy=" . $settings . "&source=" . $i . "' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to overwrite current settings by copying from Settings Set '%s'\n  'Cancel' to stop, 'OK' to copy."), $i )) . "') ) { return true;}return false;\"><img src='" . $llpluginpath . "/icons/page_copy.png' /></a> ";} ?></td>
+						<td style='background: #FFF'><?php if ($settings == $i) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?></td><td style='background: #FFF'><?php if (${"options$i"} != "") {echo "<a href='?page=link-library.php&amp;settings=" . $i . "'>" . $i . "</a>";} else { echo $i;}?></td><td style='background: #FFF'><?php if (${"options$i"} != "") echo '<a href="?page=link-library.php&amp;settings=' . $i . '">' . ${"options$i"}['settingssetname'] . '</a>'; else echo 'Empty';?></td><td style='background: #FFF'><?php if (${"options$i"} != "") echo "[link-library-cats settings=" . $i . "] [link-library-search] [link-library settings=" . $i . "] [link-library-addlink settings=" . $i . "]"; ?></td><td style='background: #FFF;text-align:center'><?php if (${"options$i"} != "") {echo "<a href='?page=link-library.php&amp;deletesettings=" . $i . "' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to delete Settings Set '%s'\n  'Cancel' to stop, 'OK' to delete."), $i )) . "') ) { return true;}return false;\"><img title='Delete Settings Set' src='" . $llpluginpath . "/icons/delete-16x16.png' /></a>";} else echo '<a href="?page=link-library.php&amp;settings=' . $i . '"><img title="Create Settings Set" src="' . $llpluginpath . '/icons/add-16x16.png" /></a>'; ?></td><td style='background: #FFF;text-align:center'><?php if ($settings != $i && ${"options$i"} != "") { echo "<a href='?page=link-library.php&amp;copy=" . $settings . "&source=" . $i . "' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to overwrite current settings by copying from Settings Set '%s'\n  'Cancel' to stop, 'OK' to copy."), $i )) . "') ) { return true;}return false;\"><img src='" . $llpluginpath . "/icons/page_copy.png' /></a> ";} ?></td>
 						</tr>
 						<?php endfor; ?>
 					</table><br />
@@ -1083,6 +1119,67 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td></td><td></td>						
 					</tr>				
 					</table>
+					</fieldset>
+					</fieldset>
+					</div>
+					<div>
+					<fieldset style='border:1px solid #CCC;padding:10px;margin:15px 0 5px 0;'>
+					<legend style='padding: 0 5px 0 5px;'><strong>Link User Submission</strong></legend>
+					<table>
+						<tr>
+							<td colspan=5 tooltip='Following this link shows a list of all links awaiting moderation. To approve a link, edit it and remove the text in parentheses at the beginning of the link description'><a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">View list of links awaiting moderation</a></td>
+						</tr>
+						<tr>
+							<td style='width:200px'>Show user links immediately</td>
+							<td style='width:75px;padding-right:20px'><input type="checkbox" id="showuserlinks" name="showuserlinks" <?php if ($options['showuserlinks']) echo ' checked="checked" '; ?>/></td>
+						</tr>
+						<tr>
+							<td style='width:200px'>Add new link label</td>
+							<? if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = "Add new link"; ?>
+							<td><input type="text" id="addnewlinkmsg" name="addnewlinkmsg" size="30" value="<?php echo $options['addnewlinkmsg']; ?>"/></td>
+							<td style='width: 20px'></td>
+							<td style='width:200px'>Link name label</td>
+							<? if ($options['linknamelabel'] == "") $options['linknamelabel'] = "Link Name"; ?>
+							<td><input type="text" id="linknamelabel" name="linknamelabel" size="30" value="<?php echo $options['linknamelabel']; ?>"/></td>
+						</tr>
+						<tr>
+							<td style='width:200px'>Link address label</td>
+							<? if ($options['linkaddrlabel'] == "") $options['linkaddrlabel'] = "Link Address"; ?>
+							<td><input type="text" id="linkaddrlabel" name="linkaddrlabel" size="30" value="<?php echo $options['linkaddrlabel']; ?>"/></td>
+							<td style='width: 20px'></td>
+							<td style='width:200px'>Link RSS label</td>
+							<? if ($options['linkrsslabel'] == "") $options['linkrsslabel'] = "Link RSS"; ?>
+							<td><input type="text" id="linkrsslabel" name="linkrsslabel" size="30" value="<?php echo $options['linkrsslabel']; ?>"/></td>
+						</tr>
+						<tr>
+							<td style='width:200px'>Link category label</td>
+							<? if ($options['linkcatlabel'] == "") $options['linkcatlabel'] = "Link Category"; ?>
+							<td><input type="text" id="linkcatlabel" name="linkcatlabel" size="30" value="<?php echo $options['linkcatlabel']; ?>"/></td>
+							<td style='width: 20px'></td>
+							<td style='width:200px'>Link description label</td>
+							<? if ($options['linkdesclabel'] == "") $options['linkdesclabel'] = "Link Description"; ?>
+							<td><input type="text" id="linkdesclabel" name="linkdesclabel" size="30" value="<?php echo $options['linkdesclabel']; ?>"/></td>
+						</tr>
+						<tr>
+							<td style='width:200px'>Link notes label</td>
+							<? if ($options['linknoteslabel'] == "") $options['linknoteslabel'] = "Link Notes"; ?>
+							<td><input type="text" id="linknoteslabel" name="linknoteslabel" size="30" value="<?php echo $options['linknoteslabel']; ?>"/></td>
+							<td style='width: 20px'></td>
+							<td style='width:200px'>Add Link button label</td>
+							<? if ($options['addlinkbtnlabel'] == "") $options['addlinkbtnlabel'] = "Add Link"; ?>
+							<td><input type="text" id="addlinkbtnlabel" name="addlinkbtnlabel" size="30" value="<?php echo $options['addlinkbtnlabel']; ?>"/></td>
+						</tr>
+						<tr>
+							<td style='width:200px'>New Link Message</td>
+							<? if ($options['newlinkmsg'] == "") $options['newlinkmsg'] = "New link submitted"; ?>
+							<td><input type="text" id="newlinkmsg" name="newlinkmsg" size="30" value="<?php echo $options['newlinkmsg']; ?>"/></td>
+							<td style='width: 20px'></td>
+							<td style='width:200px'>New Link Moderation Label</td>
+							<? if ($options['moderatemsg'] == "") $options['moderatemsg'] = "it will appear in the list once moderated. Thank you."; ?>
+							<td><input type="text" id="moderatemsg" name="moderatemsg" size="30" value="<?php echo $options['moderatemsg']; ?>"/></td>
+						</tr>
+					</table>
+					</fieldset>
 					</div>
 
 					<p style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></p>
@@ -1327,7 +1424,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
 								$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
-								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right') {
+								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
+								$showuserlinks = false) {
 								
 	global $wpdb;
 	
@@ -1351,6 +1449,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	$linkquery = "SELECT *, IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated FROM " . $wpdb->prefix . "links l, " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_relationships tr, ";
 	$linkquery .= $wpdb->prefix. "term_taxonomy tt WHERE l.link_id = tr.object_id AND tr.term_taxonomy_id = tt.term_taxonomy_id ";
 	$linkquery .= "AND tt.taxonomy = 'link_category' AND tt.term_id = t.term_id";
+	
+	if ($showuserlinks == false)
+		$linkquery .= " AND l.link_description not like '(LinkLibrary:AwaitingModeration:RemoveTextToApprove)%'";
 	
 	if ($categorylist != "")
 		$linkquery .= " AND t.term_id in (" . $categorylist. ")";
@@ -1860,21 +1961,32 @@ function PrivateLinkLibrarySearchForm() {
 	return $output;
 }
 
-function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '') {
+function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg, $linknamelabel, $linkaddrlabel, $linkrsslabel,
+										$linkcatlabel, $linkdesclabel, $linknoteslabel, $addlinkbtnlabel) {
 
 	$output = "<form method='post' id='lladdlink'>\n";
 	$output .= "<div class='lladdlink'>\n";
-	$output .= "<div>Add new link</div>\n";
+	
+	if ($addnewlinkmsg == "") $addnewlinkmsg = "Add new link";
+	$output .= "<div id='lladdlinktitle'>" . $addnewlinkmsg . "</div>\n";
+	
 	$output .= "<table>\n";
-	$output .= "<tr><td class='lladdlinkheader'>Link Name</td><td><input type='text' name='link_name' id='link_name' /></td></tr><br />\n";
-	$output .= "<tr><td>Link Address</td><td><input type='text' name='link_url' id='link_url' /></td></tr><br />\n";
-	$output .= "<tr><td>Link RSS</td><td><input type='text' name='link_rss' id='link_rss' /></td></tr><br />\n";
+	
+	if ($linknamelabel == "") $linknamelabel = "Link name";
+	$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' /></td></tr>\n";
+		
+	if ($linkaddrlabel == "") $linkaddrlabel = "Link address";
+	$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' /></td></tr>\n";
+	
+	if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
+	$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
 	
 	$linkcats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
 	
 	if ($linkcats)
 	{
-		$output .= "<tr><td>Link Category</td><td><SELECT name='link_category' id='link_category'>";
+		if ($linkcatlabel == "") $linkcatlabel = "Link category";
+		$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
 		foreach ($linkcats as $linkcat)
 		{
 			$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->category_nicename;
@@ -1883,10 +1995,16 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		$output .= "</SELECT></td></tr>";
 	}
 	
-	$output .= "<tr><td>Link Description</td><td><input type='text' name='link_description' id='link_description' /></td></tr><br />\n";
-	$output .= "<tr><td>Link Notes</td><td><input type='text' name='link_notes' id='link_notes' /></td></tr><br />\n";
+	if ($linkdesclabel == "") $linkdesclabel = "Link description";
+	$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' /></td></tr>\n";
+	
+	if ($linknoteslabel == "") $linknoteslabel = "Link notes";
+	$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' /></td></tr>\n";
 	$output .= "</table>\n";
-	$output .= '<span style="border:0;" class="submit"><input type="submit" name="submit" value="Add Link" /></span>';
+	
+	if ($addlinkbtnlabel == "") $addlinkbtnlabel = "Add link";
+	$output .= '<span style="border:0;" class="submit"><input type="submit" name="submit" value="' . $addlinkbtnlabel . '" /></span>';
+	
 	$output .= "</div>\n";
 	$output .= "</form>\n\n";
 
@@ -1968,7 +2086,19 @@ if ($options == "") {
 		$options['showdate'] = false;
 		$options['beforedate'] = '';
 		$options['afterdate'] = '';
-		$options['catdescpos'] = 'right';		
+		$options['catdescpos'] = 'right';	
+		$options['showuserlinks'] = false;	
+		$options['addnewlinkmsg'] = "Add new link";
+		$options['linknamelabel'] = "Link name";
+		$options['linkaddrlabel'] = "Link address";
+		$options['linkrsslabel'] = "Link RSS";
+		$options['linkcatlabel'] = "Link Category";
+		$options['linkdesclabel'] = "Link Description";
+		$options['linknoteslabel'] = "Link Notes";
+		$options['addlinkbtnlabel'] = "Add Link";
+		$options['newlinkmsg'] = "New link submitted";
+		$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
+		
 		
 		update_option('LinkLibraryPP1',$options);
 		
@@ -2111,6 +2241,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   beforedate (default null) - Code/Text to be displayed before link date
  *   afterdate (default null) - Code/Text to be displated after link date
  *   catdescpos (default 'right') - Position of link category description output
+ *   showuserlinks (default false) - Specifies if user submitted links should be shown immediately after submission
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -2127,7 +2258,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
-								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right') {
+								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
+								$showuserlinks = false) {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -2171,7 +2303,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible'],
-								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos']);
+								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks']);
 	
 	}
 	else
@@ -2184,7 +2316,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
-								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos);
+								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
+								$showuserlinks);
 
 }
 
@@ -2255,7 +2388,11 @@ function link_library_addlink_func($atts) {
 	else
 		$excludedcategorylist = $options['excludecategorylist'];
 	
-	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist);	
+	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
+										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
+										 $options['addlinkbtnlabel']);	
+	
+	
 }
 
 
@@ -2270,16 +2407,6 @@ function link_library_func($atts) {
 		'settings' => ''
 	), $atts));
 	
-	if ($_POST['link_name'])
-	{
-		echo "Processing incoming data\n";
-		
-		$newlinkcat = array($_POST['link_category']);
-		$newlink = array("link_name" => $_POST['link_name'], "link_url" => $_POST['link_url'], "link_rss" => $_POST['link_rss'],
-			"link_description" => $_POST['link_description'], "link_notes" => $_POST['link_notes'], "link_category" => $newlinkcat);
-		wp_insert_link($newlink);
-	}
-
 	if ($settings == '')
 		$options = get_option('LinkLibraryPP1');
 	else
@@ -2288,6 +2415,30 @@ function link_library_func($atts) {
 		$options = get_option($settingsname);
 	}
 	
+	if ($_POST['link_name'])
+	{
+		$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+		if ($options['showuserlinks'] == false)
+			$message .= ", " . $options['moderatemsg'];
+		else
+			$message .= ".";
+			
+		$message .= "</div>";
+		
+		echo $message;
+		
+		$newlinkcat = array($_POST['link_category']);
+		
+		if ($options['showuserlinks'] == false)
+			$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
+		else
+			$newlinkdesc = $_POST['link_description'];
+			
+		$newlink = array("link_name" => $_POST['link_name'], "link_url" => $_POST['link_url'], "link_rss" => $_POST['link_rss'],
+			"link_description" => $newlinkdesc, "link_notes" => $_POST['link_notes'], "link_category" => $newlinkcat);
+		wp_insert_link($newlink);
+	}
+
 	if ($notesoverride != '')
 		$selectedshownotes = $notesoverride;
 	else
@@ -2333,7 +2484,7 @@ function link_library_func($atts) {
 								  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
-								  $options['afterdate'], $options['catdescpos']);
+								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks']);
 }
 
 function link_library_header() {

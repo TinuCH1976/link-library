@@ -1,7 +1,7 @@
 === Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
-Tags: link, list, page, library, AJAX, RSS, feeds, inline, search, paging
+Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit
 Requires at least: 2.7
 Tested up to: 2.9.1
 Stable tag: trunk
@@ -10,17 +10,14 @@ The purpose of this plugin is to add the ability to output a list of link catego
 
 == Description ==
 
-** New to version 2.5: The Configuration Panel is now under the Settings section of the Wordpress Admin. **
-** Version 2.5 also adds the ability to search through your links and to display results using pagination **
-
-This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX queries to load other categories based on user input.
+This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX queries to load other categories based on user input. It can display a search box and find results based on queries. It can also display a form to accept user submissions and allow the site administrator to moderate them before listing the new entries.
 
 For links that carry RSS feed information, Link Library can display a preview of the latest feed items inline with the all links or in a separate preview window.
 
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for up to five different configurations to be created to display links on different pages of a Wordpress site. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
 You can see a few examples of pages using Link Library on my personal site:
-*   [Library in table form with search box](http://yannickcorner.nayanna.biz/freeware-database/)
+*   [Library in table form with search box and link submission form](http://yannickcorner.nayanna.biz/freeware-database/)
 *   [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)
 *   [Library in unordered list form with RSS feed icons and Pagination](http://yannickcorner.nayanna.biz/links-page-with-pagination/)
 *   [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)
@@ -52,6 +49,11 @@ To get a basic Link Library list showing on one of your Wordpress pages:<br/>
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 2.6 =
+* Adds the ability to display a form for users to submit new links to the Wordpress link database
+* Allows administrators to determine if links are displayed immediately or only after being moderated
+* All labels can be edited in the admin panel
 
 = 2.5.9.3 =
 * Corrected a big with category names appearing twice after update 2.5.9.2

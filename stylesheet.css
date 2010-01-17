@@ -74,3 +74,41 @@ text-decoration: none;text-align: left;text-indent: 0px;max-width:500px;}
 .resulttitle {padding-top:10px;}
 
 #llsearch {padding-top:10px;}
+
+.lladdlink #lladdlinktitle {
+	font-weight: bold;
+}
+
+.lladdlink table {
+	margin-top: 5px;
+	margin-bottom: 8px;
+	border: 0;
+	border-spacing: 0;
+	border-collapse: collapse;
+}
+
+.lladdlink table td {
+	border: 0;
+	height: 30px;
+}
+
+.lladdlink table th {
+	border: 0;
+	text-align: left;
+	font-weight: normal;
+	width: 400px;
+}
+
+.lladdlink input[type="text"] {
+	width: 300px;
+}
+
+.lladdlink select {
+	width: 300px;
+}
+
+.llmessage {
+	margin: 8px;
+	border: 1px solid #ddd;
+	background-color: #ff0;
+}
