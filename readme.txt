@@ -50,6 +50,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.6.1 =
+* Now correctly displays link dates if that functionality is activated
+
 = 2.6 =
 * Adds the ability to display a form for users to submit new links to the Wordpress link database
 * Allows administrators to determine if links are displayed immediately or only after being moderated

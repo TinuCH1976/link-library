@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.6
+Version: 2.6.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1446,7 +1446,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '')
 		$categorylist = $defaultsinglecat;
 	
-	$linkquery = "SELECT *, IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated FROM " . $wpdb->prefix . "links l, " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_relationships tr, ";
+	$linkquery = "SELECT *, UNIX_TIMESTAMP(l.link_updated) as link_date, IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated FROM " . $wpdb->prefix . "links l, " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_relationships tr, ";
 	$linkquery .= $wpdb->prefix. "term_taxonomy tt WHERE l.link_id = tr.object_id AND tr.term_taxonomy_id = tt.term_taxonomy_id ";
 	$linkquery .= "AND tt.taxonomy = 'link_category' AND tt.term_id = t.term_id";
 	
@@ -1845,7 +1845,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
 				}
 				
-				$formatteddate = date("F d Y", $linkitem->link_updated);
+				$formatteddate = date("F d Y", $linkitem->link_date);
 				
 				if ($showdate)
 					$output .= $between . $beforedate . $formatteddate . $afterdate;
