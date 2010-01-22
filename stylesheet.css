@@ -50,7 +50,7 @@ table.linklisttable td {
 	font-weight: bold;	
 }
 
-div.rsscontent{color: #333333; font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;font-size: 11px;line-height: 1.25em (16px);
+div.rsscontent{color: #333333; font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;font-size: 11px;line-height: 1.25em;
 vertical-align: baseline;letter-spacing: normal;word-spacing: normal;font-weight: normal;font-style: normal;font-variant: normal;text-transform: none;
 text-decoration: none;text-align: left;text-indent: 0px;max-width:500px;}
 
@@ -111,4 +111,23 @@ text-decoration: none;text-align: left;text-indent: 0px;max-width:500px;}
 	margin: 8px;
 	border: 1px solid #ddd;
 	background-color: #ff0;
+}
+
+.pageselector {
+	margin-top: 20px;
+	text-align: center;
+}
+
+.selectedpage {
+	margin: 0px 5px 0px 5px;
+	border: 1px solid #000;
+	padding: 8px;
+	background-color: #f4f5f3;
+}
+
+.unselectedpage {
+	margin: 0px 5px 0px 5px;
+	border: 1px solid #000;
+	padding: 8px;
+	background-color: #dee1d8;
 }

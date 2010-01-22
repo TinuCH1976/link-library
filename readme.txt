@@ -50,6 +50,12 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.7 =
+* Changed jQuery script to render RSS previews from Thickbox to Fancybox
+* Added code to check if javascript and stylesheets from plugin are necessary before loading them
+* Changed pagination system to show all pages and allow user to navigate though link library pages quicker
+* Fixes stylesheet bugs in Link-Library.css. CSS issues with Thickbox were removed by changing jQuery scrip for that functionality
+
 = 2.6.1 =
 * Now correctly displays link dates if that functionality is activated
 

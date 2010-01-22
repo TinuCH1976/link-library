@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.6.1
+Version: 2.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -155,6 +155,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['addlinkbtnlabel'] = "Add Link";
 					$options['newlinkmsg'] = "New link submitted";
 					$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
+					$options['rsspreviewwidth'] = 900;
+					$options['rsspreviewheight'] = 700;
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -241,6 +243,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['addlinkbtnlabel'] = "Add Link";
 					$options['newlinkmsg'] = "New link submitted";
 					$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";		
+					$options['rsspreviewwidth'] = 900;
+					$options['rsspreviewheight'] = 700;					
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -290,7 +294,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
 							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss','linksperpage', 'catdescpos',
-							   'beforedate', 'afterdate', 'catlistdescpos') as $option_name) {
+							   'beforedate', 'afterdate', 'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -500,6 +504,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['addlinkbtnlabel'] = "Add Link";
 				$options['newlinkmsg'] = "New link submitted";
 				$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
+				$options['rsspreviewwidth'] = 900;
+				$options['rsspreviewheight'] = 700;				
 
 				update_option($settingsname,$options);
 			}	
@@ -1118,6 +1124,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>				
 						<td></td><td></td>						
 					</tr>				
+					<tr>
+						<td>RSS Preview Width</td>
+						<td><input type="text" id="rsspreviewwidth" name="rsspreviewwidth" size="5" value="<?php if ($options['rsspreviewwidth'] == '') echo '900'; else echo strval($options['rsspreviewwidth']); ?>"/></td>
+						<td>RSS Preview Height</td>
+						<td><input type="text" id="rsspreviewheight" name="rsspreviewheight" size="5" value="<?php if ($options['rsspreviewheight'] == '') echo '700'; else echo strval($options['rsspreviewheight']); ?>"/></td>
+						<td></td><td></td>
+					</tr>
 					</table>
 					</fieldset>
 					</fieldset>
@@ -1425,7 +1438,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 								$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
-								$showuserlinks = false) {
+								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700) {
 								
 	global $wpdb;
 	
@@ -1512,6 +1525,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		
 	if ($pagination && $mode != 'search')
 	{
+		$linkitemsforcount = $wpdb->get_results($linkquery);
+		
+		$numberoflinks = count($linkitemsforcount);
+		
 		$quantity = $linksperpage + 1;
 		
 		if (isset($_GET['page']))
@@ -1540,6 +1557,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		}
 		else
 			$nextpage = false;		
+			
+		$numberofpages = round($numberoflinks / $linksperpage);
 	}
 
     // Display links
@@ -1867,7 +1886,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				}	
 				if ($rsspreview && $linkitem->link_rss != '')
 				{
-					$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->link_id . '&previewcount=' . $rsspreviewcount . '&TB_iframe=true&height=500&width=700" title="Preview of RSS feed for ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
+					$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->link_id . '&previewcount=' . $rsspreviewcount . '" title="Preview of RSS feed for ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
 				}
 				
 				if ($show_rss || $show_rss_icon || $rsspreview)
@@ -1925,11 +1944,22 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 			$previouspagenumber = $pagenumber - 1;
 			$nextpagenumber = $pagenumber + 1;
 			
-			if ($pagenumber > 1)
+			/* if ($pagenumber > 1)
 				$output .= "<div class='previouspage'><a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>&laquo; Page " . $previouspagenumber . "</a></div>";
 			
 			if ($nextpage)
-				$output .= "<div class='nextpage'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Page " . $nextpagenumber . " &raquo;</a></div>";
+				$output .= "<div class='nextpage'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Page " . $nextpagenumber . " &raquo;</a></div>"; */
+			
+			$output .= "<div class='pageselector'>";	
+			for ($counter = 1; $counter <= $numberofpages; $counter++)
+			{
+				if ($counter != $pagenumber)
+					$output .= "<span class='unselectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+				else
+					$output .= "<span class='selectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+			}
+			$output .= "</div>";
+
 			
 		}
 		
@@ -1940,7 +1970,21 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 	}
 	else
 	{
-		$output .= "<div>No categories were found that match the parameters entered in the Link Library Settings Panel! Please notify the blog author.</div>";	
+		$output .= "<div>No categories were found that match the parameters entered in the Link Library Settings Panel! Please notify the blog author.</div>\n";	
+	}
+	
+	if ($rsspreview)
+	{
+		$output .= "<script type='text/javascript'>\n";
+		$output .= "jQuery(document).ready(function() {\n";
+		$output .= "\tjQuery('a.rssbox').fancybox(\n";
+		$output .= "\t\t{\n";
+		$output .= "\t\t\t'frameWidth'	:	" . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . ",\n";
+		$output .= "\t\t\t'frameHeight'	:	" . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . "\n";
+		$output .= "\t\t}\n";
+		$output .= ");";
+		$output .= "});";
+		$output .= "</script>";
 	}
 	
 	$output .= "\n<!-- End of Link Library Output -->\n\n";
@@ -2098,7 +2142,8 @@ if ($options == "") {
 		$options['addlinkbtnlabel'] = "Add Link";
 		$options['newlinkmsg'] = "New link submitted";
 		$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
-		
+		$options['rsspreviewwidth'] = 900;
+		$options['rsspreviewheight'] = 700;
 		
 		update_option('LinkLibraryPP1',$options);
 		
@@ -2242,6 +2287,8 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   afterdate (default null) - Code/Text to be displated after link date
  *   catdescpos (default 'right') - Position of link category description output
  *   showuserlinks (default false) - Specifies if user submitted links should be shown immediately after submission
+ *   rsspreviewwidth (default 900) - Specifies the width of the box in which RSS previews are displayed
+ *   rsspreviewheight (default 700) - Specifies the height of the box in which RSS previews are displayed
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
@@ -2259,7 +2306,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
-								$showuserlinks = false) {
+								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700) {
 								
 	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
 	{
@@ -2303,7 +2350,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible'],
-								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks']);
+								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
+								  $options['rsspreviewwidth'], $options['rsspreviewheight']);
 	
 	}
 	else
@@ -2317,7 +2365,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
-								$showuserlinks);
+								$showuserlinks, $rsspreviewwidth, $rsspreviewheight);
 
 }
 
@@ -2484,23 +2532,8 @@ function link_library_func($atts) {
 								  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
-								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks']);
+								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight']);
 }
-
-function link_library_header() {
-	$genoptions = get_option('LinkLibraryGeneral');
-	
-	if ($genoptions == "")
-		$genoptions['stylesheet'] = 'stylesheet.css';
-		
-	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/' . $genoptions['stylesheet'] . '"/>';	
-	echo '<link rel="stylesheet" type="text/css" media="screen" href="' . WP_PLUGIN_URL . '/link-library/thickbox/thickbox.css"/>';
-}
-
-function link_library_init() {
-	wp_enqueue_script('thickbox', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/thickbox/thickbox.js');
-	wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
-}  
 
 add_shortcode('link-library-cats', 'link_library_cats_func');
 
@@ -2512,11 +2545,36 @@ add_shortcode('link-library', 'link_library_func');
 
 wp_enqueue_script('jquery');
 
-add_action('wp_head', 'link_library_header');
-
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));
 
-add_action('init', 'link_library_init');
 
+add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
+
+function conditionally_add_scripts_and_styles($posts){
+	if (empty($posts)) return $posts;
+ 
+	$shortcode_found = false; // use this flag to see if styles and scripts need to be enqueued
+	foreach ($posts as $post) {
+		if (stripos($post->post_content, 'link-library') || stripos($post->post_content, 'link-library-cats') || stripos($post->post_content, 'link-library-search') || stripos($post->post_content, 'link-library-addlink')) {
+			$shortcode_found = true; // bingo!
+			break;
+		}
+	}
+	
+	$genoptions = get_option('LinkLibraryGeneral');
+	
+	if ($genoptions == "")
+		$genoptions['stylesheet'] = 'stylesheet.css';
+ 
+	if ($shortcode_found) {
+		// enqueue here
+		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.pack.js');
+		wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
+		wp_enqueue_style('linklibrarystyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/' . $genoptions['stylesheet']);	
+		wp_enqueue_style('thickboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.css');	
+	}
+ 
+	return $posts;
+}
 ?>
