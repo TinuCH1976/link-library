@@ -119,15 +119,30 @@ text-decoration: none;text-align: left;text-indent: 0px;max-width:500px;}
 }
 
 .selectedpage {
-	margin: 0px 5px 0px 5px;
+	margin: 0px 4px 0px 4px;
 	border: 1px solid #000;
-	padding: 8px;
+	padding: 7px;
 	background-color: #f4f5f3;
 }
 
 .unselectedpage {
-	margin: 0px 5px 0px 5px;
+	margin: 0px 4px 0px 4px;
 	border: 1px solid #000;
-	padding: 8px;
+	padding: 7px;
 	background-color: #dee1d8;
+}
+
+.previousnextactive {
+	margin: 0px 4px 0px 4px;
+	border: 1px solid #000;
+	padding: 7px;
+	background-color: #dee1d8;
+}
+
+.previousnextinactive {
+	margin: 0px 4px 0px 4px;
+	border: 1px solid #000;
+	padding: 7px;
+	background-color: #dddddd;
+	color: #cccccc;
 }

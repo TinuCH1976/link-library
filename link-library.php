@@ -1269,9 +1269,11 @@ jQuery(document).ready(function()
 } //endif
 
 
-function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
+function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
+							   
+	global $wpdb;
 							   
 	$output = '';
 							   
@@ -1304,23 +1306,34 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolet
 
 		if (!isset($direction)) $direction = '';
 		// Fetch the link category data as an array of hashesa
-
-		if ($order == "catlist")
-			{
-				$displaycategories = explode(",",$categorylist);
-				
-				$catnames = array();
-				
-				foreach ( $displaycategories as $displaycategory ) {			
-					$temp = get_categories("type=link&orderby=name&order=$direction&hierarchical=0&include=$displaycategory");
-					$catnames = array_merge($catnames,$temp);							
-				}
-				
-			}
-		else
-		{
-			$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categorylist&exclude=$excludecategorylist");		
-		}
+		
+		$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
+		
+		if ($hide_if_empty)
+			$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr ";
+		
+		$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+		
+		if ($hide_if_empty)
+			$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
+			
+		if ($categorylist != "")
+			$linkcatquery .= " AND t.term_id in (" . $categorylist. ")";
+			
+		if ($excludecategorylist != "")
+			$linkcatquery .= " AND t.term_id not in (" . $excludecategorylist . ")";
+			
+		if ($order == "name")
+			$linkcatquery .= " ORDER by t.name " . $direction;
+		elseif ($order == "id")
+			$linkcatquery .= " ORDER by t.term_id " . $direction;
+		elseif ($order == "order")
+			$linkcatquery .= " ORDER by t.term_order " . $direction;
+		elseif ($order == "catlist")
+			$linkcatquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
+			
+		$catnames = $wpdb->get_results($linkcatquery);
 
 		// Display each category
 
@@ -1422,7 +1435,7 @@ function highlightWords($text, $words)
 }
 
 
-function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
+function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
                                 $showdescription = false, $shownotes = false, $showrating = false,
                                 $showupdated = false, $categorylist = '', $show_images = false, 
                                 $show_image_and_name = false, $use_html_tags = false, 
@@ -1458,13 +1471,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		$categorylist = $AJAXcatid;
 	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '')
 		$categorylist = $defaultsinglecat;
+		
+	$linkquery = "SELECT distinct *, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
+	$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
+	$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (t.term_id = tr.term_taxonomy_id) ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
+	$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
 	
-	$linkquery = "SELECT *, UNIX_TIMESTAMP(l.link_updated) as link_date, IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated FROM " . $wpdb->prefix . "links l, " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_relationships tr, ";
-	$linkquery .= $wpdb->prefix. "term_taxonomy tt WHERE l.link_id = tr.object_id AND tr.term_taxonomy_id = tt.term_taxonomy_id ";
-	$linkquery .= "AND tt.taxonomy = 'link_category' AND tt.term_id = t.term_id";
-	
-	if ($showuserlinks == false)
-		$linkquery .= " AND l.link_description not like '(LinkLibrary:AwaitingModeration:RemoveTextToApprove)%'";
+	if ($hide_if_empty)
+		$linkquery .= "AND l.link_id is not NULL ";
 	
 	if ($categorylist != "")
 		$linkquery .= " AND t.term_id in (" . $categorylist. ")";
@@ -1543,8 +1560,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 			$linkquery .= " LIMIT 0, " . $quantity;
 		}
 	}
-		
-	//echo $linkquery;
 		
 	$linkitems = $wpdb->get_results($linkquery);
 	
@@ -1763,7 +1778,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 				$feed->handle_content_type();
 			}
 			
-			if ($linkitem->link_visible == 'Y' || $showinvisible == true)
+			if (($linkitem->link_visible == 'Y' || $showinvisible == true) && ($showuserlinks == true || strpos($linkitem->link_description, "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false))
 			{
 				$linkcount = $linkcount + 1;
 				
@@ -1943,24 +1958,55 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catan
 		{
 			$previouspagenumber = $pagenumber - 1;
 			$nextpagenumber = $pagenumber + 1;
+			$dotbelow = false;
+			$dotabove = false;
 			
 			/* if ($pagenumber > 1)
 				$output .= "<div class='previouspage'><a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>&laquo; Page " . $previouspagenumber . "</a></div>";
 			
 			if ($nextpage)
 				$output .= "<div class='nextpage'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Page " . $nextpagenumber . " &raquo;</a></div>"; */
-			
-			$output .= "<div class='pageselector'>";	
-			for ($counter = 1; $counter <= $numberofpages; $counter++)
+				
+			if ($numberofpages > 1)
 			{
-				if ($counter != $pagenumber)
-					$output .= "<span class='unselectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+				$output .= "<div class='pageselector'>";	
+				
+				if ($pagenumber != 1)
+					$output .= "<span class='previousnextactive'><a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>Previous</a></span>";
 				else
-					$output .= "<span class='selectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
-			}
-			$output .= "</div>";
-
-			
+					$output .= "<span class='previousnextinactive'>Previous</span>";
+				
+				for ($counter = 1; $counter <= $numberofpages; $counter++)
+				{
+					if ($counter <= 2 || $counter >= $numberofpages - 1 || ($counter <= $pagenumber + 2 && $counter >= $pagenumber - 2))
+					{
+						if ($counter != $pagenumber)
+							$output .= "<span class='unselectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+						else
+							$output .= "<span class='selectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+					}
+					
+					if ($counter >= 2 && $counter < $pagenumber - 2 && $dotbelow == false)
+					{
+						$output .= "...";
+						$dotbelow = true;
+					}
+						
+					if ($counter > $pagenumber + 2 && $counter < $numberofpages - 1 && $dotabove == false)
+					{
+						$output .= "...";
+						$dotabove = true;
+					}
+					
+				}
+				
+				if ($pagenumber != $numberofpages)
+					$output .= "<span class='previousnextactive'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Next</a></span>";
+				else
+					$output .= "<span class='previousnextinactive'>Next</span>";
+					
+				$output .= "</div>";
+			}		
 		}
 		
 		$currentcategory = $currentcategory + 1;
@@ -2005,8 +2051,10 @@ function PrivateLinkLibrarySearchForm() {
 	return $output;
 }
 
-function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg, $linknamelabel, $linkaddrlabel, $linkrsslabel,
-										$linkcatlabel, $linkdesclabel, $linknoteslabel, $addlinkbtnlabel) {
+function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg = '', $linknamelabel = '', $linkaddrlabel = '',
+										$linkrsslabel = '', $linkcatlabel = '', $linkdesclabel = '', $linknoteslabel = '', $addlinkbtnlabel = '', $hide_if_empty = true) {
+										
+	global $wpdb;
 
 	$output = "<form method='post' id='lladdlink'>\n";
 	$output .= "<div class='lladdlink'>\n";
@@ -2025,8 +2073,27 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 	if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
 	$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
 	
-	$linkcats = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$selectedcategorylist&exclude=$excludedcategorylist");
+	$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+	$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
 	
+	if ($hide_if_empty)
+		$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr ";
+	
+	$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+	
+	if ($hide_if_empty)
+		$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
+		
+	if ($categorylist != "")
+		$linkcatquery .= " AND t.term_id in (" . $selectedcategorylist. ")";
+		
+	if ($excludecategorylist != "")
+		$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
+		
+	$linkcatquery .= " ORDER by t.name " . $direction;
+		
+	$linkcats = $wpdb->get_results($linkcatquery);
+		
 	if ($linkcats)
 	{
 		if ($linkcatlabel == "") $linkcatlabel = "Link category";
@@ -2185,7 +2252,7 @@ else
  *   catlistdescpos (default 'right') - Position of category description relative to name
  */
 
-function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $table_width = 100, $num_columns = 1, $catanchor = true, 
+function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
 	
@@ -2202,12 +2269,12 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
 		else if ($order == 'AdminSettings5')
 			$options = get_option('LinkLibraryPP5');
 
-		return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
+		return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
 								 $options['loadingicon'], $options['catlistdescpos']);   
 	}
 	else
-		return PrivateLinkLibraryCategories($order, true, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
+		return PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
 		$showonecatonly, $settings, $loadingicon, $catlistdescpos);   
 	
 }
@@ -2291,7 +2358,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = 'obsolete', $ta
  *   rsspreviewheight (default 700) - Specifies the height of the box in which RSS previews are displayed
  */
 
-function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = true,
+function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
                                 $showdescription = false, $shownotes = false, $showrating = false,
                                 $showupdated = false, $categorylist = '', $show_images = false, 
                                 $show_image_and_name = false, $use_html_tags = false, 
@@ -2336,7 +2403,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = 'obsolete', $catanchor = 
 			$settings = 5;
 		}
 
-		return PrivateLinkLibrary($options['order'], TRUE, $options['catanchor'], $options['showdescription'], $options['shownotes'],
+		return PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $options['showdescription'], $options['shownotes'],
 								  $options['showrating'], $options['showupdated'], $options['categorylist'], $options['show_images'],
 								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 								  $options['nofollow'], $options['excludecategorylist'], $options['afternote'], $options['beforeitem'],
@@ -2399,7 +2466,7 @@ function link_library_cats_func($atts) {
 	else
 		$excludedcategorylist = $options['excludecategorylist'];
 
-	return PrivateLinkLibraryCategories($options['order'], true, $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
+	return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
 								 $options['loadingicon'], $options['catlistdescpos']);
 }
@@ -2438,7 +2505,7 @@ function link_library_addlink_func($atts) {
 	
 	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
 										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
-										 $options['addlinkbtnlabel']);	
+										 $options['addlinkbtnlabel'], $options['hide_if_empty']);	
 	
 	
 }
@@ -2517,7 +2584,7 @@ function link_library_func($atts) {
 	else
 		$overridedisplayastable = $options['displayastable'];
 		
-	return PrivateLinkLibrary($options['order'], TRUE, $options['catanchor'], $selectedshowdescription, $selectedshownotes,
+	return PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 								  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
 								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 								  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],

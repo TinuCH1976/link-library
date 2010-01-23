@@ -50,6 +50,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.7.1 =
+* Fixed option "Hide if Empty" to correctly display categories that do not contain any links
+* Improved the pagination scheme that was introduced in version 2.7 to show a limited number of entries
+
 = 2.7 =
 * Changed jQuery script to render RSS previews from Thickbox to Fancybox
 * Added code to check if javascript and stylesheets from plugin are necessary before loading them
