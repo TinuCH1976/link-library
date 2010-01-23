@@ -50,6 +50,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.7.2 =
+* Correctly process special characters in category description
+
 = 2.7.1 =
 * Fixed option "Hide if Empty" to correctly display categories that do not contain any links
 * Improved the pagination scheme that was introduced in version 2.7 to show a limited number of entries

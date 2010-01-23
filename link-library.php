@@ -1376,7 +1376,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 				{
 					$catname->category_description = str_replace("[", "<", $catname->category_description);
 					$catname->category_description = str_replace("]", ">", $catname->category_description);
-					$catitem .= $catname->category_description;				
+					$catitem .= wp_specialchars($catname->category_description);				
 				}
 				
 				if ($catlistdescpos == 'left')
