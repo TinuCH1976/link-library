@@ -17,11 +17,11 @@ For links that carry RSS feed information, Link Library can display a preview of
 The latest version of this plugin has been completely re-vamped to use the filter plugin methods to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for up to five different configurations to be created to display links on different pages of a Wordpress site. The previous API has been restored in version 1.1 for users who just prefer to make calls to PHP functions from their pages.
 
 You can see a few examples of pages using Link Library on my personal site:
-*   [Library in table form with search box and link submission form](http://yannickcorner.nayanna.biz/freeware-database/)
-*   [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)
-*   [Library in unordered list form with RSS feed icons and Pagination](http://yannickcorner.nayanna.biz/links-page-with-pagination/)
-*   [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)
-*   [Library in unordered list form with 1 full RSS item per feed inline and 5 RSS item full previews when selecting preview icon](http://yannickcorner.nayanna.biz/links-page-with-preview/)
+*   [Library in table form with search box and link submission form](http://yannickcorner.nayanna.biz/freeware-database/)<br />
+*   [Library in unordered list form with RSS feed icons](http://yannickcorner.nayanna.biz/favorite-links/)<br />
+*   [Library in unordered list form with RSS feed icons and Pagination](http://yannickcorner.nayanna.biz/links-page-with-pagination/)<br />
+*   [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)<br />
+*   [Library in unordered list form with 1 full RSS item per feed inline and 5 RSS item full previews when selecting preview icon](http://yannickcorner.nayanna.biz/links-page-with-preview/)<br />
 
 Examples from actual users can be found on my [site](http://yannickcorner.nayanna.biz/wordpress-plugins/).
 
@@ -40,10 +40,10 @@ To get a basic Link Library list showing on one of your Wordpress pages:<br/>
 1. In the Wordpress Admin, create a new page and type the following text, where # should be replaced by the Settings Set number:<br/>
    [link-library settings=#]
    
-1. To add a list of categories to jump to a certain point in the list, add the following text to your page:<br/>
-   [link-library-cats settings=#]<br/>
+1. To add a list of categories to jump to a certain point in the list, add the following text to your page:<br />
+   [link-library-cats settings=#]<br />
    
-1. To add a search box to your Link Library list, add the following text to your page:<br/>
+1. To add a search box to your Link Library list, add the following text to your page:<br />
    [link-library-search]
    
 Further configuration is available under the Link Library Settings panel.
