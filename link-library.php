@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8
+Version: 2.8.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2089,10 +2089,10 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 	if ($hide_if_empty)
 		$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
 		
-	if ($categorylist != "")
+	if ($selectedcategorylist != "")
 		$linkcatquery .= " AND t.term_id in (" . $selectedcategorylist. ")";
 		
-	if ($excludecategorylist != "")
+	if ($excludedcategorylist != "")
 		$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
 		
 	$linkcatquery .= " ORDER by t.name " . $direction;
@@ -2262,18 +2262,11 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
 	
-	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
+	if (strpos($order, 'AdminSettings') != false)
 	{
-		if ($order == 'AdminSettings1')
-			$options = get_option('LinkLibraryPP1');
-		else if ($order == 'AdminSettings2')
-			$options = get_option('LinkLibraryPP2');
-		else if ($order == 'AdminSettings3')
-			$options = get_option('LinkLibraryPP3');			
-		else if ($order == 'AdminSettings4')
-			$options = get_option('LinkLibraryPP4');			
-		else if ($order == 'AdminSettings5')
-			$options = get_option('LinkLibraryPP5');
+		$settingsetid = substr($order, 13);
+		$settingsetname = "LinkLibraryPP" . $settingsetid;
+		$options = get_option($settingsetname);
 
 		return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
@@ -2381,33 +2374,11 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700) {
 								
-	if ($order == 'AdminSettings1' || $order == 'AdminSettings2' || $order == 'AdminSettings3' || $order == 'AdminSettings4' || $order == 'AdminSettings5')
+	if (strpos($order, 'AdminSettings') != false)
 	{
-		if ($order == 'AdminSettings1')
-		{
-			$options = get_option('LinkLibraryPP1');
-			$settings = 1;
-		}
-		else if ($order == 'AdminSettings2')
-		{
-			$options = get_option('LinkLibraryPP2');
-			$settings = 2;
-		}
-		else if ($order == 'AdminSettings3')
-		{
-			$options = get_option('LinkLibraryPP3');			
-			$settings = 3;
-		}
-		else if ($order == 'AdminSettings4')
-		{
-			$options = get_option('LinkLibraryPP4');			
-			$settings = 4;
-		}
-		else if ($order == 'AdminSettings5')
-		{
-			$options = get_option('LinkLibraryPP5');			
-			$settings = 5;
-		}
+		$settingsetid = substr($order, 13);
+		$settingsetname = "LinkLibraryPP" . $settingsetid;
+		$options = get_option($settingsetname);
 
 		return PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $options['showdescription'], $options['shownotes'],
 								  $options['showrating'], $options['showupdated'], $options['categorylist'], $options['show_images'],
@@ -2424,8 +2395,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
-								  $options['rsspreviewwidth'], $options['rsspreviewheight']);
-	
+								  $options['rsspreviewwidth'], $options['rsspreviewheight']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2441,8 +2411,6 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$showuserlinks, $rsspreviewwidth, $rsspreviewheight);
 
 }
-
-
 
 function link_library_cats_func($atts) {
 	extract(shortcode_atts(array(
@@ -2515,7 +2483,6 @@ function link_library_addlink_func($atts) {
 	
 	
 }
-
 
 function link_library_func($atts) {
 	extract(shortcode_atts(array(
@@ -2620,7 +2587,6 @@ wp_enqueue_script('jquery');
 
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));
-
 
 add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
 
