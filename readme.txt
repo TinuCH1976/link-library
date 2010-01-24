@@ -50,6 +50,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8 =
+* Corrects problem with bad link results introduced in version 2.7.1
+* Add ability to have more than 5 Settings Set
+
 = 2.7.2 =
 * Correctly process special characters in category description
 

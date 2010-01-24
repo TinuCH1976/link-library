@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.7.2
+Version: 2.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -277,7 +277,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.'));
 				check_admin_referer('linklibrarypp-config');
 				
-				foreach (array('stylesheet') as $option_name) {
+				foreach (array('stylesheet', 'numberstylesets') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$genoptions[$option_name] = $_POST[$option_name];
 					}
@@ -286,9 +286,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				update_option('LinkLibraryGeneral', $genoptions);
 				
 			}
-			if ( isset($_POST['submit1']) || isset($_POST['submit2']) || isset($_POST['submit3']) || isset($_POST['submit4']) || isset($_POST['submit5'])) {
+			if ( isset($_POST['submit'])) {
 				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.'));
 				check_admin_referer('linklibrarypp-config');
+				
+				$settingsetid = $_POST['settingsetid'];
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
@@ -348,31 +350,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				}
 				
-				if (isset($_POST['submit1']))
-				{
-					update_option('LinkLibraryPP1', $options);
-					echo '<div id="message" class="updated fade"><p><strong>Settings Set 1 Updated!</strong>';
-				}
-				else if (isset($_POST['submit2']))
-				{
-					update_option('LinkLibraryPP2', $options);
-					echo '<div id="message" class="updated fade"><p><strong>Settings Set 2 Updated!</strong>';
-				}
-				else if (isset($_POST['submit3']))
-				{
-					update_option('LinkLibraryPP3', $options);
-					echo '<div id="message" class="updated fade"><p><strong>Settings Set 3 Updated!</strong>';
-				}
-				else if (isset($_POST['submit4']))
-				{
-					update_option('LinkLibraryPP4', $options);
-					echo '<div id="message" class="updated fade"><p><strong>Settings Set 4 Updated!</strong>';
-				}
-				else if (isset($_POST['submit5']))
-				{
-					update_option('LinkLibraryPP5', $options);
-					echo '<div id="message" class="updated fade"><p><strong>Settings Set 5 Updated!</strong>';
-				}				
+				$settingsname = 'LinkLibraryPP' . $settings;
+				
+				update_option($settingsname, $options);
+				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong>";
 					
 				$categoryids = explode(',', $options['categorylist']);
 				
@@ -515,14 +496,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			if ($genoptions == "")
 			{
 				$genoptions['stylesheet'] = 'stylesheet.css';
+				$genoptions['numberstylesets'] = 5;
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
 				
-			$options1 = get_option('LinkLibraryPP1');
-			$options2 = get_option('LinkLibraryPP2');
-			$options3 = get_option('LinkLibraryPP3');
-			$options4 = get_option('LinkLibraryPP4');
-			$options5 = get_option('LinkLibraryPP5');
 			?>		
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
@@ -540,23 +517,44 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<tr>
 				<td style='width:200px'>Stylesheet File Name</td>
 				<td><input type="text" id="stylesheet" name="stylesheet" size="40" value="<?php echo $genoptions['stylesheet']; ?>"/></td>
+				<td style='padding-left: 10px;padding-right:10px'>Number of Style Sets</td>
+				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '5'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
 				</table>
 				</fieldset>
-				<br />
-				</form><br />
+				</form>
 				
-				<form name="lladminform" action="" method="post" id="analytics-conf">
-				<?php
-					if ( function_exists('wp_nonce_field') )
-						wp_nonce_field('linklibrarypp-config');
-					?>
-					<div>
+				<div style='padding-top: 15px;clear:both'>
+					<fieldset style='border:1px solid #CCC;padding:10px'>
+					<legend style='padding: 0 5px 0 5px;'><strong>Setting Set Selection and Usage Instructions</strong></legend>				
+						<FORM name="settingsetselection">
+							Select Current Style Set: 
+							<SELECT name="settingsetlist" style='width: 300px'>
+							<?php if ($genoptions['numberstylesets'] == '') $numberofsets = 5; else $numberofsets = $genoptions['numberstylesets'];
+								for ($counter = 1; $counter <= $numberofsets; $counter++): ?>
+									<?php $tempoptionname = "LinkLibraryPP" . $counter;
+									   $tempoptions = get_option($tempoptionname); ?>
+									   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>>Setting Set <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
+								<?php endfor; ?>
+							</SELECT>
+							<INPUT type="button" name="go" value="Go!" onClick="window.location= '?page=link-library.php&amp;settings=' + document.settingsetselection.settingsetlist.options[document.settingsetselection.settingsetlist.selectedIndex].value">						
+							Copy from: 
+							<SELECT name="copysource" style='width: 300px'>
+							<?php if ($genoptions['numberstylesets'] == '') $numberofsets = 5; else $numberofsets = $genoptions['numberstylesets'];
+								for ($counter = 1; $counter <= $numberofsets; $counter++): ?>
+									<?php $tempoptionname = "LinkLibraryPP" . $counter;
+									   $tempoptions = get_option($tempoptionname); 
+									   if ($counter != $settings):?>
+									   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>>Setting Set <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
+									   <?php endif; 
+								    endfor; ?>
+							</SELECT>
+							<INPUT type="button" name="copy" value="Copy!" onClick="window.location= '?page=link-library.php&amp;copy=<?php echo $settings; ?>&source=' + document.settingsetselection.copysource.options[document.settingsetselection.copysource.selectedIndex].value">							
+					<br />
+					<br />
 					<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 						<thead>
 						<tr>
-							<th style='width:10px'>
-							</th>
 							<th style='width:40px' tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Set #
 							</th>
@@ -566,23 +564,27 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<th tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Code to insert on a Wordpress page to see Link Library
 							</th>
-							<th style='width: 30px'>
-								Add / Delete
-							</th>
-							<th style='width: 30px'>Copy Settings</th>
 						</tr>
 						</thead>
 						<tr>
-						<td style='background: #FFF'><?php if ($settings == 1) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?></td><td style='background: #FFF'><a href="?page=link-library.php&amp;settings=1">1</a></td><td style='background: #FFF'><?php if ($options1 != "") echo '<a href="?page=link-library.php&amp;settings=1">' . $options1['settingssetname']; ?></a></td><td style='background: #FFF'><?php if ($options1 != "") echo "[link-library-cats settings=1] [link-library-search] [link-library settings=1] [link-library-addlink settings=1]"; ?></td><td style='background: #FFF;text-align:center'></td><td style='background: #FFF;text-align:center'><?php if ($settings != 1) { echo "<a href='?page=link-library.php&amp;copy=" . $settings . "&source=1' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to overwrite current settings by copying from Settings Set '%s'\n  'Cancel' to stop, 'OK' to copy."), 1 )) . "') ) { return true;}return false;\"><img src='" . $llpluginpath . "/icons/page_copy.png' /></a> ";} ?></td>
+						<td style='background: #FFF'><?php echo $settings; ?></a></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "] [link-library-search] [link-library settings=" . $settings . "] [link-library-addlink settings=". $settings . "]"; ?></td><td style='background: #FFF;text-align:center'></td>
 						</tr>
-						<?php for ($i = 2; $i <= 5; $i++): ?>
-						<tr>
-						<td style='background: #FFF'><?php if ($settings == $i) {echo '<img src="' . $llpluginpath . '/icons/next-16x16.png" />';} ?></td><td style='background: #FFF'><?php if (${"options$i"} != "") {echo "<a href='?page=link-library.php&amp;settings=" . $i . "'>" . $i . "</a>";} else { echo $i;}?></td><td style='background: #FFF'><?php if (${"options$i"} != "") echo '<a href="?page=link-library.php&amp;settings=' . $i . '">' . ${"options$i"}['settingssetname'] . '</a>'; else echo 'Empty';?></td><td style='background: #FFF'><?php if (${"options$i"} != "") echo "[link-library-cats settings=" . $i . "] [link-library-search] [link-library settings=" . $i . "] [link-library-addlink settings=" . $i . "]"; ?></td><td style='background: #FFF;text-align:center'><?php if (${"options$i"} != "") {echo "<a href='?page=link-library.php&amp;deletesettings=" . $i . "' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to delete Settings Set '%s'\n  'Cancel' to stop, 'OK' to delete."), $i )) . "') ) { return true;}return false;\"><img title='Delete Settings Set' src='" . $llpluginpath . "/icons/delete-16x16.png' /></a>";} else echo '<a href="?page=link-library.php&amp;settings=' . $i . '"><img title="Create Settings Set" src="' . $llpluginpath . '/icons/add-16x16.png" /></a>'; ?></td><td style='background: #FFF;text-align:center'><?php if ($settings != $i && ${"options$i"} != "") { echo "<a href='?page=link-library.php&amp;copy=" . $settings . "&source=" . $i . "' onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to overwrite current settings by copying from Settings Set '%s'\n  'Cancel' to stop, 'OK' to copy."), $i )) . "') ) { return true;}return false;\"><img src='" . $llpluginpath . "/icons/page_copy.png' /></a> ";} ?></td>
-						</tr>
-						<?php endfor; ?>
-					</table><br />
-					<div style='float:left'><span style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></span></div>
+					</table> 
+					<br />
+					</FORM>
+					</fieldset>
+				</div>
+				
+				<form name="lladminform" action="" method="post" id="analytics-conf">
+				<?php
+					if ( function_exists('wp_nonce_field') )
+						wp_nonce_field('linklibrarypp-config');
+					?>
+					
+					<div>
+					<div style='float:left'><span style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></span></div>
 					<div style='float:right'>
+					<span><a href='?page=link-library.php&amp;deletesettings=<?php echo $settings ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Setting Set '%s'\n  'Cancel' to stop, 'OK' to delete."), $settings )) . "') ) { return true;}return false;\""; ?>>Delete Settings Set <?php echo $settings ?></a></span>
 					<span><a href='?page=link-library.php&amp;reset=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s'\n  'Cancel' to stop, 'OK' to reset."), $settings )) . "') ) { return true;}return false;\""; ?>>Reset current Settings Set</a></span>
 					
 					<span><a href='?page=link-library.php&amp;resettable=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset."), $settings )) . "') ) { return true;}return false;\""; ?>>Reset current Setting Set for table layout</a></span>
@@ -593,6 +595,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<div style='padding-top: 15px;clear:both'>
 					<fieldset style='border:1px solid #CCC;padding:10px'>
 					<legend style='padding: 0 5px 0 5px;'><strong>Common Parameters</strong></legend>
+					<input type='hidden' value='<?php echo $settings; ?>' name='settingsetid' id='settingsetid' />
 					<table>
 					
 					<tr>
@@ -1195,7 +1198,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</fieldset>
 					</div>
 
-					<p style="border:0;" class="submit"><input type="submit" name="submit<?php echo $settings; ?>" value="Update Settings &raquo;" /></p>
+					<p style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></p>
 					
 					
 				</form>
@@ -1316,7 +1319,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 		
 		if ($hide_if_empty)
-			$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
+			$linkcatquery .= " AND tt.term_taxonomy_id = tr.term_taxonomy_id ";
 			
 		if ($categorylist != "")
 			$linkcatquery .= " AND t.term_id in (" . $categorylist. ")";
@@ -1374,9 +1377,11 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 				
 				if ($showcategorydescheaders)
 				{
+					$catname->category_description = wp_specialchars($catname->category_description);
 					$catname->category_description = str_replace("[", "<", $catname->category_description);
 					$catname->category_description = str_replace("]", ">", $catname->category_description);
-					$catitem .= wp_specialchars($catname->category_description);				
+					$catname->category_description = str_replace("&quot;", "\"", $catname->category_description);
+					$catitem .= $catname->category_description;				
 				}
 				
 				if ($catlistdescpos == 'left')
@@ -1476,7 +1481,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
 	$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
 	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (t.term_id = tr.term_taxonomy_id) ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
 	$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
 	
@@ -1560,7 +1565,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			$linkquery .= " LIMIT 0, " . $quantity;
 		}
 	}
-		
+	
 	$linkitems = $wpdb->get_results($linkquery);
 	
 	if ($pagination)
@@ -2215,6 +2220,7 @@ if ($options == "") {
 		update_option('LinkLibraryPP1',$options);
 		
 		$genoptions['stylesheet'] = 'stylesheet.css';
+		$genoptions['numberstylesets'] = 5;
 		
 		update_option('LinkLibraryGeneral', $genoptions);
 	}
