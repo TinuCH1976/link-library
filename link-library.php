@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.1
+Version: 2.8.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1274,7 +1274,8 @@ jQuery(document).ready(function()
 
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
-							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
+							   $showuserlinks = false) {
 							   
 	global $wpdb;
 							   
@@ -1295,7 +1296,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			
 		$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
 		$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
-		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
+		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
 		$output .= "}\n";
 			
 		$output .= "</SCRIPT>\n\n";
@@ -1314,12 +1315,17 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
 		
 		if ($hide_if_empty)
-			$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr ";
+			$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr, " . $wpdb->prefix . "links l ";
 		
 		$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 		
 		if ($hide_if_empty)
-			$linkcatquery .= " AND tt.term_taxonomy_id = tr.term_taxonomy_id ";
+		{
+			$linkcatquery .= " AND tt.term_taxonomy_id = tr.term_taxonomy_id AND tr.object_id = l.link_id ";
+			
+			if (!$showuserlinks)
+				$linkcatquery .= " AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";			
+		}
 			
 		if ($categorylist != "")
 			$linkcatquery .= " AND t.term_id in (" . $categorylist. ")";
@@ -1486,8 +1492,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
 	
 	if ($hide_if_empty)
-		$linkquery .= "AND l.link_id is not NULL ";
-	
+		$linkquery .= "AND l.link_id is not NULL AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+			
 	if ($categorylist != "")
 		$linkquery .= " AND t.term_id in (" . $categorylist. ")";
 		
@@ -1583,7 +1589,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
     // Display links
 	if ($linkitems) {
-		$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
+		$output .= "<div id='linklist' class='linklist" . $settings . "'>\n";
 		
 		if ($mode == "search")
 		{
@@ -2105,7 +2111,7 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
 		foreach ($linkcats as $linkcat)
 		{
-			$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->category_nicename;
+			$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
 		}
 		
 		$output .= "</SELECT></td></tr>";
@@ -2374,7 +2380,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700) {
 								
-	if (strpos($order, 'AdminSettings') != false)
+	
+	if (strpos($order, 'AdminSettings') !== false)
 	{
 		$settingsetid = substr($order, 13);
 		$settingsetname = "LinkLibraryPP" . $settingsetid;
@@ -2409,7 +2416,6 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
 								$showuserlinks, $rsspreviewwidth, $rsspreviewheight);
-
 }
 
 function link_library_cats_func($atts) {

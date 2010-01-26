@@ -53,6 +53,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.2 =
+* Fixed problem with AJAX mode when switching categories
+* Changes names of categories to full name in user submission form
+* Fixes problem with categories showing with no link if unapproved links were present in database
+
 = 2.8.1 =
 * Corrected a few bugs with listing categories in user submission form
 * Made small enhancements to stylesheet
