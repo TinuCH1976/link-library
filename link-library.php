@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.2
+Version: 2.8.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1296,7 +1296,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			
 		$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
 		$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
-		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
+		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
 		$output .= "}\n";
 			
 		$output .= "</SCRIPT>\n\n";
@@ -1418,12 +1418,12 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			if ($showonecatonly)
 			{
 				if ($loadingicon == '') $loadingicon = '/icons/Ajax-loader.gif';
-				$output .= "<span class='contentLoading' id='contentLoading' style='display: none;'><img src='" . WP_PLUGIN_URL . "/link-library" . $loadingicon . "' alt='Loading data, please wait...'></span>\n";
+				$output .= "<div class='contentLoading' id='contentLoading' style='display: none;'><img src='" . WP_PLUGIN_URL . "/link-library" . $loadingicon . "' alt='Loading data, please wait...'></div>\n";
 			}
 		}
 		else
 		{
-			$output .= "<div>No categories were found that match the parameters entered in the Link Library Settings Panel! Please notify the blog author.</div>";	
+			$output .= "<div>No categories found.</div>";	
 		}
 		
 		$output .= "\n<!-- End of Link Library Categories Output -->\n\n";
@@ -1589,7 +1589,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
     // Display links
 	if ($linkitems) {
-		$output .= "<div id='linklist' class='linklist" . $settings . "'>\n";
+		$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
 		
 		if ($mode == "search")
 		{
@@ -1857,6 +1857,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						$target = ' target="' . $target . '"';
 				}
 
+				//$output .= "<div class='ll_link'>";
 				$output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 				
 				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name)) {
@@ -1948,6 +1949,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						
 				$output .= $afteritem . "\n";
 				
+				//$output .= "</div>";
+				
 				if ($linkaddfrequency > 0)
 					if ($linkcount % $linkaddfrequency == 0)
 						$output .= $addafterlink;
@@ -2027,7 +2030,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	}
 	else
 	{
-		$output .= "<div>No categories were found that match the parameters entered in the Link Library Settings Panel! Please notify the blog author.</div>\n";	
+		$output .= "<div>No links found.</div>\n";	
 	}
 	
 	if ($rsspreview)
@@ -2400,7 +2403,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
 								  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
-								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settings, $options['showinvisible'],
+								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
 								  $options['rsspreviewwidth'], $options['rsspreviewheight']);	
 	}

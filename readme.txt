@@ -53,6 +53,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.3 =
+* Restored div ids based on setting set number to allow multiple link libraries to be displayed on the same page
+* Changed AJAX loading indicator from being displayed in a span to a div
+* Changed text displayed when no categories or no links are displayed to be simpler
+
 = 2.8.2 =
 * Fixed problem with AJAX mode when switching categories
 * Changes names of categories to full name in user submission form
