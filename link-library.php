@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.3
+Version: 2.8.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -157,6 +157,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
 					$options['rsspreviewwidth'] = 900;
 					$options['rsspreviewheight'] = 700;
+					$options['beforeimage'] = '';
+					$options['afterimage'] = '';
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -244,7 +246,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['newlinkmsg'] = "New link submitted";
 					$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";		
 					$options['rsspreviewwidth'] = 900;
-					$options['rsspreviewheight'] = 700;					
+					$options['rsspreviewheight'] = 700;
+					$options['beforeimage'] = '';
+					$options['afterimage'] = '';
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -296,7 +300,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
 							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss','linksperpage', 'catdescpos',
-							   'beforedate', 'afterdate', 'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight') as $option_name) {
+							   'beforedate', 'afterdate', 'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight', 'beforeimage', 'afterimage') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = strtolower($_POST[$option_name]);
 					}
@@ -378,9 +382,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				}
 				
 				echo '</p></div>';
-					
-				
-				
 			}
 			
 			// Pre-2.6 compatibility
@@ -486,7 +487,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['newlinkmsg'] = "New link submitted";
 				$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
 				$options['rsspreviewwidth'] = 900;
-				$options['rsspreviewheight'] = 700;				
+				$options['rsspreviewheight'] = 700;
+				$options['beforeimage'] = '';
+				$options['afterimage'] = '';
 
 				update_option($settingsname,$options);
 			}	
@@ -903,19 +906,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</table>
 					<br />
 					<strong>Link Sub-Field Configuration Table</strong>
-						<table class='widefat' style='margin:15px 5px 10px 5px;clear:none;width:400px;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
+						<table class='widefat' style='margin:15px 5px 10px 0px;clear:none;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 							<thead>
 								<tr>
 									<th></th>
 									<th tooltip='This column allows for the output of text/code before a number of links determined by the Display field'>Intermittent Before Link</th>
 									<th tooltip='This column allows for the output of text/code before each link'>Before Link</th>
+									<th tooltip='This column allows for the output of text/code before each link image'>Image</th>
 									<th tooltip='This column allows for the output of text/code before and after each link name'>Link</th>
 									<th tooltip='This column allows for the output of text/code before and after each link date stamp'>Link Date</th>
-									<th tooltip='This column allows for the output of text/code before and after each link description'>Link Description</th>
-									<th tooltip='This column allows for the output of text/code before and after each link notes'>Link Notes</th>
-									<th tooltip='This column allows for the output of text/code before and after the RSS icons'>RSS Icons</th>
-									<th tooltip='This column allows for the output of text/code after each link'>After Link Block</th>
-									<th tooltip='This column allows for the output of text/code after a number of links determined in the first column'>Intermittent After Link</th>
 								</tr>
 							</thead>			
 							<tr>
@@ -928,10 +927,67 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'>
 								</td>
 								<td style='background: #FFF'>
+								</td>								
+								<td style='background: #FFF'>
 								</td>
 								<td style='background: #FFF' tooltip='Check to display link date'>
 									<input type="checkbox" id="showdate" name="showdate" <?php if ($options['showdate']) echo ' checked="checked" '; ?>/>
 								</td>
+							</tr>					
+							<tr>
+								<td style='background: #FFF'>
+									Before
+								</td>
+								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
+									<input type="text" id="addbeforelink" name="addbeforelink" size="22" value="<?php echo $options['addbeforelink']; ?>"/>
+								</td>						
+								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
+									<input type="text" id="beforeitem" name="beforeitem" size="22" value="<?php echo $options['beforeitem']; ?>"/>
+								</td>
+								<td style='background: #FFF' tooltip='Code/Text to be displayed before each link image'>
+									<input type="text" id="beforeimage" name="beforeimage" size="22" value="<?php echo $options['beforeimage']; ?>"/>
+								</td>								
+								<td style='background: #FFF' tooltip='Code/Text to be displayed before each link'>
+									<input type="text" id="beforelink" name="beforelink" size="22" value="<?php echo $options['beforelink']; ?>"/>
+								</td>
+								<td style='background: #FFF' tooltip='Code/Text to be displayed before each date'>
+									<input type="text" id="beforedate" name="beforedate" size="22" value="<?php echo $options['beforedate']; ?>"/>
+								</td>								
+							</tr>
+							<tr>
+								<td style='background: #FFF'>
+									After
+								</td>
+								<td style='background: #FFF'>
+								</td>
+								<td style='background: #FFF'>
+								</td>
+								<td style='background: #FFF' tooltip='Code/Text to be displayed after each link image'>
+									<input type="text" id="afterimage" name="afterimage" size="22" value="<?php echo $options['afterimage']; ?>"/>
+								</td>								
+								<td style='background: #FFF' tooltip='Code/Text to be displayed after each link'>
+									<input type="text" id="afterlink" name="afterlink" size="22" value="<?php echo $options['afterlink']; ?>"/>
+								</td>
+								<td style='background: #FFF' tooltip='Code/Text to be displayed after each date'>
+									<input type="text" id="afterdate" name="afterdate" size="22" value="<?php echo $options['afterdate']; ?>"/>
+								</td>								
+							</tr>
+					</table>
+					<table class='widefat' style='margin:15px 5px 10px 0px;clear:none;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
+							<thead>
+								<tr>
+									<th></th>
+									<th tooltip='This column allows for the output of text/code before and after each link description'>Link Description</th>
+									<th tooltip='This column allows for the output of text/code before and after each link notes'>Link Notes</th>
+									<th tooltip='This column allows for the output of text/code before and after the RSS icons'>RSS Icons</th>
+									<th tooltip='This column allows for the output of text/code after each link'>After Link Block</th>
+									<th tooltip='This column allows for the output of text/code after a number of links determined in the first column'>Intermittent After Link</th>
+								</tr>
+							</thead>			
+							<tr>
+								<td style='background: #FFF'>
+									Display
+								</td>						
 								<td style='background: #FFF' tooltip='Check to display link descriptions'>
 									<input type="checkbox" id="showdescription" name="showdescription" <?php if ($options['showdescription']) echo ' checked="checked" '; ?>/>
 								</td>
@@ -949,27 +1005,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<tr>
 								<td style='background: #FFF'>
 									Before
-								</td>
-								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
-									<input type="text" id="addbeforelink" name="addbeforelink" size="12" value="<?php echo $options['addbeforelink']; ?>"/>
 								</td>						
-								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
-									<input type="text" id="beforeitem" name="beforeitem" size="12" value="<?php echo $options['beforeitem']; ?>"/>
-								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each link'>
-									<input type="text" id="beforelink" name="beforelink" size="12" value="<?php echo $options['beforelink']; ?>"/>
-								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each date'>
-									<input type="text" id="beforedate" name="beforedate" size="8" value="<?php echo $options['beforedate']; ?>"/>
-								</td>								
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before each description'>
-									<input type="text" id="beforedesc" name="beforedesc" size="8" value="<?php echo $options['beforedesc']; ?>"/>
+									<input type="text" id="beforedesc" name="beforedesc" size="22" value="<?php echo $options['beforedesc']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before each note'>
-									<input type="text" id="beforenote" name="beforenote" size="8" value="<?php echo $options['beforenote']; ?>"/>
+									<input type="text" id="beforenote" name="beforenote" size="22" value="<?php echo $options['beforenote']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Code/Text to be displayed before RSS Icons'>
-									<input type="text" id="beforerss" name="beforerss" size="12" value="<?php echo $options['beforerss']; ?>"/>
+									<input type="text" id="beforerss" name="beforerss" size="22" value="<?php echo $options['beforerss']; ?>"/>
 								</td>
 								<td style='background: #FFF'>
 								</td>						
@@ -979,31 +1023,21 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<tr>
 								<td style='background: #FFF'>
 									After
-								</td>
-								<td style='background: #FFF'>
-								</td>
-								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
-								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each link'>
-									<input type="text" id="afterlink" name="afterlink" size="12" value="<?php echo $options['afterlink']; ?>"/>
-								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each date'>
-									<input type="text" id="afterdate" name="afterdate" size="8" value="<?php echo $options['afterdate']; ?>"/>
-								</td>								
+								</td>							
 								<td style='background: #FFF' tooltip='Code/Text to be displayed after each description'>
-									<input type="text" id="afterdesc" name="afterdesc" size="8" value="<?php echo $options['afterdesc']; ?>"/>
+									<input type="text" id="afterdesc" name="afterdesc" size="22" value="<?php echo $options['afterdesc']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Code/Text to be displayed after each note'>
-									<input type="text" id="afternote" name="afternote" size="8" value="<?php echo $options['afternote']; ?>"/>
+									<input type="text" id="afternote" name="afternote" size="22" value="<?php echo $options['afternote']; ?>"/>
 								</td>
 								<td  style='background: #FFF' tooltip='Code/Text to be displayed after RSS Icons'>
-									<input type="text" id="afterrss" name="afterrss" size="12" value="<?php echo $options['afterrss']; ?>"/>
+									<input type="text" id="afterrss" name="afterrss" size="22" value="<?php echo $options['afterrss']; ?>"/>
 								</td>
 								<td style='background: #FFF' tooltip='Output after complete link group (link, notes, desc, etc...)'>
-									<input type="text" id="afteritem" name="afteritem" size="12" value="<?php echo $options['afteritem']; ?>"/>
+									<input type="text" id="afteritem" name="afteritem" size="22" value="<?php echo $options['afteritem']; ?>"/>
 								</td>	
 								<td style='background: #FFF'>
-									<input type="text" id="addafterlink" name="addafterlink" size="12" value="<?php echo $options['addafterlink']; ?>"/>
+									<input type="text" id="addafterlink" name="addafterlink" size="22" value="<?php echo $options['addafterlink']; ?>"/>
 								</td>
 							</tr>
 					</table>
@@ -1462,7 +1496,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 								$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
-								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700) {
+								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '') {
 								
 	global $wpdb;
 	
@@ -1799,7 +1833,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				
 				if (!isset($linkitem->recently_updated)) $linkitem->recently_updated = false; 
 				$output .= $beforeitem;
-				$output .= $beforelink;
 				if ($showupdated && $linkitem->recently_updated)
 					$output .= get_option('links_recently_updated_prepend'); 
 					
@@ -1857,28 +1890,22 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						$target = ' target="' . $target . '"';
 				}
 
-				//$output .= "<div class='ll_link'>";
-				$output .= '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 				
 				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name)) {
+					$output .= $beforeimage . '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 					if ( strpos($linkitem->link_image, 'http') !== false )
 						$output .= "<img src=\"$linkitem->link_image\" $alt $title />";
 					else // If it's a relative path
 						$output .= "<img src=\"" . get_option('siteurl') . "$linkitem->link_image\" $alt $title />";
-						
-					if ($show_image_and_name)
-						$output .= $name;
-				} else {
-					$output .= $name;
+					$output .= '</a>' . $afterimage;
 				}
-				
-				$output .= '</a>';
+						
+				if ($show_image_and_name || !$show_images)
+					$output .= $beforelink . '<a href="' . $the_link . '"' . $rel . $title . $target. '>' . $name . '</a>' . $afterlink;
 				
 				if (($showadmineditlinks) && current_user_can("manage_links")) {
 					$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
 				}
-				
-				$output .= $afterlink;
 				
 				if ($showupdated && $linkitem->recently_updated) {
 					$output .= get_option('links_recently_updated_append');
@@ -2225,6 +2252,8 @@ if ($options == "") {
 		$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
 		$options['rsspreviewwidth'] = 900;
 		$options['rsspreviewheight'] = 700;
+		$options['beforeimage'] = '';
+		$options['afterimage'] = '';	
 		
 		update_option('LinkLibraryPP1',$options);
 		
@@ -2364,6 +2393,8 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
  *   showuserlinks (default false) - Specifies if user submitted links should be shown immediately after submission
  *   rsspreviewwidth (default 900) - Specifies the width of the box in which RSS previews are displayed
  *   rsspreviewheight (default 700) - Specifies the height of the box in which RSS previews are displayed
+ *   beforeimage (default null) - Code/Text to be displayed before link image
+ *   after image (default null) - Code/Text to be displayed after link image
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
@@ -2381,7 +2412,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
-								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700) {
+								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '') {
 								
 	
 	if (strpos($order, 'AdminSettings') !== false)
@@ -2405,7 +2436,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
-								  $options['rsspreviewwidth'], $options['rsspreviewheight']);	
+								  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2418,7 +2449,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
-								$showuserlinks, $rsspreviewwidth, $rsspreviewheight);
+								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage);
 }
 
 function link_library_cats_func($atts) {
@@ -2581,7 +2612,8 @@ function link_library_func($atts) {
 								  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
-								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight']);
+								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],
+								  $options['beforeimage'], $options['afterimage']);
 }
 
 add_shortcode('link-library-cats', 'link_library_cats_func');

@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.4 =
+* Added ability to specify code to be placed before and after link images
+
 = 2.8.3 =
 * Restored div ids based on setting set number to allow multiple link libraries to be displayed on the same page
 * Changed AJAX loading indicator from being displayed in a span to a div
