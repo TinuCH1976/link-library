@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.5 =
+* Small correction so that edit link shows up next to link name
+
 = 2.8.4 =
 * Added ability to specify code to be placed before and after link images
 

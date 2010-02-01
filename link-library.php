@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.4
+Version: 2.8.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1901,7 +1901,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				}
 						
 				if ($show_image_and_name || !$show_images)
-					$output .= $beforelink . '<a href="' . $the_link . '"' . $rel . $title . $target. '>' . $name . '</a>' . $afterlink;
+					$output .= $beforelink . '<a href="' . $the_link . '"' . $rel . $title . $target. '>' . $name . '</a>';
 				
 				if (($showadmineditlinks) && current_user_can("manage_links")) {
 					$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
@@ -1910,6 +1910,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				if ($showupdated && $linkitem->recently_updated) {
 					$output .= get_option('links_recently_updated_append');
 				}
+				
+				$output .= $afterlink;
 
 				if ($use_html_tags || $mode == "search") {
 					$desc = $linkitem->link_description;
