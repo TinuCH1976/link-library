@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.5
+Version: 2.8.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -506,7 +506,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			?>		
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
-				Help: <a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">Links awaiting moderation</a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>Frequently Asked Questions (FAQ)</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
+				Help: <a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
 				
 				
 				<form name='lladmingenform' action="" method="post" id="ll-conf">
@@ -2509,6 +2509,30 @@ function link_library_addlink_func($atts) {
 		$options = get_option($settingsname);
 	}
 	
+	if ($_POST['link_name'])
+	{
+		$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+		if ($options['showuserlinks'] == false)
+			$message .= ", " . $options['moderatemsg'];
+		else
+			$message .= ".";
+			
+		$message .= "</div>";
+		
+		echo $message;
+		
+		$newlinkcat = array($_POST['link_category']);
+		
+		if ($options['showuserlinks'] == false)
+			$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
+		else
+			$newlinkdesc = $_POST['link_description'];
+			
+		$newlink = array("link_name" => $_POST['link_name'], "link_url" => $_POST['link_url'], "link_rss" => $_POST['link_rss'],
+			"link_description" => $newlinkdesc, "link_notes" => $_POST['link_notes'], "link_category" => $newlinkcat);
+		wp_insert_link($newlink);
+	}
+	
 	if ($categorylistoverride != '')
 		$selectedcategorylist = $categorylistoverride;
 	else
@@ -2545,30 +2569,6 @@ function link_library_func($atts) {
 		$options = get_option($settingsname);
 	}
 	
-	if ($_POST['link_name'])
-	{
-		$message = "<div class='llmessage'>" . $options['newlinkmsg'];
-		if ($options['showuserlinks'] == false)
-			$message .= ", " . $options['moderatemsg'];
-		else
-			$message .= ".";
-			
-		$message .= "</div>";
-		
-		echo $message;
-		
-		$newlinkcat = array($_POST['link_category']);
-		
-		if ($options['showuserlinks'] == false)
-			$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
-		else
-			$newlinkdesc = $_POST['link_description'];
-			
-		$newlink = array("link_name" => $_POST['link_name'], "link_url" => $_POST['link_url'], "link_rss" => $_POST['link_rss'],
-			"link_description" => $newlinkdesc, "link_notes" => $_POST['link_notes'], "link_category" => $newlinkcat);
-		wp_insert_link($newlink);
-	}
-
 	if ($notesoverride != '')
 		$selectedshownotes = $notesoverride;
 	else

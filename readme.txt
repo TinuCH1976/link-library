@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.6 =
+* Move code to process user submitted links from Link Display code to Link Submission Form code to allow link submission form to be displayed on different page than links
+
 = 2.8.5 =
 * Small correction so that edit link shows up next to link name
 
