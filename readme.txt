@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.7 =
+* Add new option to specify position of image relative to link name (before or after)
+* Added option to include scripts and stylesheets on specific pages even if they don't contain the Link Library shortcode commands
+
 = 2.8.6 =
 * Move code to process user submitted links from Link Display code to Link Submission Form code to allow link submission form to be displayed on different page than links
 
