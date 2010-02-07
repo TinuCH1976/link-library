@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.9 =
+* Corrected small bug withcheck to determine if stylesheet should be loaded
+
 = 2.8.8 =
 * Added built-in support to store link update time instead of having to rely on external plugins
 * Improved filtering system to decide which plugins/stylesheets get loaded on a page based on its contents and configuration

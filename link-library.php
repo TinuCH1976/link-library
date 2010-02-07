@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.8
+Version: 2.8.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2705,9 +2705,9 @@ function conditionally_add_scripts_and_styles($posts){
 						$load_style = true;
 				}
 				$continuesearch = $linklibrarypos;
-				$load_style = true;
 				if ($continuesearch)
 				{
+					$load_style = true;
 					$shortcodeend = stripos($post->post_content, ']', $linklibrarypos);
 					$searchpos = $shortcodeend;
 					if ($shortcodeend)
