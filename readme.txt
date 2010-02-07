@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.8.8 =
+* Added built-in support to store link update time instead of having to rely on external plugins
+* Improved filtering system to decide which plugins/stylesheets get loaded on a page based on its contents and configuration
+
 = 2.8.7 =
 * Add new option to specify position of image relative to link name (before or after)
 * Added option to include scripts and stylesheets on specific pages even if they don't contain the Link Library shortcode commands

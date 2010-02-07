@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.7
+Version: 2.8.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1338,14 +1338,17 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			
 		$output .= "<!-- Link Library Categories Output -->\n\n";
 		
-		$output .= "<SCRIPT LANGUAGE=\"JavaScript\">\n";
-			
-		$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
-		$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
-		$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
-		$output .= "}\n";
-			
-		$output .= "</SCRIPT>\n\n";
+		if ($showonecatonly == true)
+		{
+			$output .= "<SCRIPT LANGUAGE=\"JavaScript\">\n";
+				
+			$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
+			$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
+			$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
+			$output .= "}\n";
+				
+			$output .= "</SCRIPT>\n\n";
+		}
 		
 		// Handle link category sorting
 		$direction = 'ASC';
@@ -1633,6 +1636,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			
 		$numberofpages = round($numberoflinks / $linksperpage);
 	}
+	
+	$output .= "\n<!-- Beginning of Link Library Output -->\n\n";
 
     // Display links
 	if ($linkitems) {
@@ -2642,6 +2647,14 @@ function link_library_func($atts) {
 								  $options['beforeimage'], $options['afterimage'], $options['imagepos']);
 }
 
+function populate_link_field($link_id) {
+	global $wpdb;
+	
+	$tablename = $wpdb->prefix . "links";
+	$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i") ), array( 'link_id' => $link_id ));
+
+}
+
 add_shortcode('link-library-cats', 'link_library_cats_func');
 
 add_shortcode('link-library-search', 'link_library_search_func');
@@ -2655,38 +2668,127 @@ add_action('admin_menu', array('LL_Admin','add_config_page'));
 
 add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
 
+add_action('add_link', 'populate_link_field');
+
+add_action('edit_link', 'populate_link_field');
+
 function conditionally_add_scripts_and_styles($posts){
 	if (empty($posts)) return $posts;
- 
-	$shortcode_found = false; // use this flag to see if styles and scripts need to be enqueued
-	foreach ($posts as $post) {
-		if (stripos($post->post_content, 'link-library') || stripos($post->post_content, 'link-library-cats') || stripos($post->post_content, 'link-library-search') || stripos($post->post_content, 'link-library-addlink')) {
-			$shortcode_found = true; // bingo!
-			break;
-		}
-	}
+	
+	$load_jquery = false;
+	$load_qtip = false;
+	$load_fancybox = false;
+	$load_style = false;
 	
 	$genoptions = get_option('LinkLibraryGeneral');
-	
-	if ($genoptions == "")
-		$genoptions['stylesheet'] = 'stylesheet.css';
-		
-	if ($genoptions['includescriptcss'] != '')
+
+	if (is_admin()) 
 	{
-		$pagelist = explode (',', $genoptions['includescriptcss']);
-		foreach($pagelist as $pageid) {
-			if (is_page($pageid))
-				$shortcode_found = true;
+		$load_jquery = true;
+		$load_qtip = true;
+		$load_fancybox = false;
+		$load_style = false;
+	}
+	else
+	{
+		foreach ($posts as $post) {		
+			$continuesearch = true;
+			$searchpos = 0;
+			$settingsetids = array();
+			
+			while ($continuesearch) 
+			{
+				$linklibrarypos = stripos($post->post_content, 'link-library', $searchpos);
+				if ($linklibrarypos == false)
+				{
+					if (stripos($post->post_content, 'link-library-cats') || stripos($post->post_content, 'link-library-search') || stripos($post->post_content, 'link-library-addlink'))
+						$load_style = true;
+				}
+				$continuesearch = $linklibrarypos;
+				$load_style = true;
+				if ($continuesearch)
+				{
+					$shortcodeend = stripos($post->post_content, ']', $linklibrarypos);
+					$searchpos = $shortcodeend;
+					if ($shortcodeend)
+					{
+						$settingconfigpos = stripos($post->post_content, 'settings=', $linklibrarypos);
+						if ($settingconfigpos && $settingconfigpos < $shortcodeend)
+						{
+							$spacepos = stripos($post->post_content, ' ', $settingconfigpos);
+							
+							if ($spacepos > $shortcodeend)
+								$settingset = substr($post->post_content, $settingconfigpos + 9, $shortcodeend - $settingconfigpos - 9);
+							else
+								$settingset = substr($post->post_content, $settingconfigpos + 9, $spacepos - $settingconfigpos - 9);
+								
+							$settingsetids[] = $settingset;
+						}
+						else
+						{
+							$settingsetids[] = 1;
+						}
+					}
+				}	
+			}
+		}
+		
+		if ($settingsetids)
+		{
+			foreach ($settingsetids as $settingsetid)
+			{
+				$settingsname = 'LinkLibraryPP' . $settingsetid;
+				$options = get_option($settingsname);			
+				
+				if ($options['showonecatonly'])
+				{
+					$load_jquery = true;
+				}
+		
+				if ($options['rsspreview'])
+				{
+					$load_fancybox = true;
+				}	
+			}
+		}
+			
+		if ($genoptions['includescriptcss'] != '')
+		{
+			$pagelist = explode (',', $genoptions['includescriptcss']);
+			foreach($pagelist as $pageid) {
+				if (is_page($pageid))
+				{
+					$load_jquery = true;
+					$load_qtip = true;
+					$load_fancybox = true;
+					$load_style = true;
+				}
+			}
 		}
 	}
- 
-	if ($shortcode_found) {
-		// enqueue here
-		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.pack.js');
-		wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
+	
+	if ($load_style)
+	{		
+		if ($genoptions == "")
+			$genoptions['stylesheet'] = 'stylesheet.css';
+			
 		wp_enqueue_style('linklibrarystyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/' . $genoptions['stylesheet']);	
-		wp_enqueue_style('thickboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.css');	
+	}
+ 
+	if ($load_jquery)
+	{
 		wp_enqueue_script('jquery');
+	}
+	
+	if ($load_qtip)
+	{
+		wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
+	}
+	
+	if ($load_fancybox)
+	{
+		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.pack.js');
+		wp_enqueue_style('fancyboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.css');	
 	}
  
 	return $posts;
