@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.9 =
+* Added new option field to specify class for link images
+* Added debug mode to facilitate remote debugging
+
 = 2.8.9 =
 * Corrected small bug withcheck to determine if stylesheet should be loaded
 

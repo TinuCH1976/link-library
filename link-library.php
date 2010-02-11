@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.8.9
+Version: 2.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -160,6 +160,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['beforeimage'] = '';
 					$options['afterimage'] = '';
 					$options['imagepos'] = 'beforename';
+					$options['imageclass'] = '';
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -251,6 +252,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['beforeimage'] = '';
 					$options['afterimage'] = '';
 					$options['imagepos'] = 'beforename';
+					$options['imageclass'] = '';
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -289,6 +291,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				}
 				
+				foreach (array('debugmode') as $option_name) {
+					if (isset($_POST[$option_name])) {
+						$genoptions[$option_name] = true;
+					} else {
+						$genoptions[$option_name] = false;
+					}
+				}
+				
 				update_option('LinkLibraryGeneral', $genoptions);
 				
 			}
@@ -310,7 +320,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir',
 								'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
-								'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg', 'imagepos') as $option_name) {
+								'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg', 'imagepos',
+								'imageclass') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -493,6 +504,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['beforeimage'] = '';
 				$options['afterimage'] = '';
 				$options['imagepos'] = 'beforename';
+				$options['imageclass'] = '';
 
 				update_option($settingsname,$options);
 			}	
@@ -504,6 +516,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$genoptions['stylesheet'] = 'stylesheet.css';
 				$genoptions['numberstylesets'] = 5;
 				$genoptions['includescriptcss'] = '';
+				$genoptions['debugmode'] = false;
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
 				
@@ -530,6 +543,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<tr>
 				<td tooltip="Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API">Additional pages to load styles and scripts</td>
 				<td tooltip="Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
+				<td style="padding-left: 10px;padding-right:10px">Debug Mode</td>
+				<td><input type="checkbox" id="debugmode" name="debugmode" <?php if ($genoptions['debugmode']) echo ' checked="checked" '; ?>/></td>
 				</tr>
 				</table>
 				</fieldset>
@@ -984,6 +999,22 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									<input type="text" id="afterdate" name="afterdate" size="22" value="<?php echo $options['afterdate']; ?>"/>
 								</td>								
 							</tr>
+							<tr>
+								<td style='background: #FFF'>
+									Element Class
+								</td>
+								<td style='background: #FFF'>
+								</td>
+								<td style='background: #FFF'>
+								</td>
+								<td style='background: #FFF' tooltip='Class to be assigned to link image'>
+									<input type="text" id="imageclass" name="imageclass" size="22" value="<?php echo $options['imageclass']; ?>"/>
+								</td>								
+								<td style='background: #FFF'>
+								</td>
+								<td style='background: #FFF'>
+								</td>								
+							</tr>							
 					</table>
 					<table class='widefat' style='margin:15px 5px 10px 0px;clear:none;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 							<thead>
@@ -1512,7 +1543,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '',
-								$imagepos = 'beforename') {
+								$imagepos = 'beforename', $imageclass = '') {
 								
 	global $wpdb;
 	
@@ -1911,9 +1942,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name)) {
 					$imageoutput = $beforeimage . '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 					if ( strpos($linkitem->link_image, 'http') !== false )
-						$imageoutput .= "<img src=\"$linkitem->link_image\" $alt $title />";
+						$imageoutput .= '<img src="' . $linkitem->link_image . '"';
 					else // If it's a relative path
-						$imageoutput .= "<img src=\"" . get_option('siteurl') . "$linkitem->link_image\" $alt $title />";
+						$imageoutput .= '<img src="' . get_option('siteurl') . $linkitem->link_image . '"';
+						
+					$imageoutput .= $alt . $title;
+					
+					if ($imageclass != '')
+						$imageoutput .= ' class="' . $imageclass . '" ';
+					
+					$imageoutput .= "/>";
+					 
 					$imageoutput .= '</a>' . $afterimage;
 				}
 				
@@ -2283,12 +2322,14 @@ if ($options == "") {
 		$options['beforeimage'] = '';
 		$options['afterimage'] = '';
 		$options['imagepos'] = 'beforename';	
+		$options['imageclass'] = '';
 		
 		update_option('LinkLibraryPP1',$options);
 		
 		$genoptions['stylesheet'] = 'stylesheet.css';
 		$genoptions['numberstylesets'] = 5;
 		$genoptions['includescriptcss'] = '';
+		$genoptions['debugmode'] = false;
 		
 		update_option('LinkLibraryGeneral', $genoptions);
 	}
@@ -2426,6 +2467,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
  *   beforeimage (default null) - Code/Text to be displayed before link image
  *   afterimage (default null) - Code/Text to be displayed after link image
  *   imagepos (default beforename) - Position of image relative to link name
+ *   imageclass (default null) - Class that will be assigned to link images
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
@@ -2443,7 +2485,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
-								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename') {
+								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename',
+								$imageclass = '') {
 								
 	
 	if (strpos($order, 'AdminSettings') !== false)
@@ -2467,7 +2510,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
-								  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos']);	
+								  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos'],
+								  $options['imageclass']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2480,7 +2524,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
-								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos);
+								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass);
 }
 
 function link_library_cats_func($atts) {
@@ -2628,7 +2672,7 @@ function link_library_func($atts) {
 	else
 		$overridedisplayastable = $options['displayastable'];
 		
-	return PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
+	$linklibraryoutput = PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 								  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
 								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 								  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
@@ -2644,7 +2688,14 @@ function link_library_func($atts) {
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
 								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],
-								  $options['beforeimage'], $options['afterimage'], $options['imagepos']);
+								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass']);
+								  
+	$genoptions = get_option('LinkLibraryGeneral');
+	
+	if ($genoptions['debugmode'] == true)
+		$linklibraryoutput .= "\n<!--" . print_r($options, TRUE) . "-->\n";
+		
+	return $linklibraryoutput;
 }
 
 function populate_link_field($link_id) {
