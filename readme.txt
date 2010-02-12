@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.9.1 =
+* Fixes problem with infinite loop introduced in version 2.8.8 and higher
+
 = 2.9 =
 * Added new option field to specify class for link images
 * Added debug mode to facilitate remote debugging
