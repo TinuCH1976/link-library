@@ -53,6 +53,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.9.2 =
+* Fix refresh problem in Link Library admin page when updating settings
+* Enabled "Paginate Results" and "Only show one category at a time" options to work together
+* Removed possibility of upgrading settings from a pre-2.0 version of Link Library
+
 = 2.9.1 =
 * Fixes problem with infinite loop introduced in version 2.8.8 and higher
 

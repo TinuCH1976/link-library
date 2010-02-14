@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.9.1
+Version: 2.9.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -261,6 +261,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			if ( isset($_GET['settings'])) {
 				$settings = $_GET['settings'];				
 			}
+			else
+			{
+				$settings = 1;
+			}
 			if ( isset($_GET['copy']))
 			{
 				$destination = $_GET['copy'];
@@ -363,11 +367,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				{
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = (int)($_POST[$option_name]);
-					}
-				
+					}				
 				}
 				
-				$settingsname = 'LinkLibraryPP' . $settings;
+				$settingsname = 'LinkLibraryPP' . $settingsetid;
 				
 				update_option($settingsname, $options);
 				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong>";
@@ -593,7 +596,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</tr>
 						</thead>
 						<tr>
-						<td style='background: #FFF'><?php echo $settings; ?></a></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "] [link-library-search] [link-library settings=" . $settings . "] [link-library-addlink settings=". $settings . "]"; ?></td><td style='background: #FFF;text-align:center'></td>
+						<td style='background: #FFF'><?php echo $settings; ?></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "] [link-library-search] [link-library settings=" . $settings . "] [link-library-addlink settings=". $settings . "]"; ?></td><td style='background: #FFF;text-align:center'></td>
 						</tr>
 					</table> 
 					<br />
@@ -1373,8 +1376,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		{
 			$output .= "<SCRIPT LANGUAGE=\"JavaScript\">\n";
 				
-			$output .= "function showLinkCat ( _incomingID, _settingsID) {\n";
-			$output .= "var map = {id : _incomingID, settings : _settingsID}\n";
+			$output .= "function showLinkCat ( _incomingID, _settingsID, _pagenumber) {\n";
+			$output .= "var map = {id : _incomingID, settings : _settingsID, page: _pagenumber}\n";
 			$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
 			$output .= "}\n";
 				
@@ -1451,7 +1454,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 					$catfront = '	<li>';
 					
 				if ($showonecatonly)
-					$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "');return false;\" >";
+					$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', 1);return false;\" >";
 				else if ($catanchor)
 					$cattext = '<a href="#' . $catname->category_nicename . '">';
 				else
@@ -1560,9 +1563,59 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	$currentcategory = 1;
 	
 	if ($showonecatonly && $AJAXcatid != '')
+	{
 		$categorylist = $AJAXcatid;
+	}
 	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '')
+	{
 		$categorylist = $defaultsinglecat;
+	}
+	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat == '')
+	{
+		$catquery = "SELECT t.name, t.term_id ";
+		$catquery .= "FROM " . $wpdb->prefix . "terms t ";
+		$catquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+		$catquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+		$catquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
+		$catquery .= "WHERE tt.taxonomy = 'link_category' ";
+			
+		if ($hide_if_empty)
+			$catquery .= "AND l.link_id is not NULL AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+					
+		if ($categorylist != "")
+			$catquery .= " AND t.term_id in (" . $categorylist. ")";
+				
+		if ($excludecategorylist != "")
+			$catquery .= " AND t.term_id not in (" . $excludecategorylist . ")";
+
+		if ($showinvisible == false)
+			$catquery .= " AND l.link_visible != 'N'";	
+			
+		$mode = "normal";
+			
+		if ($order == "name")
+			$catquery .= " ORDER by name " . $direction;
+		elseif ($order == "id")
+			$catquery .= " ORDER by t.term_id " . $direction;
+		elseif ($order == "order")
+			$catquery .= " ORDER by t.term_order " . $direction;
+		elseif ($order == "catlist")
+			$catquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
+				
+		if ($linkorder == "name")
+			$catquery .= ", link_name " . $linkdirection;
+		elseif ($linkorder == "id")
+			$catquery .= ", link_id " . $linkdirection;
+		elseif ($linkorder == "order")
+			$catquery .= ", link_order ". $linkdirection;
+			
+		$catitems = $wpdb->get_results($catquery);
+		
+		if ($catitems)
+		{
+			$categorylist = $catitems[0]->term_id;
+		}
+	}
 		
 	$linkquery = "SELECT distinct *, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
 	$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
@@ -1580,7 +1633,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		
 	if ($excludecategorylist != "")
 		$linkquery .= " AND t.term_id not in (" . $excludecategorylist . ")";
-		
+
+	if ($showinvisible == false)
+		$linkquery .= " AND l.link_visible != 'N'";	
+	
 	if ($_GET['searchll'] != "")
 	{
 		$searchterms = explode(" ", $_GET['searchll']);
@@ -1664,8 +1720,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		}
 		else
 			$nextpage = false;		
-			
-		$numberofpages = round($numberoflinks / $linksperpage);
+		$preroundpages = $numberoflinks / $linksperpage;	
+		$numberofpages = ceil( $preroundpages * 1 ) / 1; 
 	}
 	
 	$output .= "\n<!-- Beginning of Link Library Output -->\n\n";
@@ -1872,7 +1928,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				$feed->handle_content_type();
 			}
 			
-			if (($linkitem->link_visible == 'Y' || $showinvisible == true) && ($showuserlinks == true || strpos($linkitem->link_description, "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false))
+			if ($showuserlinks == true || strpos($linkitem->link_description, "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false)
 			{
 				$linkcount = $linkcount + 1;
 				
@@ -2068,19 +2124,22 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			$nextpagenumber = $pagenumber + 1;
 			$dotbelow = false;
 			$dotabove = false;
-			
-			/* if ($pagenumber > 1)
-				$output .= "<div class='previouspage'><a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>&laquo; Page " . $previouspagenumber . "</a></div>";
-			
-			if ($nextpage)
-				$output .= "<div class='nextpage'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Page " . $nextpagenumber . " &raquo;</a></div>"; */
-				
+							
 			if ($numberofpages > 1)
 			{
 				$output .= "<div class='pageselector'>";	
 				
 				if ($pagenumber != 1)
-					$output .= "<span class='previousnextactive'><a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>Previous</a></span>";
+				{
+					$output .= "<span class='previousnextactive'>";
+				
+					if (!$showonecatonly)
+						$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>Previous</a>";
+					elseif ($showonecatonly)
+						$output .= "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >Previous</a>";
+						
+					$output .= "</span>";
+				}
 				else
 					$output .= "<span class='previousnextinactive'>Previous</span>";
 				
@@ -2089,9 +2148,16 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					if ($counter <= 2 || $counter >= $numberofpages - 1 || ($counter <= $pagenumber + 2 && $counter >= $pagenumber - 2))
 					{
 						if ($counter != $pagenumber)
-							$output .= "<span class='unselectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+							$output .= "<span class='unselectedpage'>";
 						else
-							$output .= "<span class='selectedpage'><a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a></span>";
+							$output .= "<span class='selectedpage'>";
+						
+						if (!$showonecatonly)
+							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a>";
+						elseif ($showonecatonly)
+							$output .= "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
+							
+						$output .= "</a>";
 					}
 					
 					if ($counter >= 2 && $counter < $pagenumber - 2 && $dotbelow == false)
@@ -2104,12 +2170,20 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					{
 						$output .= "...";
 						$dotabove = true;
-					}
-					
+					}					
 				}
 				
 				if ($pagenumber != $numberofpages)
-					$output .= "<span class='previousnextactive'><a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Next</a></span>";
+				{
+					$output .= "<span class='previousnextactive'>";
+					
+					if (!$showonecatonly)
+						$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Next</a>";
+					elseif ($showonecatonly)
+						$output .= "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >Next</a>";
+					
+					$output .= "</span>";
+				}
 				else
 					$output .= "<span class='previousnextinactive'>Next</span>";
 					
@@ -2232,115 +2306,103 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 
 $version = "2.2";
 
-$options  = get_option('LinkLibraryPP',"");
+$newoptions = get_option('LinkLibraryPP1', "");
 
-if ($options == "") {
-	$newoptions = get_option('LinkLibraryPP1', "");
-	
-	if ($newoptions == "")
-	{
-		$options['order'] = 'name';
-		$options['hide_if_empty'] = true;
-		$options['table_width'] = 100;
-		$options['num_columns'] = 1;
-		$options['catanchor'] = true;
-		$options['flatlist'] = false;
-		$options['categorylist'] = null;
-		$options['excludecategorylist'] = null;
-		$options['showdescription'] = false;
-		$options['shownotes'] = false;
-		$options['showrating'] = false;
-		$options['showupdated'] = false;
-		$options['show_images'] = false;
-		$options['show_image_and_name'] = false;
-		$options['use_html_tags'] = false;
-		$options['show_rss'] = false;
-		$options['beforenote'] = '<br />';
-		$options['afternote'] = '';
-		$options['nofollow'] = false;
-		$options['beforeitem'] = '<li>';
-		$options['afteritem'] = '</li>';
-		$options['beforedesc'] = '';
-		$options['afterdesc'] = '';
-		$options['displayastable'] = false;
-		$options['beforelink'] = '';
-		$options['afterlink'] = '';
-		$options['showcolumnheaders'] = false;
-		$options['linkheader'] = '';
-		$options['descheader'] = '';
-		$options['notesheader'] = '';
-		$options['catlistwrappers'] = 1;
-		$options['beforecatlist1'] = '';
-		$options['beforecatlist2'] = '';
-		$options['beforecatlist3'] = '';
-		$options['divorheader'] = false;
-		$options['catnameoutput'] = 'linklistcatname';
-		$options['show_rss_icon'] = false;
-		$options['linkaddfrequency'] = 0;
-		$options['addbeforelink'] = '';
-		$options['addafterlink'] = '';	
-		$options['linktarget'] = '';
-		$options['showcategorydescheaders'] = false;
-		$options['showcategorydesclinks'] = false;
-		$options['settingssetname'] = 'Default';
-		$options['showadmineditlinks'] = true;
-		$options['showonecatonly'] = false;
-		$options['loadingicon'] = '/icons/Ajax-loader.gif';
-		$options['defaultsinglecat'] = '';
-		$options['rsspreview'] = false;
-		$options['rsspreviewcount'] = 3;
-		$options['rssfeedinline'] = false;
-		$options['rssfeedinlinecontent'] = false;
-		$options['rssfeedinlinecount'] = 1;
-		$options['beforerss'] = '';
-		$options['aftertss'] = '';
-		$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
-		$options['direction'] = 'ASC';
-		$options['linkdirection'] = 'ASC';
-		$options['linkorder'] = 'name';
-		$options['pagination'] = false;
-		$options['linksperpage'] = 5;
-		$options['hidecategorynames'] = false;
-		$options['showinvisible'] = false;
-		$options['showdate'] = false;
-		$options['beforedate'] = '';
-		$options['afterdate'] = '';
-		$options['catdescpos'] = 'right';	
-		$options['showuserlinks'] = false;	
-		$options['addnewlinkmsg'] = "Add new link";
-		$options['linknamelabel'] = "Link name";
-		$options['linkaddrlabel'] = "Link address";
-		$options['linkrsslabel'] = "Link RSS";
-		$options['linkcatlabel'] = "Link Category";
-		$options['linkdesclabel'] = "Link Description";
-		$options['linknoteslabel'] = "Link Notes";
-		$options['addlinkbtnlabel'] = "Add Link";
-		$options['newlinkmsg'] = "New link submitted";
-		$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
-		$options['rsspreviewwidth'] = 900;
-		$options['rsspreviewheight'] = 700;
-		$options['beforeimage'] = '';
-		$options['afterimage'] = '';
-		$options['imagepos'] = 'beforename';	
-		$options['imageclass'] = '';
-		
-		update_option('LinkLibraryPP1',$options);
-		
-		$genoptions['stylesheet'] = 'stylesheet.css';
-		$genoptions['numberstylesets'] = 5;
-		$genoptions['includescriptcss'] = '';
-		$genoptions['debugmode'] = false;
-		
-		update_option('LinkLibraryGeneral', $genoptions);
-	}
-} 
-else
+if ($newoptions == "")
 {
-	/* Upgrading Options to Link Library 2.0 Format from 1.x */
-	$options['settingssetname'] = "Imported Set 1";
-	update_option('LinkLibraryPP1', $options);
+	$options['order'] = 'name';
+	$options['hide_if_empty'] = true;
+	$options['table_width'] = 100;
+	$options['num_columns'] = 1;
+	$options['catanchor'] = true;
+	$options['flatlist'] = false;
+	$options['categorylist'] = null;
+	$options['excludecategorylist'] = null;
+	$options['showdescription'] = false;
+	$options['shownotes'] = false;
+	$options['showrating'] = false;
+	$options['showupdated'] = false;
+	$options['show_images'] = false;
+	$options['show_image_and_name'] = false;
+	$options['use_html_tags'] = false;
+	$options['show_rss'] = false;
+	$options['beforenote'] = '<br />';
+	$options['afternote'] = '';
+	$options['nofollow'] = false;
+	$options['beforeitem'] = '<li>';
+	$options['afteritem'] = '</li>';
+	$options['beforedesc'] = '';
+	$options['afterdesc'] = '';
+	$options['displayastable'] = false;
+	$options['beforelink'] = '';
+	$options['afterlink'] = '';
+	$options['showcolumnheaders'] = false;
+	$options['linkheader'] = '';
+	$options['descheader'] = '';
+	$options['notesheader'] = '';
+	$options['catlistwrappers'] = 1;
+	$options['beforecatlist1'] = '';
+	$options['beforecatlist2'] = '';
+	$options['beforecatlist3'] = '';
+	$options['divorheader'] = false;
+	$options['catnameoutput'] = 'linklistcatname';
+	$options['show_rss_icon'] = false;
+	$options['linkaddfrequency'] = 0;
+	$options['addbeforelink'] = '';
+	$options['addafterlink'] = '';	
+	$options['linktarget'] = '';
+	$options['showcategorydescheaders'] = false;
+	$options['showcategorydesclinks'] = false;
+	$options['settingssetname'] = 'Default';
+	$options['showadmineditlinks'] = true;
+	$options['showonecatonly'] = false;
+	$options['loadingicon'] = '/icons/Ajax-loader.gif';
+	$options['defaultsinglecat'] = '';
+	$options['rsspreview'] = false;
+	$options['rsspreviewcount'] = 3;
+	$options['rssfeedinline'] = false;
+	$options['rssfeedinlinecontent'] = false;
+	$options['rssfeedinlinecount'] = 1;
+	$options['beforerss'] = '';
+	$options['aftertss'] = '';
+	$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
+	$options['direction'] = 'ASC';
+	$options['linkdirection'] = 'ASC';
+	$options['linkorder'] = 'name';
+	$options['pagination'] = false;
+	$options['linksperpage'] = 5;
+	$options['hidecategorynames'] = false;
+	$options['showinvisible'] = false;
+	$options['showdate'] = false;
+	$options['beforedate'] = '';
+	$options['afterdate'] = '';
+	$options['catdescpos'] = 'right';	
+	$options['showuserlinks'] = false;	
+	$options['addnewlinkmsg'] = "Add new link";
+	$options['linknamelabel'] = "Link name";
+	$options['linkaddrlabel'] = "Link address";
+	$options['linkrsslabel'] = "Link RSS";
+	$options['linkcatlabel'] = "Link Category";
+	$options['linkdesclabel'] = "Link Description";
+	$options['linknoteslabel'] = "Link Notes";
+	$options['addlinkbtnlabel'] = "Add Link";
+	$options['newlinkmsg'] = "New link submitted";
+	$options['moderatemsg'] = "it will appear in the list once moderated. Thank you.";
+	$options['rsspreviewwidth'] = 900;
+	$options['rsspreviewheight'] = 700;
+	$options['beforeimage'] = '';
+	$options['afterimage'] = '';
+	$options['imagepos'] = 'beforename';	
+	$options['imageclass'] = '';
 	
-	delete_option('LinkLibraryPP');
+	update_option('LinkLibraryPP1',$options);
+	
+	$genoptions['stylesheet'] = 'stylesheet.css';
+	$genoptions['numberstylesets'] = 5;
+	$genoptions['includescriptcss'] = '';
+	$genoptions['debugmode'] = false;
+	
+	update_option('LinkLibraryGeneral', $genoptions);
 }
 
 /*
@@ -2486,7 +2548,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename',
-								$imageclass = '') {
+								$imageclass = '', $AJAXpageid = 1) {
 								
 	
 	if (strpos($order, 'AdminSettings') !== false)
@@ -2511,7 +2573,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
 								  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos'],
-								  $options['imageclass']);	
+								  $options['imageclass'], $AJAXpageid);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2524,7 +2586,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
-								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass);
+								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '');
 }
 
 function link_library_cats_func($atts) {
@@ -2688,7 +2750,7 @@ function link_library_func($atts) {
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
 								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],
-								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass']);
+								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass'], '');
 								  
 	$genoptions = get_option('LinkLibraryGeneral');
 	
