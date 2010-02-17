@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.9.2
+Version: 2.9.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1355,7 +1355,7 @@ jQuery(document).ready(function()
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
-							   $showuserlinks = false) {
+							   $debugmode = false) {
 							   
 	global $wpdb;
 							   
@@ -1426,6 +1426,12 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			$linkcatquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
 			
 		$catnames = $wpdb->get_results($linkcatquery);
+		
+		if ($debugmode)
+		{
+			$output .= "\n<!-- Category Query: " . print_r($linkcatquery, TRUE) . "-->\n\n";
+			$output .= "\n<!-- Category Results: " . print_r($catnames, TRUE) . "-->\n\n";
+		}
 
 		// Display each category
 
@@ -1546,9 +1552,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '',
-								$imagepos = 'beforename', $imageclass = '') {
+								$imagepos = 'beforename', $imageclass = '', $AJAXpageid = 1, $debugmode = false) {
 								
 	global $wpdb;
+	
+	$output = "\n<!-- Beginning of Link Library Output -->\n\n";
 	
 	if ( !defined('WP_CONTENT_URL') )
 		define( 'WP_CONTENT_URL', get_option('siteurl') . '/wp-content');
@@ -1565,10 +1573,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	if ($showonecatonly && $AJAXcatid != '')
 	{
 		$categorylist = $AJAXcatid;
+		$ajaxcatid = $categorylist;
 	}
 	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '')
 	{
 		$categorylist = $defaultsinglecat;
+		$ajaxcatid = $categorylist;
 	}
 	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat == '')
 	{
@@ -1611,9 +1621,16 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			
 		$catitems = $wpdb->get_results($catquery);
 		
+		if ($debugmode)
+		{
+			$output .= "\n<!-- AJAX Default Category Query: " . print_r($catquery, TRUE) . "-->\n\n";
+			$output .= "\n<!-- AJAX Default Category Results: " . print_r($catitems, TRUE) . "-->\n\n";
+		}
+		
 		if ($catitems)
 		{
 			$categorylist = $catitems[0]->term_id;
+			$ajaxcatid = $categorylist;
 		}
 	}
 		
@@ -1708,8 +1725,14 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			$linkquery .= " LIMIT 0, " . $quantity;
 		}
 	}
-	
+		
 	$linkitems = $wpdb->get_results($linkquery);
+	
+	if ($debugmode)
+	{
+		$output .= "\n<!-- Link Query: " . print_r($linkquery, TRUE) . "-->\n\n";
+		$output .= "\n<!-- Link Results: " . print_r($linkitems, TRUE) . "-->\n\n";
+	}
 	
 	if ($pagination)
 	{
@@ -1724,8 +1747,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		$numberofpages = ceil( $preroundpages * 1 ) / 1; 
 	}
 	
-	$output .= "\n<!-- Beginning of Link Library Output -->\n\n";
-
     // Display links
 	if ($linkitems) {
 		$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
@@ -2136,7 +2157,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					if (!$showonecatonly)
 						$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>Previous</a>";
 					elseif ($showonecatonly)
-						$output .= "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >Previous</a>";
+						$output .= "<a href='#' onClick=\"showLinkCat('" . $ajaxcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >Previous</a>";
 						
 					$output .= "</span>";
 				}
@@ -2155,9 +2176,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						if (!$showonecatonly)
 							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a>";
 						elseif ($showonecatonly)
-							$output .= "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
+							$output .= "<a href='#' onClick=\"showLinkCat('" . $ajaxcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
 							
-						$output .= "</a>";
+						$output .= "</a></span>";
 					}
 					
 					if ($counter >= 2 && $counter < $pagenumber - 2 && $dotbelow == false)
@@ -2180,7 +2201,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					if (!$showonecatonly)
 						$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>Next</a>";
 					elseif ($showonecatonly)
-						$output .= "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >Next</a>";
+						$output .= "<a href='#' onClick=\"showLinkCat('" . $ajaxcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >Next</a>";
 					
 					$output .= "</span>";
 				}
@@ -2431,21 +2452,23 @@ if ($newoptions == "")
 
 function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
-							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right') {
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false) {
 	
 	if (strpos($order, 'AdminSettings') != false)
 	{
 		$settingsetid = substr($order, 13);
 		$settingsetname = "LinkLibraryPP" . $settingsetid;
 		$options = get_option($settingsetname);
+		
+		$genoptions = get_option('LinkLibraryGeneral');
 
 		return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
-								 $options['loadingicon'], $options['catlistdescpos']);   
+								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode']);   
 	}
 	else
 		return PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
-		$showonecatonly, $settings, $loadingicon, $catlistdescpos);   
+		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode);   
 	
 }
 
@@ -2530,6 +2553,7 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
  *   afterimage (default null) - Code/Text to be displayed after link image
  *   imagepos (default beforename) - Position of image relative to link name
  *   imageclass (default null) - Class that will be assigned to link images
+ *   debugmode (default false) - Adds debug information as comments in the Wordpress output to facilitate remote debugging
  */
 
 function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
@@ -2548,7 +2572,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename',
-								$imageclass = '', $AJAXpageid = 1) {
+								$imageclass = '', $AJAXpageid = 1, $debugmode = false) {
 								
 	
 	if (strpos($order, 'AdminSettings') !== false)
@@ -2556,6 +2580,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 		$settingsetid = substr($order, 13);
 		$settingsetname = "LinkLibraryPP" . $settingsetid;
 		$options = get_option($settingsetname);
+		
+		$genoptions = get_option('LinkLibraryGeneral');		
 
 		return PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $options['showdescription'], $options['shownotes'],
 								  $options['showrating'], $options['showupdated'], $options['categorylist'], $options['show_images'],
@@ -2573,7 +2599,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
 								  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos'],
-								  $options['imageclass'], $AJAXpageid);	
+								  $options['imageclass'], $AJAXpageid, $genoptions['debugmode']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2586,7 +2612,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
-								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '');
+								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '', $debugmode);
 }
 
 function link_library_cats_func($atts) {
@@ -2616,10 +2642,12 @@ function link_library_cats_func($atts) {
 		$excludedcategorylist = $excludecategoryoverride;
 	else
 		$excludedcategorylist = $options['excludecategorylist'];
+		
+	$genoptions = get_option('LinkLibraryGeneral');
 
 	return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
-								 $options['loadingicon'], $options['catlistdescpos']);
+								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode']);
 }
 
 function link_library_search_func($atts) {
@@ -2734,7 +2762,14 @@ function link_library_func($atts) {
 	else
 		$overridedisplayastable = $options['displayastable'];
 		
-	$linklibraryoutput = PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
+	$genoptions = get_option('LinkLibraryGeneral');
+	
+	$linklibraryoutput = "";
+	
+	if ($genoptions['debugmode'] == true)
+		$linklibraryoutput .= "\n<!-- Setting Set Info:" . print_r($options, TRUE) . "-->\n";
+		
+	$linklibraryoutput .= PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 								  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
 								  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 								  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
@@ -2750,12 +2785,10 @@ function link_library_func($atts) {
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
 								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],
-								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass'], '');
+								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass'], '', $genoptions['debugmode']);
 								  
-	$genoptions = get_option('LinkLibraryGeneral');
 	
-	if ($genoptions['debugmode'] == true)
-		$linklibraryoutput .= "\n<!--" . print_r($options, TRUE) . "-->\n";
+	
 		
 	return $linklibraryoutput;
 }

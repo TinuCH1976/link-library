@@ -53,6 +53,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 2.9.3 =
+* Resolved further issues when both "Paginate Results" and "Only show one category at a time" are activated
+* Enhanced debugging mode
+
 = 2.9.2 =
 * Fix refresh problem in Link Library admin page when updating settings
 * Enabled "Paginate Results" and "Only show one category at a time" options to work together
