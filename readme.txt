@@ -53,6 +53,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.0 =
+* Added e-mail notification when new links are submitted
+* Removed text color tags from default stylesheet
+* Added new options to specify which fields should be displayed on Link Addition form (Show/Hide)
+* Added option to use site thumbnails instead of local images
+* Added new button to request and store thumbnails for all links
+
 = 2.9.3 =
 * Resolved further issues when both "Paginate Results" and "Only show one category at a time" are activated
 * Enhanced debugging mode

@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 2.9.3
+Version: 2.9.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -36,7 +36,25 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 
 require_once(ABSPATH . 'wp-admin/includes/bookmark.php');
 
-define('LLDIR', dirname(__FILE__) . '/');                
+define('LLDIR', dirname(__FILE__) . '/');  
+
+function http_get_file($url) {
+    $url_stuff = parse_url($url);
+    $port = isset($url_stuff['port']) ? $url_stuff['port']:80;
+    $fp = fsockopen($url_stuff['host'], $port);
+    $query = 'GET ' . $url_stuff['path'] . " HTTP/1.0\n";
+    $query .= 'Host: ' . $url_stuff['host'];
+    $query .= "\n\n";
+    fwrite($fp, $query);
+    
+    while ($line = fread($fp, 1024)) {
+      $buffer .= $line;
+    }
+    
+    preg_match('/Content-Length: ([0-9]+)/', $buffer, $parts);
+    return substr($buffer, - $parts[1]);
+ }
+              
 
 if ( ! class_exists( 'LL_Admin' ) ) {
 
@@ -161,6 +179,12 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['afterimage'] = '';
 					$options['imagepos'] = 'beforename';
 					$options['imageclass'] = '';
+					$options['emailnewlink'] = false;
+					$options['showaddlinkrss'] = false;
+					$options['showaddlinkdesc'] = false;
+					$options['showaddlinkcat'] = false;
+					$options['showaddlinknotes'] = false;
+					$options['usethumbshotsforimages'] = false;
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -253,10 +277,68 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['afterimage'] = '';
 					$options['imagepos'] = 'beforename';
 					$options['imageclass'] = '';
+					$options['emailnewlink'] = false;
+					$options['showaddlinkrss'] = false;
+					$options['showaddlinkdesc'] = false;
+					$options['showaddlinkcat'] = false;
+					$options['showaddlinknotes'] = false;
+					$options['usethumbshotsforimages'] = false;
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
 					update_option($settingsname, $options);		
+			}
+			if ( isset($_GET['genthumbs'])) {
+				global $wpdb;
+				
+				if (!file_exists(ABSPATH . 'wp-content/plugins/link-library-images'))
+				{
+					echo "<div id='message' class='updated fade'><p><strong>Please create a folder called link-library-images under your Wordpress plugins directory with write permissions to use this functionality.</strong></div>";				
+				}
+				else
+				{
+					$settings = $_GET['genthumbs'];
+					$settingsname = 'LinkLibraryPP' . $settings;
+					$options = get_option($settingsname);
+					
+					$linkquery = "SELECT distinct * ";
+					$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
+					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
+					$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
+					
+					$linkitems = $wpdb->get_results($linkquery);
+					
+					if ($linkitems)
+					{
+						$filescreated = 0;
+						$totallinks = count($linkitems);
+						foreach($linkitems as $linkitem)
+						{
+							if ($linkitem->link_url != "" && $linkitem->link_name != "")
+							{
+								$genthumburl = "http://open.thumbshots.org/image.aspx?url=" . wp_specialchars($linkitem->link_url);
+								
+								$linkname = htmlspecialchars_decode($linkitem->link_name, ENT_QUOTES);
+								$linkname = str_replace(" ", "", $linkname);
+								$linkname = str_replace(".", "", $linkname);
+								$linkname = str_replace("/", "-", $linkname);
+									
+								$imagedata = file_get_contents($genthumburl);
+								$status = file_put_contents(ABSPATH . "/wp-content/plugins/link-library-images/" . $linkname . ".jpg", $imagedata);
+								
+								if ($status)
+									$filescreated++;
+								
+								$newimagedata = array("link_id" => $linkitem->link_id, "link_image" => "/wp-content/plugins/link-library-images/" . $linkname . ".jpg");
+								wp_update_link($newimagedata);
+							}
+						}
+					}
+					
+					echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></div>";
+				}
 			}
 			if ( isset($_GET['settings'])) {
 				$settings = $_GET['settings'];				
@@ -334,33 +416,19 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks') as $option_name) {
+								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
 						$options[$option_name] = false;
 					}
 				}
-
-				if ($_POST['flatlist'] == 'true') {
-					$options['flatlist'] = true;
-				} 
-				else if ($_POST['flatlist'] == 'false') {
-					$options['flatlist'] = false;
-				}
 				
-				if ($_POST['displayastable'] == 'true') {
-					$options['displayastable'] = true;
-				} 
-				else if ($_POST['displayastable'] == 'false') {
-					$options['displayastable'] = false;
-				}
-				
-				if ($_POST['divorheader'] == 'true') {
-					$options['divorheader'] = true;
-				} 
-				else if ($_POST['divorheader'] == 'false') {
-					$options['divorheader'] = false;
+				foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes') as $option_name) {
+					if ($_POST[$option_name] == 'true')
+						$options[$option_name] = true;
+					elseif ($_POST[$option_name] == 'false')
+						$options[$option_name] = false;				
 				}
 				
 				foreach (array('catlistwrappers') as $option_name)
@@ -508,6 +576,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['afterimage'] = '';
 				$options['imagepos'] = 'beforename';
 				$options['imageclass'] = '';
+				$options['emailnewlink'] = false;
 
 				update_option($settingsname,$options);
 			}	
@@ -956,6 +1025,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									<select name="imagepos" id="imagepos" style="width:150px;">
 										<option value="beforename"<?php if ($options['imagepos'] == 'beforename' || $options['imagepos'] == '') { echo ' selected="selected"';} ?>>Before Name</option>
 										<option value="aftername"<?php if ($options['imagepos'] == 'aftername') { echo ' selected="selected"';} ?>>After Name</option>
+										<option value="afterrssicons"<?php if ($options['imagepos'] == 'afterrssicons') { echo ' selected="selected"';} ?>>After RSS Icons</option>
 									</select>
 								</td>								
 								<td style='background: #FFF'>
@@ -1216,6 +1286,21 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					</table>
 					</fieldset>
+<fieldset style='border:1px solid #CCC;padding:15px;margin:15px;'>
+					<legend style='padding: 0 5px 0 5px;'><strong>Thumbnail Generation and Use</strong></legend>
+					<table>
+					<tr>
+						<td>
+							Use Thumbshots.org for dynamic link images
+						</td>
+						<td style='width=75px;padding-right:20px'>
+							<input type="checkbox" id="usethumbshotsforimages" name="usethumbshotsforimages" <?php if ($options['usethumbshotsforimages']) echo ' checked="checked" '; ?>/>
+						</td>
+						<td><INPUT type="button" name="genthumbs" value="Generate Thumbnails and Store locally" onClick="window.location= '?page=link-library.php&amp;genthumbs=<?php echo $settings; ?>'"></td>
+						<td></td><td style='width=75px;padding-right:20px'></td>
+					</tr>					
+					</table>
+					</fieldset>					
 					</fieldset>
 					</div>
 					<div>
@@ -1228,51 +1313,86 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<tr>
 							<td style='width:200px'>Show user links immediately</td>
 							<td style='width:75px;padding-right:20px'><input type="checkbox" id="showuserlinks" name="showuserlinks" <?php if ($options['showuserlinks']) echo ' checked="checked" '; ?>/></td>
+							<td style='width: 20px'></td>
+							<td style='width: 20px'></td>
+							<td style='width:250px'>E-mail admin on link submission</td>
+							<td style='width:75px;padding-right:20px'><input type="checkbox" id="emailnewlink" name="emailnewlink" <?php if ($options['emailnewlink']) echo ' checked="checked" '; ?>/></td>							
+							<td style='width: 20px'></td>
 						</tr>
 						<tr>
 							<td style='width:200px'>Add new link label</td>
 							<? if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = "Add new link"; ?>
 							<td><input type="text" id="addnewlinkmsg" name="addnewlinkmsg" size="30" value="<?php echo $options['addnewlinkmsg']; ?>"/></td>
 							<td style='width: 20px'></td>
+							<td style='width: 20px'></td>
 							<td style='width:200px'>Link name label</td>
 							<? if ($options['linknamelabel'] == "") $options['linknamelabel'] = "Link Name"; ?>
 							<td><input type="text" id="linknamelabel" name="linknamelabel" size="30" value="<?php echo $options['linknamelabel']; ?>"/></td>
+							<td style='width: 20px'></td>
 						</tr>
 						<tr>
 							<td style='width:200px'>Link address label</td>
 							<? if ($options['linkaddrlabel'] == "") $options['linkaddrlabel'] = "Link Address"; ?>
 							<td><input type="text" id="linkaddrlabel" name="linkaddrlabel" size="30" value="<?php echo $options['linkaddrlabel']; ?>"/></td>
 							<td style='width: 20px'></td>
+							<td style='width: 20px'></td>
 							<td style='width:200px'>Link RSS label</td>
 							<? if ($options['linkrsslabel'] == "") $options['linkrsslabel'] = "Link RSS"; ?>
 							<td><input type="text" id="linkrsslabel" name="linkrsslabel" size="30" value="<?php echo $options['linkrsslabel']; ?>"/></td>
+							<td>
+								<select name="showaddlinkrss" id="showaddlinkrss" style="width:60px;">
+									<option value="false"<?php if ($options['showaddlinkrss'] == false) { echo ' selected="selected"';} ?>>Hide</option>
+									<option value="true"<?php if ($options['showaddlinkrss'] == true) { echo ' selected="selected"';} ?>>Show</option>
+								</select>
+							</td>														
 						</tr>
 						<tr>
 							<td style='width:200px'>Link category label</td>
 							<? if ($options['linkcatlabel'] == "") $options['linkcatlabel'] = "Link Category"; ?>
 							<td><input type="text" id="linkcatlabel" name="linkcatlabel" size="30" value="<?php echo $options['linkcatlabel']; ?>"/></td>
+							<td>
+								<select name="showaddlinkcat" id="showaddlinkcat" style="width:60px;">
+									<option value="false"<?php if ($options['showaddlinkcat'] == false) { echo ' selected="selected"';} ?>>Hide</option>
+									<option value="true"<?php if ($options['showaddlinkcat'] == true) { echo ' selected="selected"';} ?>>Show</option>
+								</select>
+							</td>							
 							<td style='width: 20px'></td>
 							<td style='width:200px'>Link description label</td>
 							<? if ($options['linkdesclabel'] == "") $options['linkdesclabel'] = "Link Description"; ?>
 							<td><input type="text" id="linkdesclabel" name="linkdesclabel" size="30" value="<?php echo $options['linkdesclabel']; ?>"/></td>
+							<td>
+								<select name="showaddlinkdesc" id="showaddlinkdesc" style="width:60px;">
+									<option value="false"<?php if ($options['showaddlinkdesc'] == false) { echo ' selected="selected"';} ?>>Hide</option>
+									<option value="true"<?php if ($options['showaddlinkdesc'] == true) { echo ' selected="selected"';} ?>>Show</option>
+								</select>
+							</td>														
 						</tr>
 						<tr>
 							<td style='width:200px'>Link notes label</td>
 							<? if ($options['linknoteslabel'] == "") $options['linknoteslabel'] = "Link Notes"; ?>
 							<td><input type="text" id="linknoteslabel" name="linknoteslabel" size="30" value="<?php echo $options['linknoteslabel']; ?>"/></td>
+							<td>
+								<select name="showaddlinknotes" id="showaddlinknotes" style="width:60px;">
+									<option value="false"<?php if ($options['showaddlinknotes'] == false) { echo ' selected="selected"';} ?>>Hide</option>
+									<option value="true"<?php if ($options['showaddlinknotes'] == true) { echo ' selected="selected"';} ?>>Show</option>
+								</select>
+							</td>								
 							<td style='width: 20px'></td>
 							<td style='width:200px'>Add Link button label</td>
 							<? if ($options['addlinkbtnlabel'] == "") $options['addlinkbtnlabel'] = "Add Link"; ?>
 							<td><input type="text" id="addlinkbtnlabel" name="addlinkbtnlabel" size="30" value="<?php echo $options['addlinkbtnlabel']; ?>"/></td>
+							<td style='width: 20px'></td>
 						</tr>
 						<tr>
 							<td style='width:200px'>New Link Message</td>
 							<? if ($options['newlinkmsg'] == "") $options['newlinkmsg'] = "New link submitted"; ?>
 							<td><input type="text" id="newlinkmsg" name="newlinkmsg" size="30" value="<?php echo $options['newlinkmsg']; ?>"/></td>
 							<td style='width: 20px'></td>
+							<td style='width: 20px'></td>
 							<td style='width:200px'>New Link Moderation Label</td>
 							<? if ($options['moderatemsg'] == "") $options['moderatemsg'] = "it will appear in the list once moderated. Thank you."; ?>
 							<td><input type="text" id="moderatemsg" name="moderatemsg" size="30" value="<?php echo $options['moderatemsg']; ?>"/></td>
+							<td style='width: 20px'></td>
 						</tr>
 					</table>
 					</fieldset>
@@ -1552,7 +1672,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 								$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 								$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '',
-								$imagepos = 'beforename', $imageclass = '', $AJAXpageid = 1, $debugmode = false) {
+								$imagepos = 'beforename', $imageclass = '', $AJAXpageid = 1, $debugmode = false, $usethumbshotsforimages = false) {
 								
 	global $wpdb;
 	
@@ -1582,7 +1702,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	}
 	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat == '')
 	{
-		$catquery = "SELECT t.name, t.term_id ";
+		$catquery = "SELECT distinct t.name, t.term_id ";
 		$catquery .= "FROM " . $wpdb->prefix . "terms t ";
 		$catquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
 		$catquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
@@ -2016,9 +2136,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						$target = ' target="' . $target . '"';
 				}
 				
-				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name)) {
+				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name)) {
 					$imageoutput = $beforeimage . '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
-					if ( strpos($linkitem->link_image, 'http') !== false )
+					
+					if ($usethumbshotsforimages)
+						$imageoutput .= '<img src="http://open.thumbshots.org/image.aspx?url=' . $the_link . '"';
+					elseif ( strpos($linkitem->link_image, 'http') !== false )
 						$imageoutput .= '<img src="' . $linkitem->link_image . '"';
 					else // If it's a relative path
 						$imageoutput .= '<img src="' . get_option('siteurl') . $linkitem->link_image . '"';
@@ -2033,7 +2156,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$imageoutput .= '</a>' . $afterimage;
 				}
 				
-				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name) && ($imagepos == 'beforename' || $imagepos == "")) {
+				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name) && ($imagepos == 'beforename' || $imagepos == "")) {
 					$output .= $imageoutput;
 				}
 						
@@ -2050,7 +2173,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				
 				$output .= $afterlink;
 				
-				if ( $linkitem->link_image != null && ($show_images || $show_image_and_name) && $imagepos == 'aftername') {
+				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name) && $imagepos == 'aftername') {
 					$output .= $imageoutput;
 				}
 
@@ -2073,6 +2196,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				if ($shownotes) {
 					$output .= $between . $beforenote . $descnotes . $afternote;
 				}
+				
+				//$output .= '<div class="thumbshots"><a href="' . $the_link . '"' . $rel . $title . $target. '><img src="http://open.thumbshots.org/image.aspx?url=' . $the_link .'" border="1"></a></div>';
+				
 				if ($show_rss || $show_rss_icon || $rsspreview)
 					$output .= $beforerss . '<div class="rsselements">';
 					
@@ -2089,8 +2215,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				
 				if ($show_rss || $show_rss_icon || $rsspreview)
 					$output .= '</div>' . $afterrss;
-
-				
+									
 				if ($rssfeedinline && $linkitem->link_rss)
 				{
 					$feed->set_feed_url($linkitem->link_rss);
@@ -2116,6 +2241,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 							
 						
 				}
+				
+				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name) && $imagepos == 'afterrssicons') {
+					$output .= $imageoutput;
+				}
+
 				
 						
 				$output .= $afteritem . "\n";
@@ -2255,7 +2385,8 @@ function PrivateLinkLibrarySearchForm() {
 }
 
 function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg = '', $linknamelabel = '', $linkaddrlabel = '',
-										$linkrsslabel = '', $linkcatlabel = '', $linkdesclabel = '', $linknoteslabel = '', $addlinkbtnlabel = '', $hide_if_empty = true) {
+										$linkrsslabel = '', $linkcatlabel = '', $linkdesclabel = '', $linknoteslabel = '', $addlinkbtnlabel = '', $hide_if_empty = true,
+										$showaddlinkrss = false, $showaddlinkdesc = false, $showaddlinkcat = false, $showaddlinknotes = false) {
 										
 	global $wpdb;
 
@@ -2273,8 +2404,11 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 	if ($linkaddrlabel == "") $linkaddrlabel = "Link address";
 	$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' /></td></tr>\n";
 	
-	if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
-	$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
+	if ($showaddlinkrss)
+	{
+		if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
+		$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
+	}
 	
 	$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 	$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
@@ -2299,21 +2433,36 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		
 	if ($linkcats)
 	{
-		if ($linkcatlabel == "") $linkcatlabel = "Link category";
-		$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
-		foreach ($linkcats as $linkcat)
+		if ($showaddlinkcat)
 		{
-			$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
+			if ($linkcatlabel == "") $linkcatlabel = "Link category";
+			
+			$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
+			foreach ($linkcats as $linkcat)
+			{
+				$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
+			}
+			
+			$output .= "</SELECT></td></tr>";
 		}
-		
-		$output .= "</SELECT></td></tr>";
+		else
+		{
+			$output .= "<input type='hidden' name='link_category' id='link_category' value='" . $linkcats[0]->term_id . "'>";
+		}
 	}
 	
-	if ($linkdesclabel == "") $linkdesclabel = "Link description";
-	$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' /></td></tr>\n";
+	if ($showaddlinkdesc)
+	{
+		if ($linkdesclabel == "") $linkdesclabel = "Link description";
+		$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' /></td></tr>\n";
+	}
 	
-	if ($linknoteslabel == "") $linknoteslabel = "Link notes";
-	$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' /></td></tr>\n";
+	if ($showaddlinknotes)
+	{
+		if ($linknoteslabel == "") $linknoteslabel = "Link notes";
+		$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' /></td></tr>\n";
+	}
+		
 	$output .= "</table>\n";
 	
 	if ($addlinkbtnlabel == "") $addlinkbtnlabel = "Add link";
@@ -2415,6 +2564,12 @@ if ($newoptions == "")
 	$options['afterimage'] = '';
 	$options['imagepos'] = 'beforename';	
 	$options['imageclass'] = '';
+	$options['emailnewlink'] = false;
+	$options['showaddlinkrss'] = false;
+	$options['showaddlinkdesc'] = false;
+	$options['showaddlinkcat'] = false;
+	$options['showaddlinknotes'] = false;
+	$options['usethumbshotsforimages'] = false;
 	
 	update_option('LinkLibraryPP1',$options);
 	
@@ -2572,7 +2727,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 								$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 								$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename',
-								$imageclass = '', $AJAXpageid = 1, $debugmode = false) {
+								$imageclass = '', $AJAXpageid = 1, $debugmode = false, $usethumbshotsforimages = false) {
 								
 	
 	if (strpos($order, 'AdminSettings') !== false)
@@ -2599,7 +2754,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 								  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
 								  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos'],
-								  $options['imageclass'], $AJAXpageid, $genoptions['debugmode']);	
+								  $options['imageclass'], $AJAXpageid, $genoptions['debugmode'], $options['usethumbshotsforimages']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2612,7 +2767,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
 								$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 								$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
-								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '', $debugmode);
+								$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '', $debugmode,
+								$usethumbshotsforimages);
 }
 
 function link_library_cats_func($atts) {
@@ -2691,9 +2847,36 @@ function link_library_addlink_func($atts) {
 		else
 			$newlinkdesc = $_POST['link_description'];
 			
-		$newlink = array("link_name" => $_POST['link_name'], "link_url" => $_POST['link_url'], "link_rss" => $_POST['link_rss'],
-			"link_description" => $newlinkdesc, "link_notes" => $_POST['link_notes'], "link_category" => $newlinkcat);
+		$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
+			"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat);
 		wp_insert_link($newlink);
+		
+		if ($options['emailnewlink'])
+		{
+			$adminmail = get_option('admin_email');
+			$headers = "MIME-Version: 1.0\r\n";
+			$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+			
+			$message = "A user submitted a new link to your Wordpress Link database.<br /><br />";
+			$message .= "Link Name: " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
+			$message .= "Link Address: " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
+			$message .= "Link RSS: " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
+			$message .= "Link Description: " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
+			$message .= "Link Notes: " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
+			$message .= "Link Category: " . $_POST['link_category'] . "<br /><br />";
+						
+			if ( !defined('WP_ADMIN_URL') )
+				define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
+				
+			if ($options['showuserlinks'] == false)
+				$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
+			elseif ($options['showuserlinks'] == true)
+				$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+				
+			$message .= "<br /><br />Message generated by <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
+			
+			wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
+		}
 	}
 	
 	if ($categorylistoverride != '')
@@ -2708,7 +2891,8 @@ function link_library_addlink_func($atts) {
 	
 	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
 										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
-										 $options['addlinkbtnlabel'], $options['hide_if_empty']);	
+										 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
+										 $options['showaddlinkcat'], $options['showaddlinknotes']);	
 	
 	
 }
@@ -2785,10 +2969,8 @@ function link_library_func($atts) {
 								  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 								  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
 								  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],
-								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass'], '', $genoptions['debugmode']);
-								  
-	
-	
+								  $options['beforeimage'], $options['afterimage'], $options['imagepos'], $options['imageclass'], '', $genoptions['debugmode'],
+								  $options['usethumbshotsforimages']); 
 		
 	return $linklibraryoutput;
 }
