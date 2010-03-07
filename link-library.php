@@ -185,6 +185,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showaddlinkcat'] = false;
 					$options['showaddlinknotes'] = false;
 					$options['usethumbshotsforimages'] = false;
+					$options['addlinkreqlogin'] = false;
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -283,6 +284,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showaddlinkcat'] = false;
 					$options['showaddlinknotes'] = false;
 					$options['usethumbshotsforimages'] = false;
+					$options['addlinkreqlogin'] = false;
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -416,7 +418,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages') as $option_name) {
+								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
+								'addlinkreqlogin') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -577,6 +580,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['imagepos'] = 'beforename';
 				$options['imageclass'] = '';
 				$options['emailnewlink'] = false;
+				$options['addlinkreqlogin'] = false;
 
 				update_option($settingsname,$options);
 			}	
@@ -1320,6 +1324,15 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<td style='width: 20px'></td>
 						</tr>
 						<tr>
+							<td style='width:200px'>Require login to display form</td>
+							<td style='width:75px;padding-right:20px'><input type="checkbox" id="addlinkreqlogin" name="addlinkreqlogin" <?php if ($options['addlinkreqlogin']) echo ' checked="checked" '; ?>/></td>
+							<td style='width: 20px'></td>
+							<td style='width: 20px'></td>
+							<td style='width:250px'></td>
+							<td style='width:75px;padding-right:20px'></td>							
+							<td style='width: 20px'></td>
+						</tr>						
+						<tr>
 							<td style='width:200px'>Add new link label</td>
 							<? if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = "Add new link"; ?>
 							<td><input type="text" id="addnewlinkmsg" name="addnewlinkmsg" size="30" value="<?php echo $options['addnewlinkmsg']; ?>"/></td>
@@ -1475,7 +1488,7 @@ jQuery(document).ready(function()
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
-							   $debugmode = false) {
+							   $debugmode = false, $pagination = false, $linksperpage = 5) {
 							   
 	global $wpdb;
 							   
@@ -1514,7 +1527,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		if (!isset($direction)) $direction = '';
 		// Fetch the link category data as an array of hashesa
 		
-		$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+		$linkcatquery = "SELECT count(t.name) as linkcount, t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
 		
 		if ($hide_if_empty)
@@ -1535,6 +1548,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			
 		if ($excludecategorylist != "")
 			$linkcatquery .= " AND t.term_id not in (" . $excludecategorylist . ")";
+			
+		$linkcatquery .= " GROUP BY t.name ";
 			
 		if ($order == "name")
 			$linkcatquery .= " ORDER by t.name " . $direction;
@@ -1564,6 +1579,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			else
 				$output .= "<ul>\n";
 				
+			$linkcount = 0;
+				
 			foreach ( (array) $catnames as $catname) {
 				// Handle each category.
 				// First, fix the sort_order info
@@ -1582,7 +1599,21 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 				if ($showonecatonly)
 					$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', 1);return false;\" >";
 				else if ($catanchor)
-					$cattext = '<a href="#' . $catname->category_nicename . '">';
+				{
+					if (!$pagination)
+						$cattext = '<a href="#' . $catname->category_nicename . '">';
+					elseif ($pagination)
+					{
+						$pageposition = $linkcount / $linksperpage;
+						$pageposition = ceil($pageposition);
+						if ($pageposition == $_GET['page'] || ($pageposition == 0) || ($pageposition == 1 && $_GET['page'] != 1))
+							$cattext = '<a href="#' . $catname->category_nicename . '">';
+						else
+							$cattext = '<a href="?page=' . $pageposition . '#' . $catname->category_nicename . '">';
+							
+						$linkcount = $linkcount + $catname->linkcount;						
+					}
+				}
 				else
 					$cattext = '';
 		
@@ -1845,7 +1876,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			$linkquery .= " LIMIT 0, " . $quantity;
 		}
 	}
-		
+	
 	$linkitems = $wpdb->get_results($linkquery);
 	
 	if ($debugmode)
@@ -2028,17 +2059,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				
 				$output .= $cattext . $catlink . $catenddiv . $catstartlist; 
 			}
-			
-			if ($mode == "search")
-			{
-				$linkitem->link_name = highlightWords($linkitem->link_name, $searchterms);
-				
-				if ($shownotes)
-					$linkitem->link_notes = highlightWords($linkitem->link_notes, $searchterms);
-				if ($showdescription)
-					$linkitem->link_description = highlightWords($linkitem->link_description, $searchterms);				
-			}
-										
+													
 			$between = "\n";
 			
 			$feed = NULL;
@@ -2386,90 +2407,94 @@ function PrivateLinkLibrarySearchForm() {
 
 function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg = '', $linknamelabel = '', $linkaddrlabel = '',
 										$linkrsslabel = '', $linkcatlabel = '', $linkdesclabel = '', $linknoteslabel = '', $addlinkbtnlabel = '', $hide_if_empty = true,
-										$showaddlinkrss = false, $showaddlinkdesc = false, $showaddlinkcat = false, $showaddlinknotes = false) {
+										$showaddlinkrss = false, $showaddlinkdesc = false, $showaddlinkcat = false, $showaddlinknotes = false,
+										$addlinkreqlogin = false) {
 										
 	global $wpdb;
-
-	$output = "<form method='post' id='lladdlink'>\n";
-	$output .= "<div class='lladdlink'>\n";
 	
-	if ($addnewlinkmsg == "") $addnewlinkmsg = "Add new link";
-	$output .= "<div id='lladdlinktitle'>" . $addnewlinkmsg . "</div>\n";
-	
-	$output .= "<table>\n";
-	
-	if ($linknamelabel == "") $linknamelabel = "Link name";
-	$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' /></td></tr>\n";
-		
-	if ($linkaddrlabel == "") $linkaddrlabel = "Link address";
-	$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' /></td></tr>\n";
-	
-	if ($showaddlinkrss)
+	if (($addlinkreqlogin && current_user_can("read")) || !$addlinkreqlogin)
 	{
-		if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
-		$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
-	}
-	
-	$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-	$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
-	
-	if ($hide_if_empty)
-		$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr ";
-	
-	$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-	
-	if ($hide_if_empty)
-		$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
+		$output = "<form method='post' id='lladdlink'>\n";
+		$output .= "<div class='lladdlink'>\n";
 		
-	if ($selectedcategorylist != "")
-		$linkcatquery .= " AND t.term_id in (" . $selectedcategorylist. ")";
+		if ($addnewlinkmsg == "") $addnewlinkmsg = "Add new link";
+		$output .= "<div id='lladdlinktitle'>" . $addnewlinkmsg . "</div>\n";
 		
-	if ($excludedcategorylist != "")
-		$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
+		$output .= "<table>\n";
 		
-	$linkcatquery .= " ORDER by t.name " . $direction;
-		
-	$linkcats = $wpdb->get_results($linkcatquery);
-		
-	if ($linkcats)
-	{
-		if ($showaddlinkcat)
-		{
-			if ($linkcatlabel == "") $linkcatlabel = "Link category";
+		if ($linknamelabel == "") $linknamelabel = "Link name";
+		$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' /></td></tr>\n";
 			
-			$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
-			foreach ($linkcats as $linkcat)
+		if ($linkaddrlabel == "") $linkaddrlabel = "Link address";
+		$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' /></td></tr>\n";
+		
+		if ($showaddlinkrss)
+		{
+			if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
+			$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
+		}
+		
+		$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
+		
+		if ($hide_if_empty)
+			$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr ";
+		
+		$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+		
+		if ($hide_if_empty)
+			$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
+			
+		if ($selectedcategorylist != "")
+			$linkcatquery .= " AND t.term_id in (" . $selectedcategorylist. ")";
+			
+		if ($excludedcategorylist != "")
+			$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
+			
+		$linkcatquery .= " ORDER by t.name " . $direction;
+			
+		$linkcats = $wpdb->get_results($linkcatquery);
+			
+		if ($linkcats)
+		{
+			if ($showaddlinkcat)
 			{
-				$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
+				if ($linkcatlabel == "") $linkcatlabel = "Link category";
+				
+				$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
+				foreach ($linkcats as $linkcat)
+				{
+					$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
+				}
+				
+				$output .= "</SELECT></td></tr>";
 			}
-			
-			$output .= "</SELECT></td></tr>";
+			else
+			{
+				$output .= "<input type='hidden' name='link_category' id='link_category' value='" . $linkcats[0]->term_id . "'>";
+			}
 		}
-		else
-		{
-			$output .= "<input type='hidden' name='link_category' id='link_category' value='" . $linkcats[0]->term_id . "'>";
-		}
-	}
-	
-	if ($showaddlinkdesc)
-	{
-		if ($linkdesclabel == "") $linkdesclabel = "Link description";
-		$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' /></td></tr>\n";
-	}
-	
-	if ($showaddlinknotes)
-	{
-		if ($linknoteslabel == "") $linknoteslabel = "Link notes";
-		$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' /></td></tr>\n";
-	}
 		
-	$output .= "</table>\n";
-	
-	if ($addlinkbtnlabel == "") $addlinkbtnlabel = "Add link";
-	$output .= '<span style="border:0;" class="submit"><input type="submit" name="submit" value="' . $addlinkbtnlabel . '" /></span>';
-	
-	$output .= "</div>\n";
-	$output .= "</form>\n\n";
+		if ($showaddlinkdesc)
+		{
+			if ($linkdesclabel == "") $linkdesclabel = "Link description";
+			$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' /></td></tr>\n";
+		}
+		
+		if ($showaddlinknotes)
+		{
+			if ($linknoteslabel == "") $linknoteslabel = "Link notes";
+			$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' /></td></tr>\n";
+		}
+			
+		$output .= "</table>\n";
+		
+		if ($addlinkbtnlabel == "") $addlinkbtnlabel = "Add link";
+		$output .= '<span style="border:0;" class="submit"><input type="submit" name="submit" value="' . $addlinkbtnlabel . '" /></span>';
+		
+		$output .= "</div>\n";
+		$output .= "</form>\n\n";
+	}
 
 	return $output;
 }
@@ -2570,6 +2595,7 @@ if ($newoptions == "")
 	$options['showaddlinkcat'] = false;
 	$options['showaddlinknotes'] = false;
 	$options['usethumbshotsforimages'] = false;
+	$options['addlinkreqlogin'] = false;
 	
 	update_option('LinkLibraryPP1',$options);
 	
@@ -2607,7 +2633,8 @@ if ($newoptions == "")
 
 function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
-							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false) {
+							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false,
+							   $pagination = false, $linksperpage = 5) {
 	
 	if (strpos($order, 'AdminSettings') != false)
 	{
@@ -2619,11 +2646,11 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
 
 		return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
-								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode']);   
+								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage']);   
 	}
 	else
 		return PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
-		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode);   
+		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage);   
 	
 }
 
@@ -2803,7 +2830,7 @@ function link_library_cats_func($atts) {
 
 	return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
-								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode']);
+								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage']);
 }
 
 function link_library_search_func($atts) {
@@ -2892,7 +2919,7 @@ function link_library_addlink_func($atts) {
 	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
 										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
 										 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
-										 $options['showaddlinkcat'], $options['showaddlinknotes']);	
+										 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin']);	
 	
 	
 }

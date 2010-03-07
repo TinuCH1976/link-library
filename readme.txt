@@ -53,6 +53,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.0.1 =
+* Removed doubel highlight tags when displaying search results
+* Fix problem with category links when pagination mode is active and category is displayed on page other than first
+* Added new option to only display link addition form when logged in as a valid user
+
 = 3.0 =
 * Added e-mail notification when new links are submitted
 * Removed text color tags from default stylesheet
