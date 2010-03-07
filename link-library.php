@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 3.0
+Version: 3.0.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
