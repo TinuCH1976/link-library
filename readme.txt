@@ -53,6 +53,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.0.2 =
+* Corrected bug with link search when using the AJAX Show One Category at a Time mode
+
 = 3.0.1 =
 * Removed doubel highlight tags when displaying search results
 * Fix problem with category links when pagination mode is active and category is displayed on page other than first

@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 3.0.1
+Version: 3.0.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1721,17 +1721,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	
 	$currentcategory = 1;
 	
-	if ($showonecatonly && $AJAXcatid != '')
+	if ($showonecatonly && $AJAXcatid != '' && $_GET['searchll'] == "")
 	{
 		$categorylist = $AJAXcatid;
 		$ajaxcatid = $categorylist;
 	}
-	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '')
+	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '' && $_GET['searchll'] == "")
 	{
 		$categorylist = $defaultsinglecat;
 		$ajaxcatid = $categorylist;
 	}
-	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat == '')
+	else if ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat == '' && $_GET['searchll'] == "")
 	{
 		$catquery = "SELECT distinct t.name, t.term_id ";
 		$catquery .= "FROM " . $wpdb->prefix . "terms t ";
