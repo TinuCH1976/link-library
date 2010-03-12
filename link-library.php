@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 3.0.2
+Version: 3.0.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -709,7 +709,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
+						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browser's status bar. For example: 2,4,56">
 							Categories to be displayed (Empty=All)
 						</td>
 						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
@@ -3021,11 +3021,17 @@ add_shortcode('link-library', 'link_library_func');
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));
 
+add_filter('admin_head', 'admin_scripts'); // the_posts gets triggered before wp_head
+
 add_filter('the_posts', 'conditionally_add_scripts_and_styles'); // the_posts gets triggered before wp_head
 
 add_action('add_link', 'populate_link_field');
 
 add_action('edit_link', 'populate_link_field');
+
+function admin_scripts() {
+	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js"></script>'."\n";
+}
 
 function conditionally_add_scripts_and_styles($posts){
 	if (empty($posts)) return $posts;
@@ -3039,8 +3045,8 @@ function conditionally_add_scripts_and_styles($posts){
 
 	if (is_admin()) 
 	{
-		$load_jquery = true;
-		$load_qtip = true;
+		$load_jquery = false;
+		$load_qtip = false;
 		$load_fancybox = false;
 		$load_style = false;
 	}

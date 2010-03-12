@@ -23,6 +23,8 @@ You can see a few examples of pages using Link Library on my personal site:<br /
 *   [Library only showing one category at a time through AJAX queries](http://yannickcorner.nayanna.biz/freeware-database-ajax-version/)<br />
 *   [Library in unordered list form with 1 full RSS item per feed inline and 5 RSS item full previews when selecting preview icon](http://yannickcorner.nayanna.biz/links-page-with-preview/)<br />
 
+For screenshots showing how to achieve these results, check out my [site](http://yannickcorner.nayanna.biz/wordpress-plugins/link-library)
+
 Examples from actual users can be found on my [site](http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/link-library-usage-examples/).
 
 All pages are generated using different configurations all managed by Link Library. Link Library is compatible with the [My Link Order](http://wordpress.org/extend/plugins/my-link-order/) plugin to define category and link ordering.
@@ -49,9 +51,15 @@ To get a basic Link Library list showing on one of your Wordpress pages:<br />
 1. To add a form for users to be able to submit new links:<br />
    [link-library-addlink settings=#]
    
+In addition to specifying a setting set, categories to be displayed can be specified using addition keywords. Read the FAQ for more information on this topic.
+   
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 3.0.3 =
+* Fix to display tooltips in admin pages
+* Added information to readme
 
 = 3.0.2 =
 * Corrected bug with link search when using the AJAX Show One Category at a Time mode
@@ -258,6 +266,15 @@ Further configuration is available under the Link Library Settings panel.
 * This allows for more flexibility in formatting the element using your blog’s stylesheet.
 
 == Frequently Asked Questions ==
+
+= Where do I find my category IDs to place in the "Categories to be Displayed" and "Categories to be Excluded" fields? =
+
+The category IDs are numeric IDs. You can find them by going to the page to see and edit link categories, then placing your mouse over a category and seeing its numeric ID in the link that is associated with that name.
+
+= How can I display different categories on different pages? =
+
+If you want all of your link pages to have the same layout, create a single setting set, then specify the category to be displayed when you add the short code to each page. For example: [link-library categorylistoverride="28"]
+If the different pages have different styles for different categories, then you should create distinct setting sets for each page and set the categories to be displayed in the "Categories to be Displayed" field in the admin panel.
 
 = How can I override some of the options when using shortcodes in my pages =
 
