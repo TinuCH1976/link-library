@@ -57,6 +57,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.0.4 =
+* Added new option to display number of links for each category in the category list
+
 = 3.0.3 =
 * Fix to display tooltips in admin pages
 * Added information to readme

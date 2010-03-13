@@ -7,7 +7,7 @@ categories with hyperlinks to the actual link lists. Other options are
 the ability to display notes on top of descriptions, to only display
 selected categories and to display names of links at the same time
 as their related images.
-Version: 3.0.3
+Version: 3.0.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -186,6 +186,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showaddlinknotes'] = false;
 					$options['usethumbshotsforimages'] = false;
 					$options['addlinkreqlogin'] = false;
+					$options['showcatlinkcount'] = false;
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -285,6 +286,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showaddlinknotes'] = false;
 					$options['usethumbshotsforimages'] = false;
 					$options['addlinkreqlogin'] = false;
+					$options['showcatlinkcount'] = false;
 					
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -419,7 +421,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
-								'addlinkreqlogin') as $option_name) {
+								'addlinkreqlogin', 'showcatlinkcount') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -581,6 +583,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['imageclass'] = '';
 				$options['emailnewlink'] = false;
 				$options['addlinkreqlogin'] = false;
+				$options['showcatlinkcount'] = false;
 
 				update_option($settingsname,$options);
 			}	
@@ -800,6 +803,19 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<option value="false"<?php if ($options['flatlist'] == false) { echo ' selected="selected"';} ?>>Table</option>
 								<option value="true"<?php if ($options['flatlist'] == true) { echo ' selected="selected"';} ?>>Unordered List</option>
 							</select>
+						</td>
+					</tr>	
+					<tr>
+						<td>
+							Display link counts
+						</td>
+						<td>
+							<input type="checkbox" id="showcatlinkcount" name="showcatlinkcount" <?php if ($options['showcatlinkcount']) echo ' checked="checked" '; ?>/>
+						</td>
+						<td style='width:100px'></td>
+						<td style='width:200px'>
+						</td>
+						<td>
 						</td>
 					</tr>					
 					<tr>
@@ -1488,7 +1504,7 @@ jQuery(document).ready(function()
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
-							   $debugmode = false, $pagination = false, $linksperpage = 5) {
+							   $debugmode = false, $pagination = false, $linksperpage = 5, $showcatlinkcount = false) {
 							   
 	global $wpdb;
 							   
@@ -1619,7 +1635,11 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		
 				$catitem = '';
 				if ($catlistdescpos == 'right' || $catlistdescpos == '')
+				{
 					$catitem .= $catname->name;
+					if ($showcatlinkcount)
+						$catitem .= " (" . $catname->linkcount . ")";
+				}
 				
 				if ($showcategorydescheaders)
 				{
@@ -1631,7 +1651,13 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 				}
 				
 				if ($catlistdescpos == 'left')
+				{
 					$catitem .= $catname->name;
+					if ($showcatlinkcount)
+						$catitem .= " (" . $catname->linkcount . ")";
+				}
+					
+				
 				
 				if ($catanchor)
 					$catitem .= "</a>";
@@ -2596,6 +2622,7 @@ if ($newoptions == "")
 	$options['showaddlinknotes'] = false;
 	$options['usethumbshotsforimages'] = false;
 	$options['addlinkreqlogin'] = false;
+	$options['showcatlinkcount'] = false;
 	
 	update_option('LinkLibraryPP1',$options);
 	
@@ -2629,12 +2656,16 @@ if ($newoptions == "")
  *   settings (default NULL) - Settings Set ID, only used when showonecatonly is true
  *   loadingicon (default NULL) - Path to icon to display when only show one category at a time
  *   catlistdescpos (default 'right') - Position of category description relative to name
+ *   debugmode
+ *   pagination
+ *   linksperpage
+ *   showcatlinkcount
  */
 
 function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false,
-							   $pagination = false, $linksperpage = 5) {
+							   $pagination = false, $linksperpage = 5, $showcatlinkcount = false) {
 	
 	if (strpos($order, 'AdminSettings') != false)
 	{
@@ -2646,11 +2677,12 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
 
 		return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
-								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage']);   
+								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
+								 $options['showcatlinkcount']);   
 	}
 	else
 		return PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
-		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage);   
+		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage, $showcatlinkcount);   
 	
 }
 
@@ -2830,7 +2862,8 @@ function link_library_cats_func($atts) {
 
 	return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
-								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage']);
+								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
+								 $options['showcatlinkcount']);
 }
 
 function link_library_search_func($atts) {
