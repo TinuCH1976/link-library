@@ -58,6 +58,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.1.1 =
+* Fixed: Get errors when saving settings referring to an empty category
+* Fixed: When showing one category at a time and selecting an empty category, categories with links stop showing the links that they contain
+
 = 3.1 =
 * Added ability to generate RSS feeds for a link page.
 * Added new option to show single categories using AJAX (previous mode) or HTML GET methods

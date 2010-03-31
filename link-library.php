@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.1
+Version: 3.1.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -459,29 +459,58 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				update_option($settingsname, $options);
 				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong>";
+				
+				global $wpdb;
 					
-				$categoryids = explode(',', $options['categorylist']);
-				
-				foreach($categoryids as $categoryid)
+				if ($options['categorylist'] != '')
 				{
-					$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categoryid");
-					if (!$catnames)
+					$categoryids = explode(',', $options['categorylist']);
+					
+					foreach($categoryids as $categoryid)
 					{
-						echo '<br /><br />Included Category ID ' . $categoryid . ' is invalid. Please check the ID in the Link Category editor.';
+						$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+						$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
+						
+						if ($hide_if_empty)
+							$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr, " . $wpdb->prefix . "links l ";
+						
+						$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+										
+						$linkcatquery .= " AND t.term_id = " . $categoryid;
+																		
+						$catnames = $wpdb->get_results($linkcatquery);
+
+						if (!$catnames)
+						{
+							echo '<br /><br />Included Category ID ' . $categoryid . ' is invalid. Please check the ID in the Link Category editor.';
+						}
 					}
 				}
 				
-				$categoryids = explode(',', $options['excludecategorylist']);
-				
-				foreach($categoryids as $categoryid)
-				{
-					$catnames = get_categories("type=link&orderby=$order&order=$direction&hierarchical=0&include=$categoryid");
-					if (!$catnames)
+				if ($options['excludecategorylist'] != '')
+				{			
+					$categoryids = explode(',', $options['excludecategorylist']);
+					
+					foreach($categoryids as $categoryid)
 					{
-						echo '<br /><br />Excluded Category ID ' . $categoryid . ' is invalid. Please check the ID in the Link Category editor.';
+						$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+						$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
+						
+						if ($hide_if_empty)
+							$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr, " . $wpdb->prefix . "links l ";
+						
+						$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+										
+						$linkcatquery .= " AND t.term_id = " . $categoryid;
+							
+						$catnames = $wpdb->get_results($linkcatquery);
+						
+						if (!$catnames)
+						{
+							echo '<br /><br />Excluded Category ID ' . $categoryid . ' is invalid. Please check the ID in the Link Category editor.';
+						}
 					}
 				}
-				
 				echo '</p></div>';
 			}
 			
@@ -1587,18 +1616,15 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		if (!isset($direction)) $direction = '';
 		// Fetch the link category data as an array of hashesa
 		
-		$linkcatquery = "SELECT count(t.name) as linkcount, t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
+		$linkcatquery = "SELECT count(l.link_name) as linkcount, t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t LEFT JOIN " . $wpdb->prefix. "term_taxonomy tt ON (t.term_id = tt.term_id)";
 		
-		if ($hide_if_empty)
-			$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr, " . $wpdb->prefix . "links l ";
+		$linkcatquery .= " LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) LEFT JOIN " . $wpdb->prefix . "links l on (tr.object_id = l.link_id) ";
 		
-		$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+		$linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
 		
 		if ($hide_if_empty)
 		{
-			$linkcatquery .= " AND tt.term_taxonomy_id = tr.term_taxonomy_id AND tr.object_id = l.link_id ";
-			
 			if (!$showuserlinks)
 				$linkcatquery .= " AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";			
 		}
@@ -2466,7 +2492,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	}
 	else
 	{
-		$output .= "<div>No links found.</div>\n";	
+		$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
+		$output .= "No links found.\n";
+		$output .= "</div>";			
 	}
 	
 	if ($rsspreview)
