@@ -58,6 +58,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.1.2 =
+* New Feature: Generate images for links from web site fav icons
+* Fixed: Thumbnail generation now only happens once when you press the button instead of every time you press submit after the initial generation
+
 = 3.1.1 =
 * Fixed: Get errors when saving settings referring to an empty category
 * Fixed: When showing one category at a time and selecting an empty category, categories with links stop showing the links that they contain

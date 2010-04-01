@@ -303,16 +303,25 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$settingsname = 'LinkLibraryPP' . $settings;
 					update_option($settingsname, $options);		
 			}
-			if ( isset($_GET['genthumbs'])) {
+			if ( isset($_GET['genthumbs']) || isset($_GET['genfavicons'])) {
 				global $wpdb;
 				
-				if (!file_exists(ABSPATH . 'wp-content/plugins/link-library-images'))
+				if (isset($_GET['genthumbs']))
+					$filepath = "link-library-images";
+				elseif (isset($_GET['genfavicons']))
+					$filepath = "link-library-favicons";
+				
+				if (!file_exists(ABSPATH . 'wp-content/plugins/' . $filepath))
 				{
-					echo "<div id='message' class='updated fade'><p><strong>Please create a folder called link-library-images under your Wordpress plugins directory with write permissions to use this functionality.</strong></div>";				
+					echo "<div id='message' class='updated fade'><p><strong>Please create a folder called " . $filepath . " under your Wordpress plugins directory with write permissions to use this functionality.</strong></div>";				
 				}
 				else
 				{
-					$settings = $_GET['genthumbs'];
+					if (isset($_GET['genthumbs']))
+						$settings = $_GET['genthumbs'];
+					elseif (isset($_GET['genfavicons']))
+						$settings = $_GET['genfavicons'];
+						
 					$settingsname = 'LinkLibraryPP' . $settings;
 					$options = get_option($settingsname);
 					
@@ -322,6 +331,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
 					$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
+					$linkquery .= " AND t.term_id in (" . $options['categorylist'] . ")";
 					
 					$linkitems = $wpdb->get_results($linkquery);
 					
@@ -333,7 +343,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						{
 							if ($linkitem->link_url != "" && $linkitem->link_name != "")
 							{
-								$genthumburl = "http://open.thumbshots.org/image.aspx?url=" . wp_specialchars($linkitem->link_url);
+								if (isset($_GET['genthumbs']))
+									$genthumburl = "http://open.thumbshots.org/image.aspx?url=" . wp_specialchars($linkitem->link_url);
+								elseif (isset($_GET['genfavicons']))
+								{
+									$strippedurl = str_replace("http://", "", wp_specialchars($linkitem->link_url));
+									$genthumburl = "http://www.getfavicon.org/?url=" . $strippedurl . "/favicon.png";
+								}
 								
 								$linkname = htmlspecialchars_decode($linkitem->link_name, ENT_QUOTES);
 								$linkname = str_replace(" ", "", $linkname);
@@ -341,18 +357,21 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								$linkname = str_replace("/", "-", $linkname);
 									
 								$imagedata = file_get_contents($genthumburl);
-								$status = file_put_contents(ABSPATH . "/wp-content/plugins/link-library-images/" . $linkname . ".jpg", $imagedata);
+								$status = file_put_contents(ABSPATH . "/wp-content/plugins/" . $filepath. "/" . $linkname . ".jpg", $imagedata);
 								
 								if ($status)
 									$filescreated++;
 								
-								$newimagedata = array("link_id" => $linkitem->link_id, "link_image" => "/wp-content/plugins/link-library-images/" . $linkname . ".jpg");
+								$newimagedata = array("link_id" => $linkitem->link_id, "link_image" => "/wp-content/plugins/" . $filepath . "/" . $linkname . ".jpg");
 								wp_update_link($newimagedata);
 							}
 						}
 					}
 					
-					echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></div>";
+					if (isset($_GET['genthumbs']))
+						echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></div>";
+					elseif (isset($_GET['genfavicons']))
+						echo "<div id='message' class='updated fade'><p><strong>Favicons successfully generated!</strong></div>";
 				}
 			}
 			if ( isset($_GET['settings'])) {
@@ -408,6 +427,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				check_admin_referer('linklibrarypp-config');
 				
 				$settingsetid = $_POST['settingsetid'];
+				$settings = $_POST['settingsetid'];
 				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
@@ -651,7 +671,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				Help: <a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
 				
 				
-				<form name='lladmingenform' action="" method="post" id="ll-conf">
+				<form name='lladmingenform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php" method="post" id="ll-conf">
 				<?php
 				if ( function_exists('wp_nonce_field') )
 						wp_nonce_field('linklibrarypp-config');
@@ -726,7 +746,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</fieldset>
 				</div>
 				
-				<form name="lladminform" action="" method="post" id="analytics-conf">
+				<form name="lladminform" action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php" method="post" id="analytics-conf">
 				<?php
 					if ( function_exists('wp_nonce_field') )
 						wp_nonce_field('linklibrarypp-config');
@@ -1369,8 +1389,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td style='width=75px;padding-right:20px'>
 							<input type="checkbox" id="usethumbshotsforimages" name="usethumbshotsforimages" <?php if ($options['usethumbshotsforimages']) echo ' checked="checked" '; ?>/>
 						</td>
-						<td><INPUT type="button" name="genthumbs" value="Generate Thumbnails and Store locally" onClick="window.location= '?page=link-library.php&amp;genthumbs=<?php echo $settings; ?>'"></td>
-						<td></td><td style='width=75px;padding-right:20px'></td>
+						<td><INPUT type="button" name="genthumbs" value="Generate Thumbnails and Store locally" onClick="window.location= '?page=link-library.php&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
+						<td><INPUT type="button" name="genfavicons" value="Generate Favorite Icons and Store locally" onClick="window.location= '?page=link-library.php&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width=75px;padding-right:20px'></td>
 					</tr>					
 					</table>
 					</fieldset>					
