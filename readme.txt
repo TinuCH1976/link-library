@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.1.3 =
+* Upgraded version of fancybox plugin 1.3.1
+
 = 3.1.2 =
 * New Feature: Generate images for links from web site fav icons
 * Fixed: Thumbnail generation now only happens once when you press the button instead of every time you press submit after the initial generation

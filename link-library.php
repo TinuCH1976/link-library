@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.1.2
+Version: 3.1.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3337,8 +3337,8 @@ function conditionally_add_scripts_and_styles($posts){
 	
 	if ($load_fancybox)
 	{
-		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.pack.js');
-		wp_enqueue_style('fancyboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.2.6.css');	
+		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.3.1.pack.js', "", "1.3.1");
+		wp_enqueue_style('fancyboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.3.1.css');	
 	}
  
 	return $posts;
