@@ -3,7 +3,7 @@ Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit
 Requires at least: 2.7
-Tested up to: 2.9.1
+Tested up to: 3.0
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -57,6 +57,10 @@ In addition to specifying a setting set, categories to be displayed can be speci
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 3.1.4 =
+* Fixed: Problem with show one category at a time in AJAX mode after upgrade
+* Tested compatibility with Wordpress 3.0 Beta 1. No problems to report.
 
 = 3.1.3 =
 * Upgraded version of fancybox plugin 1.3.1
