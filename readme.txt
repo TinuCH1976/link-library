@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.1.5 =
+* Fixed: Category links not working correctly with pagination turned on
+
 = 3.1.4 =
 * Fixed: Problem with show one category at a time in AJAX mode after upgrade
 * Tested compatibility with Wordpress 3.0 Beta 1. No problems to report.

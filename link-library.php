@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.1.4
+Version: 3.1.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -65,18 +65,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			if ( function_exists('add_submenu_page') ) {
 				add_options_page('Link Library for Wordpress', 'Link Library', 9, basename(__FILE__), array('LL_Admin','config_page'));
 				add_filter( 'plugin_action_links', array( 'LL_Admin', 'filter_plugin_actions'), 10, 2 );
-				add_filter( 'ozh_adminmenu_icon', array( 'LL_Admin', 'add_ozh_adminmenu_icon' ) );				
 			}
 		} // end add_LL_config_page()
-
-		function add_ozh_adminmenu_icon( $hook ) {
-			static $llicon;
-			if (!$llicon) {
-				$llicon = WP_CONTENT_URL . '/plugins/' . plugin_basename(dirname(__FILE__)). '/chart_curve.png';
-			}
-			if ($hook == 'link-library.php') return $llicon;
-			return $hook;
-		}
 
 		function filter_plugin_actions( $links, $file ){
 			//Static so we don't call plugin_basename on every plugin row.
@@ -1716,10 +1706,10 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 					{
 						$pageposition = $linkcount / $linksperpage;
 						$pageposition = ceil($pageposition);
-						if ($pageposition == $_GET['page'] || ($pageposition == 0) || ($pageposition == 1 && $_GET['page'] != 1))
-							$cattext = '<a href="#' . $catname->category_nicename . '">';
+						if ($pageposition == 0 && !isset($_GET['page']))
+							$cattext = '<a href="' . get_permalink() . '#' . $catname->category_nicename . '">';
 						else
-							$cattext = '<a href="?page=' . $pageposition . '#' . $catname->category_nicename . '">';
+							$cattext = '<a href="?page=' . ($pageposition == 0 ? 1 : $pageposition) . '#' . $catname->category_nicename . '">';
 							
 						$linkcount = $linkcount + $catname->linkcount;						
 					}
