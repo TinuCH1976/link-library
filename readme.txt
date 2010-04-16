@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.1.6 =
+* Changed tooltip plugin used in admin pages to avoid conflict with other plugins
+
 = 3.1.5 =
 * Fixed: Category links not working correctly with pagination turned on
 

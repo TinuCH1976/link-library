@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.1.5
+Version: 3.1.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -666,7 +666,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						wp_nonce_field('linklibrarypp-config');
 					?>
 				<fieldset style='border:1px solid #CCC;padding:10px'>
-				<legend tooltip='These apply to all Settings Sets' style='padding: 0 5px 0 5px;'><strong>General Settings <span style="border:0;padding-left: 15px;" class="submit"><input type="submit" name="submitgen" value="Update General Settings &raquo;" /></span></strong></legend>
+				<legend class="tooltip" title='These apply to all Settings Sets' style='padding: 0 5px 0 5px;'><strong>General Settings <span style="border:0;padding-left: 15px;" class="submit"><input type="submit" name="submitgen" value="Update General Settings &raquo;" /></span></strong></legend>
 				<table>
 				<tr>
 				<td style='width:200px'>Stylesheet File Name</td>
@@ -675,8 +675,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '5'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
 				<tr>
-				<td tooltip="Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API">Additional pages to load styles and scripts</td>
-				<td tooltip="Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
+				<td class="tooltip" title="Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API">Additional pages to load styles and scripts</td>
+				<td class="tooltip" title="Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
 				<td style="padding-left: 10px;padding-right:10px">Debug Mode</td>
 				<td><input type="checkbox" id="debugmode" name="debugmode" <?php if ($genoptions['debugmode']) echo ' checked="checked" '; ?>/></td>
 				</tr>
@@ -715,13 +715,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 						<thead>
 						<tr>
-							<th style='width:40px' tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
+							<th style='width:40px' class="tooltip" title='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Set #
 							</th>
-							<th style='width:130px' tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
+							<th style='width:130px' class="tooltip" title='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Set Name
 							</th>
-							<th tooltip='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
+							<th class="tooltip" title='Link Library Supports the Creation of up to 5 configurations to display link lists on your site'>
 								Code to insert on a Wordpress page to see Link Library
 							</th>
 						</tr>
@@ -767,29 +767,29 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browser's status bar. For example: 2,4,56">
+						<td class="tooltip" title="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browser's status bar. For example: 2,4,56">
 							Categories to be displayed (Empty=All)
 						</td>
-						<td tooltip="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
+						<td class="tooltip" title="Leave Empty to see all categories<br /><br />Enter list of comma-separated<br />numeric category IDs<br /><br />For example: 2,4,56">
 							<input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>"/>
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="Enter list of comma-separated<br />numeric category IDs that should not be shown<br /><br />For example: 5,34,43">
+						<td class="tooltip" title="Enter list of comma-separated<br />numeric category IDs that should not be shown<br /><br />For example: 5,34,43">
 							Categories to be excluded
 						</td>
-						<td tooltip="Enter list of comma-separated<br />numeric category IDs that should not be shown<br /><br />For example: 5,34,43">
+						<td class="tooltip" title="Enter list of comma-separated<br />numeric category IDs that should not be shown<br /><br />For example: 5,34,43">
 							<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>"/>
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="Only show one category of links at a time">
+						<td class="tooltip" title="Only show one category of links at a time">
 							Only show one category at a time
 						</td>
-						<td tooltip="Only show one category of links at a time">
+						<td class="tooltip" title="Only show one category of links at a time">
 							<input type="checkbox" id="showonecatonly" name="showonecatonly" <?php if ($options['showonecatonly']) echo ' checked="checked" '; ?>/>
 						</td>
-						<td tooltip="Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link">Switching Method</td>
+						<td class="tooltip" title="Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link">Switching Method</td>
 						<td>
 							<select name="showonecatmode" id="showonecatmode" style="width:200px;">
 								<option value="AJAX"<?php if ($options['showonecatmode'] == 'AJAX' || $options['showonecatmode'] == '') { echo ' selected="selected"';} ?>>AJAX</option>
@@ -806,26 +806,26 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>
 					<tr>
-						<td tooltip="File path is relative to Link Library plugin directory">
+						<td class="tooltip" title="File path is relative to Link Library plugin directory">
 							Icon to display when performing AJAX queries
 						</td>
-						<td tooltip="File path is relative to Link Library plugin directory">
+						<td class="tooltip" title="File path is relative to Link Library plugin directory">
 							<input type="text" id="loadingicon" name="loadingicon" size="40" value="<?php if ($options['loadingicon'] == '') {echo '/icons/Ajax-loader.gif';} else {echo strval($options['loadingicon']);} ?>"/>
 						</td>
 					</tr>
 					<tr>
-						<td tooltip='Only show a limited number of links and add page navigation links'>
+						<td class="tooltip" title='Only show a limited number of links and add page navigation links'>
 							Paginate Results
 						</td>
-						<td tooltip='Only show a limited number of links and add page navigation links'>
+						<td class="tooltip" title='Only show a limited number of links and add page navigation links'>
 							<input type="checkbox" id="pagination" name="pagination" <?php if ($options['pagination']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>	
 					<tr>
-						<td tooltip="Number of Links to be Displayed per Page in Pagination Mode">
+						<td class="tooltip" title="Number of Links to be Displayed per Page in Pagination Mode">
 							Links per Page
 						</td>
-						<td tooltip="Number of Links to be Displayed per Page in Pagination Mode">
+						<td class="tooltip" title="Number of Links to be Displayed per Page in Pagination Mode">
 							<input type="text" id="linksperpage" name="linksperpage" size="3" value="<?php echo $options['linksperpage']; ?>"/>
 						</td>
 					</tr>				
@@ -881,20 +881,20 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>					
 					<tr>
-						<td tooltip="This setting does not apply when selecting My Link Order for the order">
+						<td class="tooltip" title="This setting does not apply when selecting My Link Order for the order">
 							Direction
 						</td>
-						<td tooltip="This setting does not apply when selecting My Link Order for the order">
+						<td class="tooltip" title="This setting does not apply when selecting My Link Order for the order">
 							<select name="direction" id="direction" style="width:100px;">
 								<option value="ASC"<?php if ($options['direction'] == 'ASC') { echo ' selected="selected"';} ?>>Ascending</option>
 								<option value="DESC"<?php if ($options['direction'] == 'DESC') { echo ' selected="selected"';} ?>>Descending</option>
 							</select>
 						</td>
 						<td></td>
-						<td tooltip="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
+						<td class="tooltip" title="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
 							Show Category Description
 						</td>
-						<td tooltip="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
+						<td class="tooltip" title="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
 							<input type="checkbox" id="showcategorydescheaders" name="showcategorydescheaders" <?php if ($options['showcategorydescheaders']) echo ' checked="checked" '; ?>/>
 							<span style='margin-left: 17px'>Position:</span>							
 							<select name="catlistdescpos" id="catlistdescpos" style="width:100px;">
@@ -911,10 +911,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="text" id="table_width" name="table_width" size="10" value="<?php echo strval($options['table_width']); ?>"/>
 						</td>
 						<td></td>
-						<td tooltip='Determines the number of alternating div tags that will be placed before and after each link category.<br /><br />These div tags can be used to style of position link categories on the link page.'>
+						<td class="tooltip" title='Determines the number of alternating div tags that will be placed before and after each link category.<br /><br />These div tags can be used to style of position link categories on the link page.'>
 							Number of alternating div classes 
 						</td>
-						<td tooltip='Determines the number of alternating div tags that will be placed before and after each link category.<br /><br />These div tags can be used to style of position link categories on the link page.'>
+						<td class="tooltip" title='Determines the number of alternating div tags that will be placed before and after each link category.<br /><br />These div tags can be used to style of position link categories on the link page.'>
 							<select name="catlistwrappers" id="catlistwrappers" style="width:200px;">
 								<option value="1"<?php if ($options['catlistwrappers'] == 1) { echo ' selected="selected"';} ?>>1</option>
 								<option value="2"<?php if ($options['catlistwrappers'] == 2) { echo ' selected="selected"';} ?>>2</option>
@@ -956,10 +956,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>					
 					<tr>
-						<td tooltip="Example div class name: linklistcatname, Example Heading Label: h3">
+						<td class="tooltip" title="Example div class name: linklistcatname, Example Heading Label: h3">
 							Div Class Name or Heading label
 						</td>
-						<td  tooltip="Example div class name: linklistcatname, Example Heading Label: h3">
+						<td  class="tooltip" title="Example div class name: linklistcatname, Example Heading Label: h3">
 							<input type="text" id="catnameoutput" name="catnameoutput" size="30" value="<?php echo strval($options['catnameoutput']); ?>"/>
 						</td>
 						<td></td>
@@ -987,10 +987,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							</select>
 						</td>
 						<td style='width:100px'></td>
-						<td tooltip="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
+						<td class="tooltip" title="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
 							Show Category Description
 						</td>
-						<td tooltip="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
+						<td class="tooltip" title="Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >">
 							<input type="checkbox" id="showcategorydesclinks" name="showcategorydesclinks" <?php if ($options['showcategorydesclinks']) echo ' checked="checked" '; ?>/>
 							<span style='margin-left: 17px'>Position:</span>							
 							<select name="catdescpos" id="catdescpos" style="width:100px;">
@@ -1000,28 +1000,28 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</td>
 					</tr>
 					<tr>
-						<td tooltip='Except for My Link Order mode'>
+						<td class="tooltip" title='Except for My Link Order mode'>
 							Direction
 						</td>
-						<td tooltip='Except for My Link Order mode'>
+						<td class="tooltip" title='Except for My Link Order mode'>
 							<select name="linkdirection" id="linkdirection" style="width:200px;">
 								<option value="ASC"<?php if ($options['linkdirection'] == 'ASC') { echo ' selected="selected"';} ?>>Ascending</option>
 								<option value="DESC"<?php if ($options['linkdirection'] == 'DESC') { echo ' selected="selected"';} ?>>Descending</option>
 							</select>
 						</td>
 						<td></td>
-						<td tooltip='Need to be active for Link Categories to work'>
+						<td class="tooltip" title='Need to be active for Link Categories to work'>
 							Embed HTML anchors
 						</td>
-						<td tooltip='Need to be active for Link Categories to work'>
+						<td class="tooltip" title='Need to be active for Link Categories to work'>
 							<input type="checkbox" id="catanchor" name="catanchor" <?php if ($options['catanchor']) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>	
 					<tr>
-						<td tooltip="Sets default link target window, does not override specific targets set in links">
+						<td class="tooltip" title="Sets default link target window, does not override specific targets set in links">
 							Link Target
 						</td>
-						<td tooltip="Sets default link target window, does not override specific targets set in links">
+						<td class="tooltip" title="Sets default link target window, does not override specific targets set in links">
 							<input type="text" id="linktarget" name="linktarget" size="40" value="<?php echo $options['linktarget']; ?>"/>
 						</td>
 						<td></td>
@@ -1087,18 +1087,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<thead>
 								<tr>
 									<th></th>
-									<th tooltip='This column allows for the output of text/code before a number of links determined by the Display field'>Intermittent Before Link</th>
-									<th tooltip='This column allows for the output of text/code before each link'>Before Link</th>
-									<th tooltip='This column allows for the output of text/code before each link image'>Image</th>
-									<th tooltip='This column allows for the output of text/code before and after each link name'>Link</th>
-									<th tooltip='This column allows for the output of text/code before and after each link date stamp'>Link Date</th>
+									<th class="tooltip" title='This column allows for the output of text/code before a number of links determined by the Display field'>Intermittent Before Link</th>
+									<th class="tooltip" title='This column allows for the output of text/code before each link'>Before Link</th>
+									<th class="tooltip" title='This column allows for the output of text/code before each link image'>Image</th>
+									<th class="tooltip" title='This column allows for the output of text/code before and after each link name'>Link</th>
+									<th class="tooltip" title='This column allows for the output of text/code before and after each link date stamp'>Link Date</th>
 								</tr>
 							</thead>			
 							<tr>
 								<td style='background: #FFF'>
 									Display
 								</td>
-								<td style='background: #FFF' tooltip='Frequency of additional output before and after complete link group'>
+								<td style='background: #FFF' class="tooltip" title='Frequency of additional output before and after complete link group'>
 									<input type="text" id="linkaddfrequency" name="linkaddfrequency" size="10" value="<?php echo strval($options['linkaddfrequency']); ?>"/>
 								</td>						
 								<td style='background: #FFF'>
@@ -1112,7 +1112,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								</td>								
 								<td style='background: #FFF'>
 								</td>
-								<td style='background: #FFF' tooltip='Check to display link date'>
+								<td style='background: #FFF' class="tooltip" title='Check to display link date'>
 									<input type="checkbox" id="showdate" name="showdate" <?php if ($options['showdate']) echo ' checked="checked" '; ?>/>
 								</td>
 							</tr>					
@@ -1120,19 +1120,19 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'>
 									Before
 								</td>
-								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
+								<td style='background: #FFF' class="tooltip" title='Output before complete link group (link, notes, desc, etc...)'>
 									<input type="text" id="addbeforelink" name="addbeforelink" size="22" value="<?php echo $options['addbeforelink']; ?>"/>
 								</td>						
-								<td style='background: #FFF' tooltip='Output before complete link group (link, notes, desc, etc...)'>
+								<td style='background: #FFF' class="tooltip" title='Output before complete link group (link, notes, desc, etc...)'>
 									<input type="text" id="beforeitem" name="beforeitem" size="22" value="<?php echo $options['beforeitem']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each link image'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each link image'>
 									<input type="text" id="beforeimage" name="beforeimage" size="22" value="<?php echo $options['beforeimage']; ?>"/>
 								</td>								
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each link'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each link'>
 									<input type="text" id="beforelink" name="beforelink" size="22" value="<?php echo $options['beforelink']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each date'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each date'>
 									<input type="text" id="beforedate" name="beforedate" size="22" value="<?php echo $options['beforedate']; ?>"/>
 								</td>								
 							</tr>
@@ -1144,13 +1144,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								</td>
 								<td style='background: #FFF'>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each link image'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each link image'>
 									<input type="text" id="afterimage" name="afterimage" size="22" value="<?php echo $options['afterimage']; ?>"/>
 								</td>								
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each link'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each link'>
 									<input type="text" id="afterlink" name="afterlink" size="22" value="<?php echo $options['afterlink']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each date'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each date'>
 									<input type="text" id="afterdate" name="afterdate" size="22" value="<?php echo $options['afterdate']; ?>"/>
 								</td>								
 							</tr>
@@ -1162,7 +1162,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								</td>
 								<td style='background: #FFF'>
 								</td>
-								<td style='background: #FFF' tooltip='Class to be assigned to link image'>
+								<td style='background: #FFF' class="tooltip" title='Class to be assigned to link image'>
 									<input type="text" id="imageclass" name="imageclass" size="22" value="<?php echo $options['imageclass']; ?>"/>
 								</td>								
 								<td style='background: #FFF'>
@@ -1175,21 +1175,21 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<thead>
 								<tr>
 									<th></th>
-									<th tooltip='This column allows for the output of text/code before and after each link description'>Link Description</th>
-									<th tooltip='This column allows for the output of text/code before and after each link notes'>Link Notes</th>
-									<th tooltip='This column allows for the output of text/code before and after the RSS icons'>RSS Icons</th>
-									<th tooltip='This column allows for the output of text/code after each link'>After Link Block</th>
-									<th tooltip='This column allows for the output of text/code after a number of links determined in the first column'>Intermittent After Link</th>
+									<th class="tooltip" title='This column allows for the output of text/code before and after each link description'>Link Description</th>
+									<th class="tooltip" title='This column allows for the output of text/code before and after each link notes'>Link Notes</th>
+									<th class="tooltip" title='This column allows for the output of text/code before and after the RSS icons'>RSS Icons</th>
+									<th class="tooltip" title='This column allows for the output of text/code after each link'>After Link Block</th>
+									<th class="tooltip" title='This column allows for the output of text/code after a number of links determined in the first column'>Intermittent After Link</th>
 								</tr>
 							</thead>			
 							<tr>
 								<td style='background: #FFF'>
 									Display
 								</td>						
-								<td style='background: #FFF' tooltip='Check to display link descriptions'>
+								<td style='background: #FFF' class="tooltip" title='Check to display link descriptions'>
 									<input type="checkbox" id="showdescription" name="showdescription" <?php if ($options['showdescription']) echo ' checked="checked" '; ?>/>
 								</td>
-								<td style='background: #FFF' tooltip='Check to display link notes'>
+								<td style='background: #FFF' class="tooltip" title='Check to display link notes'>
 									<input type="checkbox" id="shownotes" name="shownotes" <?php if ($options['shownotes']) echo ' checked="checked" '; ?>/>
 								</td>
 								<td style='background: #FFF'>
@@ -1204,13 +1204,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'>
 									Before
 								</td>						
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each description'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each description'>
 									<input type="text" id="beforedesc" name="beforedesc" size="22" value="<?php echo $options['beforedesc']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before each note'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each note'>
 									<input type="text" id="beforenote" name="beforenote" size="22" value="<?php echo $options['beforenote']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed before RSS Icons'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before RSS Icons'>
 									<input type="text" id="beforerss" name="beforerss" size="22" value="<?php echo $options['beforerss']; ?>"/>
 								</td>
 								<td style='background: #FFF'>
@@ -1222,16 +1222,16 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'>
 									After
 								</td>							
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each description'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each description'>
 									<input type="text" id="afterdesc" name="afterdesc" size="22" value="<?php echo $options['afterdesc']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Code/Text to be displayed after each note'>
+								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each note'>
 									<input type="text" id="afternote" name="afternote" size="22" value="<?php echo $options['afternote']; ?>"/>
 								</td>
-								<td  style='background: #FFF' tooltip='Code/Text to be displayed after RSS Icons'>
+								<td  style='background: #FFF' class="tooltip" title='Code/Text to be displayed after RSS Icons'>
 									<input type="text" id="afterrss" name="afterrss" size="22" value="<?php echo $options['afterrss']; ?>"/>
 								</td>
-								<td style='background: #FFF' tooltip='Output after complete link group (link, notes, desc, etc...)'>
+								<td style='background: #FFF' class="tooltip" title='Output after complete link group (link, notes, desc, etc...)'>
 									<input type="text" id="afteritem" name="afteritem" size="22" value="<?php echo $options['afteritem']; ?>"/>
 								</td>	
 								<td style='background: #FFF'>
@@ -1317,10 +1317,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td></td><td style='width=75px;padding-right:20px'></td>
 					</tr>					
 					<tr>
-						<td colspan='1' tooltip='Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory.'>
+						<td colspan='1' class="tooltip" title='Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory.'>
 							RSS Cache Directory
 						</td>
-						<td colspan='5' tooltip='Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory.'>
+						<td colspan='5' class="tooltip" title='Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory.'>
 							<input type="text" id="rsscachedir" name="rsscachedir" size="80" value="<?php if ($options['rsscachedir'] == '') echo ABSPATH . 'wp-content/cache/link-library'; else echo $options['rsscachedir']; ?>"/>
 						</td>					
 					</tr>
@@ -1410,7 +1410,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<legend style='padding: 0 5px 0 5px;'><strong>Link User Submission</strong></legend>
 					<table>
 						<tr>
-							<td colspan=5 tooltip='Following this link shows a list of all links awaiting moderation. To approve a link, edit it and remove the text in parentheses at the beginning of the link description'><a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">View list of links awaiting moderation</a></td>
+							<td colspan=5 class="tooltip" title='Following this link shows a list of all links awaiting moderation. To approve a link, edit it and remove the text in parentheses at the beginning of the link description'><a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">View list of links awaiting moderation</a></td>
 						</tr>
 						<tr>
 							<td style='width:200px'>Show user links immediately</td>
@@ -1519,58 +1519,12 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 // Create the tooltips only on document load
 jQuery(document).ready(function()
 	{
-	// Notice the use of the each() method to acquire access to each elements attributes
-	jQuery('#lladmin td[tooltip]').each(function()
+jQuery('.tooltip').each(function()
 		{
-		jQuery(this).qtip({
-			content: jQuery(this).attr('tooltip'), // Use the tooltip attribute of the element for the content
-			style: {
-				width: 300,
-				name: 'cream', // Give it a crea mstyle to make it stand out
-			},
-			position: {
-				corner: {
-					target: 'bottomLeft',
-					tooltip: 'topLeft'
-				}
-			}
-		});
-	});
+		jQuery(this).tipTip();
+		}
 	
-		jQuery('#lladmin th[tooltip]').each(function()
-		{
-		jQuery(this).qtip({
-			content: jQuery(this).attr('tooltip'), // Use the tooltip attribute of the element for the content
-			style: {
-				width: 300,
-				name: 'cream', // Give it a crea mstyle to make it stand out
-			},
-			position: {
-				corner: {
-					target: 'bottomLeft',
-					tooltip: 'topLeft'
-				}
-			}
-		});
-	});
-	
-			jQuery('#lladmin legend[tooltip]').each(function()
-		{
-		jQuery(this).qtip({
-			content: jQuery(this).attr('tooltip'), // Use the tooltip attribute of the element for the content
-			style: {
-				width: 300,
-				name: 'cream', // Give it a crea mstyle to make it stand out
-			},
-			position: {
-				corner: {
-					target: 'bottomLeft',
-					tooltip: 'topLeft'
-				}
-			}
-		});
-	});
-
+);
 });
 </script>
 
@@ -3200,14 +3154,14 @@ add_action('add_link', 'populate_link_field');
 add_action('edit_link', 'populate_link_field');
 
 function admin_scripts() {
-	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js"></script>'."\n";
+	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js"></script>'."\n";
+	echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css">'."\n";
 }
 
 function conditionally_add_scripts_and_styles($posts){
 	if (empty($posts)) return $posts;
 	
 	$load_jquery = false;
-	$load_qtip = false;
 	$load_fancybox = false;
 	$load_style = false;
 	global $testvar;
@@ -3217,7 +3171,6 @@ function conditionally_add_scripts_and_styles($posts){
 	if (is_admin()) 
 	{
 		$load_jquery = false;
-		$load_qtip = false;
 		$load_fancybox = false;
 		$load_style = false;
 	}
@@ -3298,7 +3251,6 @@ function conditionally_add_scripts_and_styles($posts){
 				if (is_page($pageid))
 				{
 					$load_jquery = true;
-					$load_qtip = true;
 					$load_fancybox = true;
 					$load_style = true;
 				}
@@ -3318,12 +3270,7 @@ function conditionally_add_scripts_and_styles($posts){
 	{
 		wp_enqueue_script('jquery');
 	}
-	
-	if ($load_qtip)
-	{
-		wp_enqueue_script('qtip', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/jquery-qtip/jquery.qtip-1.0.0-rc3.min.js');
-	}
-	
+		
 	if ($load_fancybox)
 	{
 		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.3.1.pack.js', "", "1.3.1");
