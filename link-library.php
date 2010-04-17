@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.1.6
+Version: 3.1.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1272,7 +1272,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					<tr>					
 						<td>
-							Use HTML tags for formatting
+							Convert [] to &lt;&gt; in Link Description and Notes
 						</td>
 						<td style='width=75px;padding:0px 20px 0px 20px'>
 							<input type="checkbox" id="use_html_tags" name="use_html_tags" <?php if ($options['use_html_tags']) echo ' checked="checked" '; ?>/>
@@ -2186,12 +2186,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$rel = ' rel="nofollow"';
 				
 				if ($use_html_tags) {
-					$descnotes = $linkitem->link_notes;
-				}
-				else {
 					$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
-				}
-				$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
+					$descnotes = str_replace("[", "<", $descnotes);
+					$descnotes = str_replace("]", ">", $descnotes);
+				}				
+				
 				$cleanname = wp_specialchars($linkitem->link_name, ENT_QUOTES);
 				
 				if ($mode == "search")
@@ -2268,9 +2267,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$output .= $imageoutput;
 				}
 
-
 				if ($use_html_tags || $mode == "search") {
 					$desc = $linkitem->link_description;
+					$desc = str_replace("[", "<", $desc);
+					$desc = str_replace("]", ">", $desc);
 				}
 				else {
 					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);

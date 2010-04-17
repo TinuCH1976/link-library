@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.1.7 =
+* Changed option "Use HTML codes for formatting" to "Convert [] to <> in Link Description and Notes" since Wordpress does not allow admins to put HTML tags in notes and description
+
 = 3.1.6 =
 * Changed tooltip plugin used in admin pages to avoid conflict with other plugins
 
