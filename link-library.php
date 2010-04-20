@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2
+Version: 3.2.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -706,7 +706,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$section = 'moderate';
 			}
 			
-			if ($section == 'moderate'):		
+			if ($section == 'moderate') {	
 			?>
 			<SCRIPT LANGUAGE="JavaScript">
 				function checkAll(field) {
@@ -774,7 +774,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			
 			</div>
 			
-			<?php else: ?>
+			<?php } else { ?>
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
 				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
@@ -1241,19 +1241,19 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									Before
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Output before complete link group (link, notes, desc, etc...)'>
-									<input type="text" id="addbeforelink" name="addbeforelink" size="22" value="<?php echo $options['addbeforelink']; ?>"/>
+									<input type="text" id="addbeforelink" name="addbeforelink" size="22" value="<?php echo stripslashes($options['addbeforelink']); ?>"/>
 								</td>						
 								<td style='background: #FFF' class="tooltip" title='Output before complete link group (link, notes, desc, etc...)'>
-									<input type="text" id="beforeitem" name="beforeitem" size="22" value="<?php echo $options['beforeitem']; ?>"/>
+									<input type="text" id="beforeitem" name="beforeitem" size="22" value="<?php echo stripslashes($options['beforeitem']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each link image'>
-									<input type="text" id="beforeimage" name="beforeimage" size="22" value="<?php echo $options['beforeimage']; ?>"/>
+									<input type="text" id="beforeimage" name="beforeimage" size="22" value="<?php echo stripslashes($options['beforeimage']); ?>"/>
 								</td>								
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each link'>
-									<input type="text" id="beforelink" name="beforelink" size="22" value="<?php echo $options['beforelink']; ?>"/>
+									<input type="text" id="beforelink" name="beforelink" size="22" value="<?php echo stripslashes($options['beforelink']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each date'>
-									<input type="text" id="beforedate" name="beforedate" size="22" value="<?php echo $options['beforedate']; ?>"/>
+									<input type="text" id="beforedate" name="beforedate" size="22" value="<?php echo stripslashes($options['beforedate']); ?>"/>
 								</td>								
 							</tr>
 							<tr>
@@ -1265,13 +1265,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each link image'>
-									<input type="text" id="afterimage" name="afterimage" size="22" value="<?php echo $options['afterimage']; ?>"/>
+									<input type="text" id="afterimage" name="afterimage" size="22" value="<?php echo stripslashes($options['afterimage']); ?>"/>
 								</td>								
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each link'>
-									<input type="text" id="afterlink" name="afterlink" size="22" value="<?php echo $options['afterlink']; ?>"/>
+									<input type="text" id="afterlink" name="afterlink" size="22" value="<?php echo stripslashes($options['afterlink']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each date'>
-									<input type="text" id="afterdate" name="afterdate" size="22" value="<?php echo $options['afterdate']; ?>"/>
+									<input type="text" id="afterdate" name="afterdate" size="22" value="<?php echo stripslashes($options['afterdate']); ?>"/>
 								</td>								
 							</tr>
 							<tr>
@@ -1325,13 +1325,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									Before
 								</td>						
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each description'>
-									<input type="text" id="beforedesc" name="beforedesc" size="22" value="<?php echo $options['beforedesc']; ?>"/>
+									<input type="text" id="beforedesc" name="beforedesc" size="22" value="<?php echo stripslashes($options['beforedesc']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before each note'>
-									<input type="text" id="beforenote" name="beforenote" size="22" value="<?php echo $options['beforenote']; ?>"/>
+									<input type="text" id="beforenote" name="beforenote" size="22" value="<?php echo stripslashes($options['beforenote']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed before RSS Icons'>
-									<input type="text" id="beforerss" name="beforerss" size="22" value="<?php echo $options['beforerss']; ?>"/>
+									<input type="text" id="beforerss" name="beforerss" size="22" value="<?php echo stripslashes($options['beforerss']); ?>"/>
 								</td>
 								<td style='background: #FFF'>
 								</td>						
@@ -1343,19 +1343,19 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									After
 								</td>							
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each description'>
-									<input type="text" id="afterdesc" name="afterdesc" size="22" value="<?php echo $options['afterdesc']; ?>"/>
+									<input type="text" id="afterdesc" name="afterdesc" size="22" value="<?php echo stripslashes($options['afterdesc']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Code/Text to be displayed after each note'>
-									<input type="text" id="afternote" name="afternote" size="22" value="<?php echo $options['afternote']; ?>"/>
+									<input type="text" id="afternote" name="afternote" size="22" value="<?php echo stripslashes($options['afternote']); ?>"/>
 								</td>
 								<td  style='background: #FFF' class="tooltip" title='Code/Text to be displayed after RSS Icons'>
-									<input type="text" id="afterrss" name="afterrss" size="22" value="<?php echo $options['afterrss']; ?>"/>
+									<input type="text" id="afterrss" name="afterrss" size="22" value="<?php echo stripslashes($options['afterrss']); ?>"/>
 								</td>
 								<td style='background: #FFF' class="tooltip" title='Output after complete link group (link, notes, desc, etc...)'>
-									<input type="text" id="afteritem" name="afteritem" size="22" value="<?php echo $options['afteritem']; ?>"/>
+									<input type="text" id="afteritem" name="afteritem" size="22" value="<?php echo stripslashes($options['afteritem']); ?>"/>
 								</td>	
 								<td style='background: #FFF'>
-									<input type="text" id="addafterlink" name="addafterlink" size="22" value="<?php echo $options['addafterlink']; ?>"/>
+									<input type="text" id="addafterlink" name="addafterlink" size="22" value="<?php echo stripslashes($options['addafterlink']); ?>"/>
 								</td>
 							</tr>
 					</table>
@@ -1648,7 +1648,7 @@ jQuery('.tooltip').each(function()
 });
 </script>
 
-			<?php endif;
+			<?php }
 
 		} // end config_page()
 	
@@ -2286,10 +2286,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				
 				if ($linkaddfrequency > 0)
 					if (($linkcount - 1) % $linkaddfrequency == 0)
-						$output .= $addbeforelink;
+						$output .= stripslashes($addbeforelink);
 				
 				if (!isset($linkitem->recently_updated)) $linkitem->recently_updated = false; 
-				$output .= $beforeitem;
+				$output .= stripslashes($beforeitem);
 				if ($showupdated && $linkitem->recently_updated)
 					$output .= get_option('links_recently_updated_prepend'); 
 					
@@ -2347,7 +2347,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				}
 				
 				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name)) {
-					$imageoutput = $beforeimage . '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
+					$imageoutput = stripslashes($beforeimage) . '<a href="' . $the_link . '"' . $rel . $title . $target. '>';
 					
 					if ($usethumbshotsforimages)
 						$imageoutput .= '<img src="http://open.thumbshots.org/image.aspx?url=' . $the_link . '"';
@@ -2363,7 +2363,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					
 					$imageoutput .= "/>";
 					 
-					$imageoutput .= '</a>' . $afterimage;
+					$imageoutput .= '</a>' . stripslashes($afterimage);
 				}
 				
 				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name) && ($imagepos == 'beforename' || $imagepos == "")) {
@@ -2371,7 +2371,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				}
 						
 				if ($show_image_and_name || !$show_images)
-					$output .= $beforelink . '<a href="' . $the_link . '"' . $rel . $title . $target. '>' . $name . '</a>';
+					$output .= stripslashes($beforelink) . '<a href="' . $the_link . '"' . $rel . $title . $target. '>' . $name . '</a>';
 				
 				if (($showadmineditlinks) && current_user_can("manage_links")) {
 					$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
@@ -2381,7 +2381,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$output .= get_option('links_recently_updated_append');
 				}
 				
-				$output .= $afterlink;
+				$output .= stripslashes($afterlink);
 				
 				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name) && $imagepos == 'aftername') {
 					$output .= $imageoutput;
@@ -2399,19 +2399,19 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				$formatteddate = date("F d Y", $linkitem->link_date);
 				
 				if ($showdate)
-					$output .= $between . $beforedate . $formatteddate . $afterdate;
+					$output .= $between . stripslashes($beforedate) . $formatteddate . stripslashes($afterdate);
 				
 				if ($showdescription)
-					$output .= $between . $beforedesc . $desc . $afterdesc;
+					$output .= $between . stripslashes($beforedesc) . $desc . stripslashes($afterdesc);
 
 				if ($shownotes) {
-					$output .= $between . $beforenote . $descnotes . $afternote;
+					$output .= $between . stripslashes($beforenote) . $descnotes . stripslashes($afternote);
 				}
 				
 				//$output .= '<div class="thumbshots"><a href="' . $the_link . '"' . $rel . $title . $target. '><img src="http://open.thumbshots.org/image.aspx?url=' . $the_link .'" border="1"></a></div>';
 				
 				if ($show_rss || $show_rss_icon || $rsspreview)
-					$output .= $beforerss . '<div class="rsselements">';
+					$output .= stripslashes($beforerss) . '<div class="rsselements">';
 					
 				if ($show_rss && ($linkitem->link_rss != '')) {
 					$output .= $between . '<a class="rss" href="' . $linkitem->link_rss . '">RSS</a>';
@@ -2425,7 +2425,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				}
 				
 				if ($show_rss || $show_rss_icon || $rsspreview)
-					$output .= '</div>' . $afterrss;
+					$output .= '</div>' . stripslashes($afterrss);
 									
 				if ($rssfeedinline && $linkitem->link_rss)
 				{
@@ -2459,13 +2459,13 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 				
 						
-				$output .= $afteritem . "\n";
+				$output .= stripslashes($afteritem) . "\n";
 				
 				//$output .= "</div>";
 				
 				if ($linkaddfrequency > 0)
 					if ($linkcount % $linkaddfrequency == 0)
-						$output .= $addafterlink;
+						$output .= stripslashes($addafterlink);
 					
 			}
 							
