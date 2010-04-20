@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.1.7
+Version: 3.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -467,7 +467,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$settingsname = 'LinkLibraryPP' . $settingsetid;
 				
 				update_option($settingsname, $options);
-				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong>";
+				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong></div>";
 				
 				global $wpdb;
 					
@@ -653,11 +653,131 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$genoptions['debugmode'] = false;
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
+			
+			if (isset($_POST['approvelinks']))
+			{
+				global $wpdb;
 				
-			?>		
+				$section = 'moderate';
+				
+				foreach ($_POST['links'] as $approved_link)
+				{
+					$linkdescquery = "SELECT link_description ";
+					$linkdescquery .= "FROM " . $wpdb->prefix . "links l ";
+					$linkdescquery .= "WHERE link_id = " . $approved_link;
+					
+					$linkdesc = $wpdb->get_var($linkdescquery); 
+					
+					$modpos = strpos($linkdesc, "LinkLibrary:AwaitingModeration:RemoveTextToApprove");
+					
+					if ($modpos)
+					{
+						$startpos = $modpos + 51;
+						$newlinkdesc = substr($linkdesc, $startpos);
+						
+						$id = array("id" => $linkdescquery);
+						$newdesc = array ("link_description", $newlinkdesc);
+						
+						$tablename = $wpdb->prefix . "links";
+						$wpdb->update( $tablename, array( 'link_description' => $newlinkdesc ), array( 'link_id' => $approved_link ));
+
+					}
+				}
+				
+				echo "<div id='message' class='updated fade'><p><strong>Link(s) Approved</strong></div>";			
+			}
+			
+			if (isset($_POST['deletelinks']))
+			{
+				global $wpdb;
+				
+				$section = 'moderate';
+				
+				foreach ($_POST['links'] as $approved_link)
+				{
+					$wpdb->query("DELETE FROM " . $wpdb->prefix . "links WHERE link_id = " . $approved_link);
+				}
+				
+				echo "<div id='message' class='updated fade'><p><strong>Link(s) Deleted</strong></div>";			
+			}
+			
+			if ($_GET['section'] == 'moderate')
+			{
+				$section = 'moderate';
+			}
+			
+			if ($section == 'moderate'):		
+			?>
+			<SCRIPT LANGUAGE="JavaScript">
+				function checkAll(field) {
+					for (i = 0; i < field.length; i++)
+					field[i].checked = true;
+				}
+
+				function uncheckAll(field) {
+					for (i = 0; i < field.length; i++)
+					field[i].checked = false;
+				}
+			</script>
+
+			<div class="wrap" id='llmoderate' style='width:1000px'>
+				<h2>Link Library - Link Moderation</h2>
+				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php">Configuration Page</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
+				
+				<form name='llmoderateform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate" method="post" id="ll-mod">
+				<?php
+				if ( function_exists('wp_nonce_field') )
+						wp_nonce_field('linklibrarypp-config');
+					?>
+				<table>
+					<tr>
+						<th style='width: 100px'></th>
+						<th style='width: 300px'>Link Name</th>
+						<th style='width: 300px'>Link URL</th>
+						<th>Link Description</th>
+					</tr>
+				<?php global $wpdb;
+				
+					$linkquery = "SELECT distinct * ";
+					$linkquery .= "FROM " . $wpdb->prefix . "links l ";
+					$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+					$linkquery .= " ORDER by link_name ASC";
+					
+					$linkitems = $wpdb->get_results($linkquery);
+
+					if ($linkitems) {
+						foreach($linkitems as $linkitem):
+				?>
+						<tr>
+							<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
+							<td><?php echo $linkitem->link_name; ?></td>
+							<td><?php echo $linkitem->link_url; ?></td>
+							<td><?php echo $linkitem->link_description; ?></td>
+						</tr>
+				<?      endforeach; }
+						else { ?>
+						<tr>
+							<td></td>
+							<td>No Links Found to Moderate</td>
+							<td></td>
+							<td></td>
+						</tr>
+				<? } ?>			
+				
+				</table><br />
+				<input type="button" name="CheckAll" value="Check All" onClick="checkAll(document.llmoderateform['links[]'])">
+				<input type="button" name="UnCheckAll" value="Uncheck All" onClick="uncheckAll(document.llmoderateform['links[]'])">
+
+				<input type="submit" name="approvelinks" value="Approve Selected Items" />
+				<input type="submit" name="deletelinks" value="Delete Selected Items" />
+				</form>
+			
+			</div>
+			
+			<?php else: ?>
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
-				Help: <a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
+				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
 				
 				
 				<form name='lladmingenform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php" method="post" id="ll-conf">
@@ -1528,7 +1648,7 @@ jQuery('.tooltip').each(function()
 });
 </script>
 
-			<?php
+			<?php endif;
 
 		} // end config_page()
 	

@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2 =
+* Added new link moderation screen that allows for batch approval or deletion of links awaiting moderation
+
 = 3.1.7 =
 * Changed option "Use HTML codes for formatting" to "Convert [] to <> in Link Description and Notes" since Wordpress does not allow admins to put HTML tags in notes and description
 
