@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2.3 =
+* Fixed: A href tags placed within link notes are now rendered correctly as links again
+
 = 3.2.2 =
 * Corrected bug with new link moderation section that caused errors on servers without the php open short tag option enabled
 

@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.2
+Version: 3.2.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2307,10 +2307,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$rel = ' rel="nofollow"';
 				
 				if ($use_html_tags) {
-					$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
+					$descnotes = $linkitem->link_notes;
 					$descnotes = str_replace("[", "<", $descnotes);
 					$descnotes = str_replace("]", ">", $descnotes);
-				}				
+				}
+				else
+					$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
 				
 				$cleanname = wp_specialchars($linkitem->link_name, ENT_QUOTES);
 				
