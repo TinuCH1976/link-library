@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.1
+Version: 3.2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -746,7 +746,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$linkitems = $wpdb->get_results($linkquery);
 
 					if ($linkitems) {
-						foreach($linkitems as $linkitem):
+						foreach($linkitems as $linkitem) {
 				?>
 						<tr>
 							<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
@@ -754,7 +754,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<td><?php echo $linkitem->link_url; ?></td>
 							<td><?php echo $linkitem->link_description; ?></td>
 						</tr>
-				<?      endforeach; }
+				<?php      	}
+						}
 						else { ?>
 						<tr>
 							<td></td>
@@ -762,7 +763,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<td></td>
 							<td></td>
 						</tr>
-				<? } ?>			
+				<?php } ?>			
 				
 				</table><br />
 				<input type="button" name="CheckAll" value="Check All" onClick="checkAll(document.llmoderateform['links[]'])">
@@ -1552,23 +1553,23 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</tr>						
 						<tr>
 							<td style='width:200px'>Add new link label</td>
-							<? if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = "Add new link"; ?>
+							<?php if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = "Add new link"; ?>
 							<td><input type="text" id="addnewlinkmsg" name="addnewlinkmsg" size="30" value="<?php echo $options['addnewlinkmsg']; ?>"/></td>
 							<td style='width: 20px'></td>
 							<td style='width: 20px'></td>
 							<td style='width:200px'>Link name label</td>
-							<? if ($options['linknamelabel'] == "") $options['linknamelabel'] = "Link Name"; ?>
+							<?php if ($options['linknamelabel'] == "") $options['linknamelabel'] = "Link Name"; ?>
 							<td><input type="text" id="linknamelabel" name="linknamelabel" size="30" value="<?php echo $options['linknamelabel']; ?>"/></td>
 							<td style='width: 20px'></td>
 						</tr>
 						<tr>
 							<td style='width:200px'>Link address label</td>
-							<? if ($options['linkaddrlabel'] == "") $options['linkaddrlabel'] = "Link Address"; ?>
+							<?php if ($options['linkaddrlabel'] == "") $options['linkaddrlabel'] = "Link Address"; ?>
 							<td><input type="text" id="linkaddrlabel" name="linkaddrlabel" size="30" value="<?php echo $options['linkaddrlabel']; ?>"/></td>
 							<td style='width: 20px'></td>
 							<td style='width: 20px'></td>
 							<td style='width:200px'>Link RSS label</td>
-							<? if ($options['linkrsslabel'] == "") $options['linkrsslabel'] = "Link RSS"; ?>
+							<?php if ($options['linkrsslabel'] == "") $options['linkrsslabel'] = "Link RSS"; ?>
 							<td><input type="text" id="linkrsslabel" name="linkrsslabel" size="30" value="<?php echo $options['linkrsslabel']; ?>"/></td>
 							<td>
 								<select name="showaddlinkrss" id="showaddlinkrss" style="width:60px;">
@@ -1579,7 +1580,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</tr>
 						<tr>
 							<td style='width:200px'>Link category label</td>
-							<? if ($options['linkcatlabel'] == "") $options['linkcatlabel'] = "Link Category"; ?>
+							<?php if ($options['linkcatlabel'] == "") $options['linkcatlabel'] = "Link Category"; ?>
 							<td><input type="text" id="linkcatlabel" name="linkcatlabel" size="30" value="<?php echo $options['linkcatlabel']; ?>"/></td>
 							<td>
 								<select name="showaddlinkcat" id="showaddlinkcat" style="width:60px;">
@@ -1589,7 +1590,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							</td>							
 							<td style='width: 20px'></td>
 							<td style='width:200px'>Link description label</td>
-							<? if ($options['linkdesclabel'] == "") $options['linkdesclabel'] = "Link Description"; ?>
+							<?php if ($options['linkdesclabel'] == "") $options['linkdesclabel'] = "Link Description"; ?>
 							<td><input type="text" id="linkdesclabel" name="linkdesclabel" size="30" value="<?php echo $options['linkdesclabel']; ?>"/></td>
 							<td>
 								<select name="showaddlinkdesc" id="showaddlinkdesc" style="width:60px;">
@@ -1600,7 +1601,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</tr>
 						<tr>
 							<td style='width:200px'>Link notes label</td>
-							<? if ($options['linknoteslabel'] == "") $options['linknoteslabel'] = "Link Notes"; ?>
+							<?php if ($options['linknoteslabel'] == "") $options['linknoteslabel'] = "Link Notes"; ?>
 							<td><input type="text" id="linknoteslabel" name="linknoteslabel" size="30" value="<?php echo $options['linknoteslabel']; ?>"/></td>
 							<td>
 								<select name="showaddlinknotes" id="showaddlinknotes" style="width:60px;">
@@ -1610,18 +1611,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							</td>								
 							<td style='width: 20px'></td>
 							<td style='width:200px'>Add Link button label</td>
-							<? if ($options['addlinkbtnlabel'] == "") $options['addlinkbtnlabel'] = "Add Link"; ?>
+							<?php if ($options['addlinkbtnlabel'] == "") $options['addlinkbtnlabel'] = "Add Link"; ?>
 							<td><input type="text" id="addlinkbtnlabel" name="addlinkbtnlabel" size="30" value="<?php echo $options['addlinkbtnlabel']; ?>"/></td>
 							<td style='width: 20px'></td>
 						</tr>
 						<tr>
 							<td style='width:200px'>New Link Message</td>
-							<? if ($options['newlinkmsg'] == "") $options['newlinkmsg'] = "New link submitted"; ?>
+							<?php if ($options['newlinkmsg'] == "") $options['newlinkmsg'] = "New link submitted"; ?>
 							<td><input type="text" id="newlinkmsg" name="newlinkmsg" size="30" value="<?php echo $options['newlinkmsg']; ?>"/></td>
 							<td style='width: 20px'></td>
 							<td style='width: 20px'></td>
 							<td style='width:200px'>New Link Moderation Label</td>
-							<? if ($options['moderatemsg'] == "") $options['moderatemsg'] = "it will appear in the list once moderated. Thank you."; ?>
+							<?php if ($options['moderatemsg'] == "") $options['moderatemsg'] = "it will appear in the list once moderated. Thank you."; ?>
 							<td><input type="text" id="moderatemsg" name="moderatemsg" size="30" value="<?php echo $options['moderatemsg']; ?>"/></td>
 							<td style='width: 20px'></td>
 						</tr>

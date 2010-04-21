@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2.2 =
+* Corrected bug with new link moderation section that caused errors on servers without the php open short tag option enabled
+
 = 3.2.1 =
 * Changed format of if statement to switch between admin and moderation to avoid problem with some server configurations
 * Added support for single quotes in link sub-field configuration table
