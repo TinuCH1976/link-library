@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2.4 =
+* Fixed: Gaps between admin form sections no longer appear after updating settings.
+
 = 3.2.3 =
 * Fixed: A href tags placed within link notes are now rendered correctly as links again
 

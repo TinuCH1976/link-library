@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.3
+Version: 3.2.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -302,7 +302,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				if (!file_exists(ABSPATH . 'wp-content/plugins/' . $filepath))
 				{
-					echo "<div id='message' class='updated fade'><p><strong>Please create a folder called " . $filepath . " under your Wordpress plugins directory with write permissions to use this functionality.</strong></div>";				
+					echo "<div id='message' class='updated fade'><p><strong>Please create a folder called " . $filepath . " under your Wordpress plugins directory with write permissions to use this functionality.</strong></p></div>";				
 				}
 				else
 				{
@@ -358,9 +358,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 					
 					if (isset($_GET['genthumbs']))
-						echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></div>";
+						echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></p></div>";
 					elseif (isset($_GET['genfavicons']))
-						echo "<div id='message' class='updated fade'><p><strong>Favicons successfully generated!</strong></div>";
+						echo "<div id='message' class='updated fade'><p><strong>Favicons successfully generated!</strong></p></div>";
 				}
 			}
 			if ( isset($_GET['settings'])) {
@@ -467,7 +467,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$settingsname = 'LinkLibraryPP' . $settingsetid;
 				
 				update_option($settingsname, $options);
-				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong></div>";
+				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong></p></div>";
 				
 				global $wpdb;
 					
@@ -684,7 +684,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				}
 				
-				echo "<div id='message' class='updated fade'><p><strong>Link(s) Approved</strong></div>";			
+				echo "<div id='message' class='updated fade'><p><strong>Link(s) Approved</strong></p></div>";			
 			}
 			
 			if (isset($_POST['deletelinks']))
@@ -698,7 +698,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$wpdb->query("DELETE FROM " . $wpdb->prefix . "links WHERE link_id = " . $approved_link);
 				}
 				
-				echo "<div id='message' class='updated fade'><p><strong>Link(s) Deleted</strong></div>";			
+				echo "<div id='message' class='updated fade'><p><strong>Link(s) Deleted</strong></p></div>";			
 			}
 			
 			if ($_GET['section'] == 'moderate')
@@ -780,7 +780,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<h2>Link Library Configuration</h2>
 				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
 				
-				
+				<div>
 				<form name='lladmingenform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php" method="post" id="ll-conf">
 				<?php
 				if ( function_exists('wp_nonce_field') )
@@ -804,8 +804,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				</table>
 				</fieldset>
 				</form>
+				</div>
 				
-				<div style='padding-top: 15px;clear:both'>
+				<div style='padding-top: 15px'>
 					<fieldset style='border:1px solid #CCC;padding:10px'>
 					<legend style='padding: 0 5px 0 5px;'><strong>Setting Set Selection and Usage Instructions</strong></legend>				
 						<FORM name="settingsetselection">
@@ -856,24 +857,25 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</fieldset>
 				</div>
 				
+				<div>
 				<form name="lladminform" action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php" method="post" id="analytics-conf">
 				<?php
 					if ( function_exists('wp_nonce_field') )
 						wp_nonce_field('linklibrarypp-config');
 					?>
 					
-					<div>
-					<div style='float:left'><span style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></span></div>
-					<div style='float:right'>
-					<span><a href='?page=link-library.php&amp;deletesettings=<?php echo $settings ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Setting Set '%s'\n  'Cancel' to stop, 'OK' to delete."), $settings )) . "') ) { return true;}return false;\""; ?>>Delete Settings Set <?php echo $settings ?></a></span>
-					<span><a href='?page=link-library.php&amp;reset=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s'\n  'Cancel' to stop, 'OK' to reset."), $settings )) . "') ) { return true;}return false;\""; ?>>Reset current Settings Set</a></span>
+					<table>
+					<tr>
+						<td style='text-align:left; width: 350px'><span style="border:0;" class="submit"><input type="submit" name="submit" value="Update Settings &raquo;" /></span></td>
+						<td style='text-align:right'>
+							<span><a href='?page=link-library.php&amp;deletesettings=<?php echo $settings ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Setting Set '%s'\n  'Cancel' to stop, 'OK' to delete."), $settings )) . "') ) { return true;}return false;\""; ?>>Delete Settings Set <?php echo $settings ?></a></span>
+							<span><a href='?page=link-library.php&amp;reset=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s'\n  'Cancel' to stop, 'OK' to reset."), $settings )) . "') ) { return true;}return false;\""; ?>>Reset current Settings Set</a></span>
+							<span><a href='?page=link-library.php&amp;resettable=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset."), $settings )) . "') ) { return true;}return false;\""; ?>>Reset current Setting Set for table layout</a></span>
+						</td>
+					</tr>
+					</table>
 					
-					<span><a href='?page=link-library.php&amp;resettable=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset."), $settings )) . "') ) { return true;}return false;\""; ?>>Reset current Setting Set for table layout</a></span>
-					</div>
-
-					</div>
-					
-					<div style='padding-top: 15px;clear:both'>
+					<div style='padding-top: 15px'>
 					<fieldset style='border:1px solid #CCC;padding:10px'>
 					<legend style='padding: 0 5px 0 5px;'><strong>Common Parameters</strong></legend>
 					<input type='hidden' value='<?php echo $settings; ?>' name='settingsetid' id='settingsetid' />
@@ -961,7 +963,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</table>
 					</fieldset>
 					</div>
-					<div style='clear:both;padding-top:15px'>
+					<div style='padding-top:15px'>
 					<fieldset style='border:1px solid #CCC;padding:10px;margin:5px 0 5px 0;'>
 					<legend style='padding: 0 5px 0 5px;'><strong>Link Categories Settings</strong></legend>
 					<table>
@@ -1634,6 +1636,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					
 					
 				</form>
+				</div>
 			</div>
 			
 			<script type="text/javascript">
