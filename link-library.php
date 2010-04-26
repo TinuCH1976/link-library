@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.5
+Version: 3.2.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -738,7 +738,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<th style='width: 200px'>Link Name</th>
 						<th style='width: 300px'>Link URL</th>
 						<th>Link Description</th>
-						<th>Link Category</th>
 					</tr>
 				<?php global $wpdb;
 				
@@ -746,8 +745,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$linkquery .= "FROM " . $wpdb->prefix . "links l ";
 					$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 					$linkquery .= " ORDER by link_name ASC";
-					
-					echo $linkquery;
 					
 					$linkitems = $wpdb->get_results($linkquery);
 					
@@ -768,7 +765,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='http://yannickcorner.nayanna.biz/wp-admin/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
 							<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
 							<td><?php echo $newlinkdesc; ?></td>
-							<td></td>
 						</tr>
 				<?php      	}
 						}
@@ -776,7 +772,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<tr>
 							<td></td>
 							<td>No Links Found to Moderate</td>
-							<td></td>
 							<td></td>
 							<td></td>
 						</tr>

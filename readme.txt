@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2.6 =
+* Enhanced link moderation page layout
+
 = 3.2.5 =
 * Fixed: Thumbnail generation now works all the time instead of only when specific categories are specified
 
