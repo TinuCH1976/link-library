@@ -320,7 +320,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
 					$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
-					$linkquery .= " AND t.term_id in (" . $options['categorylist'] . ")";
+					
+					if ($options['categorylist'] != "")
+						$linkquery .= " AND t.term_id in (" . $options['categorylist'] . ")";
 					
 					$linkitems = $wpdb->get_results($linkquery);
 					
@@ -355,12 +357,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								wp_update_link($newimagedata);
 							}
 						}
+						
+						if (isset($_GET['genthumbs']))
+							echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></p></div>";
+						elseif (isset($_GET['genfavicons']))
+							echo "<div id='message' class='updated fade'><p><strong>Favicons successfully generated!</strong></p></div>";
 					}
 					
-					if (isset($_GET['genthumbs']))
-						echo "<div id='message' class='updated fade'><p><strong>Thumbnails successfully generated!</strong></p></div>";
-					elseif (isset($_GET['genfavicons']))
-						echo "<div id='message' class='updated fade'><p><strong>Favicons successfully generated!</strong></p></div>";
 				}
 			}
 			if ( isset($_GET['settings'])) {
@@ -729,12 +732,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				if ( function_exists('wp_nonce_field') )
 						wp_nonce_field('linklibrarypp-config');
 					?>
-				<table>
+				<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 					<tr>
-						<th style='width: 100px'></th>
-						<th style='width: 300px'>Link Name</th>
+						<th style='width: 30px'></th>
+						<th style='width: 200px'>Link Name</th>
 						<th style='width: 300px'>Link URL</th>
 						<th>Link Description</th>
+						<th>Link Category</th>
 					</tr>
 				<?php global $wpdb;
 				
@@ -743,16 +747,28 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 					$linkquery .= " ORDER by link_name ASC";
 					
+					echo $linkquery;
+					
 					$linkitems = $wpdb->get_results($linkquery);
+					
 
 					if ($linkitems) {
 						foreach($linkitems as $linkitem) {
+						
+						$modpos = strpos($linkitem->link_description, "LinkLibrary:AwaitingModeration:RemoveTextToApprove");
+					
+						if ($modpos)
+						{
+							$startpos = $modpos + 51;
+							$newlinkdesc = substr($linkitem->link_description, $startpos);
+						}
 				?>
-						<tr>
+						<tr style='background: #FFF'>
 							<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
-							<td><?php echo $linkitem->link_name; ?></td>
-							<td><?php echo $linkitem->link_url; ?></td>
-							<td><?php echo $linkitem->link_description; ?></td>
+							<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='http://yannickcorner.nayanna.biz/wp-admin/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
+							<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
+							<td><?php echo $newlinkdesc; ?></td>
+							<td></td>
 						</tr>
 				<?php      	}
 						}
@@ -760,6 +776,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<tr>
 							<td></td>
 							<td>No Links Found to Moderate</td>
+							<td></td>
 							<td></td>
 							<td></td>
 						</tr>
