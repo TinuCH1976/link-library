@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2.7 =
+* Fixed: Highlight bugs in search results
+
 = 3.2.6 =
 * Enhanced link moderation page layout
 

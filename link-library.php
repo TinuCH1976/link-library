@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.6
+Version: 3.2.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1871,20 +1871,20 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 	return $output;
 }
 
-function highlightWords($text, $words)
+function highlight_phrase($str, $phrase, $tag_open = '<strong>', $tag_close = '</strong>')
 {
-        /*** loop of the array of words ***/
-        foreach ($words as $word)
-        {
-                /*** quote the text for regex ***/
-                $word = preg_quote($word);
-                /*** highlight the words ***/
-                $text = preg_replace("/($word)/i", '<span class="highlight_word">\1</span>', $text);
-        }
-        /*** return the text ***/
-        return $text;
-}
+	if ($str == '')
+	{
+		return '';
+	}
 
+	if ($phrase != '')
+	{
+		return preg_replace('/('.preg_quote($phrase, '/').'(?![^<]*>))/i', $tag_open."\\1".$tag_close, $str);
+	}
+
+	return $str;
+}
 
 function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
                                 $showdescription = false, $shownotes = false, $showrating = false,
@@ -2186,7 +2186,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					if ($divorheader == false)
 					{
 						if ($mode == "search")
-							$linkitem->name = highlightWords($linkitem->name, $searchterms);
+							foreach ($searchterms as $searchterm)
+							{
+								$linkitem->name = highlight_phrase($linkitem->name, $searchterm, '<span class="highlight_word">', '</span>'); 
+							}
 							
 						$catlink = '<div class="' . $catnameoutput . '">';
 						
@@ -2210,7 +2213,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					else if ($divorheader == true)
 					{
 						if ($mode == "search")
-							$linkitem->name = highlightWords($linkitem->name, $searchterms);
+						foreach ($searchterms as $searchterm)
+						{
+							$linkitem->name = highlight_phrase($linkitem->name, $searchterm, '<span class="highlight_word">', '</span>');
+						}
 							
 						$catlink = '<'. $catnameoutput . '>';
 						
@@ -2328,15 +2334,27 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				}
 				else
 					$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
+
+				if ($use_html_tags) {
+					$desc = $linkitem->link_description;
+					$desc = str_replace("[", "<", $desc);
+					$desc = str_replace("]", ">", $desc);
+				}
+				else {
+					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
+				}
 				
 				$cleanname = wp_specialchars($linkitem->link_name, ENT_QUOTES);
 				
 				if ($mode == "search")
 				{
-					$descnotes = highlightWords($linkitem->link_notes, $searchterms);
-					$desc = highlightWords($linkitem->link_description, $searchterms);
-					$name = highlightWords($linkitem->link_name, $searchterms);
-				}
+					foreach ($searchterms as $searchterm)
+					{
+						$descnotes = highlight_phrase($descnotes, $searchterm, '<span class="highlight_word">', '</span>');
+						$desc = highlight_phrase($desc, $searchterm, '<span class="highlight_word">', '</span>');
+						$name = highlight_phrase($linkitem->link_name, $searchterm, '<span class="highlight_word">', '</span>');
+					}
+			}
 				else
 					$name = $cleanname;
 					
@@ -2403,15 +2421,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				
 				if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images || $show_image_and_name) && $imagepos == 'aftername') {
 					$output .= $imageoutput;
-				}
-
-				if ($use_html_tags || $mode == "search") {
-					$desc = $linkitem->link_description;
-					$desc = str_replace("[", "<", $desc);
-					$desc = str_replace("]", ">", $desc);
-				}
-				else {
-					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
 				}
 				
 				$formatteddate = date("F d Y", $linkitem->link_date);
