@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.7
+Version: 3.2.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2193,7 +2193,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 							
 						$catlink = '<div class="' . $catnameoutput . '">';
 						
-						if ($catdescpos == "right" || $catlistdescpos == '')
+						if ($catdescpos == "right" || $catdescpos == '')
 							$catlink .= $linkitem->name;
 						
 						if ($showcategorydesclinks)
@@ -2220,7 +2220,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 							
 						$catlink = '<'. $catnameoutput . '>';
 						
-						if ($catdescpos == "right" || $catlistdescpos == '')
+						if ($catdescpos == "right" || $catdescpos == '')
 							$catlink .= $linkitem->name;
 						
 						if ($showcategorydesclinks)
