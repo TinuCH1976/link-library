@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.8
+Version: 3.2.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2613,8 +2613,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		$output .= "jQuery(document).ready(function() {\n";
 		$output .= "\tjQuery('a.rssbox').fancybox(\n";
 		$output .= "\t\t{\n";
-		$output .= "\t\t\t'frameWidth'	:	" . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . ",\n";
-		$output .= "\t\t\t'frameHeight'	:	" . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . "\n";
+		$output .= "\t\t\t'width'	:	" . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . ",\n";
+		$output .= "\t\t\t'height'	:	" . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . ",\n";
+		$output .= "\t\t\t'autoDimensions'	:	false\n";
 		$output .= "\t\t}\n";
 		$output .= ");";
 		$output .= "});";
@@ -2666,27 +2667,32 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		{
 			if ($linkrsslabel == "") $linkrsslabel = "Link RSS";
 			$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
-		}
+		}		
 		
 		$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
+		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t ";
+		$linkcatquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+		$linkcatquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 		
-		if ($hide_if_empty)
-			$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr ";
-		
-		$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-		
-		if ($hide_if_empty)
+		$linkcatquery .= "WHERE tt.taxonomy = 'link_category' ";
+
+		if ($hide_if_empty)	
 			$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
 			
 		if ($selectedcategorylist != "")
-			$linkcatquery .= " AND t.term_id in (" . $selectedcategorylist. ")";
+		{
+			if ($hide_if_empty) $linkcatquery .= " AND ";
+			$linkcatquery .= " t.term_id in (" . $selectedcategorylist. ")";
+		}
 			
 		if ($excludedcategorylist != "")
-			$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
+		{
+			if ($hide_if_empty || $selectedcategorylist != "") $linkcatquery .= " AND ";
+			$linkcatquery .= " t.term_id not in (" . $excludedcategorylist . ")";
+		}
 			
 		$linkcatquery .= " ORDER by t.name " . $direction;
-			
+					
 		$linkcats = $wpdb->get_results($linkcatquery);
 			
 		if ($linkcats)

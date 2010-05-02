@@ -58,6 +58,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.2.9 =
+* Fixed: Dimensions of RSS Preview Window
+* Fixed: Population of category list in Link Addition Form
+
 = 3.2.8 =
 * Fixed: Repeating category headers on certain configurations
 
