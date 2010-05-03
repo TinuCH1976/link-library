@@ -58,6 +58,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3 =
+* Added: New debug information for category list in add link form
+* Fixed: Problem with population of category list in Link Addition Form
+* Added: Ability for users to submit new category when submitting new links
+
 = 3.2.9 =
 * Fixed: Dimensions of RSS Preview Window
 * Fixed: Population of category list in Link Addition Form

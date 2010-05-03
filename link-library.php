@@ -3,12 +3,12 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.2.9
+Version: 3.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright © 2009 Yannick Lefebvre
+Copyright © 2010 Yannick Lefebvre
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -31,6 +31,7 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 */
 
 require_once(ABSPATH . 'wp-admin/includes/bookmark.php');
+require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
 
 define('LLDIR', dirname(__FILE__) . '/');  
 
@@ -182,6 +183,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['rssfeedtitle'] = 'Link Library-Generated RSS Feed';
 					$options['rssfeeddescription'] = 'Description of Link Library-Generated Feed';
 					$options['showonecatmode'] = 'AJAX';
+					$options['addlinkcustomcat'] = false;
+					$options['linkcustomcatlabel'] = 'User-submitted category';
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -287,6 +290,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['rssfeedtitle'] = 'Link Library-Generated RSS Feed';
 					$options['rssfeeddescription'] = 'Description of Link Library-Generated Feed';
 					$options['showonecatmode'] = 'AJAX';
+					$options['addlinkcustomcat'] = false;
+					$options['linkcustomcatlabel'] = 'User-submitted category';
 
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -435,7 +440,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir',
 								'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
 								'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg', 'imagepos',
-								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode') as $option_name) {
+								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -453,7 +458,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					}
 				}
 				
-				foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes') as $option_name) {
+				foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes','addlinkcustomcat') as $option_name) {
 					if ($_POST[$option_name] == 'true')
 						$options[$option_name] = true;
 					elseif ($_POST[$option_name] == 'false')
@@ -642,6 +647,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['rssfeedtitle'] = 'Link Library-Generated RSS Feed';
 				$options['rssfeeddescription'] = 'Description of Link Library-Generated Feed';
 				$options['showonecatmode'] = 'AJAX';
+				$options['addlinkcustomcat'] = false;
+				$options['linkcustomcatlabel'] = 'User-submitted category';
 
 				update_option($settingsname,$options);
 			}	
@@ -1603,6 +1610,17 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								</select>
 							</td>							
 							<td style='width: 20px'></td>
+							<td style='width:200px'>User-submitted category</td>
+							<?php if ($options['linkcustomcatlabel'] == "") $options['linkcustomcatlabel'] = "User-submitted category"; ?>
+							<td><input type="text" id="linkcustomcatlabel" name="linkcustomcatlabel" size="30" value="<?php echo $options['linkcustomcatlabel']; ?>"/></td>
+							<td>
+								<select name="addlinkcustomcat" id="addlinkcustomcat" style="width:60px;">
+									<option value="false"<?php if ($options['addlinkcustomcat'] == false) { echo ' selected="selected"';} ?>>No</option>
+									<option value="true"<?php if ($options['addlinkcustomcat'] == true) { echo ' selected="selected"';} ?>>Allow</option>
+								</select>
+							</td>														
+						</tr>
+						<tr>
 							<td style='width:200px'>Link description label</td>
 							<?php if ($options['linkdesclabel'] == "") $options['linkdesclabel'] = "Link Description"; ?>
 							<td><input type="text" id="linkdesclabel" name="linkdesclabel" size="30" value="<?php echo $options['linkdesclabel']; ?>"/></td>
@@ -1611,9 +1629,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									<option value="false"<?php if ($options['showaddlinkdesc'] == false) { echo ' selected="selected"';} ?>>Hide</option>
 									<option value="true"<?php if ($options['showaddlinkdesc'] == true) { echo ' selected="selected"';} ?>>Show</option>
 								</select>
-							</td>														
-						</tr>
-						<tr>
+							</td>			
+							<td style='width: 20px'></td>										
 							<td style='width:200px'>Link notes label</td>
 							<?php if ($options['linknoteslabel'] == "") $options['linknoteslabel'] = "Link Notes"; ?>
 							<td><input type="text" id="linknoteslabel" name="linknoteslabel" size="30" value="<?php echo $options['linknoteslabel']; ?>"/></td>
@@ -1623,22 +1640,21 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									<option value="true"<?php if ($options['showaddlinknotes'] == true) { echo ' selected="selected"';} ?>>Show</option>
 								</select>
 							</td>								
-							<td style='width: 20px'></td>
+						</tr>
+						<tr>
 							<td style='width:200px'>Add Link button label</td>
 							<?php if ($options['addlinkbtnlabel'] == "") $options['addlinkbtnlabel'] = "Add Link"; ?>
 							<td><input type="text" id="addlinkbtnlabel" name="addlinkbtnlabel" size="30" value="<?php echo $options['addlinkbtnlabel']; ?>"/></td>
 							<td style='width: 20px'></td>
-						</tr>
-						<tr>
+							<td style='width: 20px'></td>
 							<td style='width:200px'>New Link Message</td>
 							<?php if ($options['newlinkmsg'] == "") $options['newlinkmsg'] = "New link submitted"; ?>
 							<td><input type="text" id="newlinkmsg" name="newlinkmsg" size="30" value="<?php echo $options['newlinkmsg']; ?>"/></td>
-							<td style='width: 20px'></td>
-							<td style='width: 20px'></td>
+						</tr>
+						<tr>
 							<td style='width:200px'>New Link Moderation Label</td>
 							<?php if ($options['moderatemsg'] == "") $options['moderatemsg'] = "it will appear in the list once moderated. Thank you."; ?>
-							<td><input type="text" id="moderatemsg" name="moderatemsg" size="30" value="<?php echo $options['moderatemsg']; ?>"/></td>
-							<td style='width: 20px'></td>
+							<td colspan=6><input type="text" id="moderatemsg" name="moderatemsg" size="90" value="<?php echo $options['moderatemsg']; ?>"/></td>
 						</tr>
 					</table>
 					</fieldset>
@@ -2643,7 +2659,7 @@ function PrivateLinkLibrarySearchForm() {
 function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg = '', $linknamelabel = '', $linkaddrlabel = '',
 										$linkrsslabel = '', $linkcatlabel = '', $linkdesclabel = '', $linknoteslabel = '', $addlinkbtnlabel = '', $hide_if_empty = true,
 										$showaddlinkrss = false, $showaddlinkdesc = false, $showaddlinkcat = false, $showaddlinknotes = false,
-										$addlinkreqlogin = false) {
+										$addlinkreqlogin = false, $debugmode = false, $addlinkcustomcat = false, $linkcustomcatlabel = '') {
 										
 	global $wpdb;
 	
@@ -2676,9 +2692,6 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		
 		$linkcatquery .= "WHERE tt.taxonomy = 'link_category' ";
 
-		if ($hide_if_empty)	
-			$linkcatquery .= " AND t.term_id = tr.term_taxonomy_id ";
-			
 		if ($selectedcategorylist != "")
 		{
 			if ($hide_if_empty) $linkcatquery .= " AND ";
@@ -2692,8 +2705,14 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		}
 			
 		$linkcatquery .= " ORDER by t.name " . $direction;
-					
+						
 		$linkcats = $wpdb->get_results($linkcatquery);
+		
+		if ($debugmode)
+		{
+			$output .= "\n<!-- Category query for add link form:" . print_r($linkcatquery, TRUE) . "-->\n\n";
+			$output .= "\n<!-- Results of Category query for add link form:" . print_r($linkcats, TRUE) . "-->\n";
+		}
 			
 		if ($linkcats)
 		{
@@ -2707,13 +2726,19 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 					$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
 				}
 				
+				if ($addlinkcustomcat)
+					$output .= "<OPTION VALUE='new'>User-submitted category (define below)";
+				
 				$output .= "</SELECT></td></tr>";
 			}
 			else
 			{
 				$output .= "<input type='hidden' name='link_category' id='link_category' value='" . $linkcats[0]->term_id . "'>";
 			}
-		}
+			
+			if ($addlinkcustomcat)
+				$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' /></td></tr>\n";			
+		}		
 		
 		if ($showaddlinkdesc)
 		{
@@ -2842,6 +2867,8 @@ if ($newoptions == "")
 	$options['rssfeedtitle'] = 'Link Library-Generated RSS Feed';
 	$options['rssfeeddescription'] = 'Description of Link Library-Generated Feed';
 	$options['showonecatmode'] = 'AJAX';
+	$options['addlinkcustomcat'] = false;
+	$options['linkcustomcatlabel'] = 'User-submitted category';
 	
 	update_option('LinkLibraryPP1',$options);
 	
@@ -3102,6 +3129,8 @@ function link_library_addlink_func($atts) {
 		'excludecategoryoverride' => ''
 	), $atts));
 	
+	global $wpdb;
+	
 	if ($settings == '')
 		$options = get_option('LinkLibraryPP1');
 	else
@@ -3111,54 +3140,107 @@ function link_library_addlink_func($atts) {
 	}
 	
 	if ($_POST['link_name'])
-	{
-		$message = "<div class='llmessage'>" . $options['newlinkmsg'];
-		if ($options['showuserlinks'] == false)
-			$message .= ", " . $options['moderatemsg'];
-		else
-			$message .= ".";
-			
-		$message .= "</div>";
-		
-		echo $message;
-		
-		$newlinkcat = array($_POST['link_category']);
-		
-		if ($options['showuserlinks'] == false)
-			$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
-		else
-			$newlinkdesc = $_POST['link_description'];
-			
-		$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
-			"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat);
-		wp_insert_link($newlink);
-		
-		if ($options['emailnewlink'])
+	{		
+		if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 		{
-			$adminmail = get_option('admin_email');
-			$headers = "MIME-Version: 1.0\r\n";
-			$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+			$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
+			$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+			$existingcat = $wpdb->get_var($existingcatquery);
 			
-			$message = "A user submitted a new link to your Wordpress Link database.<br /><br />";
-			$message .= "Link Name: " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
-			$message .= "Link Address: " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
-			$message .= "Link RSS: " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
-			$message .= "Link Description: " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
-			$message .= "Link Notes: " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
-			$message .= "Link Category: " . $_POST['link_category'] . "<br /><br />";
-						
-			if ( !defined('WP_ADMIN_URL') )
-				define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
+			if (!$existingcat)
+			{
+				$newlinkcatdata = array("cat_name" => $_POST['link_user_category'], "category_description" => "", "category_nicename" => $wpdb->escape($_POST['link_user_category']));
+				wp_insert_category($newlinkcatdata);
 				
+				$newcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
+				$newcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id";
+				$newlinkcat = $wpdb->get_var($newcatquery);
+
+				$newcatarray = array("term_id" => $newlinkcat);
+
+				$newcattype = array("taxonomy" => 'link_category');
+				
+				$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
+				
+				$newlinkcat = array($newlinkcat);
+			}
+			else
+			{
+				$newlinkcat = array($existingcat);
+			}
+			
+			$message = "<div class='llmessage'>" . $options['newlinkmsg'];
 			if ($options['showuserlinks'] == false)
-				$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
-			elseif ($options['showuserlinks'] == true)
-				$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+				$message .= ", " . $options['moderatemsg'];
+			else
+				$message .= ".";
 				
-			$message .= "<br /><br />Message generated by <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
-			
-			wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
+			$message .= "</div>";	
+
+			$validcat = true;
 		}
+		elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
+		{
+			$message = "<div class='llmessage'>User Category was not provided correctly. Link insertion failed.</div>";	
+			echo $message;		
+			
+			$validcat = false;
+		}
+		else
+		{
+			$newlinkcat = array($_POST['link_category']);
+			
+			$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+			if ($options['showuserlinks'] == false)
+				$message .= ", " . $options['moderatemsg'];
+			else
+				$message .= ".";
+				
+			$message .= "</div>";
+			
+			echo $message;
+			
+			$validcat = true;
+		}
+		
+		if ($validcat == true)
+		{
+			if ($options['showuserlinks'] == false)
+				$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
+			else
+				$newlinkdesc = $_POST['link_description'];
+				
+			$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
+				"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat);
+			wp_insert_link($newlink);
+			
+			if ($options['emailnewlink'])
+			{
+				$adminmail = get_option('admin_email');
+				$headers = "MIME-Version: 1.0\r\n";
+				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+				
+				$message = "A user submitted a new link to your Wordpress Link database.<br /><br />";
+				$message .= "Link Name: " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
+				$message .= "Link Address: " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
+				$message .= "Link RSS: " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
+				$message .= "Link Description: " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
+				$message .= "Link Notes: " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
+				$message .= "Link Category: " . $_POST['link_category'] . "<br /><br />";
+							
+				if ( !defined('WP_ADMIN_URL') )
+					define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
+					
+				if ($options['showuserlinks'] == false)
+					$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
+				elseif ($options['showuserlinks'] == true)
+					$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+					
+				$message .= "<br /><br />Message generated by <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
+				
+				wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
+			}	
+		}	
 	}
 	
 	if ($categorylistoverride != '')
@@ -3170,11 +3252,14 @@ function link_library_addlink_func($atts) {
 		$excludedcategorylist = $excludecategoryoverride;
 	else
 		$excludedcategorylist = $options['excludecategorylist'];
+		
+	$genoptions = get_option('LinkLibraryGeneral');
 	
 	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
 										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
 										 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
-										 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin']);	
+										 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],
+										 $options['addlinkcustomcat'], $options['linkcustomcatlabel']);	
 	
 	
 }
