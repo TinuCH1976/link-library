@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3
+Version: 3.3.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -185,6 +185,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showonecatmode'] = 'AJAX';
 					$options['addlinkcustomcat'] = false;
 					$options['linkcustomcatlabel'] = 'User-submitted category';
+					$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -292,6 +293,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['showonecatmode'] = 'AJAX';
 					$options['addlinkcustomcat'] = false;
 					$options['linkcustomcatlabel'] = 'User-submitted category';
+					$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
 
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -440,7 +442,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir',
 								'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
 								'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg', 'imagepos',
-								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel') as $option_name) {
+								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel', 'linkcustomcatlistentry') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -649,6 +651,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['showonecatmode'] = 'AJAX';
 				$options['addlinkcustomcat'] = false;
 				$options['linkcustomcatlabel'] = 'User-submitted category';
+				$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
 
 				update_option($settingsname,$options);
 			}	
@@ -769,7 +772,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				?>
 						<tr style='background: #FFF'>
 							<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
-							<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='http://yannickcorner.nayanna.biz/wp-admin/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
+							<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . WP_ADMIN_URL . "/wp-admin/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
 							<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
 							<td><?php echo $newlinkdesc; ?></td>
 						</tr>
@@ -1619,6 +1622,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 									<option value="true"<?php if ($options['addlinkcustomcat'] == true) { echo ' selected="selected"';} ?>>Allow</option>
 								</select>
 							</td>														
+						</tr>
+						<tr>
+							<td style='width:200px'>User-submitted category prompt</td>
+							<?php if ($options['linkcustomcatlistentry'] == "") $options['linkcustomcatlistentry'] = "User-submitted category (define below)"; ?>
+							<td colspan=3><input type="text" id="linkcustomcatlistentry" name="linkcustomcatlistentry" size="50" value="<?php echo $options['linkcustomcatlistentry']; ?>"/></td>
+							<td style='width:200px'></td>
+							<td></td>
+							<td></td>														
 						</tr>
 						<tr>
 							<td style='width:200px'>Link description label</td>
@@ -2659,7 +2670,8 @@ function PrivateLinkLibrarySearchForm() {
 function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcategorylist = '', $addnewlinkmsg = '', $linknamelabel = '', $linkaddrlabel = '',
 										$linkrsslabel = '', $linkcatlabel = '', $linkdesclabel = '', $linknoteslabel = '', $addlinkbtnlabel = '', $hide_if_empty = true,
 										$showaddlinkrss = false, $showaddlinkdesc = false, $showaddlinkcat = false, $showaddlinknotes = false,
-										$addlinkreqlogin = false, $debugmode = false, $addlinkcustomcat = false, $linkcustomcatlabel = '') {
+										$addlinkreqlogin = false, $debugmode = false, $addlinkcustomcat = false, $linkcustomcatlabel = '',
+										$linkcustomcatlistentry = 'User-submitted category (define below)') {
 										
 	global $wpdb;
 	
@@ -2721,13 +2733,16 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 				if ($linkcatlabel == "") $linkcatlabel = "Link category";
 				
 				$output .= "<tr><th>" . $linkcatlabel . "</th><td><SELECT name='link_category' id='link_category'>";
+				
+				if ($linkcustomcatlistentry == "") $linkcustomcatlistentry = "User-submitted category (define below)";
+				
 				foreach ($linkcats as $linkcat)
 				{
 					$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
 				}
 				
 				if ($addlinkcustomcat)
-					$output .= "<OPTION VALUE='new'>User-submitted category (define below)";
+					$output .= "<OPTION VALUE='new'>" . $linkcustomcatlistentry;
 				
 				$output .= "</SELECT></td></tr>";
 			}
@@ -2869,6 +2884,7 @@ if ($newoptions == "")
 	$options['showonecatmode'] = 'AJAX';
 	$options['addlinkcustomcat'] = false;
 	$options['linkcustomcatlabel'] = 'User-submitted category';
+	$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
 	
 	update_option('LinkLibraryPP1',$options);
 	
@@ -3176,6 +3192,8 @@ function link_library_addlink_func($atts) {
 				$message .= ".";
 				
 			$message .= "</div>";	
+			
+			echo $message;
 
 			$validcat = true;
 		}
@@ -3259,7 +3277,7 @@ function link_library_addlink_func($atts) {
 										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
 										 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
 										 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],
-										 $options['addlinkcustomcat'], $options['linkcustomcatlabel']);	
+										 $options['addlinkcustomcat'], $options['linkcustomcatlabel'], $options['linkcustomcatlistentry']);	
 	
 	
 }

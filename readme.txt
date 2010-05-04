@@ -58,6 +58,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.1 =
+* Fixed: Removed hard-coded site path when clicking on links on moderation page
+* Added: Label for user-submitted category list entry
+
 = 3.3 =
 * Added: New debug information for category list in add link form
 * Fixed: Problem with population of category list in Link Addition Form
