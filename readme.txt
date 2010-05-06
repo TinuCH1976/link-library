@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.2 =
+* Added: Field in admin page to customize label in search form
+
 = 3.3.1 =
 * Fixed: Removed hard-coded site path when clicking on links on moderation page
 * Added: Label for user-submitted category list entry

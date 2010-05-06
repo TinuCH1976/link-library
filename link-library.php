@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.1
+Version: 3.3.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -30,8 +30,8 @@ License at http://www.gnu.org/copyleft/gpl.html
 I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 */
 
-require_once(ABSPATH . 'wp-admin/includes/bookmark.php');
-require_once(ABSPATH . 'wp-admin/includes/taxonomy.php');
+require_once(ABSPATH . '/wp-admin/includes/bookmark.php');
+require_once(ABSPATH . '/wp-admin/includes/taxonomy.php');
 
 define('LLDIR', dirname(__FILE__) . '/');  
 
@@ -186,6 +186,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['addlinkcustomcat'] = false;
 					$options['linkcustomcatlabel'] = 'User-submitted category';
 					$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
+					$options['searchlabel'] = 'Search';
 										
 					$settings = $_GET['reset'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -294,6 +295,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$options['addlinkcustomcat'] = false;
 					$options['linkcustomcatlabel'] = 'User-submitted category';
 					$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
+					$options['searchlabel'] = 'Search';
 
 					$settings = $_GET['resettable'];
 					$settingsname = 'LinkLibraryPP' . $settings;
@@ -442,7 +444,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir',
 								'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
 								'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg', 'imagepos',
-								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel', 'linkcustomcatlistentry') as $option_name) {
+								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel', 'linkcustomcatlistentry',
+								'searchlabel') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = $_POST[$option_name];
 					}
@@ -652,6 +655,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$options['addlinkcustomcat'] = false;
 				$options['linkcustomcatlabel'] = 'User-submitted category';
 				$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
+				$options['searchlabel'] = 'Search';
 
 				update_option($settingsname,$options);
 			}	
@@ -871,7 +875,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						</tr>
 						</thead>
 						<tr>
-						<td style='background: #FFF'><?php echo $settings; ?></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "] [link-library-search] [link-library settings=" . $settings . "] [link-library-addlink settings=". $settings . "]"; ?></td><td style='background: #FFF;text-align:center'></td>
+						<td style='background: #FFF'><?php echo $settings; ?></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "] [link-library-search settings=" . $settings . "] [link-library settings=" . $settings . "] [link-library-addlink settings=". $settings . "]"; ?></td><td style='background: #FFF;text-align:center'></td>
 						</tr>
 					</table> 
 					<br />
@@ -1548,6 +1552,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</tr>
 					</table>
 					</fieldset>					
+					</fieldset>
+					</div>
+					<div>
+					<fieldset style='border:1px solid #CCC;padding:10px;margin:15px 0 5px 0;'>
+					<legend style='padding: 0 5px 0 5px;'><strong>Search Form Configuration</strong></legend>
+					<table>
+						<tr>
+							<td style='width:200px'>Search Label</td>
+							<?php if ($options['searchlabel'] == "") $options['searchlabel'] = "Search"; ?>
+							<td><input type="text" id="searchlabel" name="searchlabel" size="30" value="<?php echo $options['searchlabel']; ?>"/></td>
+						</tr>
+					</table>					
 					</fieldset>
 					</div>
 					<div>
@@ -2654,13 +2670,14 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	return $output;
 }
 
-function PrivateLinkLibrarySearchForm() {
+function PrivateLinkLibrarySearchForm($searchlabel = 'Search') {
 
+	if ($searchlabel == "") $searchlabel = "Search";
 	$output = "<form method='get' id='llsearch'>\n";
 	$output .= "<div>\n";
-	$output .= "<input type='text' onfocus=\"this.value=''\" value='Search...' name='searchll' id='searchll' />\n";
+	$output .= "<input type='text' onfocus=\"this.value=''\" value='" . $searchlabel . "...' name='searchll' id='searchll' />\n";
 	$output .= "<input type='hidden' value='" .  get_the_ID() . "' name='page_id' id='page_id' />\n";
-	$output .= "<input type='submit' value='Search' />\n";
+	$output .= "<input type='submit' value='" . $searchlabel . "' />\n";
 	$output .= "</div>\n";
 	$output .= "</form>\n\n";
 	
@@ -2885,6 +2902,7 @@ if ($newoptions == "")
 	$options['addlinkcustomcat'] = false;
 	$options['linkcustomcatlabel'] = 'User-submitted category';
 	$options['linkcustomcatlistentry'] = 'User-submitted category (define below)';
+	$options['searchlabel'] = 'Search';
 	
 	update_option('LinkLibraryPP1',$options);
 	
@@ -3133,9 +3151,18 @@ function link_library_cats_func($atts) {
 
 function link_library_search_func($atts) {
 	extract(shortcode_atts(array(
+		'settings' => ''
 	), $atts));
 	
-	return PrivateLinkLibrarySearchForm();
+	if ($settings == '')
+		$options = get_option('LinkLibraryPP1');
+	else
+	{
+		$settingsname = 'LinkLibraryPP' . $settings;
+		$options = get_option($settingsname);
+	}
+	
+	return PrivateLinkLibrarySearchForm($options['searchlabel']);
 }
 
 function link_library_addlink_func($atts) {
