@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.2
+Version: 3.3.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -696,7 +696,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						$newdesc = array ("link_description", $newlinkdesc);
 						
 						$tablename = $wpdb->prefix . "links";
-						$wpdb->update( $tablename, array( 'link_description' => $newlinkdesc ), array( 'link_id' => $approved_link ));
+						$wpdb->update( $tablename, array( 'link_description' => $newlinkdesc, 'link_visible' => 'Y' ), array( 'link_id' => $approved_link ));
 
 					}
 				}
@@ -3251,12 +3251,18 @@ function link_library_addlink_func($atts) {
 		if ($validcat == true)
 		{
 			if ($options['showuserlinks'] == false)
+			{
 				$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
+				$newlinkvisibility = 'N';
+			}
 			else
+			{
 				$newlinkdesc = $_POST['link_description'];
+				$newlinkvisibility = 'Y';
+			}
 				
 			$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
-				"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat);
+				"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
 			wp_insert_link($newlink);
 			
 			if ($options['emailnewlink'])

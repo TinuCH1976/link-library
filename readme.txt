@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.3 =
+* User-submitted links under moderation are now set to be invisible. Their visibility is set to true when they are approved.
+
 = 3.3.2 =
 * Added: Field in admin page to customize label in search form
 
