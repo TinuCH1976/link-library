@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.3
+Version: 3.3.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -430,6 +430,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$settingsetid = $_POST['settingsetid'];
 				$settings = $_POST['settingsetid'];
 				
+				$settingsname = 'LinkLibraryPP' . $settingsetid;
+				
+				$options = get_option($settingsname);
+				
 				foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'beforenote', 'afternote','position',
 							   'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'beforelink','afterlink', 'beforecatlist1',
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
@@ -476,9 +480,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						$options[$option_name] = (int)($_POST[$option_name]);
 					}				
 				}
-				
-				$settingsname = 'LinkLibraryPP' . $settingsetid;
-				
+								
 				update_option($settingsname, $options);
 				echo "<div id='message' class='updated fade'><p><strong>Settings Set " . $settingsetid . " Updated!</strong></p></div>";
 				
@@ -802,6 +804,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			</div>
 			
 			<?php } else { ?>
+
+			<style type="text/css">
+				#sortable { list-style-type: none; margin: 0; padding: 0; white-space:nowrap; list-style-type:none;}
+				#sortable li { list-style: none; margin: 0 6px 4px 6px; padding: 10px 15px 10px 15px; background-color:#00CCCC; border: #CCCCCC solid 1px; color:#fff; display: inline; width:100px;height: 30px}
+				#sortable li span { position: absolute; margin-left: -1.3em; }
+			</style>
+
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2>Link Library Configuration</h2>
 				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate">Links awaiting moderation</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
@@ -1232,6 +1241,17 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					</table>
 					<br />
 					<strong>Link Sub-Field Configuration Table</strong>
+						<!-- Arrange the items below based on the desired order to display the various Link Library elements.<br /><br />
+						<ul id="sortable">
+							<li id="section_1">Image</li>
+							<li id="section_2">Name</li>
+							<li id="section_3">Date</li>
+							<li id="section_4">Description</li>
+							<li id="section_5">Notes</li>
+							<li id="section_6">Icons</li>
+							<li id="section_7">Rating</li>
+						</ul>
+						<br /> -->
 						<table class='widefat' style='margin:15px 5px 10px 0px;clear:none;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 							<thead>
 								<tr>
@@ -1698,12 +1718,18 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 // Create the tooltips only on document load
 jQuery(document).ready(function()
 	{
-jQuery('.tooltip').each(function()
-		{
-		jQuery(this).tipTip();
-		}
-	
-);
+		jQuery('.tooltip').each(function()
+				{
+				jQuery(this).tipTip();
+				}
+		);
+
+		jQuery("#sortable").sortable({ opacity: 0.6, cursor: 'move', update: function() {
+				var order = jQuery("#sortable").sortable('serialize') + '&settings=<?php echo $settings; ?>';
+				jQuery.post("<?php echo $llpluginpath;?>updateBlockOrder.php", order);
+			}
+		});
+
 });
 </script>
 
@@ -1742,7 +1768,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 				
 			$output .= "function showLinkCat ( _incomingID, _settingsID, _pagenumber) {\n";
 			$output .= "var map = {id : _incomingID, settings : _settingsID, page: _pagenumber}\n";
-			$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();initTree();});\n";
+			$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();});\n";
 			$output .= "}\n";
 				
 			$output .= "</SCRIPT>\n\n";
@@ -3444,6 +3470,7 @@ add_action('edit_link', 'populate_link_field');
 
 function admin_scripts() {
 	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js"></script>'."\n";
+	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/jquery-ui/jquery-ui-1.7.3.custom.min.js"></script>'."\n";
 	echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css">'."\n";
 }
 

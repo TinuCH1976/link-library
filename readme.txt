@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.4 =
+* Fixed: Error with undefined function initTree when using AJAX category switching
+
 = 3.3.3 =
 * User-submitted links under moderation are now set to be invisible. Their visibility is set to true when they are approved.
 
