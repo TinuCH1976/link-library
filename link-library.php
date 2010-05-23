@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.4
+Version: 3.3.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3353,7 +3353,10 @@ function link_library_func($atts) {
 	), $atts));
 	
 	if ($settings == '')
-		$options = get_option('LinkLibraryPP1');
+	{
+		$settings = 1;
+		$options = get_option('LinkLibraryPP1');		
+	}
 	else
 	{
 		$settingsname = 'LinkLibraryPP' . $settings;

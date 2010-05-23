@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.5 =
+* Fixed: Problem with AJAX category switching when setting set # not specified in Link Library shortcode
+
 = 3.3.4 =
 * Fixed: Error with undefined function initTree when using AJAX category switching
 
