@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.6 =
+* Fixed: Added check for links per page config setting being set to 0 or null when pagination mode is active
+
 = 3.3.5 =
 * Fixed: Problem with AJAX category switching when setting set # not specified in Link Library shortcode
 

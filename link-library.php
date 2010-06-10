@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.5
+Version: 3.3.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -740,7 +740,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			</script>
 
 			<div class="wrap" id='llmoderate' style='width:1000px'>
-				<h2>Link Library - Link Moderation</h2>
+				<h2><?php _e('Link Library - Link Moderation', 'link-library'); ?></h2>
 				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php">Configuration Page</a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'>Installation Instructions</a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'>FAQ</a> | Help also in tooltips | <a href='http://yannickcorner.nayanna.biz/contact-me'>Contact the Author</a><br /><br />
 				
 				<form name='llmoderateform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate" method="post" id="ll-mod">
@@ -1863,6 +1863,9 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 						$cattext = '<a href="#' . $catname->category_nicename . '">';
 					elseif ($pagination)
 					{
+						if ($linksperpage == 0 && $linksperpage == '')
+							$linksperpage = 5;
+							
 						$pageposition = $linkcount / $linksperpage;
 						$pageposition = ceil($pageposition);
 						if ($pageposition == 0 && !isset($_GET['page']))
@@ -2162,6 +2165,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	
 	if ($pagination)
 	{
+		if ($linksperpage == 0 && $linksperpage == '')
+			$linksperpage = 5;
+			
 		if (count($linkitems) > $linksperpage)
 		{
 			array_pop($linkitems);
@@ -3475,6 +3481,13 @@ function admin_scripts() {
 	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js"></script>'."\n";
 	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/jquery-ui/jquery-ui-1.7.3.custom.min.js"></script>'."\n";
 	echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css">'."\n";
+}
+
+add_action( 'init', 'LinkLibraryInit' );
+
+function LinkLibraryInit() {
+	$plugin_dir = basename(dirname(__FILE__));
+	load_plugin_textdomain( 'link-library', 'wp-content/plugins/' . $plugin_dir . '/languages', $plugin_dir . ' /languages');
 }
 
 function conditionally_add_scripts_and_styles($posts){
