@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.6
+Version: 3.3.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -37,25 +37,7 @@ define('LLDIR', dirname(__FILE__) . '/');
 
 global $rss_settings;
 
-$rss_settings = "";
-
-function http_get_file($url) {
-    $url_stuff = parse_url($url);
-    $port = isset($url_stuff['port']) ? $url_stuff['port']:80;
-    $fp = fsockopen($url_stuff['host'], $port);
-    $query = 'GET ' . $url_stuff['path'] . " HTTP/1.0\n";
-    $query .= 'Host: ' . $url_stuff['host'];
-    $query .= "\n\n";
-    fwrite($fp, $query);
-    
-    while ($line = fread($fp, 1024)) {
-      $buffer .= $line;
-    }
-    
-    preg_match('/Content-Length: ([0-9]+)/', $buffer, $parts);
-    return substr($buffer, - $parts[1]);
- }
-              
+$rss_settings = "";              
 
 if ( ! class_exists( 'LL_Admin' ) ) {
 

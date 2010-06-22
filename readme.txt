@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.7 =
+* Remove unnecessary function that caused problems with some themes which defined a function with the same name
+
 = 3.3.6 =
 * Fixed: Added check for links per page config setting being set to 0 or null when pagination mode is active
 
