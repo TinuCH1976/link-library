@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.8 =
+* Removed unnecessary call to load jquery-ui since that file does not exist.
+
 = 3.3.7 =
 * Remove unnecessary function that caused problems with some themes which defined a function with the same name
 
