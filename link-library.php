@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.8
+Version: 3.3.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1778,6 +1778,9 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 			if (!$showuserlinks)
 				$linkcatquery .= " AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";			
 		}
+		
+		if ($showinvisible == false)
+			$catquery .= " AND l.link_visible != 'N'";
 			
 		if ($categorylist != "")
 			$linkcatquery .= " AND t.term_id in (" . $categorylist. ")";

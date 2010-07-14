@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.3.9 =
+* Corrected link count in category listing to disregard hidden links is Show Hidden option is disabled
+
 = 3.3.8 =
 * Removed unnecessary call to load jquery-ui since that file does not exist.
 
