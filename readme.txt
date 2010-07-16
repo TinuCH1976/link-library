@@ -58,6 +58,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 3.4 =
+* Addition correction for link count in category listing
+
 = 3.3.9 =
 * Corrected link count in category listing to disregard hidden links is Show Hidden option is disabled
 

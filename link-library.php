@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 3.3.9
+Version: 3.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1727,7 +1727,8 @@ jQuery(document).ready(function()
 function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
-							   $debugmode = false, $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX') {
+							   $debugmode = false, $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX',
+							   $showinvisible = false) {
 							   
 	global $wpdb;
 							   
@@ -1780,7 +1781,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		}
 		
 		if ($showinvisible == false)
-			$catquery .= " AND l.link_visible != 'N'";
+			$linkcatquery .= " AND l.link_visible != 'N'";
 			
 		if ($categorylist != "")
 			$linkcatquery .= " AND t.term_id in (" . $categorylist. ")";
@@ -2958,12 +2959,13 @@ if ($newoptions == "")
  *   linksperpage (default 5)
  *   showcatlinkcount (default false)
  *   showonecatmode (default 'AJAX')
+ *   showinvisible (default false)
  */
 
 function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
 							   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 							   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false,
-							   $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX') {
+							   $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX', $showinvisible = false) {
 	
 	if (strpos($order, 'AdminSettings') != false)
 	{
@@ -2976,11 +2978,11 @@ function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_wi
 		return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
 								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
-								 $options['showcatlinkcount'], $options['showonecatmode']);   
+								 $options['showcatlinkcount'], $options['showonecatmode'], $options['showinvisible']);   
 	}
 	else
 		return PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
-		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage, $showcatlinkcount, $showonecatmode);   
+		$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage, $showcatlinkcount, $showonecatmode, $showinvisible);   
 	
 }
 
@@ -3163,7 +3165,7 @@ function link_library_cats_func($atts) {
 	return PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 								 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
 								 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
-								 $options['showcatlinkcount'], $options['showonecatmode']);
+								 $options['showcatlinkcount'], $options['showonecatmode'], $options['showinvisible']);
 }
 
 function link_library_search_func($atts) {
