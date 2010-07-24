@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.0.1 =
+* Fixed: Problem with batch thumbnail generation, files not created in right folder
+
 = 4.0 =
 * Added: New drag-and-drop interface to specify order of link elements
 * Added: Ability to specify target link for link categories to allow categories to be on seperate page from link library
