@@ -1,4 +1,6 @@
-.linktable {margin-top: 15px}
+.linktable {margin-top: 15px;text-align:center}
+
+.linktable a {text-decoration:none}
 
 table.linklisttable {
 	width:100%; 
