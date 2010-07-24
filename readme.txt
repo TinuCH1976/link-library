@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.0.4 =
+* Update: French translation corrections
+
 = 4.0.3 =
 * Fixed: Added replacement statement to convert double-quotes to single quotes in text fields.
 
