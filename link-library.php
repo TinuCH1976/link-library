@@ -681,7 +681,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'showlinkhits', 'sourceimage', 'sourcename') 
 							   as $option_name) {
 					if (isset($_POST[$option_name])) {
-						$options[$option_name] = strtolower($_POST[$option_name]);
+						$options[$option_name] = str_replace("\"", "'", strtolower($_POST[$option_name]));
 					}
 				}
 
@@ -694,7 +694,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								'linkreciprocallabel', 'linksecondurllabel', 'linktelephonelabel', 'linkemaillabel', 'emailcommand', 'rewritepage',
 								'thumbshotscid') as $option_name) {
 					if (isset($_POST[$option_name])) {
-						$options[$option_name] = $_POST[$option_name];
+						$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 					}
 				}
 
