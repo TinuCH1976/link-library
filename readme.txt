@@ -10,6 +10,12 @@ The purpose of this plugin is to add the ability to output a list of link catego
 
 == Description ==
 
+This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX or HTML Get queries to load other categories based on user input. It can display a search box and find results based on queries. It can also display a form to accept user submissions and allow the site administrator to moderate them before listing the new entries. Finally, it can generate an RSS feed for your link collection so that people can be aware of additions to your link library.
+
+For links that carry RSS feed information, Link Library can display a preview of the latest feed items inline with the all links or in a separate preview window.
+
+This plugin uses the filter method to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for an unlimited number of different configurations to be created to display links on different pages of a Wordpress site.
+
 New to Version 4.0:
 
 * New drag-and-drop interface to specify order of link elements
@@ -22,12 +28,6 @@ New to Version 4.0:
 * French Translation of Admin Interface (other translations welcome)
 * Can now generate thumbnail or favorite icon or a single-link basis
 * Option to store user information when available upon link submission
-
-This plugin is used to be able to create a page on your web site that will contain a list of all of the link categories that you have defined inside of the Links section of the Wordpress administration, along with all links defined in these categories. The user can select a sub-set of categories to be displayed or not displayed. Link Library also offers a mode where only one category is shown at a time, using AJAX or HTML Get queries to load other categories based on user input. It can display a search box and find results based on queries. It can also display a form to accept user submissions and allow the site administrator to moderate them before listing the new entries. Finally, it can generate an RSS feed for your link collection so that people can be aware of additions to your link library.
-
-For links that carry RSS feed information, Link Library can display a preview of the latest feed items inline with the all links or in a separate preview window.
-
-This plugin uses the filter method to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for an unlimited number of different configurations to be created to display links on different pages of a Wordpress site.
 
 You can see a few examples of pages using Link Library on my personal site:
 
