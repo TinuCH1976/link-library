@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.0.2 =
+* Fixed: Only search results from first category encountered would display when only showing one category at a time
+
 = 4.0.1 =
 * Fixed: Problem with batch thumbnail generation, files not created in right folder
 
