@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1.2 =
+* Correction to stylesheet display filter
+
 = 4.1.1 =
 * Minor tweaks to stylesheet editor
 

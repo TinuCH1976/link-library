@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.1
+Version: 4.1.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4115,11 +4115,14 @@ function ll_rss_link() {
 		echo '<link rel="alternate" type="application/rss+xml" title="' . wp_specialchars(stripslashes($feedtitle)) . '" href="' . $llpluginpath . 'rssfeed.php?settingset=' . $rss_settings . '" />';
 	}
 	
+	if ($llstylesheet == true)
+	{	
 		$genoptions = get_option('LinkLibraryGeneral');
 		
 		echo "<style id='LinkLibraryStyle' type='text/css'>\n";
 		echo $genoptions['fullstylesheet'];
 		echo "</style>\n";
+	}
 }
 
 function ll_link_edit_extra($link) {
