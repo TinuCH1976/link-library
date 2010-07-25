@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1 =
+* Added: Stylesheet Editor to avoid upgrade issues with customized stylesheet getting overwritten.
+
 = 4.0.4 =
 * Update: French translation corrections
 

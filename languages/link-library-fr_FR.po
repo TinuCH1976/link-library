@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: \n"
-"Last-Translator: Valentin Brandt <nitraxer@gmail.com>\n"
+"Last-Translator: Yannick Lefebvre <ylefebvre@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -11,1732 +11,1786 @@ msgstr ""
 "X-Poedit-Bookmarks: 136,-1,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid " under your Wordpress plugins directory with write permissions to use this functionality."
 msgstr " dans le dossier plugins de vore installation WordPress avec les permissions d'écriture pour utiliser cette fonctionnalité."
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "A user submitted a new link to your Wordpress Link database."
 msgstr "Un utilisateur a soumis un nouveau lien pour votre base de données Wordpress."
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2050
+#: link-library.php:4190
+#: link-library.php:2112
 msgid "Add Link"
 msgstr "Ajouter un lien"
 
 #. Text in echo
-#: link-library.php:2049
+#: link-library.php:2111
 msgid "Add Link button label"
 msgstr "Texte du bouton d'ajout de lien"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Add link"
 msgstr "Ajouter un lien"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1931
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:1993
+#: link-library.php:2194
 msgid "Add new link"
 msgstr "Ajouter un nouveau lien"
 
 #. Text in echo
-#: link-library.php:1930
+#: link-library.php:1992
 msgid "Add new link label"
 msgstr "Texte du champ d'ajout d'un nouveau lien"
 
 #. Text in echo
-#: link-library.php:1759
+#: link-library.php:1821
 msgid "Add nofollow tag to outgoing links"
 msgstr "Ajouter une balise \"nofollow\" aux liens sortants"
 
 #. Text in echo
-#: link-library.php:1470
+#: link-library.php:1532
 msgid "Additional Details"
 msgstr "Détails additionnels"
 
 #. Text in echo
-#: link-library.php:983
+#: link-library.php:1045
 msgid "Additional pages to load styles and scripts"
 msgstr "Pages additionelles pour afficher les styles et scripts"
 
 #. Text in echo
-#: link-library.php:1469
+#: link-library.php:1531
 msgid "After"
 msgstr "Après"
 
 #. Text in echo
-#: link-library.php:1712
+#: link-library.php:1774
 msgid "After Link Block"
 msgstr "Après le lien complet"
 
 #. Text in echo
-#: link-library.php:1973
+#: link-library.php:2035
 msgid "Allow"
 msgstr "Permettre"
 
 #. Text in echo
-#: link-library.php:948
+#: link-library.php:992
 msgid "Approve Selected Items"
 msgstr "Approuver les liens sélectionnés"
 
 #. Text in echo
-#: link-library.php:1419
+#: link-library.php:1481
 msgid "Arrange the items below via drag-and-drop to order the various Link Library elements."
 msgstr "Organiser les différents liens ci-dessous avec la souris ( cliquer-déplacer-déposer )"
 
 #. Text in echo
-#: link-library.php:1215
-#: link-library.php:1341
+#: link-library.php:1277
+#: link-library.php:1403
 msgid "Ascending"
 msgstr "Croissant"
 
 #. Text in echo
-#: link-library.php:4113
+#: link-library.php:4185
 msgid "Automatic Image Generation"
 msgstr "Génération automatique des images"
 
 #. Text in echo
-#: link-library.php:1468
+#: link-library.php:1530
 msgid "Before"
 msgstr "Avant"
 
 #. Text in echo
-#: link-library.php:1486
+#: link-library.php:1548
 msgid "Before Link"
 msgstr "Avant le lien"
 
 #. Text in echo
-#: link-library.php:1865
-#: link-library.php:1866
+#: link-library.php:1927
+#: link-library.php:1928
 msgid "CID provided with paid Thumbshots.org accounts"
 msgstr "Le code CID peut être obtenu avec un abonnement payant sur Thumbshots.org"
 
 #. Text in echo
-#: link-library.php:1513
+#: link-library.php:1575
 msgid "CSS Class to be assigned to link image"
 msgstr "Classe CSS qui sera assignée à l'image"
 
 #. Text in echo
-#: link-library.php:2078
+#: link-library.php:2140
 msgid "CSV file to upload to import links"
 msgstr "Fichier CSV à transmettre pour importer des liens"
 
 #. Text in echo
-#: link-library.php:1084
+#: link-library.php:1146
 msgid "Categories to be displayed (Empty=All)"
 msgstr "Catégories à afficher (Vide=Toutes)"
 
 #. Text in echo
-#: link-library.php:1092
+#: link-library.php:1154
 msgid "Categories to be excluded"
 msgstr "Catégories à exclure"
 
 #. Text in echo
-#: link-library.php:1301
+#: link-library.php:1363
 msgid "Category Target Address"
 msgstr "Adresse cible pour les liens de catégories"
 
 #. Text in echo
-#: link-library.php:945
+#: link-library.php:989
 msgid "Check All"
 msgstr "Cocher tous les choix"
 
 #. Text in echo
-#: link-library.php:1548
+#: link-library.php:1610
 msgid "Check to display link date"
 msgstr "Cocher pour afficher la date de mise à jour du lien"
 
 #. Text in echo
-#: link-library.php:1564
+#: link-library.php:1626
 msgid "Check to display link descriptions"
 msgstr "Cocher pour afficher la description du lien"
 
 #. Text in echo
-#: link-library.php:1580
+#: link-library.php:1642
 msgid "Check to display link notes"
 msgstr "Cocher pour afficher les notes du lien"
 
 #. Text in echo
-#: link-library.php:1852
-#: link-library.php:1855
+#: link-library.php:1914
+#: link-library.php:1917
 msgid "Checking this option will get images from the thumbshots web site every time"
 msgstr "L'activation de cette option active la récupération d'image du site internet thumbshots.org à chaque affichage de la page"
 
 #. Text in echo
-#: link-library.php:1037
+#: link-library.php:1099
 msgid "Code to insert on a Wordpress page to see Link Library"
 msgstr "Code à insérer dans une page WordPress pour visualiser les contenus de Link Library (librairie de liens)"
 
 #. Text in echo
-#: link-library.php:1680
+#: link-library.php:1742
 msgid "Code/Text to be displayed after E-mail"
 msgstr "Code/Texte à afficher après le courriel"
 
 #. Text in echo
-#: link-library.php:1700
+#: link-library.php:1762
 msgid "Code/Text to be displayed after Link Hits"
 msgstr "Code/Texte à afficher avant les statistiques du lien"
 
 #. Text in echo
-#: link-library.php:1602
+#: link-library.php:1664
 msgid "Code/Text to be displayed after RSS Icons"
 msgstr "Code/Texte à afficher après les icônes RSS"
 
 #. Text in echo
-#: link-library.php:1650
+#: link-library.php:1712
 msgid "Code/Text to be displayed after Telephone Number"
 msgstr "Code/Texte à afficher après le numéro de téléphone"
 
 #. Text in echo
-#: link-library.php:1622
+#: link-library.php:1684
 msgid "Code/Text to be displayed after Web Link"
 msgstr "Code/Texte à afficher après l'hyperlien"
 
 #. Text in echo
-#: link-library.php:1554
+#: link-library.php:1616
 msgid "Code/Text to be displayed after each date"
 msgstr "Code/Texte à afficher après chaque date"
 
 #. Text in echo
-#: link-library.php:1570
+#: link-library.php:1632
 msgid "Code/Text to be displayed after each description"
 msgstr "Code/Texte à afficher après chaque description"
 
 #. Text in echo
-#: link-library.php:1533
+#: link-library.php:1595
 msgid "Code/Text to be displayed after each link"
 msgstr "Code/Texte à afficher après chaque lien"
 
 #. Text in echo
-#: link-library.php:1510
+#: link-library.php:1572
 msgid "Code/Text to be displayed after each link image"
 msgstr "Code/Texte à afficher après chaque image"
 
 #. Text in echo
-#: link-library.php:1586
+#: link-library.php:1648
 msgid "Code/Text to be displayed after each note"
 msgstr "Code/Texte à afficher après chaque note"
 
 #. Text in echo
-#: link-library.php:1677
+#: link-library.php:1739
 msgid "Code/Text to be displayed before E-mail"
 msgstr "Code/Texte à afficher avant chaque courriel"
 
 #. Text in echo
-#: link-library.php:1697
+#: link-library.php:1759
 msgid "Code/Text to be displayed before Link Hits"
 msgstr "Code/Texte à afficher avant les statistiques du lien"
 
 #. Text in echo
-#: link-library.php:1599
+#: link-library.php:1661
 msgid "Code/Text to be displayed before RSS Icons"
 msgstr "Code/Texte à afficher avant les icônes RSS"
 
 #. Text in echo
-#: link-library.php:1647
+#: link-library.php:1709
 msgid "Code/Text to be displayed before Telephone Number"
 msgstr "Code/Texte à afficher avant le numéro de téléphone"
 
 #. Text in echo
-#: link-library.php:1619
+#: link-library.php:1681
 msgid "Code/Text to be displayed before Web Link"
 msgstr "Code/Texte à afficher avant l'hyperlien"
 
 #. Text in echo
-#: link-library.php:1551
+#: link-library.php:1613
 msgid "Code/Text to be displayed before each date"
 msgstr "Code/Texte à afficher avant chaque date"
 
 #. Text in echo
-#: link-library.php:1567
+#: link-library.php:1629
 msgid "Code/Text to be displayed before each description"
 msgstr "Code/Texte à afficher avant chaque description"
 
 #. Text in echo
-#: link-library.php:1530
+#: link-library.php:1592
 msgid "Code/Text to be displayed before each link"
 msgstr "Code/Texte à afficher avant chaque lien"
 
 #. Text in echo
-#: link-library.php:1507
+#: link-library.php:1569
 msgid "Code/Text to be displayed before each link image"
 msgstr "Code/Texte à afficher avant chaque image"
 
 #. Text in echo
-#: link-library.php:1583
+#: link-library.php:1645
 msgid "Code/Text to be displayed before each note"
 msgstr "Code/Texte à afficher avant chaque note"
 
 #. Text in echo
-#: link-library.php:1686
+#: link-library.php:1748
 msgid "Command that the e-mail will be embedded in. In the case of a command, use the symbols #email and #company to indicate the position where these elements should be inserted."
 msgstr "Commande dans laquelle l'adresse électronique sera incluse. Dans le cas d'une commande, utilisez les symboles #email et #company pour indiquer l'emplacement de ces éléments."
 
 #. Text in echo
-#: link-library.php:1070
+#: link-library.php:1132
 msgid "Common Parameters"
 msgstr "Paramètres communs"
 
 #. Text in echo
-#: link-library.php:893
+#: link-library.php:937
+#: link-library.php:1000
 msgid "Configuration Page"
 msgstr "Page de configuration"
 
 #. Text in echo
-#: link-library.php:893
-#: link-library.php:964
+#: link-library.php:937
+#: link-library.php:1000
+#: link-library.php:1026
 msgid "Contact the Author"
 msgstr "Contacter l'auteur"
 
 #. Text in echo
-#: link-library.php:1752
+#: link-library.php:1814
 msgid "Convert [] to &lt;&gt; in Link Description and Notes"
 msgstr "Convertir [] à &lt;&gt; dans les descriptions et notes de liens"
 
 #. Text in echo
-#: link-library.php:1024
+#: link-library.php:1086
 msgid "Copy"
 msgstr "Copier"
 
 #. Text in echo
-#: link-library.php:1013
+#: link-library.php:1075
 msgid "Copy from:"
 msgstr "Copier de :"
 
 #. Text in echo
-#: link-library.php:4103
+#: link-library.php:4175
 msgid "Current Link Image"
 msgstr "Image assignée au lien"
 
 #. Text in echo
-#: link-library.php:1076
+#: link-library.php:1138
 msgid "Current Settings Set Name"
 msgstr "Nom du groupe de configuration courant"
 
 #. Text in echo
-#: link-library.php:1434
+#: link-library.php:1496
 msgid "Date"
 msgstr "Date"
 
 #. Text in echo
-#: link-library.php:985
+#: link-library.php:1047
 msgid "Debug Mode"
 msgstr "Débogueur"
 
 #. Text in echo
-#: link-library.php:1116
+#: link-library.php:1178
 msgid "Default category to be shown when only showing one at a time (numeric ID)"
 msgstr "Catégorie à afficher par défaut lorsqu'une seule catégorie est présente (identifiant numérique)"
 
 #. Text in echo
-#: link-library.php:949
+#: link-library.php:993
 msgid "Delete Selected Items"
 msgstr "Supprimer les liens sélectionnés"
 
 #. Text in echo
-#: link-library.php:1061
+#: link-library.php:1123
 msgid "Delete Settings Set"
 msgstr "Supprimer le groupe de configuration courant"
 
 #. Text in echo
-#: link-library.php:1216
-#: link-library.php:1342
+#: link-library.php:1278
+#: link-library.php:1404
 msgid "Descending"
 msgstr "Décroissant"
 
 #. Text in echo
-#: link-library.php:1437
+#: link-library.php:1499
 msgid "Description"
 msgstr "Description"
 
 #. Text in echo
-#: link-library.php:1388
+#: link-library.php:1450
 msgid "Description Column Header"
 msgstr "Entête de colonne pour les descriptions"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Description of Link Library-Generated Feed"
 msgstr "Description du flux d'informations généré par 'Link Library'"
 
 #. Text in echo
-#: link-library.php:1243
+#: link-library.php:1305
 msgid "Determines the number of alternating div tags that will be placed before and after each link category"
 msgstr "Indique le nombre de balises div qui seront placées en alternance avant et après chaque catégorie de liens"
 
 #. Text in echo
-#: link-library.php:1337
+#: link-library.php:1399
 msgid "Direction"
 msgstr "Direction"
 
 #. Text in echo
-#: link-library.php:1467
+#: link-library.php:1529
 msgid "Display"
 msgstr "Afficher"
 
 #. Text in echo
-#: link-library.php:1198
+#: link-library.php:1260
 msgid "Display link counts"
 msgstr "Afficher la quantité de liens"
 
 #. Text in echo
-#: link-library.php:1272
+#: link-library.php:1334
 msgid "Div Class"
 msgstr "Classe Div"
 
 #. Text in echo
-#: link-library.php:1286
+#: link-library.php:1348
 msgid "Div Class Name or Heading label"
 msgstr "Nom de classe div ou type de la balise de titre"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Download here"
 msgstr "Récupérer ici"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1452
-#: link-library.php:1666
-#: link-library.php:2132
-#: link-library.php:4087
+#: link-library.php:4190
+#: link-library.php:1514
+#: link-library.php:1728
+#: link-library.php:2194
+#: link-library.php:4159
 msgid "E-mail"
 msgstr "Adresse électronique"
 
 #. Text in echo
-#: link-library.php:1916
+#: link-library.php:1978
 msgid "E-mail admin on link submission"
 msgstr "Envoyer un email à l'administrateur lors de la soumission"
 
 #. Text in echo
-#: link-library.php:1347
+#: link-library.php:1040
+msgid "Editor"
+msgstr "Éditeur"
+
+#. Text in echo
+#: link-library.php:1409
 msgid "Embed HTML anchors"
 msgstr "Inclusion d'ancrages HTML"
 
 #. Text in echo
-#: link-library.php:1154
+#: link-library.php:1216
 msgid "Enable Permalinks"
 msgstr "Activer les liens permanents"
 
 #. Text in echo
-#: link-library.php:983
-#: link-library.php:984
+#: link-library.php:1045
+#: link-library.php:1046
 msgid "Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API"
 msgstr "Spécifier une liste de pages, séparées par des virgules, dans lesquelles les feuilles de styles et les scripts de \"Link Library\" doivent être chargés. Cette option est principalement utilisée si vous affichez \"Link Library\" en utilisant son API."
 
 #. Text in echo
-#: link-library.php:1083
-#: link-library.php:1086
-#: link-library.php:1094
+#: link-library.php:1145
+#: link-library.php:1148
+#: link-library.php:1156
 msgid "Enter list of comma-separated"
 msgstr "Spécifier une liste de valeurs, séparées par des virgules"
 
 #. Text in echo
-#: link-library.php:1285
-#: link-library.php:1288
+#: link-library.php:1347
+#: link-library.php:1350
 msgid "Example div class name: linklistcatname, Example Heading Label: h3"
 msgstr "Exemples de noms de classes div: linklistcatname, Exemples de balises d'entêtes : h3"
 
 #. Text in echo
-#: link-library.php:1339
+#: link-library.php:1401
 msgid "Except for My Link Order mode"
 msgstr "Sauf pour le mode \"My Link Order\""
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Excluded Category ID"
 msgstr "Identifiant de catégorie exclue"
 
 #. Text in echo
-#: link-library.php:2101
+#: link-library.php:2163
 msgid "Export Settings Set"
 msgstr "Exporter le groupe de configuration"
 
 #. Text in echo
-#: link-library.php:2100
+#: link-library.php:2162
 msgid "Export current setting set"
 msgstr "Exporter le groupe de configuration courant"
 
 #. Text in echo
-#: link-library.php:893
-#: link-library.php:964
+#: link-library.php:937
+#: link-library.php:1000
+#: link-library.php:1026
 msgid "FAQ"
 msgstr "FAQ (QFP)"
 
 #. Text in echo
-#: link-library.php:1614
-#: link-library.php:1641
-#: link-library.php:1669
+#: link-library.php:1676
+#: link-library.php:1703
+#: link-library.php:1731
 msgid "False"
 msgstr "Faux"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Favicon successfully generated for"
 msgstr "Icône de favoris générée avec succès pour"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Favicons successfully generated!"
 msgstr "Icônes de favoris générées avec succès !"
 
 #. Text in echo
-#: link-library.php:1126
+#: link-library.php:1188
 msgid "File path is relative to Link Library plugin directory"
 msgstr "Le chemin du fichier doit être relatif par rapport au répertoire du module \"Link Library\""
 
 #. Text in echo
-#: link-library.php:1260
+#: link-library.php:1322
 msgid "First div class name"
 msgstr "Premier nom de classe de la div"
 
 #. Text in echo
-#: link-library.php:2083
+#: link-library.php:2145
 msgid "First row contains column headers"
 msgstr "La première ligne contient les entêtes"
 
 #. Text in echo
-#: link-library.php:1909
+#: link-library.php:1971
 msgid "Following this link shows a list of all links awaiting moderation"
 msgstr "Suivez ce lien pour afficher une liste des liens en attente de modération"
 
 #. Text in echo
-#: link-library.php:1086
-#: link-library.php:1094
+#: link-library.php:1148
+#: link-library.php:1156
 msgid "For example"
 msgstr "Par exemple"
 
 #. Text in echo
-#: link-library.php:1673
+#: link-library.php:1735
 msgid "Formatted Command"
 msgstr "Commande formattée"
 
 #. Text in echo
-#: link-library.php:1674
+#: link-library.php:1736
 msgid "Formatted Command with Labels"
 msgstr "Commande formattée avec affichage textuel"
 
 #. Text in echo
-#: link-library.php:1475
+#: link-library.php:1537
 msgid "Frequency of additional output before and after complete link group"
 msgstr "Fréquence des affichages supplémentaires avant et après chaque groupe de liens"
 
 #. Text in echo
-#: link-library.php:973
+#: link-library.php:1035
 msgid "General Settings"
 msgstr "Configuration générale"
 
 #. Text in echo
-#: link-library.php:4115
+#: link-library.php:4187
 msgid "Generate Favorite Icon and Store locally"
 msgstr "Générer l'icône de favori et la conserver"
 
 #. Text in echo
-#: link-library.php:1862
+#: link-library.php:1924
 msgid "Generate Favorite Icons and Store locally"
 msgstr "Générer les icônes de favoris et les conserver"
 
 #. Text in echo
-#: link-library.php:1860
+#: link-library.php:1922
 msgid "Generate Images / Favorite Icons"
 msgstr "Générer les images ou icônes de favoris"
 
 #. Text in echo
-#: link-library.php:4114
+#: link-library.php:4186
 msgid "Generate Thumbnail and Store locally"
 msgstr "Générer la vignette et la conserver"
 
 #. Text in echo
-#: link-library.php:1861
+#: link-library.php:1923
 msgid "Generate Thumbnails and Store locally"
 msgstr "Générer les vignettes et les conserver"
 
 #. Text in echo
-#: link-library.php:2100
+#: link-library.php:2162
 msgid "Generates CSV file with current setting set configuration for download"
 msgstr "Générer un fichier CSV contenant le groupe de configuration courant afin de le télécharger"
 
 #. Text in echo
-#: link-library.php:1012
+#: link-library.php:1074
 msgid "Go"
 msgstr "Allez-y"
 
 #. Text in echo
-#: link-library.php:1273
+#: link-library.php:1335
 msgid "Heading Tag"
 msgstr "Balise d'entête"
 
 #. Text in echo
-#: link-library.php:893
-#: link-library.php:964
+#: link-library.php:937
+#: link-library.php:1000
+#: link-library.php:1026
 msgid "Help also in tooltips"
 msgstr "Aide disponible dans les bulles d'informations"
 
 #. Text in echo
-#: link-library.php:1951
-#: link-library.php:1962
-#: link-library.php:1991
-#: link-library.php:2001
-#: link-library.php:2012
-#: link-library.php:2022
-#: link-library.php:2033
-#: link-library.php:2043
+#: link-library.php:2013
+#: link-library.php:2024
+#: link-library.php:2053
+#: link-library.php:2063
+#: link-library.php:2074
+#: link-library.php:2084
+#: link-library.php:2095
+#: link-library.php:2105
 msgid "Hide"
 msgstr "Masquer"
 
 #. Text in echo
-#: link-library.php:1403
+#: link-library.php:1465
 msgid "Hide Category Names"
 msgstr "Masquer les noms de catégories"
 
 #. Text in echo
-#: link-library.php:1146
+#: link-library.php:1208
 msgid "Hide Results if Empty"
 msgstr "Masquer les résultats si vide"
 
 #. Text in echo
-#: link-library.php:1455
+#: link-library.php:1517
 msgid "Hits"
 msgstr "Accès"
 
 #. Text in echo
-#: link-library.php:1124
+#: link-library.php:1186
 msgid "Icon to display when performing AJAX queries"
 msgstr "Icône à afficher lorsque des requêtes AJAX sont effectuées"
 
 #. Text in echo
-#: link-library.php:1428
-#: link-library.php:1503
+#: link-library.php:1002
+msgid "If the stylesheet editor is empty after upgrading, reset to the default stylesheet using the button below or copy/paste your backup stylesheet into the editor."
+msgstr "Si l'éditeur de feuille de style est vide après une mise à jour, appuyez sur le bouton ci-dessous pour importer la version originale de la feuille de style ou effectuez un copier/coller à partir de votre copie de sauvegarde de la feuille de style vers l'éditeur."
+
+#. Text in echo
+#: link-library.php:1490
+#: link-library.php:1565
 msgid "Image"
 msgstr "Image"
 
 #. Text in echo
-#: link-library.php:2072
+#: link-library.php:2134
 msgid "Import / Export"
 msgstr "Importer / Exporter"
 
 #. Text in echo
-#: link-library.php:2080
+#: link-library.php:2142
 msgid "Import Links"
 msgstr "Importer les liens"
 
 #. Text in echo
-#: link-library.php:2097
+#: link-library.php:2159
 msgid "Import Settings Set"
 msgstr "Inporter le groupe de configuration"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Included Category ID"
 msgstr "Identifiants de catégories inclus"
 
 #. Text in echo
-#: link-library.php:893
-#: link-library.php:964
+#: link-library.php:937
+#: link-library.php:1000
+#: link-library.php:1026
 msgid "Installation Instructions"
 msgstr "Instructions d'installation"
 
 #. Text in echo
-#: link-library.php:1722
+#: link-library.php:1784
 msgid "Intermittent After Link"
 msgstr "Balises intermittentes après le lien"
 
 #. Text in echo
-#: link-library.php:1474
+#: link-library.php:1536
 msgid "Intermittent Before Link"
 msgstr "Balises intermittentes avant le lien"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Invalid column count for link on row"
 msgstr "Nombre de colonnes invalide pour le lien de la ligne"
 
 #. Text in echo
-#: link-library.php:1616
-#: link-library.php:1644
+#: link-library.php:1678
+#: link-library.php:1706
 msgid "Label"
 msgstr "Identifiant"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Last updated"
 msgstr "Dernière mise à jour"
 
 #. Text in echo
-#: link-library.php:1083
-#: link-library.php:1086
+#: link-library.php:1145
+#: link-library.php:1148
 msgid "Leave Empty to see all categories"
 msgstr "Laissez vide pour afficher toutes les catégories"
 
 #. Text in echo
-#: link-library.php:1228
-#: link-library.php:1331
+#: link-library.php:1290
+#: link-library.php:1393
 msgid "Left"
 msgstr "Gauche"
 
 #. Text in echo
-#: link-library.php:1643
+#: link-library.php:1705
 msgid "Link"
 msgstr "Lien"
 
 #. Text in function
-#: link-library.php:1942
-#: link-library.php:2132
+#: link-library.php:2004
+#: link-library.php:2194
 msgid "Link Address"
 msgstr "Adresse du lien"
 
 #. Text in echo
-#: link-library.php:1187
+#: link-library.php:1249
 msgid "Link Categories Display Format"
 msgstr "Format d'affichage des catégories de liens"
 
 #. Text in echo
-#: link-library.php:1171
+#: link-library.php:1233
 msgid "Link Categories Settings"
 msgstr "Configurations des catégories de liens"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1958
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:2020
+#: link-library.php:2194
 msgid "Link Category"
 msgstr "Catégorie de liens"
 
 #. Text in echo
-#: link-library.php:1380
+#: link-library.php:1442
 msgid "Link Column Header"
 msgstr "Entête de colonne de lien"
 
 #. Text in echo
-#: link-library.php:1547
+#: link-library.php:1609
 msgid "Link Date"
 msgstr "Date du lien"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:905
-#: link-library.php:1563
-#: link-library.php:1987
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:949
+#: link-library.php:1625
+#: link-library.php:2049
+#: link-library.php:2194
 msgid "Link Description"
 msgstr "Description du lien"
 
 #. Text in echo
-#: link-library.php:1362
+#: link-library.php:1424
 msgid "Link Display Format"
 msgstr "Format d'affichage des liens"
 
 #. Text in function
-#: link-library.php:2039
-#: link-library.php:2132
+#: link-library.php:2101
+#: link-library.php:2194
 msgid "Link E-mail"
 msgstr "Adresse électronique"
 
 #. Text in echo
-#: link-library.php:2038
+#: link-library.php:2100
 msgid "Link E-mail label"
 msgstr "Texte pour l'adresse électronique"
 
 #. Text in echo
-#: link-library.php:1309
+#: link-library.php:1371
 msgid "Link Element Settings"
 msgstr "Configuration des éléments des liens"
 
 #. Text in echo
-#: link-library.php:1693
+#: link-library.php:1755
 msgid "Link Hits"
 msgstr "Statistiques du lien"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Link Library - Additional Link Parameters"
 msgstr "Link Library - Paramètres Additionels"
 
 # Plugin name; please avoid translating if possible
 #. Text in echo
-#: link-library.php:892
+#: link-library.php:936
 msgid "Link Library - Link Moderation"
 msgstr "Link Library - Modération des nouveaux liens"
 
+# Plugin name; please avoid translating if possible
 #. Text in echo
-#: link-library.php:963
+#: link-library.php:999
+msgid "Link Library - Stylesheet Editor"
+msgstr "Link Library - Éditeur de feuille de style"
+
+#. Text in echo
+#: link-library.php:1025
 msgid "Link Library Configuration"
 msgstr "Page de configuration de \"Link Library\""
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Link Library Generated Feed"
 msgstr "Flux d'informations généré par \"Link Library\""
 
 #. Text in echo
-#: link-library.php:1030
-#: link-library.php:1033
-#: link-library.php:1036
+#: link-library.php:1092
+#: link-library.php:1095
+#: link-library.php:1098
 msgid "Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site"
 msgstr "\"Link Library\" supporte la création d'un nombre illimité de configurations pour afficher les liens sur votre site"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Link Library plugin directory needs to be writable to perform this action"
 msgstr "Le répertoire doit avoir des permissions d'écriture complètes pour exécuter cette action"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Link Library-Generated RSS Feed"
 msgstr "Link Library-Flux d'informations généré"
 
 #. Text in echo
-#: link-library.php:903
-#: link-library.php:1526
-#: link-library.php:1936
-#: link-library.php:2132
+#: link-library.php:947
+#: link-library.php:1588
+#: link-library.php:1998
+#: link-library.php:2194
 msgid "Link Name"
 msgstr "Nom du lien"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1579
-#: link-library.php:1997
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:1641
+#: link-library.php:2059
+#: link-library.php:2194
 msgid "Link Notes"
 msgstr "Notes du lien"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1947
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:2009
+#: link-library.php:2194
 msgid "Link RSS"
 msgstr "Flux RSS du lien"
 
 #. Text in echo
-#: link-library.php:1946
+#: link-library.php:2008
 msgid "Link RSS label"
 msgstr "Texte du lien RSS"
 
 #. Text in echo
-#: link-library.php:1313
+#: link-library.php:1375
 msgid "Link Results Order"
 msgstr "Ordre des résultats"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Link Secondary Address"
 msgstr "Adresse supplémentaire pour le lien"
 
 #. Text in echo
-#: link-library.php:1471
+#: link-library.php:1533
 msgid "Link Source"
 msgstr "Source du lien"
 
 #. Text in echo
-#: link-library.php:1418
+#: link-library.php:1480
 msgid "Link Sub-Field Configuration Table"
 msgstr "Table de configuration des éléments du lien"
 
 #. Text in echo
-#: link-library.php:4099
+#: link-library.php:4171
 msgid "Link Submitter"
 msgstr "Utilisateur ayant soumis le lien"
 
 #. Text in echo
-#: link-library.php:1355
+#: link-library.php:1417
 msgid "Link Target"
 msgstr "Cible du lien"
 
 #. Text in function
-#: link-library.php:2029
-#: link-library.php:2132
+#: link-library.php:2091
+#: link-library.php:2194
 msgid "Link Telephone"
 msgstr "Numéro de téléphone"
 
 #. Text in echo
-#: link-library.php:2028
+#: link-library.php:2090
 msgid "Link Telephone label"
 msgstr "Texte du numéro de téléphone"
 
 #. Text in echo
-#: link-library.php:904
+#: link-library.php:948
 msgid "Link URL"
 msgstr "Adresse du lien"
 
 #. Text in echo
-#: link-library.php:1906
+#: link-library.php:1968
 msgid "Link User Submission"
 msgstr "Liens soumis par les usagers"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:2194
 msgid "Link address"
 msgstr "Adresse du lien"
 
 #. Text in echo
-#: link-library.php:1941
+#: link-library.php:2003
 msgid "Link address label"
 msgstr "Texte pour l'adresse du lien"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Link category"
 msgstr "Catégorie du lien"
 
 #. Text in echo
-#: link-library.php:1957
+#: link-library.php:2019
 msgid "Link category label"
 msgstr "Texte pour la catégorie du lien"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Link description"
 msgstr "Description du lien"
 
 #. Text in echo
-#: link-library.php:1986
+#: link-library.php:2048
 msgid "Link description label"
 msgstr "Texte pour la description du lien"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:2194
 msgid "Link name"
 msgstr "Nom du lien"
 
 #. Text in echo
-#: link-library.php:1935
+#: link-library.php:1997
 msgid "Link name label"
 msgstr "Texte pour le nom du lien"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Link notes"
 msgstr "Notes du lien"
 
 #. Text in echo
-#: link-library.php:1996
+#: link-library.php:2058
 msgid "Link notes label"
 msgstr "Texte pour les notes du lien"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Link(s) Approved"
 msgstr "Lien(s) approuvé(s)"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Link(s) Deleted"
 msgstr "Lien(s) supprimé(s)"
 
 #. Text in echo
-#: link-library.php:964
+#: link-library.php:1026
 msgid "Links awaiting moderation"
 msgstr "Liens en attente de modérations"
 
 #. Text in echo
-#: link-library.php:1138
+#: link-library.php:1200
 msgid "Links per Page"
 msgstr "Liens par page"
 
 #. Text in echo
-#: link-library.php:1671
+#: link-library.php:1733
 msgid "MailTo Link"
 msgstr "Lien \"mailto\""
 
 #. Text in echo
-#: link-library.php:1672
+#: link-library.php:1734
 msgid "MailTo Link with Label"
 msgstr "Lien \"Mailto\" avec libellé"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Message generated by"
 msgstr "Message généré par"
 
 #. Text in echo
-#: link-library.php:1431
+#: link-library.php:1493
 msgid "Name"
 msgstr "Nom"
 
 #. Text in echo
-#: link-library.php:1349
+#: link-library.php:1411
 msgid "Need to be active for Link Categories to work"
 msgstr "Doit être coché pour que les liens de catégories fonctionnent"
 
 #. Text in echo
-#: link-library.php:2054
+#: link-library.php:2116
 msgid "New Link Message"
 msgstr "Message pour les nouveaux liens"
 
 #. Text in echo
-#: link-library.php:2059
+#: link-library.php:2121
 msgid "New Link Moderation Label"
 msgstr "Message pour les liens devant être modérés"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2055
+#: link-library.php:4190
+#: link-library.php:2117
 msgid "New link submitted"
 msgstr "Nouveau lien soumis"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Next"
 msgstr "Suivant"
 
 #. Text in echo
-#: link-library.php:1972
+#: link-library.php:2034
 msgid "No"
 msgstr "Non"
 
 #. Text in echo
-#: link-library.php:938
+#: link-library.php:982
 msgid "No Links Found to Moderate"
 msgstr "Aucun lien trouvé nécessitant une modération"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "No categories found"
 msgstr "Aucune catégorie trouvée"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "No links found"
 msgstr "Aucun lien trouvé"
 
 #. Text in echo
-#: link-library.php:4108
+#: link-library.php:4180
 msgid "None Assigned"
 msgstr "Non disponible"
 
 #. Text in echo
-#: link-library.php:1440
+#: link-library.php:1502
 msgid "Notes"
 msgstr "Notes"
 
 #. Text in echo
-#: link-library.php:1395
+#: link-library.php:1457
 msgid "Notes Column Header"
 msgstr "Entête de la colonne des notes"
 
 #. Text in echo
-#: link-library.php:1140
+#: link-library.php:1202
 msgid "Number of Links to be Displayed per Page in Pagination Mode"
 msgstr "Nombre de liens devant être affichés en \"Mode Pagination\""
 
 #. Text in echo
-#: link-library.php:1832
+#: link-library.php:1894
 msgid "Number of RSS articles shown in Link Library Output"
 msgstr "Nombre d'articles RSS devant être affichés par \"Link Library\""
 
 #. Text in echo
-#: link-library.php:979
+#: link-library.php:1041
 msgid "Number of Style Sets"
 msgstr "Nombre de groupes de configuration"
 
 #. Text in echo
-#: link-library.php:1241
+#: link-library.php:1303
 msgid "Number of alternating div classes"
 msgstr "Nombre de classes div en alternance"
 
 #. Text in echo
-#: link-library.php:1812
+#: link-library.php:1874
 msgid "Number of articles shown in RSS Preview"
 msgstr "Nombre d'articles présentés dans l'aperçu du flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:1253
+#: link-library.php:1315
 msgid "Number of columns in Categories Table"
 msgstr "Nombre de colonnes dans la table des catégories"
 
 #. Text in echo
-#: link-library.php:1880
+#: link-library.php:1942
 msgid "Number of items in RSS feed"
 msgstr "Nombre d'items dans le flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:4095
+#: link-library.php:4167
 msgid "Number of link views"
 msgstr "Nombre de visites du lien"
 
 #. Text in echo
-#: link-library.php:1134
+#: link-library.php:1196
 msgid "Only show a limited number of links and add page navigation links"
 msgstr "Afficher seulement un nombre limité de liens et afficher une section de navigation des liens"
 
 #. Text in echo
-#: link-library.php:1100
+#: link-library.php:1162
 msgid "Only show one category at a time"
 msgstr "N'afficher qu'une catégorie à la fois"
 
 #. Text in echo
-#: link-library.php:1102
+#: link-library.php:1164
 msgid "Only show one category of links at a time"
 msgstr "N'afficher qu'une catégorie de liens à la fois"
 
 #. Text in echo
-#: link-library.php:1180
-#: link-library.php:1318
+#: link-library.php:1242
+#: link-library.php:1380
 msgid "Order by ID"
 msgstr "Trier par identifiant"
 
 #. Text in echo
-#: link-library.php:1179
-#: link-library.php:1317
+#: link-library.php:1241
+#: link-library.php:1379
 msgid "Order by Name"
 msgstr "Trier par nom"
 
 #. Text in echo
-#: link-library.php:1181
+#: link-library.php:1243
 msgid "Order of categories based on included category list"
 msgstr "Trier les catégories selon l'ordre des catégories incluses"
 
 #. Text in echo
-#: link-library.php:1182
+#: link-library.php:1244
 msgid "Order set by"
 msgstr "Trier par"
 
 #. Text in echo
-#: link-library.php:1319
+#: link-library.php:1381
 msgid "Order set by "
 msgstr "Trier par"
 
 #. Text in echo
-#: link-library.php:1715
+#: link-library.php:1777
 msgid "Output after complete link group (link, notes, desc, etc...)"
 msgstr "Afficher après le groupe de liens (lien, notes, description, etc...)"
 
 #. Text in echo
-#: link-library.php:1488
+#: link-library.php:1550
 msgid "Output before complete link group (link, notes, desc, etc...)"
 msgstr "Afficher avant le groupe de liens (lien, notes, description, etc...)"
 
 #. Text in echo
-#: link-library.php:2095
+#: link-library.php:2157
 msgid "Overwrites current setting set with contents of CSV file"
 msgstr "Écrase le groupe de configuration courant avec le contenu du fichier CSV"
 
 #. Text in echo
-#: link-library.php:989
+#: link-library.php:1051
 msgid "Page Title Prefix"
 msgstr "Préfixe pour le titre des pages"
 
 #. Text in echo
-#: link-library.php:991
+#: link-library.php:1053
 msgid "Page Title Suffix"
 msgstr "Suffixe pour le titre des pages"
 
 #. Text in echo
-#: link-library.php:1132
+#: link-library.php:1194
 msgid "Paginate Results"
 msgstr "Paginer les résultats"
 
 #. Text in echo
-#: link-library.php:1160
+#: link-library.php:1222
 msgid "Permalinks Page"
 msgstr "Page des liens permanents"
 
 #. Text in echo
-#: link-library.php:1642
-#: link-library.php:1670
+#: link-library.php:1704
+#: link-library.php:1732
 msgid "Plain Text"
 msgstr "Texte simple"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Please create a folder called"
 msgstr "Veuillez créer un répertoire sous le nom"
 
 #. Text in echo
-#: link-library.php:1225
-#: link-library.php:1328
+#: link-library.php:1287
+#: link-library.php:1390
 msgid "Position"
 msgstr "Position"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Preview of RSS feed for"
 msgstr "Aperçu du flux d'informations RSS de"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Previous"
 msgstr "Précédent"
 
 #. Text in echo
-#: link-library.php:1518
-#: link-library.php:1539
-#: link-library.php:1630
-#: link-library.php:1658
+#: link-library.php:1580
+#: link-library.php:1601
+#: link-library.php:1692
+#: link-library.php:1720
 msgid "Primary"
 msgstr "Principal"
 
 #. Text in echo
-#: link-library.php:1875
+#: link-library.php:1937
 msgid "Publish RSS Feed"
 msgstr "Publier un flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:1798
+#: link-library.php:1860
 msgid "RSS Cache Directory"
 msgstr "Répertoire cache pour les flux d'informations"
 
 #. Text in echo
-#: link-library.php:1886
+#: link-library.php:1948
 msgid "RSS Feed Description"
 msgstr "Description du flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:1883
+#: link-library.php:1945
 msgid "RSS Feed Title"
 msgstr "Titre du flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:1779
+#: link-library.php:1841
 msgid "RSS Field Configuration"
 msgstr "Configuration du champ RSS"
 
 #. Text in echo
-#: link-library.php:1871
+#: link-library.php:1933
 msgid "RSS Generation"
 msgstr "Génération de flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:1443
-#: link-library.php:1595
+#: link-library.php:1505
+#: link-library.php:1657
 msgid "RSS Icons"
 msgstr "Icône RSS"
 
 #. Text in echo
-#: link-library.php:1842
+#: link-library.php:1904
 msgid "RSS Preview Height"
 msgstr "Hauteur de l'aperçu du flux d'informations RSS"
 
 #. Text in echo
-#: link-library.php:1840
+#: link-library.php:1902
 msgid "RSS Preview Width"
 msgstr "Largeur de l'aperçu du flux d'informations RSS"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2008
-#: link-library.php:2132
-#: link-library.php:4091
+#: link-library.php:4190
+#: link-library.php:2070
+#: link-library.php:2194
+#: link-library.php:4163
 msgid "Reciprocal Link"
 msgstr "Lien réciproque"
 
 #. Text in echo
-#: link-library.php:2007
+#: link-library.php:2069
 msgid "Reciprocal Link label"
 msgstr "Texte du lien réciproque"
 
 #. Text in echo
-#: link-library.php:1921
+#: link-library.php:1983
 msgid "Require login to display form"
 msgstr "Nécessite une connexion pour afficher le formulaire"
 
 #. Text in echo
-#: link-library.php:1063
+#: link-library.php:1125
 msgid "Reset current Setting Set for table layout"
 msgstr "Réinitialiser le groupe de configuration courant pour une mise en page tabulaire"
 
 #. Text in echo
-#: link-library.php:1062
+#: link-library.php:1124
 msgid "Reset current Settings Set"
 msgstr "Réinitialiser le groupe de configuration courant"
 
 #. Text in echo
-#: link-library.php:1175
+#: link-library.php:1013
+msgid "Reset to default"
+msgstr "Restauration du défaut"
+
+#. Text in echo
+#: link-library.php:1237
 msgid "Results Order"
 msgstr "Ordre des résultats"
 
 #. Text in echo
-#: link-library.php:1227
-#: link-library.php:1330
+#: link-library.php:1289
+#: link-library.php:1392
 msgid "Right"
 msgstr "Droite"
 
 #. Text in function
-#: link-library.php:1898
-#: link-library.php:2132
+#: link-library.php:1960
+#: link-library.php:2194
 msgid "Search"
 msgstr "Rechercher"
 
 #. Text in echo
-#: link-library.php:1894
+#: link-library.php:1956
 msgid "Search Form Configuration"
 msgstr "Configuration du formulaire de recherche"
 
 #. Text in echo
-#: link-library.php:1897
+#: link-library.php:1959
 msgid "Search Label"
 msgstr "Texte pour la recherche"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "Search Results for"
 msgstr "Résultats de la recherche pour"
 
 #. Text in echo
-#: link-library.php:1278
+#: link-library.php:1340
 msgid "Second div class name"
 msgstr "Second nom de classe div"
 
 #. Text in echo
-#: link-library.php:1519
-#: link-library.php:1540
-#: link-library.php:1631
-#: link-library.php:1659
+#: link-library.php:1581
+#: link-library.php:1602
+#: link-library.php:1693
+#: link-library.php:1721
 msgid "Secondary"
 msgstr "Secondaire"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2018
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:2080
+#: link-library.php:2194
 msgid "Secondary Address"
 msgstr "Adresse secondaire"
 
 #. Text in echo
-#: link-library.php:2017
+#: link-library.php:2079
 msgid "Secondary Address label"
 msgstr "Texte de l'adresse secondaire"
 
 #. Text in echo
-#: link-library.php:4079
+#: link-library.php:4151
 msgid "Secondary Web Address"
 msgstr "Adresse Internet secondaire"
 
 #. Text in echo
-#: link-library.php:1597
+#: link-library.php:1659
 msgid "See below"
 msgstr "Voir ci-dessous"
 
 #. Text in echo
-#: link-library.php:1003
+#: link-library.php:1065
 msgid "Select Current Style Set"
 msgstr "Sélectionner le groupe de configuration courant"
 
 #. Text in echo
-#: link-library.php:1105
+#: link-library.php:1167
 msgid "Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link. The Permalinks option must be enabled for HTML GET + Permalink to work correctly."
 msgstr "Sélectionner si la librairie AJAX est utilisée pour rafraîchir la liste sans recharger complètement la page ou si la méthode HTML GET doit recharger la page complète avec un nouveau lien. L'option des liens personnalisés doit être activée pour que l'option HTML GET + Permaliens fonctionne correctement."
 
 #. Text in echo
-#: link-library.php:1656
+#: link-library.php:1718
 msgid "Select which link address will be displayed / used for link"
 msgstr "Sélectionner l'adresse qui doit être utilisée / affichée pour le lien"
 
 #. Text in echo
-#: link-library.php:1031
+#: link-library.php:1093
 msgid "Set #"
 msgstr "Groupe #"
 
 #. Text in echo
-#: link-library.php:1034
+#: link-library.php:1096
 msgid "Set Name"
 msgstr "Nom du groupe"
 
 #. Text in echo
-#: link-library.php:1300
-#: link-library.php:1303
+#: link-library.php:1362
+#: link-library.php:1365
 msgid "Set this address to a page running Link Library to place categories on a different page. Should always be used with the Show One Category at a Time and HTMLGET fetch method."
 msgstr "Configurer cette adresse vers une page utilisant \"Link Library\" pour placer la liste des catégories sur une autre page. Ce champ devrait toujours être utilisé en conjonction avec le mode \"N'affichez qu'une catégorie à la fois et la méthode HTML GET\"."
 
 #. Text in echo
-#: link-library.php:1357
+#: link-library.php:1419
 msgid "Sets default link target window, does not override specific targets set in links"
 msgstr "Configure la fenêtre cible pour les liens. Cette valeur n'est pas prioritaire par rapport aux cibles spécifiques des liens."
 
 #. Text in echo
-#: link-library.php:1020
+#: link-library.php:1082
 msgid "Setting Set"
 msgstr "Groupe de configuration"
 
 #. Text in echo
-#: link-library.php:2095
+#: link-library.php:2157
 msgid "Setting Set CSV file to import"
 msgstr "Fichier CSV contenant le groupe de configuration à importer"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Setting Set Exported"
 msgstr "Group de configuration exporté"
 
 #. Text in echo
-#: link-library.php:1001
+#: link-library.php:1063
 msgid "Setting Set Selection and Usage Instructions"
 msgstr "Sélection du groupe de configuration et instructions d'utilisation"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Setting Set Upload Failed"
 msgstr "L'envoi du groupe de configuration n'a pas fonctionné"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Setting Set imported successfully"
 msgstr "Groupe de configuration exporté avec succès"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Settings"
 msgstr "Configuration"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Settings Set"
 msgstr "Groupe de configuration"
 
 #. Text in echo
-#: link-library.php:1952
-#: link-library.php:1963
-#: link-library.php:1992
-#: link-library.php:2002
-#: link-library.php:2013
-#: link-library.php:2023
-#: link-library.php:2034
-#: link-library.php:2044
+#: link-library.php:2014
+#: link-library.php:2025
+#: link-library.php:2054
+#: link-library.php:2064
+#: link-library.php:2075
+#: link-library.php:2085
+#: link-library.php:2096
+#: link-library.php:2106
 msgid "Show"
 msgstr "Afficher"
 
 #. Text in echo
-#: link-library.php:1324
+#: link-library.php:1386
 msgid "Show Category Description"
 msgstr "Afficher la description des catégories"
 
 #. Text in echo
-#: link-library.php:1373
+#: link-library.php:1435
 msgid "Show Column Headers"
 msgstr "Afficher les entêtes de colonnes"
 
 #. Text in echo
-#: link-library.php:1410
+#: link-library.php:1472
 msgid "Show Hidden Links"
 msgstr "Afficher les liens cachés"
 
 #. Text in echo
-#: link-library.php:1737
+#: link-library.php:1799
 msgid "Show Link Rating"
 msgstr "Afficher le classement des liens"
 
 #. Text in echo
-#: link-library.php:1744
+#: link-library.php:1806
 msgid "Show Link Updated Flag"
 msgstr "Afficher l'indication de mise à jour des liens"
 
 #. Text in echo
-#: link-library.php:1826
+#: link-library.php:1888
 msgid "Show RSS Feed Content in Link Library output"
 msgstr "Afficher le contenu des flux d'informations RSS dans la page générée par \"Link Library\""
 
 #. Text in echo
-#: link-library.php:1818
+#: link-library.php:1880
 msgid "Show RSS Feed Headers in Link Library output"
 msgstr "Afficher les entêtes des flux d'informations RSS dans la page générée par \"Link Library\""
 
 #. Text in echo
-#: link-library.php:1789
+#: link-library.php:1851
 msgid "Show RSS Link using Standard Icon"
 msgstr "Afficher le lien RSS en utilisant l'icône standard"
 
 #. Text in echo
-#: link-library.php:1783
+#: link-library.php:1845
 msgid "Show RSS Link using Text"
 msgstr "Afficher le lien RSS de façon textuelle"
 
 #. Text in echo
-#: link-library.php:1806
+#: link-library.php:1868
 msgid "Show RSS Preview Link"
 msgstr "Afficher un lien vers l'aperçu du flux d'informations"
 
 #. Text in echo
-#: link-library.php:1768
+#: link-library.php:1830
 msgid "Show edit links when logged in as editor or administrator"
 msgstr "Afficher un lien d'édition lorsque l'utilisateur est un éditeur ou un administrateur"
 
 #. Text in echo
-#: link-library.php:1912
+#: link-library.php:1974
 msgid "Show user links immediately"
 msgstr "Afficher immédiatement les liens soumis par les utilisateurs"
 
 #. Text in echo
-#: link-library.php:1925
+#: link-library.php:1987
 msgid "Store login name on link submission"
 msgstr "Sauvegarder le nom de l'utilisateur ayant soumis le lien"
 
 #. Text in echo
-#: link-library.php:977
-msgid "Stylesheet File Name"
-msgstr "Nom de la feuille de style"
+#: link-library.php:1039
+msgid "Stylesheet"
+msgstr "Feuille de style"
 
 #. Text in echo
-#: link-library.php:1105
+#: link-library.php:937
+#: link-library.php:1000
+#: link-library.php:1026
+msgid "Stylesheet Editor"
+msgstr "Éditeur de feuille de style"
+
+#. Text in function
+#: link-library.php:4190
+msgid "Stylesheet reset to original state"
+msgstr "Feuille de style originale restaurée"
+
+#. Text in function
+#: link-library.php:4190
+msgid "Stylesheet updated"
+msgstr "Feuille de style mise à jour"
+
+#. Text in echo
+#: link-library.php:1013
+msgid "Submit"
+msgstr "Soumettre"
+
+#. Text in echo
+#: link-library.php:1167
 msgid "Switching Method"
 msgstr "Méthode pour les mises à jour de la page"
 
 #. Text in echo
-#: link-library.php:1191
-#: link-library.php:1366
+#: link-library.php:1253
+#: link-library.php:1428
 msgid "Table"
 msgstr "Table"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1449
-#: link-library.php:1638
-#: link-library.php:2132
-#: link-library.php:4083
+#: link-library.php:4190
+#: link-library.php:1511
+#: link-library.php:1700
+#: link-library.php:2194
+#: link-library.php:4155
 msgid "Telephone"
 msgstr "Téléphone"
 
 #. Text in echo
-#: link-library.php:1683
+#: link-library.php:1745
 msgid "Text Label that the e-mail will be assigned to represent the e-mail link."
 msgstr "Attribut de l'encadré \"Email\""
 
 #. Text in echo
-#: link-library.php:1653
+#: link-library.php:1715
 msgid "Text Label that the telephone will be assigned to."
 msgstr "Texte associé au numéro de téléphone."
 
 #. Text in echo
-#: link-library.php:1625
+#: link-library.php:1687
 msgid "Text Label that the web link will be assigned to."
 msgstr "Texte associé à l'hyperlien."
 
 #. Text in echo
-#: link-library.php:1243
+#: link-library.php:1039
+#: link-library.php:1040
+msgid "The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next."
+msgstr "La feuille de style est maintenant définir et sauvegardée à partir du panneau d'administration de Link Library. Ceci évite des problèmes lors des mises à jour."
+
+#. Text in echo
+#: link-library.php:1305
 msgid "These div tags can be used to style of position link categories on the link page"
 msgstr "Ces balises div peuvent être utilisées pour positionner les catégories de lien sur la page"
 
 #. Text in echo
-#: link-library.php:1293
+#: link-library.php:1355
 msgid "Third div class name"
 msgstr "Troisième nom de classe div"
 
 #. Text in echo
-#: link-library.php:1722
+#: link-library.php:1784
 msgid "This column allows for the output of text/code after a number of links determined in the first column"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché après le nombre de liens spécifié sur la première ligne de cette table"
 
 #. Text in echo
-#: link-library.php:1712
+#: link-library.php:1774
 msgid "This column allows for the output of text/code after each link"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché après chaque lien"
 
 #. Text in echo
-#: link-library.php:1474
+#: link-library.php:1536
 msgid "This column allows for the output of text/code before a number of links determined by the Display field"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant le nombre de liens spécifié sur la première ligne de cette table"
 
 #. Text in echo
-#: link-library.php:1693
+#: link-library.php:1755
 msgid "This column allows for the output of text/code before and after Link Hits"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque hyperlien"
 
 #. Text in echo
-#: link-library.php:1547
+#: link-library.php:1609
 msgid "This column allows for the output of text/code before and after each link date stamp"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque date"
 
 #. Text in echo
-#: link-library.php:1563
+#: link-library.php:1625
 msgid "This column allows for the output of text/code before and after each link description"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque description"
 
 #. Text in echo
-#: link-library.php:1526
+#: link-library.php:1588
 msgid "This column allows for the output of text/code before and after each link name"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque nom"
 
 #. Text in echo
-#: link-library.php:1579
+#: link-library.php:1641
 msgid "This column allows for the output of text/code before and after each link notes"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque note"
 
 #. Text in echo
-#: link-library.php:1666
+#: link-library.php:1728
 msgid "This column allows for the output of text/code before and after the E-mail"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque email"
 
 #. Text in echo
-#: link-library.php:1595
+#: link-library.php:1657
 msgid "This column allows for the output of text/code before and after the RSS icons"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après les icônes RSS"
 
 #. Text in echo
-#: link-library.php:1638
+#: link-library.php:1700
 msgid "This column allows for the output of text/code before and after the Telephone Number"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après le numéro de téléphone"
 
 #. Text in echo
-#: link-library.php:1611
+#: link-library.php:1673
 msgid "This column allows for the output of text/code before and after the Web Link"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après les hyperliens"
 
 #. Text in echo
-#: link-library.php:1486
+#: link-library.php:1548
 msgid "This column allows for the output of text/code before each link"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque lien"
 
 #. Text in echo
-#: link-library.php:1503
+#: link-library.php:1565
 msgid "This column allows for the output of text/code before each link image"
 msgstr "Cette colonne permet de spécifier le texte/code qui sera affiché avant et après chaque image"
 
 #. Text in echo
-#: link-library.php:989
-#: link-library.php:990
-#: link-library.php:991
-#: link-library.php:992
+#: link-library.php:1051
+#: link-library.php:1052
+#: link-library.php:1053
+#: link-library.php:1054
 msgid "This function is only possible when showing one category at a time and while the default category is not shown."
 msgstr "Cette fonctionnalité est seulement possible lorsque l'option \"N'afficher qu'une catégorie à la fois\" est activée et que la catégorie par défaut n'est pas affichée."
 
 #. Text in echo
-#: link-library.php:1925
+#: link-library.php:1987
 msgid "This function will only store data when users are logged in to Wordpress"
 msgstr "Cette fonctionnalité ne peut être accessible qu'aux membres connectés"
 
 #. Text in echo
-#: link-library.php:1213
+#: link-library.php:1275
 msgid "This setting does not apply when selecting My Link Order for the order"
 msgstr "Cette option ne s'applique que lorsque l'on choisit \"My Link Order\"  comme ordre de présentation"
 
 #. Text in echo
-#: link-library.php:1849
+#: link-library.php:1911
 msgid "Thumbnail Generation and Use"
 msgstr "Génération de vignettes et utilisation"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Thumbnail successfully generated for"
 msgstr "Vignette générée avec succès pour"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Thumbnails successfully generated!"
 msgstr "Vignettes générées avec succès!"
 
 #. Text in echo
-#: link-library.php:1865
+#: link-library.php:1927
 msgid "Thumbshots CID"
 msgstr "CID de Thumbshots"
 
 #. Text in echo
-#: link-library.php:1083
+#: link-library.php:1145
 msgid "To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browsers status bar. For example"
 msgstr "Pour trouver les identifiants; aller sur la page de configuration des catégories de liens, placer votre souris au-dessus du nom de la catégorie et cherchez l'identifiant dans l'adresse qui est affichée dans la barre de status de votre navigateur. Par exemple"
 
 #. Text in echo
-#: link-library.php:946
+#: link-library.php:990
 msgid "Uncheck All"
 msgstr "Tout décocher"
 
 #. Text in echo
-#: link-library.php:1192
-#: link-library.php:1367
+#: link-library.php:1254
+#: link-library.php:1429
 msgid "Unordered List"
 msgstr "Liste non-ordonée"
 
 #. Text in echo
-#: link-library.php:973
+#: link-library.php:1035
 msgid "Update General Settings"
 msgstr "Sauvegarde de la configuration générale"
 
 #. Text in echo
-#: link-library.php:1059
-#: link-library.php:2067
+#: link-library.php:1121
+#: link-library.php:2129
 msgid "Update Settings"
 msgstr "Sauvegarder la configuration"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "Updated"
 msgstr "Mis à jour"
 
 #. Text in echo
-#: link-library.php:1268
+#: link-library.php:1330
 msgid "Use Div Class or Heading tag around Category Names"
 msgstr "Utiliser une balise div ou une balise d'entête autour des noms de catégories"
 
 #. Text in echo
-#: link-library.php:1853
+#: link-library.php:1915
 msgid "Use Thumbshots.org for dynamic link images"
 msgstr "Utiliser \"Thumbshots.org\" pour la génération dynamique de vignettes"
 
 #. Text in echo
-#: link-library.php:1326
+#: link-library.php:1388
 msgid "Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >"
 msgstr "Utilisez [ et ] dans la description pour écrire du code HTML, tel que du code pour afficher une image, au lien d'utiliser < et >"
 
 #. Text in echo
-#: link-library.php:1797
-#: link-library.php:1800
+#: link-library.php:1859
+#: link-library.php:1862
 msgid "Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory"
 msgstr "Utilisé par l'aperçu des flux d'informations RSS et la présentation d'articles RSS dans la liste de lien ci-dessous. Le répertoire doit avoir des permissions d'écriture"
 
 #. Text in function
-#: link-library.php:2132
+#: link-library.php:2194
 msgid "User Category was not provided correctly. Link insertion failed."
 msgstr "La catégorie spécifiée par l'utilisateur n'a pas été correctement saisie. L'ajout du lien à échoué."
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1967
-#: link-library.php:1968
+#: link-library.php:4190
+#: link-library.php:2029
+#: link-library.php:2030
 msgid "User-submitted category"
 msgstr "Catégorie soumise par l'utilisateur"
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:1979
-#: link-library.php:2132
+#: link-library.php:4190
+#: link-library.php:2041
+#: link-library.php:2194
 msgid "User-submitted category (define below)"
 msgstr "Catégorie définie par l'usager (définir ci-dessous)"
 
 #. Text in echo
-#: link-library.php:1978
+#: link-library.php:2040
 msgid "User-submitted category prompt"
 msgstr "Texte pour la soumission de catégories par l'utilisateur"
 
 #. Text in echo
-#: link-library.php:1909
+#: link-library.php:1971
 msgid "View list of links awaiting moderation"
 msgstr "Visionner la liste des liens qui attendent d'être modérés"
 
 #. Text in function
-#: link-library.php:4080
-#: link-library.php:4092
+#: link-library.php:4152
+#: link-library.php:4164
 msgid "Visit"
 msgstr "Visiter"
 
 #. Text in echo
-#: link-library.php:1615
+#: link-library.php:1677
 msgid "Web Address"
 msgstr "Adresse du site"
 
 #. Text in echo
-#: link-library.php:1446
-#: link-library.php:1611
+#: link-library.php:1508
+#: link-library.php:1673
 msgid "Web Link"
 msgstr "Lien du site"
 
 #. Text in echo
-#: link-library.php:1234
+#: link-library.php:1296
 msgid "Width of Categories Table in Percents"
 msgstr "Largeur de la table des catégories en pourcentage"
 
 #. Text in echo
-#: link-library.php:1182
-#: link-library.php:1319
+#: link-library.php:1244
+#: link-library.php:1381
 msgid "Wordpress Plugin"
 msgstr "Extension (plugin) WordPress"
 
 #. Text in function
-#: link-library.php:1061
+#: link-library.php:1123
 msgid ""
 "You are about to Delete Setting Set '%s'\\n"
 "  'Cancel' to stop, 'OK' to delete."
@@ -1745,7 +1799,7 @@ msgstr ""
 "  'Cancel' pour interrompre, 'OK' pour supprimer."
 
 #. Text in function
-#: link-library.php:1063
+#: link-library.php:1125
 msgid ""
 "You are about to reset Setting Set '%s' for a table layout\\n"
 "  'Cancel' to stop, 'OK' to reset."
@@ -1754,7 +1808,7 @@ msgstr ""
 "  'Cancel' pour interrompre, 'OK' pour continuer."
 
 #. Text in function
-#: link-library.php:1062
+#: link-library.php:1124
 msgid ""
 "You are about to reset Setting Set '%s'\\n"
 "  'Cancel' to stop, 'OK' to reset."
@@ -1763,44 +1817,44 @@ msgstr ""
 "  'Cancel' pour interrompre, 'OK' pour continuer."
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "You cannot edit the Link Library for WordPress options."
 msgstr "Vous ne pouvez pas modifier les options de Link Library."
 
 #. Text in echo
-#: link-library.php:2078
+#: link-library.php:2140
 msgid "file template"
 msgstr "example de fichier"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "is invalid. Please check the ID in the Link Category editor."
 msgstr "est invalide. Veuillez vérifier l'identifiant dans l'éditeur de catégories de liens."
 
 #. Text in function
-#: link-library.php:4118
-#: link-library.php:2060
+#: link-library.php:4190
+#: link-library.php:2122
 msgid "it will appear in the list once moderated. Thank you."
 msgstr "il apparaîtra dans la liste une fois modéré. Merci."
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "link(s) imported successfully"
 msgstr "lien(s) importé(s) avec succès"
 
 #. Text in echo
-#: link-library.php:1083
-#: link-library.php:1086
+#: link-library.php:1145
+#: link-library.php:1148
 msgid "numeric category IDs"
 msgstr "identifiants de catégories numériques"
 
 #. Text in echo
-#: link-library.php:1094
+#: link-library.php:1156
 msgid "numeric category IDs that should not be shown"
 msgstr "identifiants de catégories numériques à ne pas afficher"
 
 #. Text in function
-#: link-library.php:4118
+#: link-library.php:4190
 msgid "row(s) found"
 msgstr "rangée(s) trouvée(s)"
 

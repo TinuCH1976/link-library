@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.0.4
+Version: 4.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -115,7 +115,22 @@ function ll_install() {
 			update_option($settingsname, $options);
 		}
 	}
-}       
+}     
+
+function ll_uninstall() {
+	$genoptions = get_option('LinkLibraryGeneral');
+	
+	if ($genoptions != '')
+	{
+		if ($genoptions['stylesheet'] != '')
+		{
+			$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/' . $genoptions['stylesheet'];
+			$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
+			
+			update_option('LinkLibraryGeneral', $genoptions);
+		}
+	}
+}  
 
 function ll_reset_options($settings = 1, $layout = 'list')
 {
@@ -307,6 +322,10 @@ function ll_reset_gen_settings()
 	$genoptions['schemaversion'] = 3.5;
 	$genoptions['pagetitleprefix'] = '';
 	$genoptions['pagetitlesuffix'] = '';
+	
+	$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
+	$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
+				
 	update_option('LinkLibraryGeneral', $genoptions);
 } 
 
@@ -505,6 +524,31 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 				update_option('LinkLibraryGeneral', $genoptions);
 
+			}
+			if (isset($_POST['submitstyle']))
+			{
+				$section = 'stylesheet';
+			
+				$genoptions = get_option('LinkLibraryGeneral');
+				
+				$genoptions['fullstylesheet'] = $_POST['fullstylesheet'];
+				
+				update_option('LinkLibraryGeneral', $genoptions);
+				
+				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet updated', 'link-library') . ".</strong></p></div>";
+			}
+			if (isset($_POST['resetstyle']))
+			{
+				$section = 'stylesheet';
+				
+				$genoptions = get_option('LinkLibraryGeneral');
+				
+				$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
+				$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
+				
+				update_option('LinkLibraryGeneral', $genoptions);
+				
+				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet reset to original state', 'link-library') . ".</strong></p></div>";
 			}
 			if (isset($_POST['importlinks']))
 			{
@@ -870,9 +914,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 			}
 
 			if ($_GET['section'] == 'moderate')
-			{
 				$section = 'moderate';
-			}
+			elseif ($_GET['section'] == 'stylesheet')
+				$section = 'stylesheet';
 
 			if ($section == 'moderate') {
 			?>
@@ -890,7 +934,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 			<div class="wrap" id='llmoderate' style='width:1000px'>
 				<h2><?php _e('Link Library - Link Moderation', 'link-library'); ?></h2>
-				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php"><?php _e('Configuration Page', 'link-library'); ?></a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'><?php _e('Installation Instructions', 'link-library'); ?></a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'><?php _e('FAQ', 'link-library'); ?></a> | <?php _e('Help also in tooltips', 'link-library'); ?> | <a href='http://yannickcorner.nayanna.biz/contact-me'><?php _e('Contact the Author', 'link-library'); ?></a><br /><br />
+				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php"><?php _e('Configuration Page', 'link-library'); ?></a> | <a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=stylesheet"><?php _e('Stylesheet Editor', 'link-library'); ?></a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'><?php _e('Installation Instructions', 'link-library'); ?></a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'><?php _e('FAQ', 'link-library'); ?></a> | <?php _e('Help also in tooltips', 'link-library'); ?> | <a href='http://yannickcorner.nayanna.biz/contact-me'><?php _e('Contact the Author', 'link-library'); ?></a><br /><br />
 
 				<form name='llmoderateform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate" method="post" id="ll-mod">
 				<?php
@@ -950,6 +994,24 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				</form>
 
 			</div>
+			<?php } elseif ($section == 'stylesheet') { ?>
+			
+			<h2><?php _e('Link Library - Stylesheet Editor', 'link-library'); ?></h2>
+				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php"><?php _e('Configuration Page', 'link-library'); ?></a> | <a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=stylesheet"><strong><?php _e('Stylesheet Editor', 'link-library'); ?></strong></a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'><?php _e('Installation Instructions', 'link-library'); ?></a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'><?php _e('FAQ', 'link-library'); ?></a> | <?php _e('Help also in tooltips', 'link-library'); ?> | <a href='http://yannickcorner.nayanna.biz/contact-me'><?php _e('Contact the Author', 'link-library'); ?></a><br /><br />
+				
+				<?php _e('If the stylesheet editor is empty after upgrading, reset to the default stylesheet using the button below or copy/paste your backup stylesheet into the editor.', 'link-library'); ?><br /><br />
+
+			<form name='llmoderateform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=stylesheet" method="post" id="ll-mod">
+			<?php
+			if ( function_exists('wp_nonce_field') )
+					wp_nonce_field('linklibrarypp-config');
+				?>
+				
+			<textarea name='fullstylesheet' id='fullstylesheet' style='font-family:Courier' rows="30" cols="100">
+<?php echo $genoptions['fullstylesheet'];?>
+</textarea>
+			<div><input type="submit" name="submitstyle" value="<?php _e('Submit','link-library'); ?>" /><span style='padding-left: 650px'><input type="submit" name="resetstyle" value="<?php _e('Reset to default','link-library'); ?>" /></span></div>
+			</form>
 
 			<?php } else { ?>
 
@@ -961,7 +1023,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 			<div class="wrap" id='lladmin' style='width:1000px'>
 				<h2><?php _e('Link Library Configuration','link-library'); ?> </h2>
-				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate"><?php _e('Links awaiting moderation','link-library'); ?></a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'><?php _e('Installation Instructions','link-library'); ?></a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'><?php _e('FAQ','link-library'); ?></a> | <?php _e('Help also in tooltips','link-library'); ?> | <a href='http://yannickcorner.nayanna.biz/contact-me'><?php _e('Contact the Author','link-library'); ?></a><br /><br />
+				<a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=moderate"><?php _e('Links awaiting moderation','link-library'); ?></a> | <a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=stylesheet"><?php _e('Stylesheet Editor', 'link-library'); ?></a> | <a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a> | <a target='llinstructions' href='http://wordpress.org/extend/plugins/link-library/installation/'><?php _e('Installation Instructions','link-library'); ?></a> | <a href='http://wordpress.org/extend/plugins/link-library/faq/' target='llfaq'><?php _e('FAQ','link-library'); ?></a> | <?php _e('Help also in tooltips','link-library'); ?> | <a href='http://yannickcorner.nayanna.biz/contact-me'><?php _e('Contact the Author','link-library'); ?></a><br /><br />
 
 				<div>
 				<form name='lladmingenform' action="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php" method="post" id="ll-conf">
@@ -974,8 +1036,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<input type='hidden' value='<?php echo $genoptions['schemaversion']; ?>' name='schemaversion' id='schemaversion' />
 				<table>
 				<tr>
-				<td style='width:200px'><?php _e('Stylesheet File Name','link-library'); ?></td>
-				<td><input type="text" id="stylesheet" name="stylesheet" size="40" value="<?php echo $genoptions['stylesheet']; ?>"/></td>
+				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>' style='width:200px'><?php _e('Stylesheet','link-library'); ?></td>
+				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/options-general.php?page=link-library.php&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
 				<td style='padding-left: 10px;padding-right:10px'><?php _e('Number of Style Sets','link-library'); ?></td>
 				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '5'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
@@ -4035,6 +4097,7 @@ function delete_link_field($link_id) {
 
 function ll_rss_link() {
 	global $rss_settings;
+	global $llstylesheet;
 	
 	if ( !defined('WP_CONTENT_DIR') )
 		define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
@@ -4050,6 +4113,15 @@ function ll_rss_link() {
 		$feedtitle = ($options['rssfeedtitle'] == "" ? __('Link Library Generated Feed', 'link-library') : $options['rssfeedtitle']);	
 				
 		echo '<link rel="alternate" type="application/rss+xml" title="' . wp_specialchars(stripslashes($feedtitle)) . '" href="' . $llpluginpath . 'rssfeed.php?settingset=' . $rss_settings . '" />';
+	}
+	
+	if ($llstylesheet)
+	{
+		$genoptions = get_option('LinkLibraryGeneral');
+		
+		echo "<style type='text/css'>\n";
+		echo $genoptions['fullstylesheet'];
+		echo "</style>\n";
 	}
 }
 
@@ -4222,6 +4294,7 @@ function LinkLibraryInit() {
 }
 
 register_activation_hook(LL_FILE, 'll_install');
+register_deactivation_hook(LL_FILE, 'll_uninstall');
 
 function conditionally_add_scripts_and_styles($posts){
 	if (empty($posts)) return $posts;
@@ -4325,10 +4398,13 @@ function conditionally_add_scripts_and_styles($posts){
 	
 	if ($load_style)
 	{		
-		if ($genoptions == "")
-			$genoptions['stylesheet'] = 'stylesheet.css';
-			
-		wp_enqueue_style('linklibrarystyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/' . $genoptions['stylesheet']);	
+		global $llstylesheet;
+		$llstylesheet = true;
+	}
+	else
+	{
+		global $llstylesheet;
+		$llstylesheet = false;
 	}
  
 	if ($load_jquery)
