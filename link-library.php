@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.3
+Version: 4.1.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2564,7 +2564,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		}
 	}
 	
-	$linkquery = "SELECT distinct *, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
+	$linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
 	$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
 	$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
 	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
@@ -2981,7 +2981,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										elseif ($sourceimage == 'secondary')
 											$imageoutput .= $the_second_link;
 
-										$imageoutput .= '" id="' . $linkitem->link_id . '" class="track_this_link" ' . $rel . $title . $target. '>';
+										$imageoutput .= '" id="' . $linkitem->proper_link_id . '" class="track_this_link" ' . $rel . $title . $target. '>';
 
 										if ($usethumbshotsforimages)
 										{
@@ -3022,11 +3022,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										elseif ($sourcename == 'secondary')
 											$output .= $the_second_link;
 
-										$output .= '" id="' . $linkitem->link_id . '" class="track_this_link" ' . $rel . $title . $target. '>' . $name . '</a>';
+										$output .= '" id="' . $linkitem->proper_link_id . '" class="track_this_link" ' . $rel . $title . $target. '>' . $name . '</a>';
 									}
 
 									if (($showadmineditlinks) && current_user_can("manage_links")) {
-										$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->link_id .'">(Edit)</a>';
+										$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->proper_link_id .'">(Edit)</a>';
 									}
 
 									if ($showupdated && $linkitem->recently_updated) {
@@ -3074,7 +3074,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									}
 									if ($rsspreview && $linkitem->link_rss != '')
 									{
-										$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->link_id . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
+										$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->proper_link_id . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
 									}
 
 									if ($show_rss || $show_rss_icon || $rsspreview)
@@ -3114,7 +3114,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										elseif ($sourceweblink == "secondary")
 											$output .= $the_second_link;
 
-										$output .= "' id='" . $linkitem->link_id . "' class='track_this_link'>";
+										$output .= "' id='" . $linkitem->proper_link_id . "' class='track_this_link'>";
 
 										if ($displayweblink == 'address')
 										{
@@ -3145,7 +3145,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 											elseif ($sourcetelephone == "secondary" && $the_second_link != '')
 												$output .= $the_second_link;
 
-											$output .= "' id='" . $linkitem->link_id . "' class='track_this_link' >";
+											$output .= "' id='" . $linkitem->proper_link_id . "' class='track_this_link' >";
 										}
 											
 										if ($showtelephone == 'link' || $showtelephone == "plain")
