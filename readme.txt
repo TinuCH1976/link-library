@@ -72,6 +72,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1.3 =
+* Fixed: Links not displayed when links ordered by ID
+* Improved upgrade process from versions before 4.0 to avoid losing configuration options.
+
 = 4.1.2 =
 * Correction to stylesheet display filter
 

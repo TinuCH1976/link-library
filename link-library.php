@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.2
+Version: 4.1.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -94,6 +94,12 @@ function ll_install() {
 			{
 				if ($options['showname'] == '')
 					$options['showname'] = true;
+					
+				if ($options['show_image_and_name'] == true)
+				{
+					$options['showname'] = true;
+					$options['show_images'] = true;
+				}
 
 				if ($options['sourcename'] == '')
 					$options['sourcename'] = 'primary';
@@ -2627,11 +2633,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		$linkquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
 
 	if ($linkorder == "name")
-		$linkquery .= ", link_name " . $linkdirection;
+		$linkquery .= ", l.link_name " . $linkdirection;
 	elseif ($linkorder == "id")
-		$linkquery .= ", link_id " . $linkdirection;
+		$linkquery .= ", l.link_id " . $linkdirection;
 	elseif ($linkorder == "order")
-		$linkquery .= ", link_order ". $linkdirection;
+		$linkquery .= ", l.link_order ". $linkdirection;
 
 	if ($pagination && $mode != 'search')
 	{
