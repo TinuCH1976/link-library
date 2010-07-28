@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1.5 =
+* Fixed: Show Web Hits option now turns off correctly
+
 = 4.1.4 =
 * Fixed: Edit links where broken in 4.0. Image and Link ids were broken in 4.0.
 

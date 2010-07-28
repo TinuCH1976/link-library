@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.4
+Version: 4.1.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -728,7 +728,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
 							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss','linksperpage', 'catdescpos',
 							   'beforedate', 'afterdate', 'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight', 'beforeimage', 'afterimage', 'numberofrssitems',
-							   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'showlinkhits', 'sourceimage', 'sourcename') 
+							   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'sourceimage', 'sourcename') 
 							   as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = str_replace("\"", "'", strtolower($_POST[$option_name]));
@@ -752,7 +752,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
-								'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter') as $option_name) {
+								'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
