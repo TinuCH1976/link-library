@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.5
+Version: 4.1.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2976,7 +2976,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images)) {
 										$imageoutput = stripslashes($beforeimage) . '<a href="';
 
-										if ($sourceimage == 'primary')
+										if ($sourceimage == 'primary' || $sourceimage == '')
 											$imageoutput .= $the_link;
 										elseif ($sourceimage == 'secondary')
 											$imageoutput .= $the_second_link;
@@ -3017,7 +3017,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									{
 										$output .= stripslashes($beforelink) . '<a href="';
 
-										if ($sourcename == 'primary')
+										if ($sourcename == 'primary' || $sourcename == '')
 											$output .= $the_link;
 										elseif ($sourcename == 'secondary')
 											$output .= $the_second_link;
@@ -3109,7 +3109,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									if ($displayweblink != 'false') {
 										$output .= $between . stripslashes($beforeweblink) . "<a href='";
 
-										if ($sourceweblink == "primary")
+										if ($sourceweblink == "primary" || $sourceweblink == "")
 											$output .= $the_link;
 										elseif ($sourceweblink == "secondary")
 											$output .= $the_second_link;
@@ -3118,7 +3118,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 										if ($displayweblink == 'address')
 										{
-											if ($sourceweblink == "primary" && $the_link != '')
+											if (($sourceweblink == "primary" || $sourceweblink == '') && $the_link != '')
 												$output .= $the_link;
 											elseif ($sourceweblink == "secondary" && $the_second_link != '')
 												$output .= $the_second_link;
@@ -3140,7 +3140,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										{
 											$output .= "<a href='";
 
-											if ($sourcetelephone == "primary" && $the_link != '')
+											if (($sourcetelephone == "primary" || $sourcetelephone == '') && $the_link != '')
 												$output .= $the_link;
 											elseif ($sourcetelephone == "secondary" && $the_second_link != '')
 												$output .= $the_second_link;

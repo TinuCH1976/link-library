@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1.6 =
+* Fixed: Use primary web address if plugin is updated and settings are not saved anew.
+
 = 4.1.5 =
 * Fixed: Show Web Hits option now turns off correctly
 
