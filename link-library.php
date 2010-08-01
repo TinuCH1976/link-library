@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.6
+Version: 4.1.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -313,7 +313,6 @@ function ll_reset_options($settings = 1, $layout = 'list')
 	$options['enablerewrite'] = false;
 	$options['rewritepage'] = '';
 	$options['storelinksubmitter'] = false;
-	$options['thumbshotscid'] = '';
 
 	$settingsname = 'LinkLibraryPP' . $settings;
 	update_option($settingsname, $options);	
@@ -328,6 +327,7 @@ function ll_reset_gen_settings()
 	$genoptions['schemaversion'] = 3.5;
 	$genoptions['pagetitleprefix'] = '';
 	$genoptions['pagetitlesuffix'] = '';
+	$genoptions['thumbshotscid'] = '';
 	
 	$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
 	$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
@@ -339,14 +339,14 @@ function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
 {
 	if ($url != "" && $name != "")
 	{
-		if ($mode == 'thumb')
+		if ($mode == 'thumb' || $mode == 'thumbonly')
 		{
 			if ($cid == '')
 				$genthumburl = "http://open.thumbshots.org/image.aspx?url=" . wp_specialchars($url);
 			elseif ($cid != '')
 				$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . $cid . "&w=120&h=90&v=1&url=" . wp_specialchars($url);
 		}
-		elseif ($mode == 'favicon')
+		elseif ($mode == 'favicon' || $mode == 'favicononly')
 		{
 			$strippedurl = str_replace("http://", "", wp_specialchars($url));
 			$genthumburl = "http://www.getfavicon.org/?url=" . $strippedurl . "/favicon.png";
@@ -363,14 +363,16 @@ function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
 		if ($status)
 		{
 			$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/plugins/" . $filepath . "/" . $linkname . ".jpg");
-			wp_update_link($newimagedata);
 
-			return true;
+			if ($mode == 'thumb' || $mode == 'favicon')
+				wp_update_link($newimagedata);
+
+			return $newimagedata['link_image'];
 		}
 		else
-			return false;
+			return "";
 	}
-	return false;
+	return "";
 }
 
 if ( ! class_exists( 'LL_Admin' ) ) {
@@ -446,6 +448,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 					$settingsname = 'LinkLibraryPP' . $settings;
 					$options = get_option($settingsname);
+					
+					$genoptions = get_option('LinkLibraryGeneral');
 
 					$linkquery = "SELECT distinct * ";
 					$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
@@ -468,7 +472,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						$totallinks = count($linkitems);
 						foreach($linkitems as $linkitem)
 						{
-							ll_get_link_image($linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $options['thumbshotscid'], $filepath);
+							ll_get_link_image($linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $genoptions['thumbshotscid'], $filepath);
 							$linkname = $linkitem->link_name;
 						}
 
@@ -514,7 +518,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.', 'link-library'));
 				check_admin_referer('linklibrarypp-config');
 
-				foreach (array('stylesheet', 'numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion') as $option_name) {
+				foreach (array('stylesheet', 'numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$genoptions[$option_name] = $_POST[$option_name];
 					}
@@ -741,8 +745,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel', 'linkcustomcatlistentry',
 								'searchlabel', 'dragndroporder', 'cattargetaddress', 'beforeweblink', 'afterweblink', 'weblinklabel', 'beforetelephone',
 								'aftertelephone', 'telephonelabel', 'beforeemail', 'afteremail', 'emaillabel', 'beforelinkhits', 'afterlinkhits',
-								'linkreciprocallabel', 'linksecondurllabel', 'linktelephonelabel', 'linkemaillabel', 'emailcommand', 'rewritepage',
-								'thumbshotscid') as $option_name) {
+								'linkreciprocallabel', 'linksecondurllabel', 'linktelephonelabel', 'linkemaillabel', 'emailcommand', 'rewritepage') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 					}
@@ -1058,6 +1061,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitleprefix" name="pagetitleprefix" size="10" value="<?php echo $genoptions['pagetitleprefix']; ?>"/></td>
 				<td style="padding-left: 10px;padding-right:10px" class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Suffix','link-library'); ?></td>
 				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitlesuffix" name="pagetitlesuffix" size="10" value="<?php echo $genoptions['pagetitlesuffix']; ?>"/></td>
+				</tr>
+				<tr>
+					<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
+					<td colspan='2' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $options['thumbshotscid']; ?>"/></td>
 				</tr>
 				</table>
 				</fieldset>
@@ -1928,10 +1935,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						<td><?php _e('Generate Images / Favorite Icons', 'link-library'); ?></td>
 						<td><INPUT type="button" name="genthumbs" value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= '?page=link-library.php&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
 						<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= '?page=link-library.php&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width=75px;padding-right:20px'></td>
-					</tr>
-					<tr>
-						<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-						<td colspan='2' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $options['thumbshotscid']; ?>"/></td>
 					</tr>
 					</table>
 					</fieldset>
@@ -3733,7 +3736,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['showemail'], $options['showlinkhits'], $options['beforeweblink'], $options['afterweblink'], $options['weblinklabel'],
 								  $options['beforetelephone'], $options['aftertelephone'], $options['telephonelabel'], $options['beforeemail'], $options['afteremail'],
 								  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
-								  $options['sourcename'], $options['thumbshotscid']);	
+								  $options['sourcename'], $genoptions['thumbshotscid']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -4066,7 +4069,7 @@ function link_library_func($atts) {
 								  $options['sourceweblink'], $options['showtelephone'], $options['sourcetelephone'], $options['showemail'], $options['showlinkhits'],
 								  $options['beforeweblink'], $options['afterweblink'], $options['weblinklabel'], $options['beforetelephone'], $options['aftertelephone'],
 								  $options['telephonelabel'], $options['beforeemail'], $options['afteremail'], $options['emaillabel'], $options['beforelinkhits'],
-								  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $options['thumbshotscid']); 
+								  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid']); 
 		
 	return $linklibraryoutput;
 }
@@ -4180,19 +4183,83 @@ function ll_link_edit_extra($link) {
 		<tr>
 			<td><?php _e('Current Link Image', 'link-library'); ?></td>
 			<td>
+				<div id='current_link_image'>
 				<?php if ($originaldata['link_image'] != ''): ?>
 					<img src="<?php echo $originaldata['link_image'] ?>" />
 				<?php else: ?>
 					<?php _e('None Assigned', 'link-library'); ?>
 				<?php endif; ?>
+				</div>
 			</td>
 		</tr>
 		<tr>
 			<td><?php _e('Automatic Image Generation', 'link-library'); ?></td>
-			<td><INPUT type="button" name="genthumbs" value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>" onClick="window.location= '<?php echo WP_ADMIN_URL; ?>/options-general.php?page=link-library.php&amp;settings=<?php echo $settings; ?>&amp;genthumbsingle=<?php echo $settings; ?>&amp;linkid=<?php echo $link->link_id; ?>'">
-				<INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icon and Store locally', 'link-library'); ?>" onClick="window.location= '<?php echo WP_ADMIN_URL; ?>/options-general.php?page=link-library.php&amp;settings=<?php echo $settings; ?>&amp;genfaviconsingle=<?php echo $settings; ?>&amp;linkid=<?php echo $link->link_id; ?>'"></td>
+			<td><INPUT type="button" id="genthumbs" name="genthumbs" value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
+				<INPUT type="button" id="genfavicons" name="genfavicons" value="<?php _e('Generate Favorite Icon and Store locally', 'link-library'); ?>"></td>
 		</tr>
 	</table>
+						
+<?php $genoptions = get_option('LinkLibraryGeneral'); ?>
+
+	<script type="text/javascript">
+		jQuery(document).ready(function()
+		{
+			jQuery('#genthumbs').click(function()
+			{
+				var linkname = jQuery('#link_name').val();
+				var linkurl = jQuery('#link_url').val();
+				
+				if (linkname != '' && linkurl != '')
+				{
+					jQuery('#current_link_image').fadeOut('fast');
+					var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images' };
+					jQuery.get('<?php echo WP_PLUGIN_URL; ?>/link-library/link-library-image-generator.php', map, 
+						function(data){
+							if (data != '')
+							{
+								jQuery('#current_link_image').replaceWith("<div id='current_link_image'><img src='" + data + "' /></div>");
+								jQuery('#current_link_image').fadeIn('fast');
+								jQuery('#link_image').val(data);
+								alert('<?php _e('Thumbnail successfully generated for', 'link-library'); ?> ' + linkname);
+							}
+						});
+				}
+				else
+				{
+					alert("<?php _e('Cannot generate thumbnail when no name and no web address are specified.', 'link-library'); ?>");
+				}
+			} );
+			
+			jQuery('#genfavicons').click(function()
+			{
+				var linkname = jQuery('#link_name').val();
+				var linkurl = jQuery('#link_url').val();
+				
+				if (linkname != '' && linkurl != '')
+				{
+					jQuery('#current_link_image').fadeOut('fast');
+					var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons' };
+					jQuery.get('<?php echo WP_PLUGIN_URL; ?>/link-library/link-library-image-generator.php', map, 
+						function(data){
+							if (data != '')
+							{
+								jQuery('#current_link_image').replaceWith("<div id='current_link_image'><img src='" + data + "' /></div>");
+								jQuery('#current_link_image').fadeIn('fast');
+								jQuery('#link_image').val(data);
+								alert('<?php _e('Favicon successfully generated for', 'link-library') ?> ' + linkname);
+							}
+						});
+				}
+				else
+				{
+					alert("<?php _e('Cannot generate favorite icon when no name and no web address are specified.', 'link-library'); ?>");
+				}
+			} );
+
+		});
+</script>
+	
+	
 <?php
 }
 

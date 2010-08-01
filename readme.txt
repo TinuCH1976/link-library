@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1.7 =
+* Improved thumbnail and favorite icon generation buttons in link edition form so that they work even when creating a new link and don't redirect to a different page
+
 = 4.1.6 =
 * Fixed: Use primary web address if plugin is updated and settings are not saved anew.
 
