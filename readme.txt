@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.1.8 =
+* Improved usage instructions section
+
 = 4.1.7 =
 * Improved thumbnail and favorite icon generation buttons in link edition form so that they work even when creating a new link and don't redirect to a different page
 

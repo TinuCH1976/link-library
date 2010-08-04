@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.1.7
+Version: 4.1.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1108,13 +1108,23 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<th style='width:130px' class="tooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
 								<?php _e('Set Name', 'link-library'); ?>
 							</th>
+							<th style='width: 230px'><?php _e('Feature', 'link-library'); ?></th>
 							<th class="tooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
-								<?php _e('Code to insert on a Wordpress page to see Link Library', 'link-library'); ?>
+								<?php _e('Code to insert on a Wordpress page', 'link-library'); ?>
 							</th>
 						</tr>
 						</thead>
 						<tr>
-						<td style='background: #FFF'><?php echo $settings; ?></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "] [link-library-search settings=" . $settings . "] [link-library settings=" . $settings . "] [link-library-addlink settings=". $settings . "]"; ?></td><td style='background: #FFF;text-align:center'></td>
+							<td style='background: #FFF'><?php echo $settings; ?></td><td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td><td style='background: #FFF'><?php _e('Display basic link library', 'link-library'); ?></td><td style='background: #FFF'><?php echo "[link-library settings=" . $settings . "]"; ?></td>
+						</tr>
+						<tr>
+							<td style='background: #FFF'></td><td style='background: #FFF'></td><td style='background: #FFF'><?php _e('Display list of link categories', 'link-library'); ?></td><td style='background: #FFF'><?php echo "[link-library-cats settings=" . $settings . "]"; ?></td>
+						</tr>
+						<tr>
+							<td style='background: #FFF'></td><td style='background: #FFF'></td><td style='background: #FFF'><?php _e('Display search box', 'link-library'); ?></td><td style='background: #FFF'><?php echo "[link-library-search settings=" . $settings . "]"; ?></td>						
+						</tr>
+						<tr>
+							<td style='background: #FFF'></td><td style='background: #FFF'></td><td style='background: #FFF'><?php _e('Display link submission form', 'link-library'); ?></td><td style='background: #FFF'><?php echo "[link-library-addlink settings=" . $settings . "]"; ?></td>						
 						</tr>
 					</table> 
 					<br />
