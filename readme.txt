@@ -72,6 +72,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.2 =
+* Fix for RSS dialog box images not showing up in Internet Explorer
+* Fix to properly pass thumbshots CID when requested thumbnails
+
 = 4.1.8 =
 * Improved usage instructions section
 
