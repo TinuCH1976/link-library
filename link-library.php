@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.2.1
+Version: 4.2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1017,7 +1017,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				?>
 				
 			<textarea name='fullstylesheet' id='fullstylesheet' style='font-family:Courier' rows="30" cols="100">
-<?php echo $genoptions['fullstylesheet'];?>
+<?php echo stripslashes($genoptions['fullstylesheet']);?>
 </textarea>
 			<div><input type="submit" name="submitstyle" value="<?php _e('Submit','link-library'); ?>" /><span style='padding-left: 650px'><input type="submit" name="resetstyle" value="<?php _e('Reset to default','link-library'); ?>" /></span></div>
 			</form>
@@ -4139,7 +4139,7 @@ function ll_rss_link() {
 		$genoptions = get_option('LinkLibraryGeneral');
 		
 		echo "<style id='LinkLibraryStyle' type='text/css'>\n";
-		echo $genoptions['fullstylesheet'];
+		echo stripslashes($genoptions['fullstylesheet']);
 		
 		echo "/* IE */\n";
 		echo "#fancybox-loading.fancybox-ie div	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_loading.png', sizingMethod='scale'); }\n";

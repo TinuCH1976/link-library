@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.2.2 =
+* Fixed problem with escape characters added to stylesheet editor when double-quote are present
+
 = 4.2.1 =
 * Added missing code for translation of edit link
 
