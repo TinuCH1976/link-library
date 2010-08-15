@@ -4,7 +4,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid " under your Wordpress plugins directory with write permissions to use this functionality."
 msgstr ""
 
@@ -14,7 +14,7 @@ msgid "A user submitted a new link to your Wordpress Link database."
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2131
 msgid "Add Link"
 msgstr ""
@@ -30,7 +30,7 @@ msgid "Add link"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2012
 #: link-library.php:2213
 msgid "Add new link"
@@ -88,7 +88,7 @@ msgid "Ascending"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4206
+#: link-library.php:4227
 msgid "Automatic Image Generation"
 msgstr ""
 
@@ -119,12 +119,12 @@ msgid "CSV file to upload to import links"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4265
+#: link-library.php:4286
 msgid "Cannot generate favorite icon when no name and no web address are specified."
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4239
+#: link-library.php:4260
 msgid "Cannot generate thumbnail when no name and no web address are specified."
 msgstr ""
 
@@ -313,7 +313,7 @@ msgid "Copy from:"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4194
+#: link-library.php:4215
 msgid "Current Link Image"
 msgstr ""
 
@@ -364,7 +364,7 @@ msgid "Description Column Header"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Description of Link Library-Generated Feed"
 msgstr ""
 
@@ -419,22 +419,27 @@ msgid "Div Class Name or Heading label"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Download here"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:1537
 #: link-library.php:1751
 #: link-library.php:2213
-#: link-library.php:4178
+#: link-library.php:4199
 msgid "E-mail"
 msgstr ""
 
 #. Text in echo
 #: link-library.php:1997
 msgid "E-mail admin on link submission"
+msgstr ""
+
+#. Text in function
+#: link-library.php:2213
+msgid "Edit"
 msgstr ""
 
 #. Text in echo
@@ -477,7 +482,7 @@ msgid "Except for My Link Order mode"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Excluded Category ID"
 msgstr ""
 
@@ -506,13 +511,13 @@ msgid "False"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
-#: link-library.php:4259
+#: link-library.php:4294
+#: link-library.php:4280
 msgid "Favicon successfully generated for"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Favicons successfully generated!"
 msgstr ""
 
@@ -568,7 +573,7 @@ msgid "General Settings"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4208
+#: link-library.php:4229
 msgid "Generate Favorite Icon and Store locally"
 msgstr ""
 
@@ -583,7 +588,7 @@ msgid "Generate Images / Favorite Icons"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4207
+#: link-library.php:4228
 msgid "Generate Thumbnail and Store locally"
 msgstr ""
 
@@ -673,7 +678,7 @@ msgid "Import Settings Set"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Included Category ID"
 msgstr ""
 
@@ -695,7 +700,7 @@ msgid "Intermittent Before Link"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Invalid column count for link on row"
 msgstr ""
 
@@ -744,7 +749,7 @@ msgid "Link Categories Settings"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2039
 #: link-library.php:2213
 msgid "Link Category"
@@ -761,7 +766,7 @@ msgid "Link Date"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:958
 #: link-library.php:1648
 #: link-library.php:2068
@@ -796,7 +801,7 @@ msgid "Link Hits"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Link Library - Additional Link Parameters"
 msgstr ""
 
@@ -828,12 +833,12 @@ msgid "Link Library Supports the Creation of an unlimited number of configuratio
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Link Library plugin directory needs to be writable to perform this action"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Link Library-Generated RSS Feed"
 msgstr ""
 
@@ -846,7 +851,7 @@ msgid "Link Name"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:1664
 #: link-library.php:2078
 #: link-library.php:2213
@@ -854,7 +859,7 @@ msgid "Link Notes"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2028
 #: link-library.php:2213
 msgid "Link RSS"
@@ -886,7 +891,7 @@ msgid "Link Sub-Field Configuration Table"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4190
+#: link-library.php:4211
 msgid "Link Submitter"
 msgstr ""
 
@@ -917,7 +922,7 @@ msgid "Link User Submission"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2213
 msgid "Link address"
 msgstr ""
@@ -948,7 +953,7 @@ msgid "Link description label"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2213
 msgid "Link name"
 msgstr ""
@@ -969,12 +974,12 @@ msgid "Link notes label"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Link(s) Approved"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Link(s) Deleted"
 msgstr ""
 
@@ -1024,7 +1029,7 @@ msgid "New Link Moderation Label"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2136
 msgid "New link submitted"
 msgstr ""
@@ -1055,7 +1060,7 @@ msgid "No links found"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4200
+#: link-library.php:4221
 msgid "None Assigned"
 msgstr ""
 
@@ -1105,7 +1110,7 @@ msgid "Number of items in RSS feed"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4186
+#: link-library.php:4207
 msgid "Number of link views"
 msgstr ""
 
@@ -1193,7 +1198,7 @@ msgid "Plain Text"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Please create a folder called"
 msgstr ""
 
@@ -1268,10 +1273,10 @@ msgid "RSS Preview Width"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2089
 #: link-library.php:2213
-#: link-library.php:4182
+#: link-library.php:4203
 msgid "Reciprocal Link"
 msgstr ""
 
@@ -1346,7 +1351,7 @@ msgid "Secondary"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2099
 #: link-library.php:2213
 msgid "Secondary Address"
@@ -1358,7 +1363,7 @@ msgid "Secondary Address label"
 msgstr ""
 
 #. Text in echo
-#: link-library.php:4170
+#: link-library.php:4191
 msgid "Secondary Web Address"
 msgstr ""
 
@@ -1414,7 +1419,7 @@ msgid "Setting Set CSV file to import"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Setting Set Exported"
 msgstr ""
 
@@ -1424,22 +1429,22 @@ msgid "Setting Set Selection and Usage Instructions"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Setting Set Upload Failed"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Setting Set imported successfully"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Settings"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Settings Set"
 msgstr ""
 
@@ -1533,12 +1538,12 @@ msgid "Stylesheet Editor"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Stylesheet reset to original state"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Stylesheet updated"
 msgstr ""
 
@@ -1559,11 +1564,11 @@ msgid "Table"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:1534
 #: link-library.php:1723
 #: link-library.php:2213
-#: link-library.php:4174
+#: link-library.php:4195
 msgid "Telephone"
 msgstr ""
 
@@ -1692,13 +1697,13 @@ msgid "Thumbnail Generation and Use"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
-#: link-library.php:4233
+#: link-library.php:4294
+#: link-library.php:4254
 msgid "Thumbnail successfully generated for"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Thumbnails successfully generated!"
 msgstr ""
 
@@ -1735,7 +1740,7 @@ msgid "Update Settings"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "Updated"
 msgstr ""
 
@@ -1766,14 +1771,14 @@ msgid "User Category was not provided correctly. Link insertion failed."
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2048
 #: link-library.php:2049
 msgid "User-submitted category"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2060
 #: link-library.php:2213
 msgid "User-submitted category (define below)"
@@ -1790,8 +1795,8 @@ msgid "View list of links awaiting moderation"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4171
-#: link-library.php:4183
+#: link-library.php:4192
+#: link-library.php:4204
 msgid "Visit"
 msgstr ""
 
@@ -1833,7 +1838,7 @@ msgid "You are about to reset Setting Set '%s'\\n  'Cancel' to stop, 'OK' to res
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "You cannot edit the Link Library for WordPress options."
 msgstr ""
 
@@ -1843,18 +1848,18 @@ msgid "file template"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "is invalid. Please check the ID in the Link Category editor."
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 #: link-library.php:2141
 msgid "it will appear in the list once moderated. Thank you."
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "link(s) imported successfully"
 msgstr ""
 
@@ -1870,6 +1875,6 @@ msgid "numeric category IDs that should not be shown"
 msgstr ""
 
 #. Text in function
-#: link-library.php:4273
+#: link-library.php:4294
 msgid "row(s) found"
 msgstr ""

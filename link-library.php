@@ -3039,7 +3039,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									}
 
 									if (($showadmineditlinks) && current_user_can("manage_links")) {
-										$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->proper_link_id .'">(Edit)</a>';
+										$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->proper_link_id .'">(' . __('Edit', 'link-library') . ')</a>';
 									}
 
 									if ($showupdated && $linkitem->recently_updated) {
