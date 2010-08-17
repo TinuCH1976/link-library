@@ -72,6 +72,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.2.4 =
+* Added fix for strict PHP errors that may appear on RSS Preview on some server configurations
+* Fixed display of thumbshots cid field
+* Fixed retrieval of thumbnails from thumbshots.ord when user CID provided
+
 = 4.2.2 =
 * Fixed problem with escape characters added to stylesheet editor when double-quote are present
 

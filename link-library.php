@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.2.2
+Version: 4.2.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1064,7 +1064,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				</tr>
 				<tr>
 					<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-					<td colspan='2' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $options['thumbshotscid']; ?>"/></td>
+					<td colspan='2' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
 				</table>
 				</fieldset>
@@ -2871,6 +2871,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 			if ($rssfeedinline)
 			{
+				ini_set('display_errors', '0');
+				error_reporting(E_ALL | E_STRICT);
+			
 				if( !class_exists('SimplePie'))
 				{
 					require_once( 'simplepie.inc' );
@@ -3002,7 +3005,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 												$imageoutput .= '<img src="http://open.thumbshots.org/image.aspx?url=' . $the_link . '"';
 											elseif ($thumbshotscid != '')
 												$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . $thumbshotscid . 
-													'&w=120&h=90&v=1&url=' . wp_specialchars($url) . '"';											
+													'&v=1&w=120&h=90&url=' . $the_link . '"';											
 										}
 										elseif ( strpos($linkitem->link_image, 'http') !== false )
 											$imageoutput .= '<img src="' . $linkitem->link_image . '"';
@@ -3115,6 +3118,8 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 												$output .= '</div>';
 											}
+											
+										ini_set('display_errors', '1');
 									}
 									break;
 								case 7: 	//------------------ Web Link Output --------------------   
