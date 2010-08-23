@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.2.4
+Version: 4.2.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -47,7 +47,7 @@ define('LLDIR', dirname(__FILE__) . '/');
 
 global $rss_settings;
 
-$rss_settings = "";   
+$rss_settings = ""; 
 
 function ll_install() {
 	global $wpdb;
@@ -313,6 +313,7 @@ function ll_reset_options($settings = 1, $layout = 'list')
 	$options['enablerewrite'] = false;
 	$options['rewritepage'] = '';
 	$options['storelinksubmitter'] = false;
+	$options['maxlinks'] = '';
 
 	$settingsname = 'LinkLibraryPP' . $settings;
 	update_option($settingsname, $options);	
@@ -320,7 +321,6 @@ function ll_reset_options($settings = 1, $layout = 'list')
 
 function ll_reset_gen_settings()
 {
-	$genoptions['stylesheet'] = 'stylesheet.css';
 	$genoptions['numberstylesets'] = 5;
 	$genoptions['includescriptcss'] = '';
 	$genoptions['debugmode'] = false;
@@ -359,7 +359,7 @@ function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
 
 		$imagedata = file_get_contents($genthumburl);
 		$status = file_put_contents(ABSPATH . "/wp-content/plugins/" . $filepath. "/" . $linkname . ".jpg", $imagedata);
-
+		
 		if ($status)
 		{
 			$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/plugins/" . $filepath . "/" . $linkname . ".jpg");
@@ -514,11 +514,13 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				$settings = 1;
 			}
 			if (isset($_POST['submitgen']))
-			{
+			{				
 				if (!current_user_can('manage_options')) die(__('You cannot edit the Link Library for WordPress options.', 'link-library'));
 				check_admin_referer('linklibrarypp-config');
+				
+				$genoptions = get_option('LinkLibraryGeneral');
 
-				foreach (array('stylesheet', 'numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid') as $option_name) {
+				foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$genoptions[$option_name] = $_POST[$option_name];
 					}
@@ -745,7 +747,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel', 'linkcustomcatlistentry',
 								'searchlabel', 'dragndroporder', 'cattargetaddress', 'beforeweblink', 'afterweblink', 'weblinklabel', 'beforetelephone',
 								'aftertelephone', 'telephonelabel', 'beforeemail', 'afteremail', 'emaillabel', 'beforelinkhits', 'afterlinkhits',
-								'linkreciprocallabel', 'linksecondurllabel', 'linktelephonelabel', 'linkemaillabel', 'emailcommand', 'rewritepage') as $option_name) {
+								'linkreciprocallabel', 'linksecondurllabel', 'linktelephonelabel', 'linkemaillabel', 'emailcommand', 'rewritepage',
+								'maxlinks') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 					}
@@ -1402,6 +1405,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<option value="name"<?php if ($options['linkorder'] == 'name') { echo ' selected="selected"';} ?>><?php _e('Order by Name', 'link-library'); ?></option>
 								<option value="id"<?php if ($options['linkorder'] == 'id') { echo ' selected="selected"';} ?>><?php _e('Order by ID', 'link-library'); ?></option>
 								<option value="order"<?php if ($options['linkorder'] == 'order') { echo ' selected="selected"';} ?>><?php _e('Order set by ', 'link-library'); ?>'My Link Order' <?php _e('Wordpress Plugin', 'link-library'); ?></option>
+                                <option value="random"<?php if ($options['linkorder'] == 'random') { echo ' selected="selected"';} ?>><?php _e('Order randomly', 'link-library'); ?></option>                                                                
 							</select>
 						</td>
 						<td style='width:100px'></td>
@@ -1428,11 +1432,11 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							</select>
 						</td>
 						<td></td>
-						<td class="tooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
-							<?php _e('Embed HTML anchors', 'link-library'); ?>
+                        <td class="tooltip" title="<?php _e('Leave empty to show all results', 'link-library'); ?>">
+							<?php _e('Max number of links to display', 'link-library'); ?>
 						</td>
-						<td class="tooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
-							<input type="checkbox" id="catanchor" name="catanchor" <?php if ($options['catanchor']) echo ' checked="checked" '; ?>/>
+						<td class="tooltip" title="<?php _e('Leave empty to show all results', 'link-library'); ?>">
+							<input type="text" id="maxlinks" name="maxlinks" size="4" value="<?php echo $options['maxlinks']; ?>"/>
 						</td>
 					</tr>	
 					<tr>
@@ -1498,6 +1502,14 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<input type="checkbox" id="showinvisible" name="showinvisible" <?php if ($options['showinvisible'] == true) echo ' checked="checked" '; ?>/>
 						</td>
 					</tr>	
+                    <tr>
+						<td class="tooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
+							<?php _e('Embed HTML anchors', 'link-library'); ?>
+						</td>
+						<td class="tooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
+							<input type="checkbox" id="catanchor" name="catanchor" <?php if ($options['catanchor']) echo ' checked="checked" '; ?>/>
+						</td>
+                    </tr>
 					</table>
 					<br />
 					<strong><?php _e('Link Sub-Field Configuration Table', 'link-library'); ?></strong>
@@ -2483,7 +2495,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 								$sourceweblink = 'primary', $showtelephone = 'false', $sourcetelephone = 'primary', $showemail = 'false', $showlinkhits = false,
 								$beforeweblink = '', $afterweblink = '', $weblinklabel = '', $beforetelephone = '', $aftertelephone = '', $telephonelabel = '',
 								$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
-								$sourceimage = '', $sourcename = '', $thumbshotscid = '') {
+								$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '') {
 
 	global $wpdb;
 	
@@ -2645,7 +2657,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	elseif ($order == "catlist")
 		$linkquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
 
-	if ($linkorder == "name")
+	if ($linkorder == "name" || $linkorder == 'random')
 		$linkquery .= ", l.link_name " . $linkdirection;
 	elseif ($linkorder == "id")
 		$linkquery .= ", l.link_id " . $linkdirection;
@@ -2673,7 +2685,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		}
 	}
 	
-	$linkitems = $wpdb->get_results($linkquery);
+	$linkitems = $wpdb->get_results($linkquery, ARRAY_A);
 
 	if ($debugmode)
 	{
@@ -2696,6 +2708,19 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		$preroundpages = $numberoflinks / $linksperpage;	
 		$numberofpages = ceil( $preroundpages * 1 ) / 1; 
 	}
+	
+	if ($linkorder == 'random')
+	{
+		shuffle($linkitems);
+	}
+	
+	if ($maxlinks != '')
+	{
+		if (is_numeric($maxlinks))
+		{
+			array_splice($linkitems, $maxlinks);
+		}
+	}
 
     // Display links
 	if ($linkitems) {
@@ -2708,9 +2733,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 		$currentcategoryid = -1;
 
-		foreach ( (array) $linkitems as $linkitem) {
+		foreach ( $linkitems as $linkitem ) {
 
-			if ($currentcategoryid != $linkitem->term_id)
+			if ($currentcategoryid != $linkitem['term_id'])
 			{
 				if ($currentcategoryid != -1 && $showonecatonly && $_GET['searchll'] == "")
 				{
@@ -2730,7 +2755,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$currentcategory = $currentcategory + 1;
 				}
 
-				$currentcategoryid = $linkitem->term_id;
+				$currentcategoryid = $linkitem['term_id'];
 				$linkcount = 0;
 
 				if ($catlistwrappers == 1)
@@ -2772,7 +2797,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				if ($hidecategorynames == false || $hidecategorynames == "")
 				{
 					if ($catanchor)
-						$cattext = '<div id="' . $linkitem->slug . '">';
+						$cattext = '<div id="' . $linkitem['slug'] . '">';
 					else
 						$cattext = '';
 
@@ -2781,25 +2806,25 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						if ($mode == "search")
 							foreach ($searchterms as $searchterm)
 							{
-								$linkitem->name = highlight_phrase($linkitem->name, $searchterm, '<span class="highlight_word">', '</span>'); 
+								$linkitem['name'] = highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>'); 
 							}
 
 						$catlink = '<div class="' . $catnameoutput . '">';
 
 						if ($catdescpos == "right" || $catdescpos == '')
-							$catlink .= $linkitem->name;
+							$catlink .= $linkitem['name'];
 
 						if ($showcategorydesclinks)
 						{
 							$catlink .= "<span class='linklistcatnamedesc'>";
-							$linkitem->description = str_replace("[", "<", $linkitem->description);
-							$linkitem->description = str_replace("]", ">", $linkitem->description);
-							$catlink .= $linkitem->description;
+							$linkitem['description'] = str_replace("[", "<", $linkitem['description']);
+							$linkitem['description'] = str_replace("]", ">", $linkitem['description']);
+							$catlink .= $linkitem['description'];
 							$catlink .= '</span>';
 						}
 
 						if ($catdescpos == "left")
-							$catlink .= $linkitem->name;
+							$catlink .= $linkitem['name'];
 
 						$catlink .= "</div>";
 					}
@@ -2808,25 +2833,25 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						if ($mode == "search")
 						foreach ($searchterms as $searchterm)
 						{
-							$linkitem->name = highlight_phrase($linkitem->name, $searchterm, '<span class="highlight_word">', '</span>');
+							$linkitem['name'] = highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>');
 						}
 							
 						$catlink = '<'. $catnameoutput . '>';
 
 						if ($catdescpos == "right" || $catdescpos == '')
-							$catlink .= $linkitem->name;
+							$catlink .= $linkitem['name'];
 
 						if ($showcategorydesclinks)
 						{
 							$catlink .= "<span class='linklistcatnamedesc'>";
-							$linkitem->description = str_replace("[", "<", $linkitem->description);
-							$linkitem->description = str_replace("]", ">", $linkitem->description);
-							$catlink .= $linkitem->description;
+							$linkitem['description'] = str_replace("[", "<", $linkitem['description']);
+							$linkitem['description'] = str_replace("]", ">", $linkitem['description']);
+							$catlink .= $linkitem['description'];
 							$catlink .= '</span>';
 						}
 
 						if ($catdescpos == "left")
-							$catlink .= $linkitem->name;
+							$catlink .= $linkitem['name'];
 
 						$catlink .= '</' . $catnameoutput . '>';
 					}
@@ -2872,7 +2897,6 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 			if ($rssfeedinline)
 			{
 				ini_set('display_errors', '0');
-				error_reporting(E_ALL | E_STRICT);
 			
 				if( !class_exists('SimplePie'))
 				{
@@ -2898,7 +2922,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				$feed->handle_content_type();
 			}
 			
-			if ($showuserlinks == true || strpos($linkitem->link_description, "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false)
+			if ($showuserlinks == true || strpos($linkitem['link_description'], "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false)
 			{
 				$linkcount = $linkcount + 1;
 				
@@ -2906,20 +2930,20 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					if (($linkcount - 1) % $linkaddfrequency == 0)
 						$output .= stripslashes($addbeforelink);
 
-				if (!isset($linkitem->recently_updated)) $linkitem->recently_updated = false; 
+				if (!isset($linkitem['recently_updated'])) $linkitem['recently_updated'] = false; 
 				$output .= stripslashes($beforeitem);
-				if ($showupdated && $linkitem->recently_updated)
+				if ($showupdated && $linkitem['recently_updated'])
 					$output .= get_option('links_recently_updated_prepend'); 
 
 				$the_link = '#';
-				if (!empty($linkitem->link_url) )
-					$the_link = wp_specialchars($linkitem->link_url);
+				if (!empty($linkitem['link_url']) )
+					$the_link = wp_specialchars($linkitem['link_url']);
 
 				$the_second_link = '#';
-				if (!empty($linkitem->link_second_url) )
-					$the_second_link = wp_specialchars($linkitem->link_second_url);
+				if (!empty($linkitem['link_second_url']) )
+					$the_second_link = wp_specialchars($linkitem['link_second_url']);
 
-				$rel = $linkitem->link_rel;
+				$rel = $linkitem['link_rel'];
 				if ('' != $rel and !$nofollow)
 					$rel = ' rel="' . $rel . '"';
 				else if ('' != $rel and $nofollow)
@@ -2928,23 +2952,23 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					$rel = ' rel="nofollow"';
 
 				if ($use_html_tags) {
-					$descnotes = $linkitem->link_notes;
+					$descnotes = $linkitem['link_notes'];
 					$descnotes = str_replace("[", "<", $descnotes);
 					$descnotes = str_replace("]", ">", $descnotes);
 				}
 				else
-					$descnotes = wp_specialchars($linkitem->link_notes, ENT_QUOTES);
+					$descnotes = wp_specialchars($linkitem['link_notes'], ENT_QUOTES);
 
 				if ($use_html_tags) {
-					$desc = $linkitem->link_description;
+					$desc = $linkitem['link_description'];
 					$desc = str_replace("[", "<", $desc);
 					$desc = str_replace("]", ">", $desc);
 				}
 				else {
-					$desc = wp_specialchars($linkitem->link_description, ENT_QUOTES);
+					$desc = wp_specialchars($linkitem['link_description'], ENT_QUOTES);
 				}
 				
-				$cleanname = wp_specialchars($linkitem->link_name, ENT_QUOTES);
+				$cleanname = wp_specialchars($linkitem['link_name'], ENT_QUOTES);
 				
 				if ($mode == "search")
 				{
@@ -2952,17 +2976,17 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					{
 						$descnotes = highlight_phrase($descnotes, $searchterm, '<span class="highlight_word">', '</span>');
 						$desc = highlight_phrase($desc, $searchterm, '<span class="highlight_word">', '</span>');
-						$name = highlight_phrase($linkitem->link_name, $searchterm, '<span class="highlight_word">', '</span>');
+						$name = highlight_phrase($linkitem['link_name'], $searchterm, '<span class="highlight_word">', '</span>');
 					}
 			}
 				else
 					$name = $cleanname;
 
-				$title = wp_specialchars($linkitem->link_description, ENT_QUOTES);;
+				$title = wp_specialchars($linkitem['link_description'], ENT_QUOTES);;
 
 				if ($showupdated) {
-				   if (substr($linkitem->link_updated_f,0,2) != '00') {
-						$title .= ' ('.__('Last updated', 'link-library') . '  ' . date(get_option('links_updated_date_format'), $linkitem->link_updated_f + (get_option('gmt_offset') * 3600)) .')';
+				   if (substr($linkitem['link_updated'],0,2) != '00') {
+						$title .= ' ('.__('Last updated', 'link-library') . '  ' . date(get_option('links_updated_date_format'), $linkitem['link_updated'] + (get_option('gmt_offset') * 3600)) .')';
 					}
 				}
 
@@ -2971,7 +2995,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 				$alt = ' alt="' . $cleanname . '"';
 					
-				$target = $linkitem->link_target;
+				$target = $linkitem['link_target'];
 				if ('' != $target)
 					$target = ' target="' . $target . '"';
 				else 
@@ -2989,7 +3013,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 							switch ($arrayelements) {
 								case 1: 	//------------------ Image Output --------------------
 
-									if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images)) {
+									if ( ($linkitem['link_image'] != null || $usethumbshotsforimages) && ($show_images)) {
 										$imageoutput = stripslashes($beforeimage) . '<a href="';
 
 										if ($sourceimage == 'primary' || $sourceimage == '')
@@ -2997,7 +3021,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										elseif ($sourceimage == 'secondary')
 											$imageoutput .= $the_second_link;
 
-										$imageoutput .= '" id="' . $linkitem->proper_link_id . '" class="track_this_link" ' . $rel . $title . $target. '>';
+										$imageoutput .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link" ' . $rel . $title . $target. '>';
 
 										if ($usethumbshotsforimages)
 										{
@@ -3007,10 +3031,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 												$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . $thumbshotscid . 
 													'&v=1&w=120&h=90&url=' . $the_link . '"';											
 										}
-										elseif ( strpos($linkitem->link_image, 'http') !== false )
-											$imageoutput .= '<img src="' . $linkitem->link_image . '"';
+										elseif ( strpos($linkitem['link_image'], 'http') !== false )
+											$imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
 										else // If it's a relative path
-											$imageoutput .= '<img src="' . get_option('siteurl') . $linkitem->link_image . '"';
+											$imageoutput .= '<img src="' . get_option('siteurl') . $linkitem['link_image'] . '"';
 
 										$imageoutput .= $alt . $title;
 
@@ -3022,7 +3046,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										$imageoutput .= '</a>' . stripslashes($afterimage);
 									}
 
-									if ( ($linkitem->link_image != null || $usethumbshotsforimages) && ($show_images) ) {
+									if ( ($linkitem['link_image'] != null || $usethumbshotsforimages) && ($show_images) ) {
 										$output .= $imageoutput;
 									}
 									break;
@@ -3038,14 +3062,14 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										elseif ($sourcename == 'secondary')
 											$output .= $the_second_link;
 
-										$output .= '" id="' . $linkitem->proper_link_id . '" class="track_this_link" ' . $rel . $title . $target. '>' . $name . '</a>';
+										$output .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link" ' . $rel . $title . $target. '>' . $name . '</a>';
 									}
 
 									if (($showadmineditlinks) && current_user_can("manage_links")) {
-										$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem->proper_link_id .'">(' . __('Edit', 'link-library') . ')</a>';
+										$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem['proper_link_id'] .'">(' . __('Edit', 'link-library') . ')</a>';
 									}
 
-									if ($showupdated && $linkitem->recently_updated) {
+									if ($showupdated && $linkitem['recently_updated']) {
 										$output .= get_option('links_recently_updated_append');
 									}
 
@@ -3055,7 +3079,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 
 								case 3: 	//------------------ Date Output --------------------   
 
-									$formatteddate = date("F d Y", $linkitem->link_date);
+									$formatteddate = date("F d Y", $linkitem['link_date']);
 
 									if ($showdate)
 										$output .= $between . stripslashes($beforedate) . $formatteddate . stripslashes($afterdate);
@@ -3082,23 +3106,23 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									if ($show_rss || $show_rss_icon || $rsspreview)
 										$output .= stripslashes($beforerss) . '<div class="rsselements">';
 
-									if ($show_rss && ($linkitem->link_rss != '')) {
-										$output .= $between . '<a class="rss" href="' . $linkitem->link_rss . '">RSS</a>';
+									if ($show_rss && ($linkitem['link_rss'] != '')) {
+										$output .= $between . '<a class="rss" href="' . $linkitem['link_rss'] . '">RSS</a>';
 									}
-									if ($show_rss_icon && ($linkitem->link_rss != '')) {
+									if ($show_rss_icon && ($linkitem['link_rss'] != '')) {
 										$output .= $between . '<a class="rssicon" href="' . $linkitem->link_rss . '"><img src="' . $llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
 									}
-									if ($rsspreview && $linkitem->link_rss != '')
+									if ($rsspreview && $linkitem['link_rss'] != '')
 									{
-										$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem->proper_link_id . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
+										$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
 									}
 
 									if ($show_rss || $show_rss_icon || $rsspreview)
 										$output .= '</div>' . stripslashes($afterrss);
 
-									if ($rssfeedinline && $linkitem->link_rss)
+									if ($rssfeedinline && $linkitem['link_rss'])
 									{
-										$feed->set_feed_url($linkitem->link_rss);
+										$feed->set_feed_url($linkitem['link_rss']);
 
 										$feed->init();
 
@@ -3132,7 +3156,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										elseif ($sourceweblink == "secondary")
 											$output .= $the_second_link;
 
-										$output .= "' id='" . $linkitem->proper_link_id . "' class='track_this_link'>";
+										$output .= "' id='" . $linkitem['proper_link_id'] . "' class='track_this_link'>";
 
 										if ($displayweblink == 'address')
 										{
@@ -3163,11 +3187,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 											elseif ($sourcetelephone == "secondary" && $the_second_link != '')
 												$output .= $the_second_link;
 
-											$output .= "' id='" . $linkitem->proper_link_id . "' class='track_this_link' >";
+											$output .= "' id='" . $linkitem['proper_link_id'] . "' class='track_this_link' >";
 										}
 											
 										if ($showtelephone == 'link' || $showtelephone == "plain")
-											$output .= $linkitem->link_telephone;
+											$output .= $linkitem['link_telephone'];
 										elseif ($showtelephone == 'label')
 											$output .= $telephonelabel;
 											
@@ -3188,11 +3212,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 											$output .= "<a href='";
 											
 											if ($showemail == 'mailto' || $showemail == 'mailtolabel')
-												$output .= "mailto:" . $linkitem->link_email;
+												$output .= "mailto:" . $linkitem['link_email'];
 											elseif ($showemail == 'command' || $showemail == 'commandlabel')
 											{
-												$newcommand = str_replace("#email", $linkitem->link_email, $emailcommand);
-												$cleanlinkname = str_replace(" ", "%20", $linkitem->link_name);
+												$newcommand = str_replace("#email", $linkitem['link_email'], $emailcommand);
+												$cleanlinkname = str_replace(" ", "%20", $linkitem['link_name']);
 												$newcommand = str_replace("#company", $cleanlinkname, $newcommand);
 												$output .= $newcommand;												
 											}
@@ -3201,7 +3225,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 										}
 										
 										if ($showemail == 'plain' || $showemail == 'mailto' || $showemail == 'command')
-											$output .= $linkitem->link_email;
+											$output .= $linkitem['link_email'];
 										elseif ($showemail == 'mailtolabel' || $showemail == 'commandlabel')
 											$output .= $emaillabel;
 											
@@ -3218,7 +3242,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									{
 										$output .= $between . stripslashes($beforelinkhits);
 										
-										$output .= $linkitem->link_visits;
+										$output .= $linkitem['link_visits'];
 										
 										$output .= stripslashes($afterlinkhits);
 									}
@@ -3720,7 +3744,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$dragndroporder = '1,2,3,4,5,6,7,8,9,10', $showname = true, $displayweblink = 'false', $sourceweblink = 'primary', $showtelephone = 'false',
 								$sourcetelephone = 'primary', $showemail = 'false', $showlinkhits = false, $beforeweblink = '', $afterweblink = '', $weblinklabel = '',
 								$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
-								$afterlinkhits = '', $emailcommand = '', $thumbshotscid = '') {
+								$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
+								$maxlinks = '') {
 
 	if (strpos($order, 'AdminSettings') !== false)
 	{
@@ -3751,7 +3776,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['showemail'], $options['showlinkhits'], $options['beforeweblink'], $options['afterweblink'], $options['weblinklabel'],
 								  $options['beforetelephone'], $options['aftertelephone'], $options['telephonelabel'], $options['beforeemail'], $options['afteremail'],
 								  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
-								  $options['sourcename'], $genoptions['thumbshotscid']);	
+								  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -3768,7 +3793,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$usethumbshotsforimages, $showonecatmode, $dragndroporder, $showname, $displayweblink, $sourceweblink, $showtelephone,
 								$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 								$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
-								$thumbshotscid);
+								$thumbshotscid, $maxlinks);
 }
 
 function link_library_cats_func($atts) {
@@ -4084,7 +4109,8 @@ function link_library_func($atts) {
 								  $options['sourceweblink'], $options['showtelephone'], $options['sourcetelephone'], $options['showemail'], $options['showlinkhits'],
 								  $options['beforeweblink'], $options['afterweblink'], $options['weblinklabel'], $options['beforetelephone'], $options['aftertelephone'],
 								  $options['telephonelabel'], $options['beforeemail'], $options['afteremail'], $options['emaillabel'], $options['beforelinkhits'],
-								  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid']); 
+								  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
+								  $options['maxlinks']); 
 		
 	return $linklibraryoutput;
 }
@@ -4351,7 +4377,7 @@ function ll_insertMyRewriteRules($rules)
 	}	
 	
 	return $newrules + $rules;
-}
+}	
 
 // Adding the id var so that WP recognizes it
 function ll_insertMyRewriteQueryVars($vars)

@@ -72,6 +72,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.2.5 =
+* Added: New sorting order for links to be displayed in random order
+* Added: New option to limit number of links displayed per category
+* Fixed: Stylesheet no longer disappears when saving general settings
+* Fixed: Thumbshots CID now works correctly for dynamic thumbnail generation
+* Fixed: Error messages that were appearing on AJAX load and a few other section have been removed
+
 = 4.2.4 =
 * Added fix for strict PHP errors that may appear on RSS Preview on some server configurations
 * Fixed display of thumbshots cid field
