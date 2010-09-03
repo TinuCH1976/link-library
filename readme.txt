@@ -1,9 +1,9 @@
-=== Link Library ===
+ï»¿=== Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
-Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit
+Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, network, BuddyPress, import
 Requires at least: 2.7
-Tested up to: 3.0
+Tested up to: 3.0.1
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -71,6 +71,12 @@ In addition to specifying a setting set, categories to be displayed can be speci
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 4.2.6 =
+* Added: WP 3.0 Network Compatibility
+* Fixed: Problem with too many AJAX queries in a short period of time in Internet Explorer
+* Fixed: Paging in AJAX mode when showing one category at a time
+* Added: Ability to specify link image address when batch importing
 
 = 4.2.5 =
 * Added: New sorting order for links to be displayed in random order
@@ -452,7 +458,7 @@ Further configuration is available under the Link Library Settings panel.
 
 = 1.1.6 =
 * The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname.
-* This allows for more flexibility in formatting the element using your blog’s stylesheet.
+* This allows for more flexibility in formatting the element using your blogï¿½s stylesheet.
 
 == Frequently Asked Questions ==
 
