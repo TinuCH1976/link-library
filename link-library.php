@@ -1,14 +1,14 @@
-ï»¿<?php
+<?php
 /*
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.2.7
+Version: 4.2.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright 2010 Yannick Lefebvre
+Copyright © 2010 Yannick Lefebvre
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -583,7 +583,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 						if (!$skiprow)
 						{
-							if (count($data) == 12)
+							if (count($data) == 11)
 							{
 								$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
 								$existingcatquery .= "WHERE t.name = '" . $data[5] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
@@ -613,8 +613,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 												"link_description" => wp_specialchars(stripslashes($data[3])),
 												"link_notes" => wp_specialchars(stripslashes($data[4])),
 												"link_category" => $newlinkcat,
-												"link_visible" => $data[6],
-                                                "link_image" => $data[11]);
+												"link_visible" => $data[6]);
 
 								$newlinkid = wp_insert_link($newlink);
 
@@ -2256,9 +2255,8 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		if ($showonecatonly == true && ($showonecatmode == 'AJAX' || $showonecatmode == ''))
 		{
 			$output .= "<SCRIPT LANGUAGE=\"JavaScript\">\n";
-            $output .= "var ajaxobject;\n";
+
 			$output .= "function showLinkCat ( _incomingID, _settingsID, _pagenumber) {\n";
-			$output .= "if (typeof(ajaxobject) != \"undefined\") { ajaxobject.abort(); }\n";            
 			$output .= "var map = {id : _incomingID, settings : _settingsID, page: _pagenumber}\n";
 			$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();});\n";
 			$output .= "}\n";
@@ -2518,6 +2516,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	if ($showonecatonly && $showonecatmode == 'AJAX' && $AJAXcatid != '' && $_GET['searchll'] == "")
 	{
 		$categorylist = $AJAXcatid;
+		$ajaxcatid = $categorylist;
 	}
 	elseif ($showonecatonly && $showonecatmode == 'HTMLGET' && isset($_GET['cat_id']) && $_GET['searchll'] == "")
 	{
@@ -2586,7 +2585,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 		if ($catitems)
 		{
 			$categorylist = $catitems[0]->term_id;
-			$AJAXcatid = $categorylist;
+			$ajaxcatid = $categorylist;
 		}
 	}
 	
@@ -3292,9 +3291,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					elseif ($showonecatonly)
 					{
 						if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-							$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . "</a>";
+							$output .= "<a href='#' onClick=\"showLinkCat('" . $ajaxcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . "</a>";
 						elseif ($showonecatmode == 'HTMLGET')
-							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Previous', 'link-library') . "</a>";
+							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "&cat_id=" . $ajaxcatid . "' >" . __('Previous', 'link-library') . "</a>";
 					}
 						
 					$output .= "</span>";
@@ -3316,9 +3315,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						elseif ($showonecatonly)
 						{
 							if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-								$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
+								$output .= "<a href='#' onClick=\"showLinkCat('" . $ajaxcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
 							elseif ($showonecatmode == 'HTMLGET')
-								$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $counter . "&cat_id=" . $AJAXcatid . "' >" . $counter . "</a>";
+								$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $counter . "&cat_id=" . $ajaxcatid . "' >" . $counter . "</a>";
 						}
 							
 						$output .= "</a></span>";
@@ -3346,9 +3345,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 					elseif ($showonecatonly)
 					{
 						if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-							$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . "</a>";
+							$output .= "<a href='#' onClick=\"showLinkCat('" . $ajaxcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . "</a>";
 						elseif ($showonecatmode == 'HTMLGET')
-							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Next', 'link-library') . "</a>";
+							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "&cat_id=" . $ajaxcatid . "' >" . __('Next', 'link-library') . "</a>";
 					}
 					
 					$output .= "</span>";
