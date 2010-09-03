@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.2.7=
+* Reverted changes related to WP 3.0 network compatibility to fix errors experienced by many users
+
 = 4.2.6 =
 * Added: WP 3.0 Network Compatibility
 * Fixed: Problem with too many AJAX queries in a short period of time in Internet Explorer

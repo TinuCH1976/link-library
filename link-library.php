@@ -3,10 +3,9 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.2.6
+Version: 4.2.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
-Network: true
 
 A plugin for the blogging MySQL/PHP-based WordPress.
 Copyright 2010 Yannick Lefebvre
@@ -63,7 +62,7 @@ function ll_install() {
 		}
 	}
 	
-	$wpdb->links_extrainfo = $wpdb->get_blog_prefix().'links_extrainfo';
+	$wpdb->links_extrainfo = $wpdb->prefix.'links_extrainfo';
 
 	$result = $wpdb->query("
 			CREATE TABLE IF NOT EXISTS `$wpdb->links_extrainfo` (
@@ -453,10 +452,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					$genoptions = get_option('LinkLibraryGeneral');
 
 					$linkquery = "SELECT distinct * ";
-					$linkquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t ";
-					$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-					$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
-					$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "links l ON (tr.object_id = l.link_id) ";
+					$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
+					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+					$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
 					$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
 
 					if ($options['categorylist'] != "" && !isset($_GET['genthumbsingle']) && !isset($_GET['genfaviconsingle']))
@@ -586,7 +585,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						{
 							if (count($data) == 12)
 							{
-								$existingcatquery = "SELECT t.term_id FROM " . $wpdb->get_blog_prefix() . "terms t, " . $wpdb->get_blog_prefix() . "term_taxonomy tt ";
+								$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
 								$existingcatquery .= "WHERE t.name = '" . $data[5] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 								$existingcat = $wpdb->get_var($existingcatquery);
 
@@ -599,7 +598,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 									$newcattype = array("taxonomy" => 'link_category');
 
-									$wpdb->update( $wpdb->get_blog_prefix().'term_taxonomy', $newcattype, $newcatarray);
+									$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
 
 									$newlinkcat = array($newlinkcat);
 								}
@@ -621,7 +620,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 								if ($newlinkid != 0)
 								{
-									$extradatatable = $wpdb->get_blog_prefix() . "links_extrainfo";
+									$extradatatable = $wpdb->prefix . "links_extrainfo";
 									$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10] ), array( 'link_id' => $newlinkid ));
 
 									$successfulimport += 1;
@@ -795,10 +794,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					foreach($categoryids as $categoryid)
 					{
 						$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-						$linkcatquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t, " . $wpdb->get_blog_prefix(). "term_taxonomy tt ";
+						$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
 
 						if ($hide_if_empty)
-							$linkcatquery .= ", " . $wpdb->get_blog_prefix() . "term_relationships tr, " . $wpdb->get_blog_prefix() . "links l ";
+							$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr, " . $wpdb->prefix . "links l ";
 
 						$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 
@@ -820,10 +819,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					foreach($categoryids as $categoryid)
 					{
 						$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-						$linkcatquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t, " . $wpdb->get_blog_prefix(). "term_taxonomy tt ";
+						$linkcatquery .= "FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix. "term_taxonomy tt ";
 
 						if ($hide_if_empty)
-							$linkcatquery .= ", " . $wpdb->get_blog_prefix() . "term_relationships tr, " . $wpdb->get_blog_prefix() . "links l ";
+							$linkcatquery .= ", " . $wpdb->prefix . "term_relationships tr, " . $wpdb->prefix . "links l ";
 
 						$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 
@@ -889,7 +888,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				foreach ($_POST['links'] as $approved_link)
 				{
 					$linkdescquery = "SELECT link_description ";
-					$linkdescquery .= "FROM " . $wpdb->get_blog_prefix() . "links l ";
+					$linkdescquery .= "FROM " . $wpdb->prefix . "links l ";
 					$linkdescquery .= "WHERE link_id = " . $approved_link;
 
 					$linkdesc = $wpdb->get_var($linkdescquery); 
@@ -904,7 +903,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 						$id = array("id" => $linkdescquery);
 						$newdesc = array ("link_description", $newlinkdesc);
 
-						$tablename = $wpdb->get_blog_prefix() . "links";
+						$tablename = $wpdb->prefix . "links";
 						$wpdb->update( $tablename, array( 'link_description' => $newlinkdesc, 'link_visible' => 'Y' ), array( 'link_id' => $approved_link ));
 
 					}
@@ -921,7 +920,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 
 				foreach ($_POST['links'] as $approved_link)
 				{
-					$wpdb->query("DELETE FROM " . $wpdb->get_blog_prefix() . "links WHERE link_id = " . $approved_link);
+					$wpdb->query("DELETE FROM " . $wpdb->prefix . "links WHERE link_id = " . $approved_link);
 				}
 
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Link(s) Deleted', 'link-library') . "</strong></p></div>";
@@ -965,7 +964,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				<?php global $wpdb;
 
 					$linkquery = "SELECT distinct * ";
-					$linkquery .= "FROM " . $wpdb->get_blog_prefix() . "links l ";
+					$linkquery .= "FROM " . $wpdb->prefix . "links l ";
 					$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 					$linkquery .= " ORDER by link_name ASC";
 
@@ -2278,9 +2277,9 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 		// Fetch the link category data as an array of hashesa
 		
 		$linkcatquery = "SELECT count(l.link_name) as linkcount, t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-		$linkcatquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t LEFT JOIN " . $wpdb->get_blog_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id)";
+		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t LEFT JOIN " . $wpdb->prefix. "term_taxonomy tt ON (t.term_id = tt.term_id)";
 
-		$linkcatquery .= " LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) LEFT JOIN " . $wpdb->get_blog_prefix() . "links l on (tr.object_id = l.link_id) ";
+		$linkcatquery .= " LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) LEFT JOIN " . $wpdb->prefix . "links l on (tr.object_id = l.link_id) ";
 
 		$linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
 
@@ -2540,10 +2539,10 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	elseif ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat == '' && $_GET['searchll'] == "")
 	{
 		$catquery = "SELECT distinct t.name, t.term_id ";
-		$catquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t ";
-		$catquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-		$catquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
-		$catquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "links l ON (tr.object_id = l.link_id) ";
+		$catquery .= "FROM " . $wpdb->prefix . "terms t ";
+		$catquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+		$catquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+		$catquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
 		$catquery .= "WHERE tt.taxonomy = 'link_category' ";
 
 		if ($hide_if_empty)
@@ -2593,11 +2592,11 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	
 	$linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
 	$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
-	$linkquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t ";
-	$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-	$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
-	$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "links l ON (tr.object_id = l.link_id) ";
-	$linkquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";	
+	$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
+	$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links_extrainfo le ON (l.link_id = le.link_id) ";	
 	$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
 
 	if ($hide_if_empty)
@@ -3450,9 +3449,9 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		}		
 		
 		$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
-		$linkcatquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t ";
-		$linkcatquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-		$linkcatquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+		$linkcatquery .= "FROM " . $wpdb->prefix . "terms t ";
+		$linkcatquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+		$linkcatquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 		
 		$linkcatquery .= "WHERE tt.taxonomy = 'link_category' ";
 
@@ -3872,7 +3871,7 @@ function link_library_addlink_func($atts) {
 	{		
 		if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 		{
-			$existingcatquery = "SELECT t.term_id FROM " . $wpdb->get_blog_prefix() . "terms t, " . $wpdb->get_blog_prefix() . "term_taxonomy tt ";
+			$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
 			$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 			$existingcat = $wpdb->get_var($existingcatquery);
 			
@@ -3885,7 +3884,7 @@ function link_library_addlink_func($atts) {
 
 				$newcattype = array("taxonomy" => 'link_category');
 				
-				$wpdb->update( $wpdb->get_blog_prefix().'term_taxonomy', $newcattype, $newcatarray);
+				$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
 				
 				$newlinkcat = array($newlinkcat);
 			}
@@ -3957,7 +3956,7 @@ function link_library_addlink_func($atts) {
 				"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
 			$newlinkid = wp_insert_link($newlink);
 			
-			$extradatatable = $wpdb->get_blog_prefix() . "links_extrainfo";
+			$extradatatable = $wpdb->prefix . "links_extrainfo";
 			$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'],
 							'link_submitter' => $username), array( 'link_id' => $newlinkid ));		
 			
@@ -4120,12 +4119,12 @@ function link_library_func($atts) {
 function add_link_field($link_id) {
 	global $wpdb;
 	
-	$tablename = $wpdb->get_blog_prefix() . "links";
+	$tablename = $wpdb->prefix . "links";
 	$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i") ), array( 'link_id' => $link_id ));
 	
-	$extradatatable = $wpdb->get_blog_prefix() . "links_extrainfo";
+	$extradatatable = $wpdb->prefix . "links_extrainfo";
 	
-	$linkextradataquery = "select * from " . $wpdb->get_blog_prefix() . "links_extrainfo where link_id = " . $link_id;
+	$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link_id;
 	$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
 	
 	global $current_user;
@@ -4143,7 +4142,7 @@ function add_link_field($link_id) {
 function delete_link_field($link_id) {
 	global $wpdb;
 	
-	$deletequery = "delete from " . $wpdb->get_blog_prefix() . "links_extrainfo where link_id = " . $link_id;
+	$deletequery = "delete from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link_id;
 	$wpdb->get_results($deletequery);
 }
 
@@ -4208,12 +4207,12 @@ function ll_link_edit_extra($link) {
 		ll_install();
 	}
 	
-	$linkextradataquery = "select * from " . $wpdb->get_blog_prefix() . "links_extrainfo where link_id = " . $link->link_id;
+	$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link->link_id;
 	$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
 	
 	if ($extradata['link_visits'] == '') $extradata['link_visits'] = 0;
 	
-	$originallinkdata = "select * from " . $wpdb->get_blog_prefix() . "links where link_id = " . $link->link_id;
+	$originallinkdata = "select * from " . $wpdb->prefix . "links where link_id = " . $link->link_id;
 	$originaldata = $wpdb->get_row($originallinkdata, ARRAY_A);
 	
 	if ( !defined('WP_ADMIN_URL') )
@@ -4402,8 +4401,8 @@ function ll_title_creator($title) {
 	$catid = $_GET['cat_id'];
 	
 	$linkcatquery = "SELECT t.name ";
-	$linkcatquery .= "FROM " . $wpdb->get_blog_prefix() . "terms t LEFT JOIN " . $wpdb->get_blog_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-	$linkcatquery .= "LEFT JOIN " . $wpdb->get_blog_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+	$linkcatquery .= "FROM " . $wpdb->prefix . "terms t LEFT JOIN " . $wpdb->prefix. "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+	$linkcatquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 	$linkcatquery .= "WHERE tt.taxonomy = 'link_category' AND ";
 	
 	if ($categoryname != '')
