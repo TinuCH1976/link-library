@@ -1,4 +1,4 @@
-=== Link Library ===
+ï»¿=== Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, Buddypress, import, batch
@@ -71,6 +71,9 @@ In addition to specifying a setting set, categories to be displayed can be speci
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 4.2.9.1 =
+* Re-added: Extra field in link import template for link image address
 
 = 4.2.9 =
 * Re-fixed: Problem with too many AJAX queries in a short period of time in Internet Explorer
@@ -469,7 +472,7 @@ Further configuration is available under the Link Library Settings panel.
 
 = 1.1.6 =
 * The H2 tags that were previously placed before and after the names of the link categories have been replaced by a div class called linklistcatname.
-* This allows for more flexibility in formatting the element using your blog’s stylesheet.
+* This allows for more flexibility in formatting the element using your blogï¿½s stylesheet.
 
 == Frequently Asked Questions ==
 
