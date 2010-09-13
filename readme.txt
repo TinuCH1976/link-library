@@ -72,6 +72,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.3 =
+* Added: Captcha option for user link submission form (uses Re-Captcha service)
+* Fixed: MySQL error message displayed on some installations when creating new links
+
 = 4.2.9.1 =
 * Re-added: Extra field in link import template for link image address
 

@@ -3,12 +3,12 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.2.9.1
+Version: 4.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright © 2010 Yannick Lefebvre
+Copyright 2010 Yannick Lefebvre
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -314,6 +314,7 @@ function ll_reset_options($settings = 1, $layout = 'list')
 	$options['rewritepage'] = '';
 	$options['storelinksubmitter'] = false;
 	$options['maxlinks'] = '';
+	$options['showcaptcha'] = false;
 
 	$settingsname = 'LinkLibraryPP' . $settings;
 	update_option($settingsname, $options);	
@@ -328,6 +329,8 @@ function ll_reset_gen_settings()
 	$genoptions['pagetitleprefix'] = '';
 	$genoptions['pagetitlesuffix'] = '';
 	$genoptions['thumbshotscid'] = '';
+	$genoptions['recaptchapublickey'] = '';
+	$genoptions['recaptchaprivatekey'] = '';
 	
 	$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
 	$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
@@ -520,7 +523,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				$genoptions = get_option('LinkLibraryGeneral');
 
-				foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid') as $option_name) {
+				foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'recaptchapublickey', 'recaptchaprivatekey') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$genoptions[$option_name] = $_POST[$option_name];
 					}
@@ -759,7 +762,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								'show_image_and_name', 'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 								'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 								'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
-								'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits') as $option_name) {
+								'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = true;
 					} else {
@@ -1068,8 +1071,16 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				</tr>
 				<tr>
 					<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-					<td colspan='2' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
+					<td colspan='4' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
+				<tr>
+					<td class='tooltip' title='<?php _e('Re-Captcha Public Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><?php _e('Re-Captcha Public Key', 'link-library'); ?></td>
+					<td colspan='4' class='tooltip' title='<?php _e('Re-Captcha Public Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><input type="text" id="recaptchapublickey" name="recaptchapublickey" size="80" value="<?php echo $genoptions['recaptchapublickey']; ?>"/></td>
+				</tr>
+				<tr>
+					<td class='tooltip' title='<?php _e('Re-Captcha Private Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><?php _e('Re-Captcha Private Key', 'link-library'); ?></td>
+					<td colspan='4' class='tooltip' title='<?php _e('Re-Captcha Private Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><input type="text" id="recaptchaprivatekey" name="recaptchaprivatekey" size="80" value="<?php echo $genoptions['recaptchaprivatekey']; ?>"/></td>
+				</tr>				
 				</table>
 				</fieldset>
 				</form>
@@ -2021,6 +2032,10 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<td style='width: 20px'></td>
 						</tr>
 						<tr>
+							<td class='tooltip' title='<?php _e('The Re-Captha public and private keys need to be specified in the General Configuration for this feature to work', 'link-library'); ?>.' style='width:200px'><?php _e('Display captcha', 'link-library'); ?></td>
+							<td class='tooltip' title='<?php _e('The Re-Captha public and private keys need to be specified in the General Configuration for this feature to work', 'link-library'); ?>.' style='width:75px;padding-right:20px'><input type="checkbox" id="showcaptcha" name="showcaptcha" <?php if ($options['showcaptcha']) echo ' checked="checked" '; ?>/></td>
+						</tr>
+						<tr>
 							<td style='width:200px'><?php _e('Add new link label', 'link-library'); ?></td>
 							<?php if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = __('Add new link', 'link-library'); ?>
 							<td><input type="text" id="addnewlinkmsg" name="addnewlinkmsg" size="30" value="<?php echo $options['addnewlinkmsg']; ?>"/></td>
@@ -2460,7 +2475,7 @@ function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $t
 	return $output;
 }
 
-function highlight_phrase($str, $phrase, $tag_open = '<strong>', $tag_close = '</strong>')
+function ll_highlight_phrase($str, $phrase, $tag_open = '<strong>', $tag_close = '</strong>')
 {
 	if ($str == '')
 	{
@@ -2807,7 +2822,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						if ($mode == "search")
 							foreach ($searchterms as $searchterm)
 							{
-								$linkitem['name'] = highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>'); 
+								$linkitem['name'] = ll_highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>'); 
 							}
 
 						$catlink = '<div class="' . $catnameoutput . '">';
@@ -2834,7 +2849,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 						if ($mode == "search")
 						foreach ($searchterms as $searchterm)
 						{
-							$linkitem['name'] = highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>');
+							$linkitem['name'] = ll_highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>');
 						}
 							
 						$catlink = '<'. $catnameoutput . '>';
@@ -2975,9 +2990,9 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 				{
 					foreach ($searchterms as $searchterm)
 					{
-						$descnotes = highlight_phrase($descnotes, $searchterm, '<span class="highlight_word">', '</span>');
-						$desc = highlight_phrase($desc, $searchterm, '<span class="highlight_word">', '</span>');
-						$name = highlight_phrase($linkitem['link_name'], $searchterm, '<span class="highlight_word">', '</span>');
+						$descnotes = ll_highlight_phrase($descnotes, $searchterm, '<span class="highlight_word">', '</span>');
+						$desc = ll_highlight_phrase($desc, $searchterm, '<span class="highlight_word">', '</span>');
+						$name = ll_highlight_phrase($linkitem['link_name'], $searchterm, '<span class="highlight_word">', '</span>');
 					}
 			}
 				else
@@ -3422,7 +3437,8 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 										$addlinkreqlogin = false, $debugmode = false, $addlinkcustomcat = false, $linkcustomcatlabel = '',
 										$linkcustomcatlistentry = 'User-submitted category (define below)', $showaddlinkreciprocal = false,
 										$linkreciprocallabel = '', $showaddlinksecondurl = false, $linksecondurllabel = '',
-										$showaddlinktelephone = false, $linktelephonelabel = '', $showaddlinkemail = false, $linkemaillabel = '') {
+										$showaddlinktelephone = false, $linktelephonelabel = '', $showaddlinkemail = false, $linkemaillabel = '',
+										$showcaptcha = false, $recaptchapublickey = '', $captureddata = '') {
 										
 	global $wpdb;
 	
@@ -3437,15 +3453,15 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		$output .= "<table>\n";
 		
 		if ($linknamelabel == "") $linknamelabel = __('Link name', 'link-library');
-		$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' /></td></tr>\n";
+		$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . $captureddata['link_name'] . "' /></td></tr>\n";
 			
 		if ($linkaddrlabel == "") $linkaddrlabel = __('Link address', 'link-library');
-		$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' /></td></tr>\n";
+		$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . $captureddata['link_url']. "' /></td></tr>\n";
 		
 		if ($showaddlinkrss)
 		{
 			if ($linkrsslabel == "") $linkrsslabel = __('Link RSS', 'link-library');
-			$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' /></td></tr>\n";
+			$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . $captureddata['link_rss'] . "' /></td></tr>\n";
 		}		
 		
 		$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
@@ -3489,7 +3505,10 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 				
 				foreach ($linkcats as $linkcat)
 				{
-					$output .= "<OPTION VALUE='" . $linkcat->term_id . "'>" . $linkcat->name;
+					$output .= "<OPTION VALUE='" . $linkcat->term_id . "' ";
+					if ($captureddata['link_category'] == $linkcat->term_id)
+						$output .= "selected";
+					$output .= ">" . $linkcat->name;
 				}
 				
 				if ($addlinkcustomcat)
@@ -3503,43 +3522,50 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 			}
 			
 			if ($addlinkcustomcat)
-				$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' /></td></tr>\n";			
+				$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . $captureddata['link_user_category'] . "' /></td></tr>\n";			
 		}		
 		
 		if ($showaddlinkdesc)
 		{
 			if ($linkdesclabel == "") $linkdesclabel = __('Link description', 'link-library');
-			$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' /></td></tr>\n";
+			$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . $captureddata['link_description'] . "' /></td></tr>\n";
 		}
 		
 		if ($showaddlinknotes)
 		{
 			if ($linknoteslabel == "") $linknoteslabel = __('Link notes', 'link-library');
-			$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' /></td></tr>\n";
+			$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' value='" . $captureddata['link_notes'] . "' /></td></tr>\n";
 		}
 		
 		if ($showaddlinkreciprocal)
 		{
 			if ($linkreciprocallabel == "") $linkreciprocallabel = __('Reciprocal Link', 'link-library');
-			$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' /></td></tr>\n";
+			$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . $captureddata['link_reciprocal'] . "' /></td></tr>\n";
 		}
 		
 		if ($showaddlinksecondurl)
 		{
 			if ($linksecondurllabel == "") $linksecondurllabel = __('Secondary Address', 'link-library');
-			$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' /></td></tr>\n";
+			$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . $captureddata['ll_secondwebaddr'] . "' /></td></tr>\n";
 		}
 		
 		if ($showaddlinktelephone)
 		{
 			if ($linktelephonelabel == "") $linktelephonelabel = __('Telephone', 'link-library');
-			$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' /></td></tr>\n";
+			$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . $captureddata['ll_telephone'] . "' /></td></tr>\n";
 		}
 		
 		if ($showaddlinkemail)
 		{
 			if ($linkemaillabel == "") $linkemaillabel = __('E-mail', 'link-library');
-			$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' /></td></tr>\n";
+			$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . $captureddata['ll_email'] . "' /></td></tr>\n";
+		}
+		
+		if ($showcaptcha && $recaptchapublickey != '')
+		{
+			require_once('recaptchalib.php');
+			$publickey = "your_public_key"; // you got this from the signup page
+			$output .= "<tr><td colspan='2'>" . recaptcha_get_html($recaptchapublickey) . "</td></tr>";
 		}
 					
 		$output .= "</table>\n";
@@ -3867,130 +3893,167 @@ function link_library_addlink_func($atts) {
 		$options = get_option($settingsname);
 	}
 	
+	$genoptions = get_option('LinkLibraryGeneral');
+	
 	if ($_POST['link_name'])
 	{		
-		if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
+		if ($options['showcaptcha'])
 		{
-			$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
-			$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-			$existingcat = $wpdb->get_var($existingcatquery);
-			
-			if (!$existingcat)
-			{
-				$newlinkcatdata = array("cat_name" => $_POST['link_user_category'], "category_description" => "", "category_nicename" => $wpdb->escape($_POST['link_user_category']));
-				$newlinkcat = wp_insert_category($newlinkcatdata);
-				
-				$newcatarray = array("term_id" => $newlinkcat);
-
-				$newcattype = array("taxonomy" => 'link_category');
-				
-				$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
-				
-				$newlinkcat = array($newlinkcat);
-			}
-			else
-			{
-				$newlinkcat = array($existingcat);
-			}
-			
-			$message = "<div class='llmessage'>" . $options['newlinkmsg'];
-			if ($options['showuserlinks'] == false)
-				$message .= ", " . $options['moderatemsg'];
-			else
-				$message .= ".";
-				
-			$message .= "</div>";	
-			
-			echo $message;
-
-			$validcat = true;
-		}
-		elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
-		{
-			$message = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
-			echo $message;		
-			
-			$validcat = false;
-		}
-		else
-		{
-			$newlinkcat = array($_POST['link_category']);
-			
-			$message = "<div class='llmessage'>" . $options['newlinkmsg'];
-			if ($options['showuserlinks'] == false)
-				$message .= ", " . $options['moderatemsg'];
-			else
-				$message .= ".";
-				
-			$message .= "</div>";
-			
-			echo $message;
-			
-			$validcat = true;
+			require_once('recaptchalib.php');
+			$privatekey = $genoptions['recaptchaprivatekey'];
+			$resp = recaptcha_check_answer ($privatekey,
+											$_SERVER["REMOTE_ADDR"],
+											$_POST["recaptcha_challenge_field"],
+											$_POST["recaptcha_response_field"]);
 		}
 		
-		if ($validcat == true)
+		$captureddata = array();
+		
+		if (!$resp->is_valid && $options['showcaptcha'] == true)
 		{
-			if ($options['showuserlinks'] == false)
+			$message = "<div class='llmessage'>" . __('The captcha was not entered correctly. Please try again.', 'link-library') . "</div>";
+			echo $message;
+
+			$captureddata['link_category'] = $_POST['link_category'];
+			$captureddata['link_user_category'] = $_POST['link_user_category'];
+			$captureddata['link_description'] = $_POST['link_description'];
+			$captureddata['link_name'] = $_POST['link_name'];
+			$captureddata['link_url'] = $_POST['link_url'];
+			$captureddata['link_rss'] = $_POST['link_rss'];
+			$captureddata['link_notes'] = $_POST['link_notes'];
+			$captureddata['ll_secondwebaddr'] = $_POST['ll_secondwebaddr'];
+			$captureddata['ll_telephone'] = $_POST['ll_telephone'];
+			$captureddata['ll_email'] = $_POST['ll_email'];
+			$captureddata['ll_reciprocal'] = $_POST['ll_reciprocal'];            
+		}
+		elseif ($resp->is_valid || $options['showcaptcha'] == false)
+		{
+			if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 			{
-				$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
-				$newlinkvisibility = 'N';
+				$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
+				$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+				$existingcat = $wpdb->get_var($existingcatquery);
+				
+				if (!$existingcat)
+				{
+					$newlinkcatdata = array("cat_name" => $_POST['link_user_category'], "category_description" => "", "category_nicename" => $wpdb->escape($_POST['link_user_category']));
+					$newlinkcat = wp_insert_category($newlinkcatdata);
+					
+					$newcatarray = array("term_id" => $newlinkcat);
+
+					$newcattype = array("taxonomy" => 'link_category');
+					
+					$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
+					
+					$newlinkcat = array($newlinkcat);
+				}
+				else
+				{
+					$newlinkcat = array($existingcat);
+				}
+				
+				$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+				if ($options['showuserlinks'] == false)
+					$message .= ", " . $options['moderatemsg'];
+				else
+					$message .= ".";
+					
+				$message .= "</div>";	
+				
+				echo $message;
+
+				$validcat = true;
+			}
+			elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
+			{
+				$message = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
+				echo $message;		
+				
+				$validcat = false;
 			}
 			else
 			{
-				$newlinkdesc = $_POST['link_description'];
-				$newlinkvisibility = 'Y';
-			}
-			
-			if ($options['storelinksubmitter'] == true)
-			{
-				global $current_user;
+				$newlinkcat = array($_POST['link_category']);
 				
-				get_currentuserinfo();
-				
-				if ($current_user)
-					$username = $current_user->user_login;
-			}
-				
-			$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
-				"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
-			$newlinkid = wp_insert_link($newlink);
-			
-			$extradatatable = $wpdb->prefix . "links_extrainfo";
-			$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'],
-							'link_submitter' => $username), array( 'link_id' => $newlinkid ));		
-			
-			if ($options['emailnewlink'])
-			{
-				$adminmail = get_option('admin_email');
-				$headers = "MIME-Version: 1.0\r\n";
-				$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-				
-				$message = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
-				$message .= __('Link Name', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
-				$message .= __('Link Address', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
-				$message .= __('Link RSS', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
-				$message .= __('Link Description', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
-				$message .= __('Link Notes', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
-				$message .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
-				$message .= __('Reciprocal Link', 'link-library') . ": " . $_POST['link_reciprocal'] . "<br /><br />";
-				$message .= __('Link Secondary Address', 'link-library') . ": " . $_POST['link_second_url'] . "<br /><br />";
-				$message .= __('Link Telephone', 'link-library') . ": " . $_POST['link_telephone'] . "<br /><br />";
-				$message .= __('Link E-mail', 'link-library') . ": " . $_POST['link_email'] . "<br /><br />";
-							
-				if ( !defined('WP_ADMIN_URL') )
-					define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
-					
+				$message = "<div class='llmessage'>" . $options['newlinkmsg'];
 				if ($options['showuserlinks'] == false)
-					$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
-				elseif ($options['showuserlinks'] == true)
-					$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+					$message .= ", " . $options['moderatemsg'];
+				else
+					$message .= ".";
 					
-				$message .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
+				$message .= "</div>";
 				
-				wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
-			}	
-		}	
+				echo $message;
+				
+				$validcat = true;
+			}
+			
+			if ($validcat == true)
+			{
+				if ($options['showuserlinks'] == false)
+				{
+					$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
+					$newlinkvisibility = 'N';
+				}
+				else
+				{
+					$newlinkdesc = $_POST['link_description'];
+					$newlinkvisibility = 'Y';
+				}
+				
+				if ($options['storelinksubmitter'] == true)
+				{
+					global $current_user;
+					
+					get_currentuserinfo();
+					
+					if ($current_user)
+						$username = $current_user->user_login;
+				}
+					
+				$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
+					"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
+				$newlinkid = wp_insert_link($newlink);
+				
+				$extradatatable = $wpdb->prefix . "links_extrainfo";
+				$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'],
+								'link_submitter' => $username), array( 'link_id' => $newlinkid ));		
+				
+				if ($options['emailnewlink'])
+				{
+					$adminmail = get_option('admin_email');
+					$headers = "MIME-Version: 1.0\r\n";
+					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+					
+					$message = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
+					$message .= __('Link Name', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
+					$message .= __('Link Address', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
+					$message .= __('Link RSS', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
+					$message .= __('Link Description', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
+					$message .= __('Link Notes', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
+					$message .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
+					$message .= __('Reciprocal Link', 'link-library') . ": " . $_POST['link_reciprocal'] . "<br /><br />";
+					$message .= __('Link Secondary Address', 'link-library') . ": " . $_POST['link_second_url'] . "<br /><br />";
+					$message .= __('Link Telephone', 'link-library') . ": " . $_POST['link_telephone'] . "<br /><br />";
+					$message .= __('Link E-mail', 'link-library') . ": " . $_POST['link_email'] . "<br /><br />";
+								
+					if ( !defined('WP_ADMIN_URL') )
+						define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
+						
+					if ($options['showuserlinks'] == false)
+						$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
+					elseif ($options['showuserlinks'] == true)
+						$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+						
+					$message .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
+					
+					wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
+				}	
+			}			
+		}
+		
+		
+
 	}
 	
 	if ($categorylistoverride != '')
@@ -4003,15 +4066,14 @@ function link_library_addlink_func($atts) {
 	else
 		$excludedcategorylist = $options['excludecategorylist'];
 		
-	$genoptions = get_option('LinkLibraryGeneral');
-	
 	return PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
 										 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
 										 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
 										 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],
 										 $options['addlinkcustomcat'], $options['linkcustomcatlabel'], $options['linkcustomcatlistentry'], 
 										 $options['showaddlinkreciprocal'], $options['linkreciprocallabel'], $options['showaddlinksecondurl'], $options['linksecondurllabel'],
-										 $options['showaddlinktelephone'], $options['linktelephonelabel'], $options['showaddlinkemail'], $options['linkemaillabel']);	
+										 $options['showaddlinktelephone'], $options['linktelephonelabel'], $options['showaddlinkemail'], $options['linkemaillabel'],
+										 $options['showcaptcha'], $genoptions['recaptchapublickey'], $captureddata);	
 	
 	
 }
@@ -4207,13 +4269,21 @@ function ll_link_edit_extra($link) {
 		ll_install();
 	}
 	
-	$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link->link_id;
-	$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
-	
-	if ($extradata['link_visits'] == '') $extradata['link_visits'] = 0;
-	
-	$originallinkdata = "select * from " . $wpdb->prefix . "links where link_id = " . $link->link_id;
-	$originaldata = $wpdb->get_row($originallinkdata, ARRAY_A);
+	if ($link->link_id != '')
+	{
+		$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link->link_id;
+		$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
+		
+		if ($extradata['link_visits'] == '') $extradata['link_visits'] = 0;
+		
+		$originallinkdata = "select * from " . $wpdb->prefix . "links where link_id = " . $link->link_id;
+		$originaldata = $wpdb->get_row($originallinkdata, ARRAY_A);
+	}
+	else
+	{
+		$extradata = array();
+		$originaldata = array();
+	}	
 	
 	if ( !defined('WP_ADMIN_URL') )
 		define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');	
