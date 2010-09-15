@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.3
+Version: 4.3.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -329,8 +329,6 @@ function ll_reset_gen_settings()
 	$genoptions['pagetitleprefix'] = '';
 	$genoptions['pagetitlesuffix'] = '';
 	$genoptions['thumbshotscid'] = '';
-	$genoptions['recaptchapublickey'] = '';
-	$genoptions['recaptchaprivatekey'] = '';
 	
 	$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
 	$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
@@ -523,7 +521,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				
 				$genoptions = get_option('LinkLibraryGeneral');
 
-				foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'recaptchapublickey', 'recaptchaprivatekey') as $option_name) {
+				foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid') as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$genoptions[$option_name] = $_POST[$option_name];
 					}
@@ -1073,14 +1071,6 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
 					<td colspan='4' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
-				<tr>
-					<td class='tooltip' title='<?php _e('Re-Captcha Public Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><?php _e('Re-Captcha Public Key', 'link-library'); ?></td>
-					<td colspan='4' class='tooltip' title='<?php _e('Re-Captcha Public Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><input type="text" id="recaptchapublickey" name="recaptchapublickey" size="80" value="<?php echo $genoptions['recaptchapublickey']; ?>"/></td>
-				</tr>
-				<tr>
-					<td class='tooltip' title='<?php _e('Re-Captcha Private Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><?php _e('Re-Captcha Private Key', 'link-library'); ?></td>
-					<td colspan='4' class='tooltip' title='<?php _e('Re-Captcha Private Key. Required to display captcha in User Link Submission Form. Get your public and private keys at http://www.google.com/recaptcha', 'link-library'); ?>'><input type="text" id="recaptchaprivatekey" name="recaptchaprivatekey" size="80" value="<?php echo $genoptions['recaptchaprivatekey']; ?>"/></td>
-				</tr>				
 				</table>
 				</fieldset>
 				</form>
@@ -3438,7 +3428,7 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 										$linkcustomcatlistentry = 'User-submitted category (define below)', $showaddlinkreciprocal = false,
 										$linkreciprocallabel = '', $showaddlinksecondurl = false, $linksecondurllabel = '',
 										$showaddlinktelephone = false, $linktelephonelabel = '', $showaddlinkemail = false, $linkemaillabel = '',
-										$showcaptcha = false, $recaptchapublickey = '', $captureddata = '') {
+										$showcaptcha = false, $captureddata = '') {
 										
 	global $wpdb;
 	
@@ -3561,11 +3551,11 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 			$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . $captureddata['ll_email'] . "' /></td></tr>\n";
 		}
 		
-		if ($showcaptcha && $recaptchapublickey != '')
+		if ($showcaptcha)
 		{
-			require_once('recaptchalib.php');
-			$publickey = "your_public_key"; // you got this from the signup page
-			$output .= "<tr><td colspan='2'>" . recaptcha_get_html($recaptchapublickey) . "</td></tr>";
+			$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
+			$output .= "<tr><td></td><td><img src='" . $llpluginpath . "captcha/easycaptcha.php' /></td></tr>\n";
+			$output .= "<tr><td>" . __('Enter code from above image', 'link-library') . "</td><td><input type='text' name='confirm_code' /></td></tr>\n";
 		}
 					
 		$output .= "</table>\n";
@@ -3895,23 +3885,51 @@ function link_library_addlink_func($atts) {
 	
 	$genoptions = get_option('LinkLibraryGeneral');
 	
+	$valid = false;
+	$validmessage = "";
+	
 	if ($_POST['link_name'])
 	{		
 		if ($options['showcaptcha'])
 		{
-			require_once('recaptchalib.php');
-			$privatekey = $genoptions['recaptchaprivatekey'];
-			$resp = recaptcha_check_answer ($privatekey,
-											$_SERVER["REMOTE_ADDR"],
-											$_POST["recaptcha_challenge_field"],
-											$_POST["recaptcha_response_field"]);
+			if (empty($_REQUEST['confirm_code']))
+			{
+				$valid = false;
+				$validmessage = __('Confirm code not given', 'link-library') . ".";
+			}
+			else
+			{
+				if ( isset($_COOKIE['Captcha']) )
+				{
+					list($Hash, $Time) = explode('.', $_COOKIE['Captcha']);
+					if ( md5("ORHFUKELFPTUEODKFJ".$_REQUEST['confirm_code'].$_SERVER['REMOTE_ADDR'].$Time) != $Hash )
+					{
+						$valid = false;
+						$validmessage = __('Captcha code is wrong', 'link-library') . ".";
+					}
+					elseif( (time() - 5*60) > $Time)
+					{
+						$valid = false;
+						$validmessage = __('Captcha code is only valid for 5 minutes', 'link-library') . ".";
+					}
+					else
+					{
+						$valid = true;					
+					}
+				}
+				else
+				{
+					$valid = false;
+					$validmessage = __('No captcha cookie given. Make sure cookies are enabled', 'link-library') . ".";
+				}
+			}
 		}
 		
 		$captureddata = array();
 		
-		if (!$resp->is_valid && $options['showcaptcha'] == true)
+		if ($valid == false && $options['showcaptcha'] == true)
 		{
-			$message = "<div class='llmessage'>" . __('The captcha was not entered correctly. Please try again.', 'link-library') . "</div>";
+			$message = "<div class='llmessage'>" . $validmessage . "</div>";
 			echo $message;
 
 			$captureddata['link_category'] = $_POST['link_category'];
@@ -3926,7 +3944,7 @@ function link_library_addlink_func($atts) {
 			$captureddata['ll_email'] = $_POST['ll_email'];
 			$captureddata['ll_reciprocal'] = $_POST['ll_reciprocal'];            
 		}
-		elseif ($resp->is_valid || $options['showcaptcha'] == false)
+		elseif ($valid || $options['showcaptcha'] == false)
 		{
 			if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 			{
@@ -4073,7 +4091,7 @@ function link_library_addlink_func($atts) {
 										 $options['addlinkcustomcat'], $options['linkcustomcatlabel'], $options['linkcustomcatlistentry'], 
 										 $options['showaddlinkreciprocal'], $options['linkreciprocallabel'], $options['showaddlinksecondurl'], $options['linksecondurllabel'],
 										 $options['showaddlinktelephone'], $options['linktelephonelabel'], $options['showaddlinkemail'], $options['linkemaillabel'],
-										 $options['showcaptcha'], $genoptions['recaptchapublickey'], $captureddata);	
+										 $options['showcaptcha'], $captureddata);	
 	
 	
 }
