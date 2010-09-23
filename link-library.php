@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.3.1
+Version: 4.3.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -116,6 +116,16 @@ function ll_install() {
 					elseif ($options['imagepos'] == 'afterrssicons')
 						$options['dragndroporder'] = '2,3,4,5,6,1,7,8,9,10';
 				}
+				else if ($options['dragndroporder'] != '')
+					$elementarray = explode(',', $options['dragndroporder']);
+				{
+					if (!in_array('11', $elementarray))
+					{
+						$elementarray[] = '11';
+						$options['dragndroporder'] = implode(",", $elementarray);
+					}
+				}
+				
 			}
 
 			update_option($settingsname, $options);
@@ -315,6 +325,8 @@ function ll_reset_options($settings = 1, $layout = 'list')
 	$options['storelinksubmitter'] = false;
 	$options['maxlinks'] = '';
 	$options['showcaptcha'] = false;
+	$options['beforelinkrating'] = '';
+	$options['afterlinkrating'] = '';
 
 	$settingsname = 'LinkLibraryPP' . $settings;
 	update_option($settingsname, $options);	
@@ -334,6 +346,37 @@ function ll_reset_gen_settings()
 	$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
 				
 	update_option('LinkLibraryGeneral', $genoptions);
+}
+
+function ll_downloadRemoteFile($url,$dir,$file_name = NULL){
+    if($file_name == NULL){ $file_name = basename($url);}
+    $url_stuff = parse_url($url);
+    $port = isset($url_stuff['port']) ? $url_stuff['port'] : 80;
+
+    $fp = fsockopen($url_stuff['host'], $port);
+    if(!$fp){ return false;}
+
+    $query  = 'GET ' . $url_stuff['path'] . " HTTP/1.0\n";
+    $query .= 'Host: ' . $url_stuff['host'];
+    $query .= "\n\n";
+
+    fwrite($fp, $query);
+
+    while ($tmp = fread($fp, 8192))   {
+        $buffer .= $tmp;
+    }
+
+    preg_match('/Content-Length: ([0-9]+)/', $buffer, $parts);
+    $file_binary = substr($buffer, - $parts[1]);
+    if($file_name == NULL){
+        $temp = explode(".",$url);
+        $file_name = $temp[count($temp)-1];
+    }
+    $file_open = fopen($dir . "/" . $file_name,'w');
+    if(!$file_open){ return false;}
+    fwrite($file_open,$file_binary);
+    fclose($file_open);
+    return true;
 } 
 
 function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
@@ -345,25 +388,20 @@ function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
 			if ($cid == '')
 				$genthumburl = "http://open.thumbshots.org/image.aspx?url=" . wp_specialchars($url);
 			elseif ($cid != '')
-				$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . $cid . "&w=120&h=90&v=1&url=" . wp_specialchars($url);
+				$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . $cid . "&v1=w=120&h=90&url=" . wp_specialchars($url);
 		}
 		elseif ($mode == 'favicon' || $mode == 'favicononly')
 		{
 			$strippedurl = str_replace("http://", "", wp_specialchars($url));
 			$genthumburl = "http://www.getfavicon.org/?url=" . $strippedurl . "/favicon.png";
 		}
-
-		$linkname = htmlspecialchars_decode($name, ENT_QUOTES);
-		$linkname = str_replace(" ", "", $linkname);
-		$linkname = str_replace(".", "", $linkname);
-		$linkname = str_replace("/", "-", $linkname);
-
-		$imagedata = file_get_contents($genthumburl);
-		$status = file_put_contents(ABSPATH . "/wp-content/plugins/" . $filepath. "/" . $linkname . ".jpg", $imagedata);
 		
-		if ($status)
+		$img = ABSPATH . "/wp-content/plugins/" . $filepath. "/" . $linkid . ".jpg";
+		$status = file_put_contents($img, file_get_contents($genthumburl));
+
+		if ($status != true)
 		{
-			$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/plugins/" . $filepath . "/" . $linkname . ".jpg");
+			$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/plugins/" . $filepath . "/" . $linkid . ".jpg");
 
 			if ($mode == 'thumb' || $mode == 'favicon')
 				wp_update_link($newimagedata);
@@ -373,7 +411,7 @@ function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
 		else
 			return "";
 	}
-	return "";
+	return "Parameters are missing";
 }
 
 if ( ! class_exists( 'LL_Admin' ) ) {
@@ -736,7 +774,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							   'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 'addbeforelink', 'addafterlink',
 							   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount','beforerss','afterrss','linksperpage', 'catdescpos',
 							   'beforedate', 'afterdate', 'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight', 'beforeimage', 'afterimage', 'numberofrssitems',
-							   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'sourceimage', 'sourcename') 
+							   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'sourceimage', 'sourcename',
+							   'beforelinkrating', 'afterlinkrating') 
 							   as $option_name) {
 					if (isset($_POST[$option_name])) {
 						$options[$option_name] = str_replace("\"", "'", strtolower($_POST[$option_name]));
@@ -984,7 +1023,7 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 				?>
 						<tr style='background: #FFF'>
 							<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
-							<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . WP_ADMIN_URL . "/wp-admin/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
+							<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . WP_ADMIN_URL . "/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
 							<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
 							<td><?php echo $newlinkdesc; ?></td>
 						</tr>
@@ -1553,6 +1592,9 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 										case 10: ?>
 											<li id="10" style='background-color: #33cccc'><?php _e('Hits', 'link-library'); ?></li>
 										<?php break;
+										case 11: ?>
+											<li id="11" style='background-color: #33cc00'><?php _e('Rating', 'link-library'); ?></li>
+										<?php break;										
 									}
 								}
 							}
@@ -1803,6 +1845,22 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 								<td style='background: #FFF'></td>
 							</tr>
 							<?php break;
+							case 11: /* -------------------------------- Link Rating -------------------------------------------*/ ?>
+							<tr>
+								<td style='background-color: #33cc00;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the Link Rating', 'link-library'); ?>'><?php _e('Link Rating', 'link-library'); ?></td>
+								<td style='text-align:center;background: #FFF'>
+									<input type="checkbox" id="showrating" name="showrating" <?php if ($options['showrating']) echo ' checked="checked" '; ?>/>
+								</td>
+								<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before Link Rating', 'link-library'); ?>'>
+									<input type="text" id="beforelinkrating" name="beforelinkrating" size="22" value="<?php echo stripslashes($options['beforelinkrating']); ?>"/>
+								</td>
+								<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after Link Rating', 'link-library'); ?>'>
+									<input type="text" id="afterlinkrating" name="afterlinkrating" size="22" value="<?php echo stripslashes($options['afterlinkrating']); ?>"/>
+								</td>
+								<td style='background: #FFF'></td>
+								<td style='background: #FFF'></td>
+							</tr>
+							<?php break;
 									}
 								}
 							}
@@ -1833,45 +1891,34 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 					<table>
 					<tr>
 						<td style='width=150px'>
-							<?php _e('Show Link Rating', 'link-library'); ?>
-						</td>
-						<td style='width=75px;padding:0px 20px 0px 20px'>
-							<input type="checkbox" id="showrating" name="showrating" <?php if ($options['showrating']) echo ' checked="checked" '; ?>/>
-						</td>
-						<td style='width:100px'></td>
-						<td>
 							<?php _e('Show Link Updated Flag', 'link-library'); ?>
 						</td>
 						<td style='width=75px;padding:0px 20px 0px 20px'>
 							<input type="checkbox" id="showupdated" name="showupdated" <?php if ($options['showupdated']) echo ' checked="checked" '; ?>/>
 						</td>
-					</tr>
-					<tr>
+						<td style='width=20px'>
+						</td>
 						<td>
 							<?php _e('Convert [] to &lt;&gt; in Link Description and Notes', 'link-library'); ?>
 						</td>
 						<td style='width=75px;padding:0px 20px 0px 20px'>
 							<input type="checkbox" id="use_html_tags" name="use_html_tags" <?php if ($options['use_html_tags']) echo ' checked="checked" '; ?>/>
 						</td>
-						<td></td>
+					</tr>
+					<tr>
 						<td>
 							<?php _e('Add nofollow tag to outgoing links', 'link-library'); ?>
 						</td>
-						
 						<td style='width=75px;padding:0px 20px 0px 20px'>
 							<input type="checkbox" id="nofollow" name="nofollow" <?php if ($options['nofollow']) echo ' checked="checked" '; ?>/>
 						</td>
-					</tr>
-					<tr>
+						<td></td>
 						<td>
 							<?php _e('Show edit links when logged in as editor or administrator', 'link-library'); ?>
 						</td>
 						<td style='width=75px;padding:0px 20px 0px 20px'>
 							<input type="checkbox" id="showadmineditlinks" name="showadmineditlinks" <?php if ($options['showadmineditlinks']) echo ' checked="checked" '; ?>/>
 						</td>
-						<td></td>
-						<td></td>
-						<td></td>
 					</tr>
 					</table>
 					<fieldset style='border:1px solid #CCC;padding:15px;margin:15px;'>
@@ -2022,8 +2069,8 @@ if ( ! class_exists( 'LL_Admin' ) ) {
 							<td style='width: 20px'></td>
 						</tr>
 						<tr>
-							<td class='tooltip' title='<?php _e('The Re-Captha public and private keys need to be specified in the General Configuration for this feature to work', 'link-library'); ?>.' style='width:200px'><?php _e('Display captcha', 'link-library'); ?></td>
-							<td class='tooltip' title='<?php _e('The Re-Captha public and private keys need to be specified in the General Configuration for this feature to work', 'link-library'); ?>.' style='width:75px;padding-right:20px'><input type="checkbox" id="showcaptcha" name="showcaptcha" <?php if ($options['showcaptcha']) echo ' checked="checked" '; ?>/></td>
+							<td style='width:200px'><?php _e('Display captcha', 'link-library'); ?></td>
+							<td style='width:75px;padding-right:20px'><input type="checkbox" id="showcaptcha" name="showcaptcha" <?php if ($options['showcaptcha']) echo ' checked="checked" '; ?>/></td>
 						</tr>
 						<tr>
 							<td style='width:200px'><?php _e('Add new link label', 'link-library'); ?></td>
@@ -2502,7 +2549,7 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 								$sourceweblink = 'primary', $showtelephone = 'false', $sourcetelephone = 'primary', $showemail = 'false', $showlinkhits = false,
 								$beforeweblink = '', $afterweblink = '', $weblinklabel = '', $beforetelephone = '', $aftertelephone = '', $telephonelabel = '',
 								$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
-								$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '') {
+								$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '') {
 
 	global $wpdb;
 	
@@ -3254,6 +3301,19 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 									}
 									
 									break;
+									
+								case 11: 	//------------------ Link Rating Output --------------------   
+								
+									if ($showrating)
+									{
+										$output .= $between . stripslashes($beforelinkrating);
+										
+										$output .= $linkitem['link_rating'];
+										
+										$output .= stripslashes($afterlinkrating);
+									}
+									
+									break;
 								}
 							}
 						}
@@ -3391,12 +3451,12 @@ function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor =
 	{
 		$output .= "<script type='text/javascript'>\n";
 		$output .= "jQuery(document).ready(function() {\n";
-		$output .= "\tjQuery('a.rssbox').fancybox(\n";
+		$output .= "\tjQuery('a.rssbox').colorbox(\n";
 		$output .= "\t\t{\n";
-		$output .= "\t\t\t'width'	:	" . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . ",\n";
-		$output .= "\t\t\t'height'	:	" . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . ",\n";
-		$output .= "\t\t\t'autoDimensions'	:	false\n";
-		$output .= "\t\t}\n";
+		$output .= "\t\t\t'innerWidth'	:	" . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . ",\n";
+		$output .= "\t\t\t'innerHeight'	:	" . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . ",\n";
+		$output .= "\t\t\t'opacity'	:  0.2\n"; 
+		$output .= "\t\t}\n"; 
 		$output .= ");";
 		$output .= "});";
 		$output .= "</script>";
@@ -3502,9 +3562,9 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 				}
 				
 				if ($addlinkcustomcat)
-					$output .= "<OPTION VALUE='new'>" . $linkcustomcatlistentry;
+					$output .= "<OPTION VALUE='new'>" . $linkcustomcatlistentry . "\n";
 				
-				$output .= "</SELECT></td></tr>";
+				$output .= "</SELECT></td></tr>\n";
 			}
 			else
 			{
@@ -3554,7 +3614,7 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		if ($showcaptcha)
 		{
 			$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
-			$output .= "<tr><td></td><td><img src='" . $llpluginpath . "captcha/easycaptcha.php' /></td></tr>\n";
+			$output .= "<tr><td></td><td><span id='captchaimage'><img src='" . $llpluginpath . "captcha/easycaptcha.php' /></span></td></tr>\n";
 			$output .= "<tr><td>" . __('Enter code from above image', 'link-library') . "</td><td><input type='text' name='confirm_code' /></td></tr>\n";
 		}
 					
@@ -3564,7 +3624,7 @@ function PrivateLinkLibraryAddLinkForm($selectedcategorylist = '', $excludedcate
 		$output .= '<span style="border:0;" class="submit"><input type="submit" name="submit" value="' . $addlinkbtnlabel . '" /></span>';
 		
 		$output .= "</div>\n";
-		$output .= "</form>\n\n";
+		$output .= "</form>\n\n";		
 	}
 
 	return $output;
@@ -3762,7 +3822,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$sourcetelephone = 'primary', $showemail = 'false', $showlinkhits = false, $beforeweblink = '', $afterweblink = '', $weblinklabel = '',
 								$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 								$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
-								$maxlinks = '') {
+								$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '') {
 
 	if (strpos($order, 'AdminSettings') !== false)
 	{
@@ -3793,7 +3853,8 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								  $options['showemail'], $options['showlinkhits'], $options['beforeweblink'], $options['afterweblink'], $options['weblinklabel'],
 								  $options['beforetelephone'], $options['aftertelephone'], $options['telephonelabel'], $options['beforeemail'], $options['afteremail'],
 								  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
-								  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks']);	
+								  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
+								  $options['afterlinkrating']);	
 	}
 	else
 		return PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -3810,7 +3871,7 @@ function LinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 								$usethumbshotsforimages, $showonecatmode, $dragndroporder, $showname, $displayweblink, $sourceweblink, $showtelephone,
 								$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 								$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
-								$thumbshotscid, $maxlinks);
+								$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating);
 }
 
 function link_library_cats_func($atts) {
@@ -3946,132 +4007,144 @@ function link_library_addlink_func($atts) {
 		}
 		elseif ($valid || $options['showcaptcha'] == false)
 		{
-			if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
+		
+			$existinglinkquery = "SELECT * from " . $wpdb->prefix . "links l where l.link_url = '" . $_POST['link_url'] . "' or l.link_name = '" . $_POST['link_name'] . "'";
+			$existinglink = $wpdb->get_var($existinglinkquery);
+			
+			if ($existinglink == null)
 			{
-				$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
-				$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-				$existingcat = $wpdb->get_var($existingcatquery);
-				
-				if (!$existingcat)
+				if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 				{
-					$newlinkcatdata = array("cat_name" => $_POST['link_user_category'], "category_description" => "", "category_nicename" => $wpdb->escape($_POST['link_user_category']));
-					$newlinkcat = wp_insert_category($newlinkcatdata);
+					$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
+					$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+					$existingcat = $wpdb->get_var($existingcatquery);
 					
-					$newcatarray = array("term_id" => $newlinkcat);
+					if (!$existingcat)
+					{
+						$newlinkcatdata = array("cat_name" => $_POST['link_user_category'], "category_description" => "", "category_nicename" => $wpdb->escape($_POST['link_user_category']));
+						$newlinkcat = wp_insert_category($newlinkcatdata);
+						
+						$newcatarray = array("term_id" => $newlinkcat);
 
-					$newcattype = array("taxonomy" => 'link_category');
+						$newcattype = array("taxonomy" => 'link_category');
+						
+						$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
+						
+						$newlinkcat = array($newlinkcat);
+					}
+					else
+					{
+						$newlinkcat = array($existingcat);
+					}
 					
-					$wpdb->update( $wpdb->prefix.'term_taxonomy', $newcattype, $newcatarray);
+					$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+					if ($options['showuserlinks'] == false)
+						$message .= ", " . $options['moderatemsg'];
+					else
+						$message .= ".";
+						
+					$message .= "</div>";	
 					
-					$newlinkcat = array($newlinkcat);
+					echo $message;
+
+					$validcat = true;
+				}
+				elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
+				{
+					$message = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
+					echo $message;		
+					
+					$validcat = false;
 				}
 				else
 				{
-					$newlinkcat = array($existingcat);
+					$newlinkcat = array($_POST['link_category']);
+					
+					$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+					if ($options['showuserlinks'] == false)
+						$message .= ", " . $options['moderatemsg'];
+					else
+						$message .= ".";
+						
+					$message .= "</div>";
+					
+					echo $message;
+					
+					$validcat = true;
 				}
 				
-				$message = "<div class='llmessage'>" . $options['newlinkmsg'];
-				if ($options['showuserlinks'] == false)
-					$message .= ", " . $options['moderatemsg'];
-				else
-					$message .= ".";
+				if ($validcat == true)
+				{
+					if ($options['showuserlinks'] == false)
+					{
+						$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
+						$newlinkvisibility = 'N';
+					}
+					else
+					{
+						$newlinkdesc = $_POST['link_description'];
+						$newlinkvisibility = 'Y';
+					}
 					
-				$message .= "</div>";	
-				
-				echo $message;
-
-				$validcat = true;
-			}
-			elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
-			{
-				$message = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
-				echo $message;		
-				
-				$validcat = false;
+					if ($options['storelinksubmitter'] == true)
+					{
+						global $current_user;
+						
+						get_currentuserinfo();
+						
+						if ($current_user)
+							$username = $current_user->user_login;
+					}
+						
+					$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
+						"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
+					$newlinkid = wp_insert_link($newlink);
+					
+					$extradatatable = $wpdb->prefix . "links_extrainfo";
+					$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'],
+									'link_submitter' => $username), array( 'link_id' => $newlinkid ));		
+					
+					if ($options['emailnewlink'])
+					{
+						$adminmail = get_option('admin_email');
+						$headers = "MIME-Version: 1.0\r\n";
+						$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
+						
+						$message = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
+						$message .= __('Link Name', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
+						$message .= __('Link Address', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
+						$message .= __('Link RSS', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
+						$message .= __('Link Description', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
+						$message .= __('Link Notes', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
+						$message .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
+						$message .= __('Reciprocal Link', 'link-library') . ": " . $_POST['link_reciprocal'] . "<br /><br />";
+						$message .= __('Link Secondary Address', 'link-library') . ": " . $_POST['link_second_url'] . "<br /><br />";
+						$message .= __('Link Telephone', 'link-library') . ": " . $_POST['link_telephone'] . "<br /><br />";
+						$message .= __('Link E-mail', 'link-library') . ": " . $_POST['link_email'] . "<br /><br />";
+									
+						if ( !defined('WP_ADMIN_URL') )
+							define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
+							
+						if ($options['showuserlinks'] == false)
+							$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
+						elseif ($options['showuserlinks'] == true)
+							$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+							
+						$message .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
+						
+						wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
+					}	
+				}	
 			}
 			else
 			{
-				$newlinkcat = array($_POST['link_category']);
-				
-				$message = "<div class='llmessage'>" . $options['newlinkmsg'];
-				if ($options['showuserlinks'] == false)
-					$message .= ", " . $options['moderatemsg'];
-				else
-					$message .= ".";
-					
+				$message = "<div class='llmessage'>";
+				$message = __('Error: Link already exists.', 'link-library');
 				$message .= "</div>";
 				
 				echo $message;
-				
-				$validcat = true;
 			}
-			
-			if ($validcat == true)
-			{
-				if ($options['showuserlinks'] == false)
-				{
-					$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
-					$newlinkvisibility = 'N';
-				}
-				else
-				{
-					$newlinkdesc = $_POST['link_description'];
-					$newlinkvisibility = 'Y';
-				}
-				
-				if ($options['storelinksubmitter'] == true)
-				{
-					global $current_user;
-					
-					get_currentuserinfo();
-					
-					if ($current_user)
-						$username = $current_user->user_login;
-				}
-					
-				$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
-					"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
-				$newlinkid = wp_insert_link($newlink);
-				
-				$extradatatable = $wpdb->prefix . "links_extrainfo";
-				$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'],
-								'link_submitter' => $username), array( 'link_id' => $newlinkid ));		
-				
-				if ($options['emailnewlink'])
-				{
-					$adminmail = get_option('admin_email');
-					$headers = "MIME-Version: 1.0\r\n";
-					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-					
-					$message = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
-					$message .= __('Link Name', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_name'])) . "<br />";
-					$message .= __('Link Address', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
-					$message .= __('Link RSS', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
-					$message .= __('Link Description', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
-					$message .= __('Link Notes', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
-					$message .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
-					$message .= __('Reciprocal Link', 'link-library') . ": " . $_POST['link_reciprocal'] . "<br /><br />";
-					$message .= __('Link Secondary Address', 'link-library') . ": " . $_POST['link_second_url'] . "<br /><br />";
-					$message .= __('Link Telephone', 'link-library') . ": " . $_POST['link_telephone'] . "<br /><br />";
-					$message .= __('Link E-mail', 'link-library') . ": " . $_POST['link_email'] . "<br /><br />";
-								
-					if ( !defined('WP_ADMIN_URL') )
-						define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
-						
-					if ($options['showuserlinks'] == false)
-						$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
-					elseif ($options['showuserlinks'] == true)
-						$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
-						
-					$message .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
-					
-					wp_mail($adminmail, htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - New link added: " . htmlspecialchars($_POST['link_name']), $message, $headers);
-				}	
-			}			
 		}
-		
-		
-
 	}
 	
 	if ($categorylistoverride != '')
@@ -4191,7 +4264,7 @@ function link_library_func($atts) {
 								  $options['beforeweblink'], $options['afterweblink'], $options['weblinklabel'], $options['beforetelephone'], $options['aftertelephone'],
 								  $options['telephonelabel'], $options['beforeemail'], $options['afteremail'], $options['emaillabel'], $options['beforelinkhits'],
 								  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
-								  $options['maxlinks']); 
+								  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating']); 
 		
 	return $linklibraryoutput;
 }
@@ -4251,28 +4324,7 @@ function ll_rss_link() {
 		$genoptions = get_option('LinkLibraryGeneral');
 		
 		echo "<style id='LinkLibraryStyle' type='text/css'>\n";
-		echo stripslashes($genoptions['fullstylesheet']);
-		
-		echo "/* IE */\n";
-		echo "#fancybox-loading.fancybox-ie div	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_loading.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancybox-close		{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_close.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancybox-title-over	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_title_over.png', sizingMethod='scale'); zoom: 1; }\n";
-		echo ".fancybox-ie #fancybox-title-left	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_title_left.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancybox-title-main	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_title_main.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancybox-title-right	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_title_right.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancybox-left-ico		{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_nav_left.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancybox-right-ico	{ background: transparent; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_nav_right.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie .fancy-bg { background: transparent !important; }\n";
-			
-		echo ".fancybox-ie #fancy-bg-n	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_n.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-ne	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_ne.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-e	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_e.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-se	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_se.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-s	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_s.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-sw	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_sw.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-w	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_w.png', sizingMethod='scale'); }\n";
-		echo ".fancybox-ie #fancy-bg-nw	{ filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='" . WP_PLUGIN_URL . "/link-library/fancybox/fancy_shadow_nw.png', sizingMethod='scale'); }\n";
-		
+		echo stripslashes($genoptions['fullstylesheet']);				
 		echo "</style>\n";
 	}
 }
@@ -4343,11 +4395,18 @@ function ll_link_edit_extra($link) {
 				</div>
 			</td>
 		</tr>
+		<?php if ($link->link_id != ''): ?>
 		<tr>
 			<td><?php _e('Automatic Image Generation', 'link-library'); ?></td>
 			<td><INPUT type="button" id="genthumbs" name="genthumbs" value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
 				<INPUT type="button" id="genfavicons" name="genfavicons" value="<?php _e('Generate Favorite Icon and Store locally', 'link-library'); ?>"></td>
 		</tr>
+		<?php else: ?>
+		<tr>
+			<td><?php _e('Automatic Image Generation', 'link-library'); ?></td>
+			<td><?php _e('Only available once link is saved', 'link-library'); ?></td>
+		</tr>
+		<?php endif; ?>
 	</table>
 						
 <?php $genoptions = get_option('LinkLibraryGeneral'); ?>
@@ -4363,7 +4422,7 @@ function ll_link_edit_extra($link) {
 				if (linkname != '' && linkurl != '')
 				{
 					jQuery('#current_link_image').fadeOut('fast');
-					var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images' };
+					var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images', linkid: <?php echo $link->link_id; ?> };
 					jQuery.get('<?php echo WP_PLUGIN_URL; ?>/link-library/link-library-image-generator.php', map, 
 						function(data){
 							if (data != '')
@@ -4425,7 +4484,7 @@ add_shortcode('link-library', 'link_library_func');
 // adds the menu item to the admin interface
 add_action('admin_menu', array('LL_Admin','add_config_page'));
 
-add_filter('admin_head', 'admin_scripts'); // the_posts gets triggered before wp_head
+add_filter('admin_init', 'admin_scripts'); // the_posts gets triggered before wp_head
 
 add_action('wp_head', 'll_rss_link');
 
@@ -4440,9 +4499,9 @@ add_action('delete_link', 'delete_link_field');
 add_meta_box ('linklibrary_meta_box', __('Link Library - Additional Link Parameters', 'link-library'), 'll_link_edit_extra', 'link', 'normal', 'high');
 
 function admin_scripts() {
-	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js"></script>'."\n";
-	echo '<script type="text/javascript" src="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/jquery-ui/jquery-ui-1.7.3.custom.min.js"></script>'."\n";
-	echo '<link rel="stylesheet" type="text/css" href="'.get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css">'."\n";
+	wp_enqueue_script('tiptip', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js', "jQuery", "1.0rc3");
+	wp_enqueue_script('ui.sortable');
+	wp_enqueue_style('tiptipstyle', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css');	
 }
 
 add_action( 'init', 'LinkLibraryInit' );
@@ -4510,7 +4569,28 @@ function ll_title_creator($title) {
 	return $title;
 }
 
+function ll_linkmanager_addcolumn($columns) {
+	$columns['hits'] = 'Hits';
+	return $columns;
+}
+
+function ll_linkmanager_populatecolumn($data, $data2) {
+	global $wpdb;
+	print_r($data);
+	echo " / ";
+	print_r($data2);
+    switch ($name) {
+        case 'hits':
+			$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link_id;
+			$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
+            $hits = $extradata['link_visits'];
+            //echo $hits;
+    }
+}
+
 add_filter('wp_title', 'll_title_creator');
+//add_filter('manage_link-manager_columns', 'll_linkmanager_addcolumn');
+//add_action('manage_link_custom_column',  'll_linkmanager_populatecolumn');
 
 function LinkLibraryInit() {
 	global $llpluginpath;
@@ -4524,7 +4604,7 @@ function conditionally_add_scripts_and_styles($posts){
 	if (empty($posts)) return $posts;
 	
 	$load_jquery = false;
-	$load_fancybox = false;
+	$load_colorbox = false;
 	$load_style = false;
 	global $testvar;
 	
@@ -4533,7 +4613,7 @@ function conditionally_add_scripts_and_styles($posts){
 	if (is_admin()) 
 	{
 		$load_jquery = false;
-		$load_fancybox = false;
+		$load_colorbox = false;
 		$load_style = false;
 	}
 	else
@@ -4595,7 +4675,7 @@ function conditionally_add_scripts_and_styles($posts){
 		
 				if ($options['rsspreview'])
 				{
-					$load_fancybox = true;
+					$load_colorbox = true;
 				}
 
 				if ($options['publishrssfeed'] == true)			
@@ -4613,7 +4693,7 @@ function conditionally_add_scripts_and_styles($posts){
 				if (is_page($pageid))
 				{
 					$load_jquery = true;
-					$load_fancybox = true;
+					$load_colorbox = true;
 					$load_style = true;
 				}
 			}
@@ -4636,10 +4716,10 @@ function conditionally_add_scripts_and_styles($posts){
 		wp_enqueue_script('jquery');
 	}
 		
-	if ($load_fancybox)
+	if ($load_colorbox)
 	{
-		wp_enqueue_script('fancyboxpack', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.3.1.pack.js', "", "1.3.1");
-		wp_enqueue_style('fancyboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/fancybox/jquery.fancybox-1.3.1.css');	
+		wp_enqueue_script('colorbox', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/colorbox/jquery.colorbox-min.js', "", "1.3.9");
+		wp_enqueue_style('colorboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/colorbox/colorbox.css');	
 	}
  
 	return $posts;

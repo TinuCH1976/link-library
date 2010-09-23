@@ -72,6 +72,14 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.3.2 =
+* Added: Link Rating is now part of the Link Sub-Field Configuration table to be displayed and configured
+* Fixed: Slow load in IE caused by fancybox. Switched to colorbox for RSS Preview box.
+* Fixed: Potential conflicts between jQuery sortable query delivered with Link Library and version included with Wordpress
+* Added: French translation of Captcha elements
+* Added: Check for duplicate link URL and names upon user submission
+* Fixed: Links in moderation screen now correctly let you view link edit pages
+
 = 4.3.1 =
 * Change captcha library from re-captcha to library included with plugin to fix layout issues
 

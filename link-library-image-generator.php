@@ -7,6 +7,7 @@
 	$mode = $_GET['mode'];
 	$cid = $_GET['cid'];
 	$filepath = $_GET['filepath'];
+	$linkid = $_GET['linkid'];
 	
-	echo ll_get_link_image($url, $name, $mode, NULL, $cid, $filepath);
+	echo ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath);
 ?>
