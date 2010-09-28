@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.3.3 =
+* Fixed: Drag-and-drop for link element ordering
+
 = 4.3.2 =
 * Added: Link Rating is now part of the Link Sub-Field Configuration table to be displayed and configured
 * Fixed: Slow load in IE caused by fancybox. Switched to colorbox for RSS Preview box.

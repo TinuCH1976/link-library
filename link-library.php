@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.3.2
+Version: 4.3.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4500,7 +4500,7 @@ add_meta_box ('linklibrary_meta_box', __('Link Library - Additional Link Paramet
 
 function admin_scripts() {
 	wp_enqueue_script('tiptip', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js', "jQuery", "1.0rc3");
-	wp_enqueue_script('ui.sortable');
+	wp_enqueue_script('jquery-ui-sortable');
 	wp_enqueue_style('tiptipstyle', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css');	
 }
 
