@@ -72,6 +72,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5 =
+* Redesign of the admin pages and restructuring of entire code base
+* Admin section now has its own menu section with sub-sections instead of being located under settings
+* Ability to hide sections of admin pages using the screen options Wordpress tab at the top of each admin page
+
 = 4.3.3 =
 * Fixed: Drag-and-drop for link element ordering
 

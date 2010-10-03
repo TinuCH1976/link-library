@@ -8,7 +8,7 @@
 	
 	$settingsname = 'AdminSettings' . $settingsID;
 	
-	echo LinkLibrary($settingsname, true, true, false, false, false, false, '', false, false, false, false, '<br />', false, 
+	echo $my_link_library_plugin->LinkLibrary($settingsname, true, true, false, false, false, false, '', false, false, false, false, '<br />', false, 
 					'', '', '<li>', '</li>', '', '', false, '', '', false, '', '', '', 1, '', '', '', false, 'linklistcatname', false,
 					0, '', '', '', false, true, false, $catID, '', false, 3, false, false, 1, '', '', '', 'ASC', 'ASC', 'name', false, 5, false,
 					'', false, false, '', '', 'right', false, 900, 700, '', '', 'beforename', '', $pageID, false, false, 'AJAX',

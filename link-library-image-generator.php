@@ -9,5 +9,5 @@
 	$filepath = $_GET['filepath'];
 	$linkid = $_GET['linkid'];
 	
-	echo ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath);
+	echo $my_link_library_plugin->ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath);
 ?>
