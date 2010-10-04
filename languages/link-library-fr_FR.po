@@ -771,9 +771,8 @@ msgstr "Laissez vide pour afficher toutes les catégories"
 #. Text in echo
 #: link-library.php:1476
 #: link-library.php:1479
-#, fuzzy
 msgid "Leave empty to show all results"
-msgstr "Laissez vide pour afficher toutes les catégories"
+msgstr "Laissez vide pour afficher toutes les résultats"
 
 #. Text in echo
 #: link-library.php:1357

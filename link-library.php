@@ -3,12 +3,15 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.5
+Version: 4.5.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
 Copyright 2010 Yannick Lefebvre
+
+Translations:
+Danish Translation Courtesy of GeorgWP (http://wordpress.blogos.dk)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -60,44 +63,44 @@ class link_library_plugin {
 		}
 
 		// Functions to be called when plugin is activated and deactivated
-		register_activation_hook(LL_FILE, array(&$this, 'll_install'));
-		register_deactivation_hook(LL_FILE, array(&$this, 'll_uninstall'));
+		register_activation_hook(LL_FILE, array($this, 'll_install'));
+		register_deactivation_hook(LL_FILE, array($this, 'll_uninstall'));
 
 		//add filter for WordPress 2.8 changed backend box system !
-		add_filter('screen_layout_columns', array(&$this, 'on_screen_layout_columns'), 10, 2);
+		add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
 		//register callback for admin menu  setup
-		add_action('admin_menu', array(&$this, 'on_admin_menu')); 
+		add_action('admin_menu', array($this, 'on_admin_menu')); 
 		//register the callback been used if options of page been submitted and needs to be processed
-		add_action('admin_post_save_link_library_general', array(&$this, 'on_save_changes_general'));
-		add_action('admin_post_save_link_library_settingssets', array(&$this, 'on_save_changes_settingssets'));
-		add_action('admin_post_save_link_library_moderate', array(&$this, 'on_save_changes_moderate'));
-		add_action('admin_post_save_link_library_stylesheet', array(&$this, 'on_save_changes_stylesheet'));
+		add_action('admin_post_save_link_library_general', array($this, 'on_save_changes_general'));
+		add_action('admin_post_save_link_library_settingssets', array($this, 'on_save_changes_settingssets'));
+		add_action('admin_post_save_link_library_moderate', array($this, 'on_save_changes_moderate'));
+		add_action('admin_post_save_link_library_stylesheet', array($this, 'on_save_changes_stylesheet'));
 
 		// Add short codes
-		add_shortcode('link-library-cats', array(&$this, 'link_library_cats_func'));
-		add_shortcode('link-library-search', array(&$this, 'link_library_search_func'));
-		add_shortcode('link-library-addlink', array(&$this, 'link_library_addlink_func'));
-		add_shortcode('link-library', array(&$this, 'link_library_func'));
+		add_shortcode('link-library-cats', array($this, 'link_library_cats_func'));
+		add_shortcode('link-library-search', array($this, 'link_library_search_func'));
+		add_shortcode('link-library-addlink', array($this, 'link_library_addlink_func'));
+		add_shortcode('link-library', array($this, 'link_library_func'));
 
 		// Function to print information in page header when plugin present
-		add_action('wp_head', array(&$this, 'll_rss_link'));
+		add_action('wp_head', array($this, 'll_rss_link'));
 
 		// Function to determine if Link Library is used on a page before printing headers
-		add_filter('the_posts', array(&$this, 'conditionally_add_scripts_and_styles')); // the_posts gets triggered before wp_head
+		add_filter('the_posts', array($this, 'conditionally_add_scripts_and_styles')); // the_posts gets triggered before wp_head
 
-		add_filter('wp_title', array(&$this, 'll_title_creator'));
+		add_filter('wp_title', array($this, 'll_title_creator'));
 
 		// Add addition section to Link Edition page
-		add_meta_box ('linklibrary_meta_box', __('Link Library - Additional Link Parameters', 'link-library'), array(&$this, 'll_link_edit_extra'), 'link', 'normal', 'high');
+		add_meta_box ('linklibrary_meta_box', __('Link Library - Additional Link Parameters', 'link-library'), array($this, 'll_link_edit_extra'), 'link', 'normal', 'high');
 
 		// Capture and process user submissions for custom fields in Link Edition page
-		add_action('add_link', array(&$this, 'add_link_field'));
-		add_action('edit_link', array(&$this, 'add_link_field'));
-		add_action('delete_link', array(&$this, 'delete_link_field'));
+		add_action('add_link', array($this, 'add_link_field'));
+		add_action('edit_link', array($this, 'add_link_field'));
+		add_action('delete_link', array($this, 'delete_link_field'));
 
 		// Re-write rules filters to allow for custom permalinks
-		add_filter('rewrite_rules_array', array(&$this, 'll_insertMyRewriteRules'));
-		add_filter('query_vars', array(&$this, 'll_insertMyRewriteQueryVars'));
+		add_filter('rewrite_rules_array', array($this, 'll_insertMyRewriteRules'));
+		add_filter('query_vars', array($this, 'll_insertMyRewriteQueryVars'));
 
 		// Under development, trying to display extra columns in link list page
 		//add_filter('manage_link-manager_columns', 'll_linkmanager_addcolumn');
@@ -468,15 +471,31 @@ class link_library_plugin {
 	//extend the admin menu
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
-		$this->pagehooktop = add_menu_page('Link Library General Options', "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array(&$this, 'on_show_page'));
-		$this->pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Settings Sets', 'link-library') , __('Settings Sets', 'link-library'), 'manage_options', 'link-library-settingssets', array(&$this,'on_show_page'));
-		$this->pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array(&$this,'on_show_page'));
-		$this->pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array(&$this,'on_show_page')); 
+		global $wpdb;
+		
+		$linkmoderatecount = 0;
+		
+		$linkmoderatequery = "SELECT count(*) ";
+		$linkmoderatequery .= "FROM " . $wpdb->prefix . "links l ";
+		$linkmoderatequery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+		$linkmoderatequery .= " ORDER by link_name ASC";
+
+		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
+		
+		$this->pagehooktop = add_menu_page(__('Link Library General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'));
+		$this->pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Settings Sets', 'link-library') , __('Settings Sets', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
+		
+		if ($linkmoderatecount == 0)
+			$this->pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));
+		else
+			$this->pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , sprintf( __('Moderate', 'link-library') . ' %s', "<span class='update-plugins count-" . $linkmoderatecount . "'><span class='plugin-count'>" . number_format_i18n($linkmoderatecount) . "</span></span>"), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));	
+		
+		$this->pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
 		//register  callback gets call prior your own page gets rendered
-		add_action('load-'.$this->pagehooktop, array(&$this, 'on_load_page'));
-		add_action('load-'.$this->pagehooksettingssets, array(&$this, 'on_load_page'));
-		add_action('load-'.$this->pagehookmoderate, array(&$this, 'on_load_page'));
-		add_action('load-'.$this->pagehookstylesheet, array(&$this, 'on_load_page'));
+		add_action('load-'.$this->pagehooktop, array($this, 'on_load_page'));
+		add_action('load-'.$this->pagehooksettingssets, array($this, 'on_load_page'));
+		add_action('load-'.$this->pagehookmoderate, array($this, 'on_load_page'));
+		add_action('load-'.$this->pagehookstylesheet, array($this, 'on_load_page'));
 	}
 
 	//will be executed if wordpress core detects this page has to be rendered
@@ -490,23 +509,23 @@ class link_library_plugin {
 		wp_enqueue_script('postbox');
 
 		//add several metaboxes now, all metaboxes registered during load page can be switched off/on at "Screen Options" automatically, nothing special to do therefore
-		add_meta_box('linklibrary_general_meta_box', __('General Settings', 'link-library'), array(&$this, 'general_meta_box'), $this->pagehooktop, 'normal', 'high');
-		add_meta_box('linklibrary_general_save_meta_box', __('Save', 'link-library'), array(&$this, 'general_save_meta_box'), $this->pagehooktop, 'normal', 'high');
-		add_meta_box('linklibrary_moderation_meta_box', __('Links awaiting moderation', 'link-library'), array(&$this, 'moderate_meta_box'), $this->pagehookmoderate, 'normal', 'high');
-		add_meta_box('linklibrary_stylesheet_meta_box', __('Editor', 'link-library'), array(&$this, 'stylesheet_meta_box'), $this->pagehookstylesheet, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_usage_meta_box', __('Setting Set Selection and Usage Instructions', 'link-library'), array(&$this, 'settingssets_usage_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array(&$this, 'settingssets_save_meta_box'), $this->pagehooksettingssets, 'normal', 'high');				
-		add_meta_box('linklibrary_settingssets_common_meta_box', __('Common Parameters', 'link-library'), array(&$this, 'settingssets_common_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
- 		add_meta_box('linklibrary_settingssets_categories_meta_box', __('Link Categories Settings', 'link-library'), array(&$this, 'settingssets_categories_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_linkelement_meta_box', __('Link Element Settings', 'link-library'), array(&$this, 'settingssets_linkelement_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_subfieldtable_meta_box', __('Link Sub-Field Configuration Table', 'link-library'), array(&$this, 'settingssets_subfieldtable_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_rssconfig_meta_box', __('RSS Field Configuration', 'link-library'), array(&$this, 'settingssets_rssconfig_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_thumbnails_meta_box', __('Thumbnail Generation and Use', 'link-library'), array(&$this, 'settingssets_thumbnails_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_rssgen_meta_box', __('RSS Generation', 'link-library'), array(&$this, 'settingssets_rssgen_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_search_meta_box', __('Search Form Configuration', 'link-library'), array(&$this, 'settingssets_search_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_linksubmission_meta_box', __('Link User Submission', 'link-library'), array(&$this, 'settingssets_linksubmission_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
-		add_meta_box('linklibrary_settingssets_importexport_meta_box', __('Import / Export', 'link-library'), array(&$this, 'settingssets_importexport_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
-		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array(&$this, 'settingssets_save_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_general_meta_box', __('General Settings', 'link-library'), array($this, 'general_meta_box'), $this->pagehooktop, 'normal', 'high');
+		add_meta_box('linklibrary_general_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $this->pagehooktop, 'normal', 'high');
+		add_meta_box('linklibrary_moderation_meta_box', __('Links awaiting moderation', 'link-library'), array($this, 'moderate_meta_box'), $this->pagehookmoderate, 'normal', 'high');
+		add_meta_box('linklibrary_stylesheet_meta_box', __('Editor', 'link-library'), array($this, 'stylesheet_meta_box'), $this->pagehookstylesheet, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_usage_meta_box', __('Setting Set Selection and Usage Instructions', 'link-library'), array($this, 'settingssets_usage_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $this->pagehooksettingssets, 'normal', 'high');				
+		add_meta_box('linklibrary_settingssets_common_meta_box', __('Common Parameters', 'link-library'), array($this, 'settingssets_common_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+ 		add_meta_box('linklibrary_settingssets_categories_meta_box', __('Link Categories Settings', 'link-library'), array($this, 'settingssets_categories_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_linkelement_meta_box', __('Link Element Settings', 'link-library'), array($this, 'settingssets_linkelement_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_subfieldtable_meta_box', __('Link Sub-Field Configuration Table', 'link-library'), array($this, 'settingssets_subfieldtable_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_rssconfig_meta_box', __('RSS Field Configuration', 'link-library'), array($this, 'settingssets_rssconfig_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_thumbnails_meta_box', __('Thumbnail Generation and Use', 'link-library'), array($this, 'settingssets_thumbnails_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_rssgen_meta_box', __('RSS Generation', 'link-library'), array($this, 'settingssets_rssgen_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_search_meta_box', __('Search Form Configuration', 'link-library'), array($this, 'settingssets_search_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_linksubmission_meta_box', __('Link User Submission', 'link-library'), array($this, 'settingssets_linksubmission_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_settingssets_importexport_meta_box', __('Import / Export', 'link-library'), array($this, 'settingssets_importexport_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
 	}
 
 	//executed to show the plugins complete admin page
@@ -833,7 +852,7 @@ class link_library_plugin {
 	function on_save_changes_general() {
 		//user permission check
 		if ( !current_user_can('manage_options') )
-			wp_die( __('Cheatin&#8217; uh?') );			
+			wp_die( __('Not allowed', 'link-library') );			
 		//cross check the given referer
 		check_admin_referer('link-library');
 
@@ -863,7 +882,7 @@ class link_library_plugin {
 	function on_save_changes_settingssets() {
 		//user permission check
 		if ( !current_user_can('manage_options') )
-			wp_die( __('Cheatin&#8217; uh?') );
+			wp_die( __('Not allowed', 'link-library') );	
 		//cross check the given referer
 		check_admin_referer('link-library');
 
@@ -1171,7 +1190,7 @@ class link_library_plugin {
 	function on_save_changes_moderate() {
 		//user permission check
 		if ( !current_user_can('manage_options') )
-			wp_die( __('Cheatin&#8217; uh?') );	
+			wp_die( __('Not allowed', 'link-library') );	
 		//cross check the given referer
 		check_admin_referer('link-library');
 
@@ -1236,7 +1255,7 @@ class link_library_plugin {
 	function on_save_changes_stylesheet() {
 		//user permission check
 		if ( !current_user_can('manage_options') )
-			wp_die( __('Cheatin&#8217; uh?') );
+			wp_die( __('Not allowed', 'link-library') );	
 		//cross check the given referer
 		check_admin_referer('link-library');
 

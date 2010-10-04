@@ -1,7 +1,7 @@
 ﻿=== Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
-Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, Buddypress, import, batch
+Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch
 Requires at least: 2.7
 Tested up to: 3.0
 Stable tag: trunk
@@ -71,6 +71,11 @@ In addition to specifying a setting set, categories to be displayed can be speci
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 4.5.1 =
+* Fixed: Changed registration method for actions to avoid problem on some installations of Wordpress
+* Added: New notification icon on moderate section to indicate if any links need to be moderated
+* Updated french and danish translations
 
 = 4.5 =
 * Redesign of the admin pages and restructuring of entire code base
