@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5.3 =
+* Added: New Manual Image Upload field in link edition form
+
 = 4.5.2 =
 * Fixed: Headers already sent error when pressing update settings button on settings set window
 * Fixed: Added back second save button at bottom of Settings Set section

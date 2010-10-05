@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.5.2
+Version: 4.5.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2660,6 +2660,13 @@ class link_library_plugin {
 				<td><?php _e('Only available once link is saved', 'link-library'); ?></td>
 			</tr>
 			<?php endif; ?>
+			<tr>
+				<td><?php _e('Manual Image Upload', 'link-library'); ?></td>
+				<td><input size="80" name="linkimageupload" type="file" /></td>
+			</tr>
+			<tr>
+				<td colspan='2'><p><?php _e('Manual upload requires a directory called link-library-images with write permissions under wp-content\plugins', 'link-library'); ?>.</p></td>
+			</tr>
 		</table>
 
 	<?php $genoptions = get_option('LinkLibraryGeneral'); ?>
@@ -2667,6 +2674,12 @@ class link_library_plugin {
 		<script type="text/javascript">
 			jQuery(document).ready(function()
 			{
+			    // Using jQuery, set both the enctype and the encoding
+				// attributes to be multipart/form-data.
+				jQuery( "form#editlink" )
+					.attr( "enctype", "multipart/form-data" )
+					.attr( "encoding", "multipart/form-data" )
+					;
 				jQuery('#genthumbs').click(function()
 				{
 					var linkname = jQuery('#link_name').val();
@@ -2729,9 +2742,25 @@ class link_library_plugin {
 	function add_link_field($link_id) {
 		global $wpdb;
 		
+		if(array_key_exists('linkimageupload', $_FILES))
+		{
+			$target_path = ABSPATH . "/wp-content/plugins/link-library-images/" . $link_id . ".jpg";
+			$file_path = WP_CONTENT_URL . "/plugins/link-library-images/" . $link_id . ".jpg";
+			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
+				$withimage = true;
+			else
+				$withimage = false;
+		}
+		else
+			$withimage = false;
+			
 		$tablename = $wpdb->prefix . "links";
-		$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i") ), array( 'link_id' => $link_id ));
-		
+
+		if ($withimage == true)
+			$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i"), 'link_image' => $file_path ), array( 'link_id' => $link_id ));
+		else
+			$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i") ), array( 'link_id' => $link_id ));
+				
 		$extradatatable = $wpdb->prefix . "links_extrainfo";
 		
 		$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $link_id;
