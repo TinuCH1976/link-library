@@ -72,6 +72,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5.2 =
+* Fixed: Headers already sent error when pressing update settings button on settings set window
+* Fixed: Added back second save button at bottom of Settings Set section
+* Fixed: Messages get variable that was repeating on settings set page
+* Fixed: Unable to hide Link Name
+* Fixed: Non-translable string in e-mail notification template
+
 = 4.5.1 =
 * Fixed: Changed registration method for actions to avoid problem on some installations of Wordpress
 * Added: New notification icon on moderate section to indicate if any links need to be moderated
