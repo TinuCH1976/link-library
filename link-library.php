@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.5.3
+Version: 4.5.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -444,12 +444,12 @@ class link_library_plugin {
 				$genthumburl = "http://www.getfavicon.org/?url=" . $strippedurl . "/favicon.png";
 			}
 			
-			$img = ABSPATH . "/wp-content/plugins/" . $filepath. "/" . $linkid . ".jpg";
+			$img = ABSPATH . "/wp-content/uploads/" . $filepath. "/" . $linkid . ".jpg";
 			$status = file_put_contents($img, file_get_contents($genthumburl));
 
 			if ($status != true)
 			{
-				$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/plugins/" . $filepath . "/" . $linkid . ".jpg");
+				$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/uploads/" . $filepath . "/" . $linkid . ".jpg");
 
 				if ($mode == 'thumb' || $mode == 'favicon')
 					wp_update_link($newimagedata);
@@ -562,12 +562,19 @@ class link_library_plugin {
 			elseif (isset($_GET['genfavicons']) || isset($_GET['genfaviconsingle']))
 				$filepath = "link-library-favicons";
 
-			if (!file_exists(ABSPATH . 'wp-content/plugins/' . $filepath))
+			if (!file_exists(ABSPATH . 'wp-content/uploads/'))
 			{
-				echo "<div id='message' class='updated fade'><p><strong>" . __('Please create a folder called', 'link-library') . " " . $filepath . __(' under your Wordpress plugins directory with write permissions to use this functionality.', 'link-library') . "</strong></p></div>";				
+				echo "<div id='message' class='updated fade'><p><strong>" . __('Please create a folder called uploads under your Wordpress /wp-content/ directory with write permissions to use this functionality.', 'link-library') . "</strong></p></div>";				
+			}
+			elseif (!is_writable(ABSPATH . 'wp-content/uploads/'))
+			{
+				echo "<div id='message' class='updated fade'><p><strong>" . __('Please make sure that the /wp-content/uploads/ directory has write permissions to use this functionality.', 'link-library') . "</strong></p></div>";				
 			}
 			else
 			{
+				if (!file_exists(ABSPATH . 'wp-content/uploads/' . $filepath))
+					mkdir(ABSPATH . 'wp-content/uploads/' . $filepath);
+					
 				if (isset($_GET['genthumbs']) || isset($_GET['genthumbsingle']))
 				{
 					$settings = $_GET['genthumbs'];
@@ -2665,7 +2672,7 @@ class link_library_plugin {
 				<td><input size="80" name="linkimageupload" type="file" /></td>
 			</tr>
 			<tr>
-				<td colspan='2'><p><?php _e('Manual upload requires a directory called link-library-images with write permissions under wp-content\plugins', 'link-library'); ?>.</p></td>
+				<td colspan='2'><p><?php _e('Manual upload requires a wp-content\uploads directory to be present with write permissions', 'link-library'); ?>.</p></td>
 			</tr>
 		</table>
 
@@ -2744,8 +2751,10 @@ class link_library_plugin {
 		
 		if(array_key_exists('linkimageupload', $_FILES))
 		{
-			$target_path = ABSPATH . "/wp-content/plugins/link-library-images/" . $link_id . ".jpg";
-			$file_path = WP_CONTENT_URL . "/plugins/link-library-images/" . $link_id . ".jpg";
+			if (!file_exists(ABSPATH . 'wp-content/uploads/link-library-images'))
+				mkdir(ABSPATH . 'wp-content/uploads/link-library-images');
+			$target_path = ABSPATH . "/wp-content/uploads/link-library-images/" . $link_id . ".jpg";
+			$file_path = WP_CONTENT_URL . "/uploads/link-library-images/" . $link_id . ".jpg";
 			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
 				$withimage = true;
 			else

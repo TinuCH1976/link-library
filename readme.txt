@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5.4 =
+* Changed directory for image upload and thumbnail generation to be under \wp-content\uploads instead of plugins directory
+
 = 4.5.3 =
 * Added: New Manual Image Upload field in link edition form
 
