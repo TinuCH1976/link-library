@@ -72,6 +72,12 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5.5 =
+* Added: Icon for plugin menu in Wordpress Admin
+* Fixed: Edit link for admins now points to correct URL
+* Fixed: Link to stylesheet editor on general settings page
+* Fixed: Re-arranged some code section for compatibility with older versions of PHP
+
 = 4.5.4 =
 * Changed directory for image upload and thumbnail generation to be under \wp-content\uploads instead of plugins directory
 

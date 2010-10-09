@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.5.4
+Version: 4.5.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -42,11 +42,21 @@ else if (is_file(trailingslashit(ABSPATH.PLUGINDIR).'link-library/link-library.p
 	define('LL_FILE', trailingslashit(ABSPATH.PLUGINDIR).'link-library/link-library.php');
 }
 
-define('LLDIR', dirname(__FILE__) . '/');  
+define('LLDIR', dirname(__FILE__) . '/');
+
+if ( !defined('WP_ADMIN_URL') )
+	define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
 
 require_once(ABSPATH . '/wp-admin/includes/bookmark.php');
 require_once(ABSPATH . '/wp-admin/includes/taxonomy.php');
 require_once(ABSPATH . '/wp-admin/includes/template.php');
+
+$rss_settings = "";
+$llpluginpath = "";
+$pagehooktop = "";
+$pagehookmoderate = "";
+$pagehooksettingssets = "";
+$pagehookstylesheet = "";
 
 /*********************************** Link Library Class *****************************************************************************/
 class link_library_plugin {
@@ -106,11 +116,11 @@ class link_library_plugin {
 		//add_filter('manage_link-manager_columns', 'll_linkmanager_addcolumn');
 		//add_action('manage_link_custom_column',  'll_linkmanager_populatecolumn');
 
-		$this->rss_settings = "";
-		$this->llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
+		global $llpluginpath;
+		$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
 
 		// Load text domain for translation of admin pages and text strings
-		load_plugin_textdomain( 'link-library', $this->llpluginpath . '/languages', 'link-library/languages');
+		load_plugin_textdomain( 'link-library', $llpluginpath . '/languages', 'link-library/languages');
 	}
 
 	/************************** Link Library Installation Function **************************/
@@ -422,9 +432,20 @@ class link_library_plugin {
 
 	/* the function */
 	function remove_querystring_var($url, $key) { 
-		$url = preg_replace('/(.*)(?|&)' . $key . '=[^&]+?(&)(.*)/i', '$1$2$4', $url . '&'); 
-		$url = substr($url, 0, -1); 
-		return $url; 
+	
+		$keypos = strpos($url, $key);
+		if ($keypos)
+		{
+			$ampersandpos = strpos($url, '&', $keypos);
+			$newurl = substr($url, 0, $keypos - 1);
+			
+			if ($ampersandpos)
+				$newurl .= substr($url, $ampersandpos);
+		}
+		else
+			$newurl = $url;
+		
+		return $newurl; 
 	}
 
 	function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
@@ -470,7 +491,7 @@ class link_library_plugin {
 	//extend the admin menu
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
-		global $wpdb;
+		global $wpdb, $llpluginpath, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet;
 		
 		$linkmoderatecount = 0;
 		
@@ -481,24 +502,27 @@ class link_library_plugin {
 
 		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
 		
-		$this->pagehooktop = add_menu_page(__('Link Library General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'));
-		$this->pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Settings Sets', 'link-library') , __('Settings Sets', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
+		$pagehooktop = add_menu_page(__('Link Library General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . '/icons/folder-beige-internet-icon.png');
+		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Settings Sets', 'link-library') , __('Settings Sets', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
 		if ($linkmoderatecount == 0)
-			$this->pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));
+			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));
 		else
-			$this->pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , sprintf( __('Moderate', 'link-library') . ' %s', "<span class='update-plugins count-" . $linkmoderatecount . "'><span class='plugin-count'>" . number_format_i18n($linkmoderatecount) . "</span></span>"), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));	
+			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , sprintf( __('Moderate', 'link-library') . ' %s', "<span class='update-plugins count-" . $linkmoderatecount . "'><span class='plugin-count'>" . number_format_i18n($linkmoderatecount) . "</span></span>"), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));	
 		
-		$this->pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
+		$pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
 		//register  callback gets call prior your own page gets rendered
-		add_action('load-'.$this->pagehooktop, array($this, 'on_load_page'));
-		add_action('load-'.$this->pagehooksettingssets, array($this, 'on_load_page'));
-		add_action('load-'.$this->pagehookmoderate, array($this, 'on_load_page'));
-		add_action('load-'.$this->pagehookstylesheet, array($this, 'on_load_page'));
+		add_action('load-'.$pagehooktop, array($this, 'on_load_page'));
+		add_action('load-'.$pagehooksettingssets, array($this, 'on_load_page'));
+		add_action('load-'.$pagehookmoderate, array($this, 'on_load_page'));
+		add_action('load-'.$pagehookstylesheet, array($this, 'on_load_page'));
 	}
 
 	//will be executed if wordpress core detects this page has to be rendered
 	function on_load_page() {
+	
+		global $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet;
+		
 		//ensure, that the needed javascripts been loaded to allow drag/drop, expand/collapse and hide/show of boxes
 		wp_enqueue_script('tiptip', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js', "jQuery", "1.0rc3");
 		wp_enqueue_style('tiptipstyle', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css');
@@ -508,29 +532,29 @@ class link_library_plugin {
 		wp_enqueue_script('postbox');
 
 		//add several metaboxes now, all metaboxes registered during load page can be switched off/on at "Screen Options" automatically, nothing special to do therefore
-		add_meta_box('linklibrary_general_meta_box', __('General Settings', 'link-library'), array($this, 'general_meta_box'), $this->pagehooktop, 'normal', 'high');
-		add_meta_box('linklibrary_general_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $this->pagehooktop, 'normal', 'high');
-		add_meta_box('linklibrary_moderation_meta_box', __('Links awaiting moderation', 'link-library'), array($this, 'moderate_meta_box'), $this->pagehookmoderate, 'normal', 'high');
-		add_meta_box('linklibrary_stylesheet_meta_box', __('Editor', 'link-library'), array($this, 'stylesheet_meta_box'), $this->pagehookstylesheet, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_usage_meta_box', __('Setting Set Selection and Usage Instructions', 'link-library'), array($this, 'settingssets_usage_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $this->pagehooksettingssets, 'normal', 'high');				
-		add_meta_box('linklibrary_settingssets_common_meta_box', __('Common Parameters', 'link-library'), array($this, 'settingssets_common_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
- 		add_meta_box('linklibrary_settingssets_categories_meta_box', __('Link Categories Settings', 'link-library'), array($this, 'settingssets_categories_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_linkelement_meta_box', __('Link Element Settings', 'link-library'), array($this, 'settingssets_linkelement_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_subfieldtable_meta_box', __('Link Sub-Field Configuration Table', 'link-library'), array($this, 'settingssets_subfieldtable_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_rssconfig_meta_box', __('RSS Field Configuration', 'link-library'), array($this, 'settingssets_rssconfig_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_thumbnails_meta_box', __('Thumbnail Generation and Use', 'link-library'), array($this, 'settingssets_thumbnails_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_rssgen_meta_box', __('RSS Generation', 'link-library'), array($this, 'settingssets_rssgen_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_search_meta_box', __('Search Form Configuration', 'link-library'), array($this, 'settingssets_search_meta_box'), $this->pagehooksettingssets, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_linksubmission_meta_box', __('Link User Submission', 'link-library'), array($this, 'settingssets_linksubmission_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
-		add_meta_box('linklibrary_settingssets_importexport_meta_box', __('Import / Export', 'link-library'), array($this, 'settingssets_importexport_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
-		add_meta_box('linklibrary_settingssets_side_meta_box_2', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $this->pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_general_meta_box', __('General Settings', 'link-library'), array($this, 'general_meta_box'), $pagehooktop, 'normal', 'high');
+		add_meta_box('linklibrary_general_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehooktop, 'normal', 'high');
+		add_meta_box('linklibrary_moderation_meta_box', __('Links awaiting moderation', 'link-library'), array($this, 'moderate_meta_box'), $pagehookmoderate, 'normal', 'high');
+		add_meta_box('linklibrary_stylesheet_meta_box', __('Editor', 'link-library'), array($this, 'stylesheet_meta_box'), $pagehookstylesheet, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_usage_meta_box', __('Setting Set Selection and Usage Instructions', 'link-library'), array($this, 'settingssets_usage_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $pagehooksettingssets, 'normal', 'high');				
+		add_meta_box('linklibrary_settingssets_common_meta_box', __('Common Parameters', 'link-library'), array($this, 'settingssets_common_meta_box'), $pagehooksettingssets, 'normal', 'high');
+ 		add_meta_box('linklibrary_settingssets_categories_meta_box', __('Link Categories Settings', 'link-library'), array($this, 'settingssets_categories_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_linkelement_meta_box', __('Link Element Settings', 'link-library'), array($this, 'settingssets_linkelement_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_subfieldtable_meta_box', __('Link Sub-Field Configuration Table', 'link-library'), array($this, 'settingssets_subfieldtable_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_rssconfig_meta_box', __('RSS Field Configuration', 'link-library'), array($this, 'settingssets_rssconfig_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_thumbnails_meta_box', __('Thumbnail Generation and Use', 'link-library'), array($this, 'settingssets_thumbnails_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_rssgen_meta_box', __('RSS Generation', 'link-library'), array($this, 'settingssets_rssgen_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_search_meta_box', __('Search Form Configuration', 'link-library'), array($this, 'settingssets_search_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_linksubmission_meta_box', __('Link User Submission', 'link-library'), array($this, 'settingssets_linksubmission_meta_box'), $pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_settingssets_importexport_meta_box', __('Import / Export', 'link-library'), array($this, 'settingssets_importexport_meta_box'), $pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_settingssets_side_meta_box_2', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $pagehooksettingssets, 'normal', 'high');		
 	}
 
 	//executed to show the plugins complete admin page
 	function on_show_page() {
 		//we need the global screen column value to beable to have a sidebar in WordPress 2.8
-		global $screen_layout_columns;
+		global $screen_layout_columns, $llpluginpath;
 
 		// Retrieve general options
 		$genoptions = get_option('LinkLibraryGeneral');
@@ -723,7 +747,7 @@ class link_library_plugin {
 							break;
 
 						case '5':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Setting Set Exported', 'link-library') . ". <a href='" . $this->llpluginpath . "SettingSet" . $settings . "Export.csv'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Setting Set Exported', 'link-library') . ". <a href='" . $llpluginpath . "SettingSet" . $settings . "Export.csv'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
 							break;
 
 						case '6':
@@ -776,10 +800,11 @@ class link_library_plugin {
 		$data['settings'] = $settings;
 		$data['options'] = $options;
 		$data['genoptions'] = $genoptions;
+		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets;
 		?>
 		<div id="link-library-general" class="wrap">
-		<?php screen_icon('options-general'); ?>
-		<h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $this->llpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span></h2>
+		<div class='icon32'><img src="<?php echo $llpluginpath . '/icons/folder-beige-internet-icon32.png'; ?>" /></div>
+		<h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span></h2>
 		<form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 
@@ -799,13 +824,13 @@ class link_library_plugin {
 					<div id="post-body-content" class="has-sidebar-content">
 						<?php 
 							if ($_GET['page'] == 'link-library')
-								do_meta_boxes($this->pagehooktop, 'normal', $data); 
+								do_meta_boxes($pagehooktop, 'normal', $data); 
 							elseif ($_GET['page'] == 'link-library-settingssets')
-								do_meta_boxes($this->pagehooksettingssets, 'normal', $data); 
+								do_meta_boxes($pagehooksettingssets, 'normal', $data); 
 							elseif ($_GET['page'] == 'link-library-moderate')
-								do_meta_boxes($this->pagehookmoderate, 'normal', $data); 
+								do_meta_boxes($pagehookmoderate, 'normal', $data); 
 							elseif ($_GET['page'] == 'link-library-stylesheet')
-								do_meta_boxes($this->pagehookstylesheet, 'normal', $data); 
+								do_meta_boxes($pagehookstylesheet, 'normal', $data); 
 						?>
 					</div>
 				</div>
@@ -821,13 +846,13 @@ class link_library_plugin {
 			// postboxes setup
 			postboxes.add_postbox_toggles('<?php 
 				if ($_GET['page'] == 'link-library')
-					echo $this->pagehooktop;
+					echo $pagehooktop;
 				elseif ($_GET['page'] == 'link-library-settingssets')
-					echo $this->pagehooksettingssets;
+					echo $pagehooksettingssets;
 				elseif ($_GET['page'] == 'link-library-moderate')
-					echo $this->pagehookmoderate;
+					echo $pagehookmoderate;
 				elseif ($_GET['page'] == 'link-library-stylesheet')
-					echo $this->pagehookstylesheet;
+					echo $pagehookstylesheet;
 				?>');
 		});
 		//]]>
@@ -1176,6 +1201,8 @@ class link_library_plugin {
 		$cleanredirecturl = $this->remove_querystring_var($_POST['_wp_http_referer'], 'messages');
 		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'importrowscount');
 		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'successimportcount');
+		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'copy');
+		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'source');
 		$redirecturl = $cleanredirecturl;
 
 		if (!empty($messages))
@@ -1300,7 +1327,7 @@ class link_library_plugin {
 				<table>
 				<tr>
 				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>' style='width:200px'><?php _e('Stylesheet','link-library'); ?></td>
-				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-settingssets&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
+				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-stylesheet&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
 				<td style='padding-left: 10px;padding-right:10px'><?php _e('Number of Style Sets','link-library'); ?></td>
 				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '5'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
@@ -1450,7 +1477,7 @@ class link_library_plugin {
 								   <?php endif; 
 								endfor; ?>
 						</SELECT>
-						<INPUT type="button" name="copy" value="<?php _e('Copy', 'link-library'); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val()">
+						<INPUT type="button" name="copy" value="<?php _e('Copy', 'link-library'); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val()">
 				<br />
 				<br />
 				<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
@@ -2557,11 +2584,12 @@ class link_library_plugin {
 	function settingssets_importexport_meta_box($data) {
 		$options = $data['options'];
 		$settings = $data['settings'];
+		global $llpluginpath;
 	?>
 
 		<table>
 			<tr>
-				<td class='tooltip' title='Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.' style='width: 330px'><?php _e('CSV file to upload to import links', 'link-library'); ?> (<a href="<?php echo $this->llpluginpath . 'importtemplate.csv'; ?>"><?php _e('file template', 'link-library'); ?></a>)</td>
+				<td class='tooltip' title='Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.' style='width: 330px'><?php _e('CSV file to upload to import links', 'link-library'); ?> (<a href="<?php echo $llpluginpath . 'importtemplate.csv'; ?>"><?php _e('file template', 'link-library'); ?></a>)</td>
 				<td><input size="80" name="linksfile" type="file" /></td>
 				<td><input type="submit" name="importlinks" value="<?php _e('Import Links', 'link-library'); ?>" /></td>
 			</tr>
@@ -2614,9 +2642,6 @@ class link_library_plugin {
 			$extradata = array();
 			$originaldata = array();
 		}
-
-		if ( !defined('WP_ADMIN_URL') )
-			define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
 	?>
 		<table>
 			<tr>
@@ -2798,16 +2823,16 @@ class link_library_plugin {
 	/******************************************** Print style data to header *********************************************/
 
 	function ll_rss_link() {
-		global $llstylesheet;
+		global $llstylesheet, $rss_settings, $llpluginpath;
 		
-		if ($this->rss_settings != "")
+		if ($rss_settings != "")
 		{
-			$settingsname = 'LinkLibraryPP' . $this->rss_settings;
+			$settingsname = 'LinkLibraryPP' . $rss_settings;
 			$options = get_option($settingsname);
 
 			$feedtitle = ($options['rssfeedtitle'] == "" ? __('Link Library Generated Feed', 'link-library') : $options['rssfeedtitle']);
 
-			echo '<link rel="alternate" type="application/rss+xml" title="' . wp_specialchars(stripslashes($feedtitle)) . '" href="' . $this->llpluginpath . 'rssfeed.php?settingset=' . $this->rss_settings . '" />';
+			echo '<link rel="alternate" type="application/rss+xml" title="' . wp_specialchars(stripslashes($feedtitle)) . '" href="' . $llpluginpath . 'rssfeed.php?settingset=' . $rss_settings . '" />';
 		}
 
 		if ($llstylesheet == true)
@@ -3661,6 +3686,8 @@ class link_library_plugin {
 						if ('' != $target)
 							$target = ' target="' . $target . '"';
 					}
+					
+					global $llpluginpath;
 
 					if ($dragndroporder == '') $dragndroporder = '1,2,3,4,5,6,7,8,9,10';
 						$dragndroparray = explode(',', $dragndroporder);
@@ -3767,11 +3794,11 @@ class link_library_plugin {
 											$output .= $between . '<a class="rss" href="' . $linkitem['link_rss'] . '">RSS</a>';
 										}
 										if ($show_rss_icon && ($linkitem['link_rss'] != '')) {
-											$output .= $between . '<a class="rssicon" href="' . $linkitem->link_rss . '"><img src="' . $this->llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
+											$output .= $between . '<a class="rssicon" href="' . $linkitem->link_rss . '"><img src="' . $llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
 										}
 										if ($rsspreview && $linkitem['link_rss'] != '')
 										{
-											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $this->llpluginpath . '/icons/preview-16x16.png" /></a>';
+											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
 										}
 
 										if ($show_rss || $show_rss_icon || $rsspreview)
@@ -4094,7 +4121,7 @@ class link_library_plugin {
 											$showaddlinktelephone = false, $linktelephonelabel = '', $showaddlinkemail = false, $linkemaillabel = '',
 											$showcaptcha = false, $captureddata = '') {
 											
-		global $wpdb;
+		global $wpdb, $llpluginpath;
 		
 		if (($addlinkreqlogin && current_user_can("read")) || !$addlinkreqlogin)
 		{
@@ -4217,7 +4244,7 @@ class link_library_plugin {
 			
 			if ($showcaptcha)
 			{
-				$output .= "<tr><td></td><td><span id='captchaimage'><img src='" . $this->llpluginpath . "captcha/easycaptcha.php' /></span></td></tr>\n";
+				$output .= "<tr><td></td><td><span id='captchaimage'><img src='" . $llpluginpath . "captcha/easycaptcha.php' /></span></td></tr>\n";
 				$output .= "<tr><td>" . __('Enter code from above image', 'link-library') . "</td><td><input type='text' name='confirm_code' /></td></tr>\n";
 			}
 						
@@ -4722,10 +4749,7 @@ class link_library_plugin {
 							$message .= __('Link Secondary Address', 'link-library') . ": " . $_POST['link_second_url'] . "<br /><br />";
 							$message .= __('Link Telephone', 'link-library') . ": " . $_POST['link_telephone'] . "<br /><br />";
 							$message .= __('Link E-mail', 'link-library') . ": " . $_POST['link_email'] . "<br /><br />";
-										
-							if ( !defined('WP_ADMIN_URL') )
-								define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
-								
+
 							if ($options['showuserlinks'] == false)
 								$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
 							elseif ($options['showuserlinks'] == true)
@@ -4953,7 +4977,8 @@ class link_library_plugin {
 
 					if ($options['publishrssfeed'] == true)			
 					{
-						$this->rss_settings = $settingsetid;
+						global $rss_settings;
+						$rss_settings = $settingsetid;
 					}	
 				}
 			}
