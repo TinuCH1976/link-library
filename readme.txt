@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5.6 =
+* Fixed: RSS Link using Standard Icon did not use correct address
+
 = 4.5.5 =
 * Added: Icon for plugin menu in Wordpress Admin
 * Fixed: Edit link for admins now points to correct URL
