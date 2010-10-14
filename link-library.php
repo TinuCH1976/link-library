@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.5.6
+Version: 4.5.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1292,8 +1292,6 @@ class link_library_plugin {
 
 		if (isset($_POST['submitstyle']))
 		{
-			$section = 'stylesheet';
-
 			$genoptions = get_option('LinkLibraryGeneral');
 
 			$genoptions['fullstylesheet'] = $_POST['fullstylesheet'];
@@ -1303,8 +1301,6 @@ class link_library_plugin {
 		}
 		elseif (isset($_POST['resetstyle']))
 		{
-			$section = 'stylesheet';
-
 			$genoptions = get_option('LinkLibraryGeneral');
 
 			$stylesheetlocation = LLDIR . '/stylesheettemplate.css';
@@ -2624,7 +2620,7 @@ class link_library_plugin {
 
 		if ($genoptions['schemaversion'] < "3.5")
 		{
-			ll_install();
+			$this->ll_install();
 		}
 
 		if ($link->link_id != '')
@@ -4854,7 +4850,7 @@ class link_library_plugin {
 				
 		if ($genoptions['schemaversion'] < "3.5")
 		{
-			ll_install();
+			$this->ll_install();
 			$genoptions = get_option('LinkLibraryGeneral');
 			
 			if ($settings == '')
