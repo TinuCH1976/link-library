@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.5.8 =
+* Added: Code to remove link tags from links that have a hash sign as their address (#)
+
 = 4.5.7 =
 * Fixed: Error about ll_install function not found for users upgrading from older versions
 

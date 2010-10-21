@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.5.7
+Version: 4.5.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3735,14 +3735,22 @@ class link_library_plugin {
 
 										if ($showname == true)
 										{
-											$output .= stripslashes($beforelink) . '<a href="';
+											if (($sourcename == 'primary' && $the_link != '#') || ($sourcename == 'secondary' && $the_second_link != '#'))
+											{
+												$output .= stripslashes($beforelink) . '<a href="';
 
-											if ($sourcename == 'primary' || $sourcename == '')
-												$output .= $the_link;
-											elseif ($sourcename == 'secondary')
-												$output .= $the_second_link;
+												if ($sourcename == 'primary' || $sourcename == '')
+													$output .= $the_link;
+												elseif ($sourcename == 'secondary')
+													$output .= $the_second_link;
 
-											$output .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link" ' . $rel . $title . $target. '>' . $name . '</a>';
+												$output .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link" ' . $rel . $title . $target. '>';
+											}
+											
+											$output .= $name;
+											
+											if (($sourcename == 'primary' && $the_link != '#') || ($sourcename == 'secondary' && $the_second_link != '#'))
+												$output .= '</a>';
 										}
 
 										if (($showadmineditlinks) && current_user_can("manage_links")) {
