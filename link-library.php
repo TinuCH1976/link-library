@@ -149,6 +149,9 @@ class link_library_plugin {
 				`link_visits` bigint(20) DEFAULT '0',
 				`link_reciprocal` varchar(255) DEFAULT NULL,
 				`link_submitter` varchar(255) DEFAULT NULL,
+				`link_submitter_name` VARCHAR( 128 ) NULL,
+				`link_submitter_email` VARCHAR( 128 ) NULL,
+				`link_textfield` TEXT NULL,
 				PRIMARY KEY (`link_id`)
 				) $charset_collate"); 
 

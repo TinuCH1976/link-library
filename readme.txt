@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6.1 =
+* Fixed: Missing some fields for new installations
+
 = 4.6 =
 * Added: New configuration section under General Settings for Moderation Options
 * Added: Ability to send approval or refusal messages to new link submitters
