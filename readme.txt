@@ -72,6 +72,15 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6 =
+* Added: New configuration section under General Settings for Moderation Options
+* Added: Ability to send approval or refusal messages to new link submitters
+* Added: Option to customize title of moderation notification e-mail
+* Added: Ability to specify custom captcha question
+* Added: New field to store large link descriptions in link editor page
+* Added: CSS Class for User Link Submit button
+* Added: Ability to specify custom URL to redirect after user submission
+
 = 4.5.8 =
 * Added: Code to remove link tags from links that have a hash sign as their address (#)
 
