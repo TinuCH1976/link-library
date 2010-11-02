@@ -72,6 +72,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6.2 =
+* Fixed: Only Settings Set up to 5 could be accessed since version 4.5
+* Fixed: First part of submitter was not properly parsed when sending user confirmation e-mail
+
 = 4.6.1 =
 * Fixed: Missing some fields for new installations
 

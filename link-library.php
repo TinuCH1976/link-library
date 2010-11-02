@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.1
+Version: 4.6.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1302,9 +1302,9 @@ class link_library_plugin {
 				{
 					if ($genoptions['usefirstpartsubmittername'] == true)
 					{
-						$spacepos = strpos($genoptions['link_submitter_email'], " ");
+						$spacepos = strpos($linkextradata['link_submitter_name'], " ");
 						if ($spacepos !== false)
-							$genoptions['link_submitter_email'] = substr($genoptions['link_submitter_email'], 0, $spacepos);
+							$linkextradata['link_submitter_name'] = substr($linkextradata['link_submitter_name'], 0, $spacepos);
 					}
 					
 					$emailtitle = str_replace('%linkname%', $linkdata['link_name'], $genoptions['approvalemailtitle']);
@@ -1596,6 +1596,7 @@ class link_library_plugin {
 	function settingssets_usage_meta_box($data) {
 		$options = $data['options'];
 		$settings = $data['settings'];
+		$genoptions = $data['genoptions'];
 	?>
 			<div>
 						<?php _e('Change Current Style Set', 'link-library'); ?> : 
