@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.2
+Version: 4.6.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1153,7 +1153,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlinksubmittername', 'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showlargedescription', 'showcustomcaptcha')
+							'showlinksubmittername', 'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showlargedescription')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -1163,7 +1163,7 @@ class link_library_plugin {
 			}
 
 			foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes','addlinkcustomcat',
-						  'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail') as $option_name) {
+						  'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha') as $option_name) {
 				if ($_POST[$option_name] == 'true')
 					$options[$option_name] = true;
 				elseif ($_POST[$option_name] == 'false')
@@ -4916,7 +4916,7 @@ class link_library_plugin {
 			
 			$captureddata = array();
 			
-			if ($valid == false && ($options['showcaptcha'] == true || $options['showcustomcaptcha']))
+			if ($valid == false && ($options['showcaptcha'] == true || $options['showcustomcaptcha'] == true))
 			{
 				$message = "<div class='llmessage'>" . $validmessage . "</div>";
 				echo $message;
@@ -4937,9 +4937,8 @@ class link_library_plugin {
 				$captureddata['ll_submittercomment'] = $_POST['ll_submittercomment'];
 				$captureddata['ll_customcaptchaanswer'] = $_POST['ll_customcaptchaanswer'];
 			}
-			elseif ($valid || ($options['showcaptcha'] == false && $options['showcustomcaptcha']))
-			{
-			
+			elseif ($valid || ($options['showcaptcha'] == false && $options['showcustomcaptcha'] == false))
+			{			
 				$existinglinkquery = "SELECT * from " . $wpdb->prefix . "links l where l.link_url = '" . $_POST['link_url'] . "' or l.link_name = '" . $_POST['link_name'] . "'";
 				$existinglink = $wpdb->get_var($existinglinkquery);
 				
