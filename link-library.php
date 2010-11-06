@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.3
+Version: 4.6.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1153,7 +1153,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlinksubmittername', 'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showlargedescription')
+							'showlargedescription')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -1163,7 +1163,8 @@ class link_library_plugin {
 			}
 
 			foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes','addlinkcustomcat',
-						  'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha') as $option_name) {
+						  'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
+						  'showaddlinksubmitteremail', 'showlinksubmittercomment') as $option_name) {
 				if ($_POST[$option_name] == 'true')
 					$options[$option_name] = true;
 				elseif ($_POST[$option_name] == 'false')

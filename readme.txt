@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6.4 =
+* Fixed: Unable to hide submitter name and e-mail fields
+
 = 4.6.3 =
 * Fixed: Problem with link submission when no captcha is displayed
 * Fixed: Custom captcha show/hide setting not saved
