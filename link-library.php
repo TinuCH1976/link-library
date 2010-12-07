@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.4
+Version: 4.6.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3176,7 +3176,7 @@ class link_library_plugin {
 				$output .= "var ajaxobject;\n";
 				$output .= "function showLinkCat ( _incomingID, _settingsID, _pagenumber) {\n";
 				$output .= "if (typeof(ajaxobject) != \"undefined\") { ajaxobject.abort(); }\n";            
-				$output .= "var map = {id : _incomingID, settings : _settingsID, page: _pagenumber}\n";
+				$output .= "var map = {id : _incomingID, settings : _settingsID, linkresultpage: _pagenumber}\n";
 				$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . WP_PLUGIN_URL . "/link-library/link-library-ajax.php', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();});\n";
 				$output .= "}\n";
 
@@ -3301,10 +3301,10 @@ class link_library_plugin {
 
 							$pageposition = $linkcount / $linksperpage;
 							$pageposition = ceil($pageposition);
-							if ($pageposition == 0 && !isset($_GET['page']))
+							if ($pageposition == 0 && !isset($_GET['linkresultpage']))
 								$cattext = '<a href="' . get_permalink() . '#' . $catname->category_nicename . '">';
 							else
-								$cattext = '<a href="?page=' . ($pageposition == 0 ? 1 : $pageposition) . '#' . $catname->category_nicename . '">';
+								$cattext = '<a href="?linkresultpage=' . ($pageposition == 0 ? 1 : $pageposition) . '#' . $catname->category_nicename . '">';
 
 							$linkcount = $linkcount + $catname->linkcount;
 						}
@@ -3581,9 +3581,9 @@ class link_library_plugin {
 
 			$quantity = $linksperpage + 1;
 
-			if (isset($_GET['page']))
+			if (isset($_GET['linkresultpage']))
 			{
-				$pagenumber = $_GET['page'];
+				$pagenumber = $_GET['linkresultpage'];
 				$startingitem = ($pagenumber - 1) * $linksperpage;
 				$linkquery .= " LIMIT " . $startingitem . ", " . $quantity;
 			}
@@ -4231,13 +4231,13 @@ class link_library_plugin {
 						$output .= "<span class='previousnextactive'>";
 
 						if (!$showonecatonly)
-							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "'>" . __('Previous', 'link-library') . "</a>";
+							$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $previouspagenumber . "'>" . __('Previous', 'link-library') . "</a>";
 						elseif ($showonecatonly)
 						{
 							if ($showonecatmode == 'AJAX' || $showonecatmode == '')
 								$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . "</a>";
 							elseif ($showonecatmode == 'HTMLGET')
-								$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $previouspagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Previous', 'link-library') . "</a>";
+								$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $previouspagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Previous', 'link-library') . "</a>";
 						}
 
 						$output .= "</span>";
@@ -4255,13 +4255,13 @@ class link_library_plugin {
 								$output .= "<span class='selectedpage'>";
 
 							if (!$showonecatonly)
-								$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $counter . "'>" . $counter . "</a>";
+								$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $counter . "'>" . $counter . "</a>";
 							elseif ($showonecatonly)
 							{
 								if ($showonecatmode == 'AJAX' || $showonecatmode == '')
 									$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
 								elseif ($showonecatmode == 'HTMLGET')
-									$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $counter . "&cat_id=" . $AJAXcatid . "' >" . $counter . "</a>";
+									$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $counter . "&cat_id=" . $AJAXcatid . "' >" . $counter . "</a>";
 							}
 
 							$output .= "</a></span>";
@@ -4285,13 +4285,13 @@ class link_library_plugin {
 						$output .= "<span class='previousnextactive'>";
 
 						if (!$showonecatonly)
-							$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "'>" . __('Next', 'link-library') . "</a>";
+							$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $nextpagenumber . "'>" . __('Next', 'link-library') . "</a>";
 						elseif ($showonecatonly)
 						{
 							if ($showonecatmode == 'AJAX' || $showonecatmode == '')
 								$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . "</a>";
 							elseif ($showonecatmode == 'HTMLGET')
-								$output .= "<a href='?page_id=" . get_the_ID() . "&page=" . $nextpagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Next', 'link-library') . "</a>";
+								$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $nextpagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Next', 'link-library') . "</a>";
 						}
 
 						$output .= "</span>";

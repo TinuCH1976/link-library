@@ -4,7 +4,7 @@
 	
 	$catID = $_GET['id'];
 	$settingsID = $_GET['settings'];
-	$pageID = $_GET['page'];
+	$pageID = $_GET['linkresultpage'];
 	
 	$settingsname = 'AdminSettings' . $settingsID;
 	

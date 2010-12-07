@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6.5 =
+* Fixed: Pagination issues
+
 = 4.6.4 =
 * Fixed: Unable to hide submitter name and e-mail fields
 
