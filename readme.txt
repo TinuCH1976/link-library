@@ -72,6 +72,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6.6 =
+* Fixed: Direct references to content upload directory which did not work in network configurations
+
 = 4.6.5 =
 * Fixed: Pagination issues
 

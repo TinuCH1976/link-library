@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.5
+Version: 4.6.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -243,6 +243,8 @@ class link_library_plugin {
 	/************************** Function called to create default settings or to reset them on user request **************************/
 	function ll_reset_options($settings = 1, $layout = 'list')
 	{
+		$uploads = wp_upload_dir();
+		
 		if ($layout == "list")
 		{
 			$options['num_columns'] = 1;
@@ -499,7 +501,8 @@ class link_library_plugin {
 				$genthumburl = "http://www.getfavicon.org/?url=" . $strippedurl . "/favicon.png";
 			}
 			
-			$img = ABSPATH . "/wp-content/uploads/" . $filepath. "/" . $linkid . ".jpg";
+			$uploads = wp_upload_dir();
+			$img = $uploads['basedir'] . "/" . $filepath. "/" . $linkid . ".jpg";
 			$status = file_put_contents($img, file_get_contents($genthumburl));
 
 			if ($status != true)
@@ -621,18 +624,20 @@ class link_library_plugin {
 			elseif (isset($_GET['genfavicons']) || isset($_GET['genfaviconsingle']))
 				$filepath = "link-library-favicons";
 
-			if (!file_exists(ABSPATH . 'wp-content/uploads/'))
+			$uploads = wp_upload_dir();
+			
+			if (!file_exists($uploads['basedir']))
 			{
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Please create a folder called uploads under your Wordpress /wp-content/ directory with write permissions to use this functionality.', 'link-library') . "</strong></p></div>";				
 			}
-			elseif (!is_writable(ABSPATH . 'wp-content/uploads/'))
+			elseif (!is_writable($uploads['basedir']))
 			{
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Please make sure that the /wp-content/uploads/ directory has write permissions to use this functionality.', 'link-library') . "</strong></p></div>";				
 			}
 			else
 			{
-				if (!file_exists(ABSPATH . 'wp-content/uploads/' . $filepath))
-					mkdir(ABSPATH . 'wp-content/uploads/' . $filepath);
+				if (!file_exists($uploads['basedir'] . '/' . $filepath))
+					mkdir($uploads['basedir'] . '/' . $filepath);
 					
 				if (isset($_GET['genthumbs']) || isset($_GET['genthumbsingle']))
 				{
@@ -2999,11 +3004,13 @@ class link_library_plugin {
 	function add_link_field($link_id) {
 		global $wpdb;
 		
+		$uploads = wp_upload_dir();
+		
 		if(array_key_exists('linkimageupload', $_FILES))
 		{
-			if (!file_exists(ABSPATH . 'wp-content/uploads/link-library-images'))
-				mkdir(ABSPATH . 'wp-content/uploads/link-library-images');
-			$target_path = ABSPATH . "/wp-content/uploads/link-library-images/" . $link_id . ".jpg";
+			if (!file_exists($uploads['basedir'] . '/link-library-images'))
+				mkdir($uploads['basedir'] . '/link-library-images');
+			$target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
 			$file_path = WP_CONTENT_URL . "/uploads/link-library-images/" . $link_id . ".jpg";
 			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
 				$withimage = true;
