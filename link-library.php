@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.6
+Version: 4.6.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -118,7 +118,7 @@ class link_library_plugin {
 		//add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'));
 
 		global $llpluginpath;
-		$llpluginpath = WP_CONTENT_URL.'/plugins/'.plugin_basename(dirname(__FILE__)).'/';
+		$llpluginpath = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__)).'/';
 
 		// Load text domain for translation of admin pages and text strings
 		load_plugin_textdomain( 'link-library', $llpluginpath . '/languages', 'link-library/languages');
@@ -502,12 +502,27 @@ class link_library_plugin {
 			}
 			
 			$uploads = wp_upload_dir();
+			
+			if (!file_exists($uploads['basedir']))
+			{
+				return __('Please create a folder called uploads under your Wordpress /wp-content/ directory with write permissions to use this functionality.', 'link-library');				
+			}
+			elseif (!is_writable($uploads['basedir']))
+			{
+				return __('Please make sure that the /wp-content/uploads/ directory has write permissions to use this functionality.', 'link-library');				
+			}
+			else
+			{
+				if (!file_exists($uploads['basedir'] . '/' . $filepath))
+					mkdir($uploads['basedir'] . '/' . $filepath);
+			}			
+			
 			$img = $uploads['basedir'] . "/" . $filepath. "/" . $linkid . ".jpg";
 			$status = file_put_contents($img, file_get_contents($genthumburl));
 
-			if ($status != true)
+			if ($status !== false)
 			{
-				$newimagedata = array("link_id" => $linkid, "link_image" => "/wp-content/uploads/" . $filepath . "/" . $linkid . ".jpg");
+				$newimagedata = array("link_id" => $linkid, "link_image" => $uploads['baseurl'] . "/" . $filepath . "/" . $linkid . ".jpg");
 
 				if ($mode == 'thumb' || $mode == 'favicon')
 					wp_update_link($newimagedata);
@@ -540,6 +555,7 @@ class link_library_plugin {
 		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
 		
 		$pagehooktop = add_menu_page(__('Link Library General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . '/icons/folder-beige-internet-icon.png');
+		
 		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Settings Sets', 'link-library') , __('Settings Sets', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
 		if ($linkmoderatecount == 0)
@@ -2976,7 +2992,7 @@ class link_library_plugin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons' };
+						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons', linkid: <?php echo $link->link_id; ?> };
 						jQuery.get('<?php echo WP_PLUGIN_URL; ?>/link-library/link-library-image-generator.php', map, 
 							function(data){
 								if (data != '')
@@ -3011,7 +3027,7 @@ class link_library_plugin {
 			if (!file_exists($uploads['basedir'] . '/link-library-images'))
 				mkdir($uploads['basedir'] . '/link-library-images');
 			$target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
-			$file_path = WP_CONTENT_URL . "/uploads/link-library-images/" . $link_id . ".jpg";
+			$file_path = $uploads['baseurl'] . "/uploads/link-library-images/" . $link_id . ".jpg";
 			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
 				$withimage = true;
 			else
@@ -4081,7 +4097,7 @@ class link_library_plugin {
 											elseif ($sourceweblink == "secondary")
 												$output .= $the_second_link;
 
-											$output .= "' id='" . $linkitem['proper_link_id'] . "' class='track_this_link'>";
+											$output .= "' id='" . $linkitem['proper_link_id'] . "' class='track_this_link' " . $target . ">";
 
 											if ($displayweblink == 'address')
 											{

@@ -72,6 +72,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.6.7 =
+* Fixed: Problem with favicon generation in link editor page
+* Fixed: Problem with content directory location when user redirects it
+* Fixed: Web Link not following target rules
+
 = 4.6.6 =
 * Fixed: Direct references to content upload directory which did not work in network configurations
 
