@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.6.7
+Version: 4.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -152,6 +152,7 @@ class link_library_plugin {
 				`link_submitter_name` VARCHAR( 128 ) NULL,
 				`link_submitter_email` VARCHAR( 128 ) NULL,
 				`link_textfield` TEXT NULL,
+				`link_no_follow` VARCHAR(1) NULL,
 				PRIMARY KEY (`link_id`)
 				) $charset_collate"); 
 
@@ -168,6 +169,13 @@ class link_library_plugin {
 			{
 				$genoptions['schemaversion'] = "4.6";
 				$wpdb->get_results("ALTER TABLE `" . $wpdb->prefix . "links_extrainfo` ADD `link_submitter_name` VARCHAR( 128 ) NULL, ADD `link_submitter_email` VARCHAR( 128 ) NULL , ADD `link_textfield` TEXT NULL ;");
+				
+				update_option('LinkLibraryGeneral', $genoptions);
+			}
+			elseif (floatval($genoptions['schemaversion']) < "4.7")
+			{
+				$genoptions['schemaversion'] = "4.7";
+				$wpdb->get_results("ALTER TABLE `" . $wpdb->prefix . "links_extrainfo` ADD `link_no_follow` VARCHAR( 1 ) NULL;");
 				
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
@@ -2879,6 +2887,10 @@ class link_library_plugin {
 	?>
 		<table>
 			<tr>
+				<td style='width: 200px'><?php _e('No Follow', 'link-library'); ?></td>
+				<td><input type="checkbox" id="link_no_follow" name="link_no_follow" <?php if ($extradata['link_no_follow']) echo ' checked="checked" '; ?>/></td>
+			</tr>
+			<tr>
 				<td style='width: 200px'><?php _e('Secondary Web Address', 'link-library'); ?></td>
 				<td><input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo $extradata['link_second_url']; ?>"/> <?php if ($extradata['link_second_url'] != "") echo " <a href=" . $extradata['link_second_url'] . ">" . __('Visit', 'link-library') . "</a>"; ?></td></td>
 			</tr>
@@ -3055,9 +3067,9 @@ class link_library_plugin {
 		$username = $current_user->user_login;
 		
 		if ($extradata)
-			$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_textfield' => $_POST['link_textfield'] ), array( 'link_id' => $link_id ));
+			$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_textfield' => $_POST['link_textfield'], 'link_no_follow' => $_POST['link_no_follow'] ), array( 'link_id' => $link_id ));
 		else
-			$wpdb->insert( $extradatatable, array( 'link_id' => $link_id, 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username ));
+			$wpdb->insert( $extradatatable, array( 'link_id' => $link_id, 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_no_follow' => $_POST['link_no_follow'] ));
 	}
 
 	/************************************************ Delete extra field data when link is deleted ***********************************/
@@ -3875,11 +3887,11 @@ class link_library_plugin {
 						$the_second_link = wp_specialchars($linkitem['link_second_url']);
 
 					$rel = $linkitem['link_rel'];
-					if ('' != $rel and !$nofollow)
+					if ('' != $rel and !$nofollow and !$linkitem['link_no_follow'])
 						$rel = ' rel="' . $rel . '"';
-					else if ('' != $rel and $nofollow)
+					else if ('' != $rel and ($nofollow or $linkitem['link_no_follow']))
 						$rel = ' rel="' . $rel . ' nofollow"';
-					else if ('' == $rel and $nofollow)
+					else if ('' == $rel and ($nofollow or $linkitem['link_no_follow']))
 						$rel = ' rel="nofollow"';
 
 					if ($use_html_tags) {
