@@ -16,19 +16,6 @@ For links that carry RSS feed information, Link Library can display a preview of
 
 This plugin uses the filter method to add contents to the pages. It also contains a configuration page under the admin tools to be able to configure all outputs. This page allows for an unlimited number of different configurations to be created to display links on different pages of a Wordpress site.
 
-New to Version 4.0:
-
-* New drag-and-drop interface to specify order of link elements
-* Ability to specify target link for link categories to allow categories to be on seperate page from link library
-* New section in link edition screen to specify new data elements (Reciprocal Link, E-mail, Second Web Address, Telephone)
-* Ability to batch import links through csv files
-* Ability to import/export setting sets using csv files
-* Collection of click-through stats for links, Link category permalinks
-* Update page title
-* French Translation of Admin Interface (other translations welcome)
-* Can now generate thumbnail or favorite icon or a single-link basis
-* Option to store user information when available upon link submission
-
 You can see a few examples of pages using Link Library on my personal site:
 
 * [Library in table form with search box and link submission form](http://yannickcorner.nayanna.biz/freeware-database/)
@@ -71,6 +58,9 @@ In addition to specifying a setting set, categories to be displayed can be speci
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 4.7.1 =
+* Maintenance and removal of old information on plugin page
 
 = 4.7 =
 * Added: Option to set nofollow property on links on a link-by-link basis

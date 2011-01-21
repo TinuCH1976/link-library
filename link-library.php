@@ -114,8 +114,8 @@ class link_library_plugin {
 		add_filter('query_vars', array($this, 'll_insertMyRewriteQueryVars'));
 
 		// Under development, trying to display extra columns in link list page
-		//add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
-		//add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'));
+		add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
+		add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
 
 		global $llpluginpath;
 		$llpluginpath = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__)).'/';
@@ -868,8 +868,8 @@ class link_library_plugin {
 		?>
 		<div id="link-library-general" class="wrap">
 		<div class='icon32'><img src="<?php echo $llpluginpath . '/icons/folder-beige-internet-icon32.png'; ?>" /></div>
-		<h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span></h2>
-		<form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
+		<div ><h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span></h2></div>
+		<div><form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 
 			<?php wp_nonce_field('link-library'); ?>
@@ -901,7 +901,7 @@ class link_library_plugin {
 				<br class="clear"/>
 			</div>
 		</form>
-		</div>
+		</div></div>
 	<script type="text/javascript">
 		//<![CDATA[
 		jQuery(document).ready( function($) {
@@ -1447,32 +1447,46 @@ class link_library_plugin {
 	function general_meta_box($data) {
 		$genoptions = $data['genoptions'];
 		?>
+			<table>
+			<tr>
+			<td>
 				<input type='hidden' value='<?php echo $genoptions['schemaversion']; ?>' name='schemaversion' id='schemaversion' />
 				<table>
 				<tr>
 				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>' style='width:200px'><?php _e('Stylesheet','link-library'); ?></td>
 				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-stylesheet&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
-				<td style='padding-left: 10px;padding-right:10px'><?php _e('Number of Style Sets','link-library'); ?></td>
+				</tr>
+				<tr>
+				<td><?php _e('Number of Style Sets','link-library'); ?></td>
 				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '5'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
 				<tr>
 				<td class="tooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><?php _e('Additional pages to load styles and scripts','link-library'); ?></td>
 				<td class="tooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
-				<td style="padding-left: 10px;padding-right:10px"><?php _e('Debug Mode', 'link-library'); ?></td>
+				</tr>
+				<tr>
+				<td><?php _e('Debug Mode', 'link-library'); ?></td>
 				<td><input type="checkbox" id="debugmode" name="debugmode" <?php if ($genoptions['debugmode']) echo ' checked="checked" '; ?>/></td>
 				</tr>
 				<tr>
 				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Prefix','link-library'); ?></td>
 				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitleprefix" name="pagetitleprefix" size="10" value="<?php echo $genoptions['pagetitleprefix']; ?>"/></td>
-				<td style="padding-left: 10px;padding-right:10px" class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Suffix','link-library'); ?></td>
+				</tr>
+				<tr>
+				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Suffix','link-library'); ?></td>
 				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitlesuffix" name="pagetitlesuffix" size="10" value="<?php echo $genoptions['pagetitlesuffix']; ?>"/></td>
 				</tr>
 				<tr>
 					<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-					<td colspan='4' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="60" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
+					<td colspan='4' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
 				
 				</table>
+			</td>
+			<td style='padding: 8px; border: 1px solid #cccccc;'>
+			<div><h3>ThemeFuse Original WP Themes</h3><br />If you are looking to buy an original WP theme, take a look at <a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle">ThemeFuse</a>?<br />They have a nice 1-click installer, great support and good-looking themes.</div><div style='text-align: center; padding-top: 10px'><a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle"><img src='http://themefuse.com/wp-content/themes/themefuse/images/campaigns/themefuse.jpg' /></a></div>
+			</td>
+			</table>
 		<?php }
 		
 	function general_moderation_meta_box($data) {
@@ -3146,14 +3160,13 @@ class link_library_plugin {
 	function ll_linkmanager_populatecolumn($arg1, $arg2) {
 		global $wpdb;
 		
-		echo print_r($arg1, true) . " / " . print_r($arg2, true);
-	
 		switch ($arg1) {
 			case 'hits':
-				$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $data2;
+				$linkextradataquery = "select * from " . $wpdb->prefix . "links_extrainfo where link_id = " . $arg2;
 				$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
 				$hits = $extradata['link_visits'];
-				//echo "Hits: " . $hits;
+				if ($hits == '') $hits = 0;
+				echo $hits;
 		}
 	}
 
