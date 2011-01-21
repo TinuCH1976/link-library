@@ -1484,7 +1484,7 @@ class link_library_plugin {
 				</table>
 			</td>
 			<td style='padding: 8px; border: 1px solid #cccccc;'>
-			<div><h3>ThemeFuse Original WP Themes</h3><br />If you are looking to buy an original WP theme, take a look at <a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle">ThemeFuse</a>?<br />They have a nice 1-click installer, great support and good-looking themes.</div><div style='text-align: center; padding-top: 10px'><a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle"><img src='http://themefuse.com/wp-content/themes/themefuse/images/campaigns/themefuse.jpg' /></a></div>
+			<div><h3>ThemeFuse Original WP Themes</h3><br />If you are looking to buy an original WP theme, take a look at <a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle">ThemeFuse</a><br />They have a nice 1-click installer, great support and good-looking themes.</div><div style='text-align: center; padding-top: 10px'><a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle"><img src='http://themefuse.com/wp-content/themes/themefuse/images/campaigns/themefuse.jpg' /></a></div>
 			</td>
 			</table>
 		<?php }
