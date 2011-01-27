@@ -59,6 +59,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.7.2 =
+* Renamed tooltip class in admin to avoid conflict with other plugins (UAM in specific)
+* Changed default number of stylesets to 1 to make plugin easier to use for newcomers
+* Fixed problem with link name before code not showing up when secondary link was selected
+
 = 4.7.1 =
 * Maintenance and removal of old information on plugin page
 

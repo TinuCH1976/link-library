@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.7.1
+Version: 4.7.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -450,7 +450,7 @@ class link_library_plugin {
 	// Function used to set initial settings or reset them on user request
 	function ll_reset_gen_settings()
 	{
-		$genoptions['numberstylesets'] = 5;
+		$genoptions['numberstylesets'] = 1;
 		$genoptions['includescriptcss'] = '';
 		$genoptions['debugmode'] = false;
 		$genoptions['schemaversion'] = "4.6";
@@ -924,7 +924,7 @@ class link_library_plugin {
 		// Create the tooltips only on document load
 		jQuery(document).ready(function()
 			{
-				jQuery('.tooltip').each(function()
+				jQuery('.lltooltip').each(function()
 						{
 						jQuery(this).tipTip();
 						}
@@ -1453,32 +1453,32 @@ class link_library_plugin {
 				<input type='hidden' value='<?php echo $genoptions['schemaversion']; ?>' name='schemaversion' id='schemaversion' />
 				<table>
 				<tr>
-				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>' style='width:200px'><?php _e('Stylesheet','link-library'); ?></td>
-				<td class='tooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-stylesheet&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
+				<td class='lltooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>' style='width:200px'><?php _e('Stylesheet','link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-stylesheet&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
 				</tr>
 				<tr>
 				<td><?php _e('Number of Style Sets','link-library'); ?></td>
-				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '5'; echo $genoptions['numberstylesets']; ?>"/></td>
+				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '1'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
 				<tr>
-				<td class="tooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><?php _e('Additional pages to load styles and scripts','link-library'); ?></td>
-				<td class="tooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
+				<td class="lltooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><?php _e('Additional pages to load styles and scripts','link-library'); ?></td>
+				<td class="lltooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
 				</tr>
 				<tr>
 				<td><?php _e('Debug Mode', 'link-library'); ?></td>
 				<td><input type="checkbox" id="debugmode" name="debugmode" <?php if ($genoptions['debugmode']) echo ' checked="checked" '; ?>/></td>
 				</tr>
 				<tr>
-				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Prefix','link-library'); ?></td>
-				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitleprefix" name="pagetitleprefix" size="10" value="<?php echo $genoptions['pagetitleprefix']; ?>"/></td>
+				<td class="lltooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Prefix','link-library'); ?></td>
+				<td class="lltooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitleprefix" name="pagetitleprefix" size="10" value="<?php echo $genoptions['pagetitleprefix']; ?>"/></td>
 				</tr>
 				<tr>
-				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Suffix','link-library'); ?></td>
-				<td class="tooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitlesuffix" name="pagetitlesuffix" size="10" value="<?php echo $genoptions['pagetitlesuffix']; ?>"/></td>
+				<td class="lltooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><?php _e('Page Title Suffix','link-library'); ?></td>
+				<td class="lltooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitlesuffix" name="pagetitlesuffix" size="10" value="<?php echo $genoptions['pagetitlesuffix']; ?>"/></td>
 				</tr>
 				<tr>
-					<td class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-					<td colspan='4' class='tooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
+					<td class='lltooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
+					<td colspan='4' class='lltooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
 				
 				</table>
@@ -1494,15 +1494,15 @@ class link_library_plugin {
 	?>
 		<table>
 			<tr>
-				<td class='tooltip' title='<?php _e('URL that user will be redirected to after submitting new link. When used, the short code [link-library-addlinkcustommsg] should be placed on the destination page.', 'link-library'); ?>.' style='width:250px'><?php _e('Link Acknowledgement URL', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('URL that user will be redirected to after submitting new link. When used, the short code [link-library-addlinkcustommsg] should be placed on the destination page.', 'link-library'); ?>.' style='width:250px'><?php _e('Link Acknowledgement URL', 'link-library'); ?></td>
 				<td style='width:75px;padding-right:20px'><input type="text" id="linksubmissionthankyouurl" name="linksubmissionthankyouurl" size="60" value='<?php echo $genoptions['linksubmissionthankyouurl']; ?>' /></td>
 			</tr>
 			<tr>
-				<td class='tooltip' title='<?php _e('Title of e-mail sent to site admin when new links are submitted. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>.' style='width:250px'><?php _e('Moderation Notification Title', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Title of e-mail sent to site admin when new links are submitted. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>.' style='width:250px'><?php _e('Moderation Notification Title', 'link-library'); ?></td>
 				<td style='width:75px;padding-right:20px'><input type="text" id="moderationnotificationtitle" name="moderationnotificationtitle" size="60" value='<?php echo $genoptions['moderationnotificationtitle']; ?>' /></td>
 			</tr>		
 			<tr>
-				<td class='tooltip' title='<?php _e('Will send a confirmation e-mail to link submitter if they provided their contact information', 'link-library'); ?>.' style='width:250px'><?php _e('E-mail submitter on link approval or rejection', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Will send a confirmation e-mail to link submitter if they provided their contact information', 'link-library'); ?>.' style='width:250px'><?php _e('E-mail submitter on link approval or rejection', 'link-library'); ?></td>
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="emaillinksubmitter" name="emaillinksubmitter" <?php if ($genoptions['emaillinksubmitter']) echo ' checked="checked" '; ?>/></td>
 			</tr>
 			<tr>
@@ -1510,27 +1510,27 @@ class link_library_plugin {
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="usefirstpartsubmittername" name="usefirstpartsubmittername" <?php if ($genoptions['usefirstpartsubmittername']) echo ' checked="checked" '; ?>/></td>
 			</tr>			
 			<tr>
-				<td class='tooltip' title='<?php _e('The name of the e-mail account that the approval e-mail will be sent from', 'link-library'); ?>'><?php _e('Moderator Name', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('The name of the e-mail account that the approval e-mail will be sent from', 'link-library'); ?>'><?php _e('Moderator Name', 'link-library'); ?></td>
 				<td><input type="text" id="moderatorname" name="moderatorname" size="60" value="<?php echo $genoptions['moderatorname']; ?>"/></td>
 			</tr>
 			<tr>
-				<td class='tooltip' title='<?php _e('The e-mail address that the approval e-mail will be sent from', 'link-library'); ?>'><?php _e('Moderator E-mail', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('The e-mail address that the approval e-mail will be sent from', 'link-library'); ?>'><?php _e('Moderator E-mail', 'link-library'); ?></td>
 				<td><input type="text" id="moderatoremail" name="moderatoremail" size="60" value="<?php echo $genoptions['moderatoremail']; ?>"/></td>
 			</tr>
 			<tr>
-				<td class='tooltip' title='<?php _e('Title of approval e-mail. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>'><?php _e('Approval e-mail title', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Title of approval e-mail. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>'><?php _e('Approval e-mail title', 'link-library'); ?></td>
 				<td><input type="text" id="approvalemailtitle" name="approvalemailtitle" size="60" value="<?php echo $genoptions['approvalemailtitle']; ?>"/></td>
 			</tr>
 			<tr>
-				<td class='tooltip' title='<?php _e('Body of approval e-mail. Use %linkname% as a variable to be replaced by the actual link name and %submittername% for the submitter name', 'link-library'); ?>'><?php _e('Approval e-mail body', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Body of approval e-mail. Use %linkname% as a variable to be replaced by the actual link name and %submittername% for the submitter name', 'link-library'); ?>'><?php _e('Approval e-mail body', 'link-library'); ?></td>
 				<td><textarea id="approvalemailbody" name="approvalemailbody" cols="60"><?php echo stripslashes($genoptions['approvalemailbody']); ?></textarea></td>
 			</tr>
 			<tr>
-				<td class='tooltip' title='<?php _e('Title of rejection e-mail. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>'><?php _e('Rejection e-mail title', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Title of rejection e-mail. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>'><?php _e('Rejection e-mail title', 'link-library'); ?></td>
 				<td><input type="text" id="rejectedemailtitle" name="rejectedemailtitle" size="60" value="<?php echo $genoptions['rejectedemailtitle']; ?>"/></td>
 			</tr>
 			<tr>
-				<td class='tooltip' title='<?php _e('Body of rejection e-mail. Use %linkname% as a variable to be replaced by the actual link name and %submittername% for the submitter name', 'link-library'); ?>'><?php _e('Rejection e-mail body', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Body of rejection e-mail. Use %linkname% as a variable to be replaced by the actual link name and %submittername% for the submitter name', 'link-library'); ?>'><?php _e('Rejection e-mail body', 'link-library'); ?></td>
 				<td><textarea id="rejectedemailbody" name="rejectedemailbody" cols="60"><?php echo stripslashes($genoptions['rejectedemailbody']); ?></textarea></td>
 			</tr>			
 		</table>
@@ -1645,7 +1645,7 @@ class link_library_plugin {
 			<div>
 						<?php _e('Change Current Style Set', 'link-library'); ?> : 
 						<SELECT id="settingsetlist" name="settingsetlist" style='width: 300px'>
-						<?php if ($genoptions['numberstylesets'] == '') $numberofsets = 5; else $numberofsets = $genoptions['numberstylesets'];
+						<?php if ($genoptions['numberstylesets'] == '') $numberofsets = 1; else $numberofsets = $genoptions['numberstylesets'];
 							for ($counter = 1; $counter <= $numberofsets; $counter++): ?>
 								<?php $tempoptionname = "LinkLibraryPP" . $counter;
 								   $tempoptions = get_option($tempoptionname); ?>
@@ -1653,31 +1653,33 @@ class link_library_plugin {
 							<?php endfor; ?>
 						</SELECT>
 						<INPUT type="button" name="go" value="<?php _e('Go', 'link-library'); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=' + jQuery('#settingsetlist').val()">
+						<?php if ($numberofsets > 1): ?>
 						<?php _e('Copy from:', 'link-library'); ?> 
 						<SELECT id="copysource" name="copysource" style='width: 300px'>
-						<?php if ($genoptions['numberstylesets'] == '') $numberofsets = 5; else $numberofsets = $genoptions['numberstylesets'];
-							for ($counter = 1; $counter <= $numberofsets; $counter++): ?>
+						<?php for ($counter = 1; $counter <= $numberofsets; $counter++): ?>
 								<?php $tempoptionname = "LinkLibraryPP" . $counter;
 								   $tempoptions = get_option($tempoptionname); 
 								   if ($counter != $settings):?>
 								   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>><?php _e('Setting Set', 'link-library'); ?> <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
 								   <?php endif; 
-								endfor; ?>
+								endfor;
+							?>
 						</SELECT>
 						<INPUT type="button" name="copy" value="<?php _e('Copy', 'link-library'); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val()">
+						<?php endif; ?>
 				<br />
 				<br />
 				<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
 					<thead>
 					<tr>
-						<th style='width:40px' class="tooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
+						<th style='width:40px' class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
 							<?php _e('Set #', 'link-library'); ?>
 						</th>
-						<th style='width:130px' class="tooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
+						<th style='width:130px' class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
 							<?php _e('Set Name', 'link-library'); ?>
 						</th>
 						<th style='width: 230px'><?php _e('Feature', 'link-library'); ?></th>
-						<th class="tooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
+						<th class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
 							<?php _e('Code to insert on a Wordpress page', 'link-library'); ?>
 						</th>
 					</tr>
@@ -1729,29 +1731,29 @@ class link_library_plugin {
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browsers status bar. For example', 'link-library'); ?>: 2,4,56">
+			<td class="lltooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browsers status bar. For example', 'link-library'); ?>: 2,4,56">
 				<?php _e('Categories to be displayed (Empty=All)', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 2,4,56">
+			<td class="lltooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 2,4,56">
 				<input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>"/>
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title="<?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs that should not be shown', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 5,34,43">
+			<td class="lltooltip" title="<?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs that should not be shown', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 5,34,43">
 				<?php _e('Categories to be excluded', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs that should not be shown', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 5,34,43">
+			<td class="lltooltip" title="<?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs that should not be shown', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 5,34,43">
 				<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>"/>
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title="<?php _e('Only show one category of links at a time', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Only show one category of links at a time', 'link-library'); ?>">
 				<?php _e('Only show one category at a time', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Only show one category of links at a time', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Only show one category of links at a time', 'link-library'); ?>">
 				<input type="checkbox" id="showonecatonly" name="showonecatonly" <?php if ($options['showonecatonly']) echo ' checked="checked" '; ?>/>
 			</td>
-			<td class="tooltip" title="<?php _e('Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link. The Permalinks option must be enabled for HTML GET + Permalink to work correctly.', 'link-library'); ?>"><?php _e('Switching Method', 'link-library'); ?></td>
+			<td class="lltooltip" title="<?php _e('Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link. The Permalinks option must be enabled for HTML GET + Permalink to work correctly.', 'link-library'); ?>"><?php _e('Switching Method', 'link-library'); ?></td>
 			<td>
 				<select name="showonecatmode" id="showonecatmode" style="width:200px;">
 					<option value="AJAX"<?php if ($options['showonecatmode'] == 'AJAX' || $options['showonecatmode'] == '') { echo ' selected="selected"';} ?>>AJAX</option>
@@ -1769,24 +1771,24 @@ class link_library_plugin {
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title="<?php _e('File path is relative to Link Library plugin directory', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('File path is relative to Link Library plugin directory', 'link-library'); ?>">
 				<?php _e('Icon to display when performing AJAX queries', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('File path is relative to Link Library plugin directory', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('File path is relative to Link Library plugin directory', 'link-library'); ?>">
 				<input type="text" id="loadingicon" name="loadingicon" size="40" value="<?php if ($options['loadingicon'] == '') {echo '/icons/Ajax-loader.gif';} else {echo strval($options['loadingicon']);} ?>"/>
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title='<?php _e('Only show a limited number of links and add page navigation links', 'link-library'); ?>'>
+			<td class="lltooltip" title='<?php _e('Only show a limited number of links and add page navigation links', 'link-library'); ?>'>
 				<?php _e('Paginate Results', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title='<?php _e('Only show a limited number of links and add page navigation links', 'link-library'); ?>'>
+			<td class="lltooltip" title='<?php _e('Only show a limited number of links and add page navigation links', 'link-library'); ?>'>
 				<input type="checkbox" id="pagination" name="pagination" <?php if ($options['pagination']) echo ' checked="checked" '; ?>/>
 			</td>
-			<td class="tooltip" title="<?php _e('Number of Links to be Displayed per Page in Pagination Mode', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Number of Links to be Displayed per Page in Pagination Mode', 'link-library'); ?>">
 				<?php _e('Links per Page', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Number of Links to be Displayed per Page in Pagination Mode', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Number of Links to be Displayed per Page in Pagination Mode', 'link-library'); ?>">
 				<input type="text" id="linksperpage" name="linksperpage" size="3" value="<?php echo $options['linksperpage']; ?>"/>
 			</td>
 		</tr>
@@ -1861,20 +1863,20 @@ class link_library_plugin {
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title="<?php _e('This setting does not apply when selecting My Link Order for the order', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('This setting does not apply when selecting My Link Order for the order', 'link-library'); ?>">
 				<?php _e('Direction', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('This setting does not apply when selecting My Link Order for the order', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('This setting does not apply when selecting My Link Order for the order', 'link-library'); ?>">
 				<select name="direction" id="direction" style="width:100px;">
 					<option value="ASC"<?php if ($options['direction'] == 'ASC') { echo ' selected="selected"';} ?>><?php _e('Ascending', 'link-library'); ?></option>
 					<option value="DESC"<?php if ($options['direction'] == 'DESC') { echo ' selected="selected"';} ?>><?php _e('Descending', 'link-library'); ?></option>
 				</select>
 			</td>
 			<td></td>
-			<td class="tooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
 				<?php _e('Show Category Description', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
 				<input type="checkbox" id="showcategorydescheaders" name="showcategorydescheaders" <?php if ($options['showcategorydescheaders']) echo ' checked="checked" '; ?>/>
 				<span style='margin-left: 17px'><?php _e('Position', 'link-library'); ?>:</span>							
 				<select name="catlistdescpos" id="catlistdescpos" style="width:100px;">
@@ -1891,10 +1893,10 @@ class link_library_plugin {
 				<input type="text" id="table_width" name="table_width" size="10" value="<?php echo strval($options['table_width']); ?>"/>
 			</td>
 			<td></td>
-			<td class="tooltip" title='<?php _e('Determines the number of alternating div tags that will be placed before and after each link category', 'link-library'); ?>.<br /><br /><?php _e('These div tags can be used to style of position link categories on the link page', 'link-library'); ?>.'>
+			<td class="lltooltip" title='<?php _e('Determines the number of alternating div tags that will be placed before and after each link category', 'link-library'); ?>.<br /><br /><?php _e('These div tags can be used to style of position link categories on the link page', 'link-library'); ?>.'>
 				<?php _e('Number of alternating div classes', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title='<?php _e('Determines the number of alternating div tags that will be placed before and after each link category', 'link-library'); ?>.<br /><br /><?php _e('These div tags can be used to style of position link categories on the link page', 'link-library'); ?>.'>
+			<td class="lltooltip" title='<?php _e('Determines the number of alternating div tags that will be placed before and after each link category', 'link-library'); ?>.<br /><br /><?php _e('These div tags can be used to style of position link categories on the link page', 'link-library'); ?>.'>
 				<select name="catlistwrappers" id="catlistwrappers" style="width:200px;">
 					<option value="1"<?php if ($options['catlistwrappers'] == 1) { echo ' selected="selected"';} ?>>1</option>
 					<option value="2"<?php if ($options['catlistwrappers'] == 2) { echo ' selected="selected"';} ?>>2</option>
@@ -1936,10 +1938,10 @@ class link_library_plugin {
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title="<?php _e('Example div class name: linklistcatname, Example Heading Label: h3', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Example div class name: linklistcatname, Example Heading Label: h3', 'link-library'); ?>">
 				<?php _e('Div Class Name or Heading label', 'link-library'); ?>
 			</td>
-			<td  class="tooltip" title="<?php _e('Example div class name: linklistcatname, Example Heading Label: h3', 'link-library'); ?>">
+			<td  class="lltooltip" title="<?php _e('Example div class name: linklistcatname, Example Heading Label: h3', 'link-library'); ?>">
 				<input type="text" id="catnameoutput" name="catnameoutput" size="30" value="<?php echo strval($options['catnameoutput']); ?>"/>
 			</td>
 			<td></td>
@@ -1951,10 +1953,10 @@ class link_library_plugin {
 			</td>
 		</tr>
 		<tr>
-		<td class="tooltip" title="<?php _e('Set this address to a page running Link Library to place categories on a different page. Should always be used with the Show One Category at a Time and HTMLGET fetch method.', 'link-library'); ?>">
+		<td class="lltooltip" title="<?php _e('Set this address to a page running Link Library to place categories on a different page. Should always be used with the Show One Category at a Time and HTMLGET fetch method.', 'link-library'); ?>">
 			<?php _e('Category Target Address', 'link-library'); ?>
 		</td>
-		<td colspan="4" class="tooltip" title="<?php _e('Set this address to a page running Link Library to place categories on a different page. Should always be used with the Show One Category at a Time and HTMLGET fetch method.', 'link-library'); ?>">
+		<td colspan="4" class="lltooltip" title="<?php _e('Set this address to a page running Link Library to place categories on a different page. Should always be used with the Show One Category at a Time and HTMLGET fetch method.', 'link-library'); ?>">
 			<input type="text" id="cattargetaddress" name="cattargetaddress" size="120" value="<?php echo $options['cattargetaddress']; ?>" /></td>
 		</tr>
 		</table>
@@ -1980,10 +1982,10 @@ class link_library_plugin {
 				</select>
 			</td>
 			<td style='width:100px'></td>
-			<td class="tooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
 				<?php _e('Show Category Description', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library'); ?>">
 				<input type="checkbox" id="showcategorydesclinks" name="showcategorydesclinks" <?php if ($options['showcategorydesclinks']) echo ' checked="checked" '; ?>/>
 				<span style='margin-left: 17px'><?php _e('Position', 'link-library'); ?>:</span>
 				<select name="catdescpos" id="catdescpos" style="width:100px;">
@@ -1993,28 +1995,28 @@ class link_library_plugin {
 			</td>
 		</tr>
 		<tr>
-			<td class="tooltip" title='<?php _e('Except for My Link Order mode', 'link-library'); ?>'>
+			<td class="lltooltip" title='<?php _e('Except for My Link Order mode', 'link-library'); ?>'>
 				<?php _e('Direction', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title='<?php _e('Except for My Link Order mode', 'link-library'); ?>'>
+			<td class="lltooltip" title='<?php _e('Except for My Link Order mode', 'link-library'); ?>'>
 				<select name="linkdirection" id="linkdirection" style="width:200px;">
 					<option value="ASC"<?php if ($options['linkdirection'] == 'ASC') { echo ' selected="selected"';} ?>><?php _e('Ascending', 'link-library'); ?></option>
 					<option value="DESC"<?php if ($options['linkdirection'] == 'DESC') { echo ' selected="selected"';} ?>><?php _e('Descending', 'link-library'); ?></option>
 				</select>
 			</td>
 			<td></td>
-			<td class="tooltip" title="<?php _e('Leave empty to show all results', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Leave empty to show all results', 'link-library'); ?>">
 				<?php _e('Max number of links to display', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Leave empty to show all results', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Leave empty to show all results', 'link-library'); ?>">
 				<input type="text" id="maxlinks" name="maxlinks" size="4" value="<?php echo $options['maxlinks']; ?>"/>
 			</td>
 		</tr>	
 		<tr>
-			<td class="tooltip" title="<?php _e('Sets default link target window, does not override specific targets set in links', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Sets default link target window, does not override specific targets set in links', 'link-library'); ?>">
 				<?php _e('Link Target', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title="<?php _e('Sets default link target window, does not override specific targets set in links', 'link-library'); ?>">
+			<td class="lltooltip" title="<?php _e('Sets default link target window, does not override specific targets set in links', 'link-library'); ?>">
 				<input type="text" id="linktarget" name="linktarget" size="40" value="<?php echo $options['linktarget']; ?>"/>
 			</td>
 			<td></td>
@@ -2074,10 +2076,10 @@ class link_library_plugin {
 			</td>
 		</tr>	
 		<tr>
-			<td class="tooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
+			<td class="lltooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
 				<?php _e('Embed HTML anchors', 'link-library'); ?>
 			</td>
-			<td class="tooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
+			<td class="lltooltip" title='<?php _e('Need to be active for Link Categories to work', 'link-library'); ?>'>
 				<input type="checkbox" id="catanchor" name="catanchor" <?php if ($options['catanchor']) echo ' checked="checked" '; ?>/>
 			</td>
 		</tr>
@@ -2150,11 +2152,11 @@ class link_library_plugin {
 					<th style='width: 80px'><?php _e('Link Source', 'link-library'); ?></th>
 				</thead>
 				<tr>
-					<td class="tooltip" title='<?php _e('This column allows for the output of text/code before a number of links determined by the Display field', 'link-library'); ?>'><?php _e('Intermittent Before Link', 'link-library'); ?></td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Frequency of additional output before and after complete link group', 'link-library'); ?>'>
+					<td class="lltooltip" title='<?php _e('This column allows for the output of text/code before a number of links determined by the Display field', 'link-library'); ?>'><?php _e('Intermittent Before Link', 'link-library'); ?></td>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Frequency of additional output before and after complete link group', 'link-library'); ?>'>
 						<input type="text" id="linkaddfrequency" name="linkaddfrequency" size="10" value="<?php echo strval($options['linkaddfrequency']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Output before complete link group (link, notes, desc, etc...)', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Output before complete link group (link, notes, desc, etc...)', 'link-library'); ?>'>
 						<input type="text" id="addbeforelink" name="addbeforelink" size="22" value="<?php echo stripslashes($options['addbeforelink']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2162,9 +2164,9 @@ class link_library_plugin {
 					<td style='background: #FFF'></td>
 				</tr>
 				<tr>
-					<td class="tooltip" title='<?php _e('This column allows for the output of text/code before each link', 'link-library'); ?>'><?php _e('Before Link', 'link-library'); ?></td>
+					<td class="lltooltip" title='<?php _e('This column allows for the output of text/code before each link', 'link-library'); ?>'><?php _e('Before Link', 'link-library'); ?></td>
 					<td style='background: #FFF'></td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Output before complete link group (link, notes, desc, etc...)', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Output before complete link group (link, notes, desc, etc...)', 'link-library'); ?>'>
 						<input type="text" id="beforeitem" name="beforeitem" size="22" value="<?php echo stripslashes($options['beforeitem']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2179,17 +2181,17 @@ class link_library_plugin {
 						switch ($arrayelements) {
 							case 1: /* -------------------------------- Link Image -------------------------------------------*/ ?>	
 				<tr>
-					<td style='background-color: #1240ab; color: #fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before each link image', 'link-library'); ?>'><?php _e('Image', 'link-library'); ?></td>
+					<td style='background-color: #1240ab; color: #fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before each link image', 'link-library'); ?>'><?php _e('Image', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<input type="checkbox" id="show_images" name="show_images" <?php if ($options['show_images']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before each link image', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before each link image', 'link-library'); ?>'>
 						<input type="text" id="beforeimage" name="beforeimage" size="22" value="<?php echo stripslashes($options['beforeimage']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after each link image', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after each link image', 'link-library'); ?>'>
 						<input type="text" id="afterimage" name="afterimage" size="22" value="<?php echo stripslashes($options['afterimage']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('CSS Class to be assigned to link image', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('CSS Class to be assigned to link image', 'link-library'); ?>'>
 						<input type="text" id="imageclass" name="imageclass" size="22" value="<?php echo $options['imageclass']; ?>"/>
 					</td>
 					<td style='background: #FFF'>
@@ -2202,14 +2204,14 @@ class link_library_plugin {
 				<?php break;
 				case 2: /* -------------------------------- Link Name -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #4671d5; color: #fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after each link name', 'link-library'); ?>'><?php _e('Link Name', 'link-library'); ?></td>
+					<td style='background-color: #4671d5; color: #fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after each link name', 'link-library'); ?>'><?php _e('Link Name', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<input type="checkbox" id="showname" name="showname" <?php if ($options['showname'] == true) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before each link', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before each link', 'link-library'); ?>'>
 						<input type="text" id="beforelink" name="beforelink" size="22" value="<?php echo stripslashes($options['beforelink']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after each link', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after each link', 'link-library'); ?>'>
 						<input type="text" id="afterlink" name="afterlink" size="22" value="<?php echo stripslashes($options['afterlink']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2223,14 +2225,14 @@ class link_library_plugin {
 				<?php break;
 				case 3: /* -------------------------------- Link Date -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #39e639; color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after each link date stamp', 'link-library'); ?>'><?php _e('Link Date', 'link-library'); ?></td>
-					<td style='background: #FFF;text-align:center' class="tooltip" title='<?php _e('Check to display link date', 'link-library'); ?>'>
+					<td style='background-color: #39e639; color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after each link date stamp', 'link-library'); ?>'><?php _e('Link Date', 'link-library'); ?></td>
+					<td style='background: #FFF;text-align:center' class="lltooltip" title='<?php _e('Check to display link date', 'link-library'); ?>'>
 						<input type="checkbox" id="showdate" name="showdate" <?php if ($options['showdate']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before each date', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before each date', 'link-library'); ?>'>
 						<input type="text" id="beforedate" name="beforedate" size="22" value="<?php echo stripslashes($options['beforedate']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after each date', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after each date', 'link-library'); ?>'>
 						<input type="text" id="afterdate" name="afterdate" size="22" value="<?php echo stripslashes($options['afterdate']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2239,14 +2241,14 @@ class link_library_plugin {
 				<?php break;
 				case 4: /* -------------------------------- Link Description -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #009999;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after each link description', 'link-library'); ?>'><?php _e('Link Description', 'link-library'); ?></td>
-					<td style='background: #FFF;text-align: center' class="tooltip" title='<?php _e('Check to display link descriptions', 'link-library'); ?>'>
+					<td style='background-color: #009999;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after each link description', 'link-library'); ?>'><?php _e('Link Description', 'link-library'); ?></td>
+					<td style='background: #FFF;text-align: center' class="lltooltip" title='<?php _e('Check to display link descriptions', 'link-library'); ?>'>
 						<input type="checkbox" id="showdescription" name="showdescription" <?php if ($options['showdescription']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before each description', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before each description', 'link-library'); ?>'>
 						<input type="text" id="beforedesc" name="beforedesc" size="22" value="<?php echo stripslashes($options['beforedesc']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after each description', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after each description', 'link-library'); ?>'>
 						<input type="text" id="afterdesc" name="afterdesc" size="22" value="<?php echo stripslashes($options['afterdesc']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2255,14 +2257,14 @@ class link_library_plugin {
 				<?php break;
 				case 5: /* -------------------------------- Link Notes -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #00cc00;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after each link notes', 'link-library'); ?>'><?php _e('Link Notes', 'link-library'); ?></td>
-					<td style='background: #FFF;text-align: center' class="tooltip" title='<?php _e('Check to display link notes', 'link-library'); ?>'>
+					<td style='background-color: #00cc00;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after each link notes', 'link-library'); ?>'><?php _e('Link Notes', 'link-library'); ?></td>
+					<td style='background: #FFF;text-align: center' class="lltooltip" title='<?php _e('Check to display link notes', 'link-library'); ?>'>
 						<input type="checkbox" id="shownotes" name="shownotes" <?php if ($options['shownotes']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before each note', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before each note', 'link-library'); ?>'>
 						<input type="text" id="beforenote" name="beforenote" size="22" value="<?php echo stripslashes($options['beforenote']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after each note', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after each note', 'link-library'); ?>'>
 						<input type="text" id="afternote" name="afternote" size="22" value="<?php echo stripslashes($options['afternote']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2271,14 +2273,14 @@ class link_library_plugin {
 				<?php break;
 				case 6: /* -------------------------------- Link RSS Icons -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #008500;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the RSS icons', 'link-library'); ?>'><?php _e('RSS Icons', 'link-library'); ?></td>
+					<td style='background-color: #008500;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after the RSS icons', 'link-library'); ?>'><?php _e('RSS Icons', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<?php _e('See below', 'link-library'); ?>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before RSS Icons', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before RSS Icons', 'link-library'); ?>'>
 						<input type="text" id="beforerss" name="beforerss" size="22" value="<?php echo stripslashes($options['beforerss']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after RSS Icons', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after RSS Icons', 'link-library'); ?>'>
 						<input type="text" id="afterrss" name="afterrss" size="22" value="<?php echo stripslashes($options['afterrss']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2287,7 +2289,7 @@ class link_library_plugin {
 				<?php break;
 				case 7: /* -------------------------------- Web Link -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #5ccccc;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the Web Link', 'link-library'); ?>'><?php _e('Web Link', 'link-library'); ?></td>
+					<td style='background-color: #5ccccc;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after the Web Link', 'link-library'); ?>'><?php _e('Web Link', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<select name="displayweblink" id="displayweblink" style="width:80px;">
 							<option value="false"<?php if ($options['displayweblink'] == "false") { echo ' selected="selected"';} ?>><?php _e('False', 'link-library'); ?></option>
@@ -2295,16 +2297,16 @@ class link_library_plugin {
 							<option value="label"<?php if ($options['displayweblink'] == "label") { echo ' selected="selected"';} ?>><?php _e('Label', 'link-library'); ?></option>
 						</select>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before Web Link', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before Web Link', 'link-library'); ?>'>
 						<input type="text" id="beforeweblink" name="beforeweblink" size="22" value="<?php echo stripslashes($options['beforeweblink']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after Web Link', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after Web Link', 'link-library'); ?>'>
 						<input type="text" id="afterweblink" name="afterweblink" size="22" value="<?php echo stripslashes($options['afterweblink']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Text Label that the web link will be assigned to.', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Text Label that the web link will be assigned to.', 'link-library'); ?>'>
 						<input type="text" id="weblinklabel" name="weblinklabel" size="22" value="<?php echo stripslashes($options['weblinklabel']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Select which link address will be displayed / used for link', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Select which link address will be displayed / used for link', 'link-library'); ?>'>
 						<select name="sourceweblink" id="sourceweblink" style="width:200px;">
 							<option value="primary"<?php if ($options['sourceweblink'] == "primary") { echo ' selected="selected"';} ?>><?php _e('Primary', 'link-library'); ?></option>
 							<option value="secondary"<?php if ($options['sourceweblink'] == "secondary") { echo ' selected="selected"';} ?>><?php _e('Secondary', 'link-library'); ?></option>
@@ -2314,7 +2316,7 @@ class link_library_plugin {
 				<?php break;
 				case 8: /* -------------------------------- Telephone -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #6c8cd5;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the Telephone Number', 'link-library'); ?>'><?php _e('Telephone', 'link-library'); ?></td>
+					<td style='background-color: #6c8cd5;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after the Telephone Number', 'link-library'); ?>'><?php _e('Telephone', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<select name="showtelephone" id="showtelephone" style="width:80px;">
 							<option value="false"<?php if ($options['showtelephone'] == "false") { echo ' selected="selected"';} ?>><?php _e('False', 'link-library'); ?></option>
@@ -2323,16 +2325,16 @@ class link_library_plugin {
 							<option value="label"<?php if ($options['showtelephone'] == "label") { echo ' selected="selected"';} ?>><?php _e('Label', 'link-library'); ?></option>
 						</select>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before Telephone Number', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before Telephone Number', 'link-library'); ?>'>
 						<input type="text" id="beforetelephone" name="beforetelephone" size="22" value="<?php echo stripslashes($options['beforetelephone']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after Telephone Number', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after Telephone Number', 'link-library'); ?>'>
 						<input type="text" id="aftertelephone" name="aftertelephone" size="22" value="<?php echo stripslashes($options['aftertelephone']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Text Label that the telephone will be assigned to.', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Text Label that the telephone will be assigned to.', 'link-library'); ?>'>
 						<input type="text" id="telephonelabel" name="telephonelabel" size="22" value="<?php echo stripslashes($options['telephonelabel']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Select which link address will be displayed / used for link', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Select which link address will be displayed / used for link', 'link-library'); ?>'>
 						<select name="sourcetelephone" id="sourcetelephone" style="width:200px;">
 							<option value="primary"<?php if ($options['sourcetelephone'] == "primary") { echo ' selected="selected"';} ?>><?php _e('Primary', 'link-library'); ?></option>
 							<option value="secondary"<?php if ($options['sourcetelephone'] == "secondary") { echo ' selected="selected"';} ?>><?php _e('Secondary', 'link-library'); ?></option>
@@ -2342,7 +2344,7 @@ class link_library_plugin {
 				<?php break;
 				case 9: /* -------------------------------- E-mail -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #67e667;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the E-mail', 'link-library'); ?>'><?php _e('E-mail', 'link-library'); ?></td>
+					<td style='background-color: #67e667;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after the E-mail', 'link-library'); ?>'><?php _e('E-mail', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<select name="showemail" id="showemail" style="width:80px;">
 							<option value="false"<?php if ($options['showemail'] == "false") { echo ' selected="selected"';} ?>><?php _e('False', 'link-library'); ?></option>
@@ -2353,30 +2355,30 @@ class link_library_plugin {
 							<option value="commandlabel"<?php if ($options['showemail'] == "commandlabel") { echo ' selected="selected"';} ?>><?php _e('Formatted Command with Labels', 'link-library'); ?></option>
 						</select>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before E-mail', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before E-mail', 'link-library'); ?>'>
 						<input type="text" id="beforeemail" name="beforeemail" size="22" value="<?php echo stripslashes($options['beforeemail']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after E-mail', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after E-mail', 'link-library'); ?>'>
 						<input type="text" id="afteremail" name="afteremail" size="22" value="<?php echo stripslashes($options['afteremail']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Text Label that the e-mail will be assigned to represent the e-mail link.', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Text Label that the e-mail will be assigned to represent the e-mail link.', 'link-library'); ?>'>
 						<input type="text" id="emaillabel" name="emaillabel" size="22" value="<?php echo stripslashes($options['emaillabel']); ?>"/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Command that the e-mail will be embedded in. In the case of a command, use the symbols #email and #company to indicate the position where these elements should be inserted.', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Command that the e-mail will be embedded in. In the case of a command, use the symbols #email and #company to indicate the position where these elements should be inserted.', 'link-library'); ?>'>
 						<input type="text" id="emailcommand" name="emailcommand" size="22" value="<?php echo stripslashes($options['emailcommand']); ?>"/>
 					</td>
 				</tr>
 				<?php break;
 				case 10: /* -------------------------------- Link Hits -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #33cccc;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after Link Hits', 'link-library'); ?>'><?php _e('Link Hits', 'link-library'); ?></td>
+					<td style='background-color: #33cccc;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after Link Hits', 'link-library'); ?>'><?php _e('Link Hits', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<input type="checkbox" id="showlinkhits" name="showlinkhits" <?php if ($options['showlinkhits']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before Link Hits', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before Link Hits', 'link-library'); ?>'>
 						<input type="text" id="beforelinkhits" name="beforelinkhits" size="22" value="<?php echo stripslashes($options['beforelinkhits']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after Link Hits', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after Link Hits', 'link-library'); ?>'>
 						<input type="text" id="afterlinkhits" name="afterlinkhits" size="22" value="<?php echo stripslashes($options['afterlinkhits']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2385,14 +2387,14 @@ class link_library_plugin {
 				<?php break;
 				case 11: /* -------------------------------- Link Rating -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #33cc00;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the Link Rating', 'link-library'); ?>'><?php _e('Link Rating', 'link-library'); ?></td>
+					<td style='background-color: #33cc00;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after the Link Rating', 'link-library'); ?>'><?php _e('Link Rating', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<input type="checkbox" id="showrating" name="showrating" <?php if ($options['showrating']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before Link Rating', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before Link Rating', 'link-library'); ?>'>
 						<input type="text" id="beforelinkrating" name="beforelinkrating" size="22" value="<?php echo stripslashes($options['beforelinkrating']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after Link Rating', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after Link Rating', 'link-library'); ?>'>
 						<input type="text" id="afterlinkrating" name="afterlinkrating" size="22" value="<?php echo stripslashes($options['afterlinkrating']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2401,14 +2403,14 @@ class link_library_plugin {
 				<?php break;
 				case 12: /* -------------------------------- Large Description -------------------------------------------*/ ?>
 				<tr>
-					<td style='background-color: #33ccff;color:#fff' class="tooltip" title='<?php _e('This column allows for the output of text/code before and after the Link Large Description', 'link-library'); ?>'><?php _e('Link Large Description', 'link-library'); ?></td>
+					<td style='background-color: #33ccff;color:#fff' class="lltooltip" title='<?php _e('This column allows for the output of text/code before and after the Link Large Description', 'link-library'); ?>'><?php _e('Link Large Description', 'link-library'); ?></td>
 					<td style='text-align:center;background: #FFF'>
 						<input type="checkbox" id="showlargedescription" name="showlargedescription" <?php if ($options['showlargedescription']) echo ' checked="checked" '; ?>/>
 					</td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed before Link Large Description', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed before Link Large Description', 'link-library'); ?>'>
 						<input type="text" id="beforelargedescription" name="beforelargedescription" size="22" value="<?php echo stripslashes($options['beforelargedescription']); ?>"/>
 					</td>
-					<td  style='background: #FFF' class="tooltip" title='<?php _e('Code/Text to be displayed after Link Large Description', 'link-library'); ?>'>
+					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after Link Large Description', 'link-library'); ?>'>
 						<input type="text" id="afterlinklargedescription" name="afterlinklargedescription" size="22" value="<?php echo stripslashes($options['afterlinklargedescription']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
@@ -2420,17 +2422,17 @@ class link_library_plugin {
 				}
 				?>
 				<tr>
-					<td class="tooltip" title='<?php _e('This column allows for the output of text/code after each link', 'link-library'); ?>'><?php _e('After Link Block', 'link-library'); ?></td>
+					<td class="lltooltip" title='<?php _e('This column allows for the output of text/code after each link', 'link-library'); ?>'><?php _e('After Link Block', 'link-library'); ?></td>
 					<td style='background: #FFF'></td>
 					<td style='background: #FFF'></td>
-					<td style='background: #FFF' class="tooltip" title='<?php _e('Output after complete link group (link, notes, desc, etc...)', 'link-library'); ?>'>
+					<td style='background: #FFF' class="lltooltip" title='<?php _e('Output after complete link group (link, notes, desc, etc...)', 'link-library'); ?>'>
 						<input type="text" id="afteritem" name="afteritem" size="22" value="<?php echo stripslashes($options['afteritem']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
 					<td style='background: #FFF'></td>
 				</tr>
 				<tr>
-					<td class="tooltip" title='<?php _e('This column allows for the output of text/code after a number of links determined in the first column', 'link-library'); ?>'><?php _e('Intermittent After Link', 'link-library'); ?></td>
+					<td class="lltooltip" title='<?php _e('This column allows for the output of text/code after a number of links determined in the first column', 'link-library'); ?>'><?php _e('Intermittent After Link', 'link-library'); ?></td>
 					<td style='background: #FFF'></td>
 					<td style='background: #FFF'></td>
 					<td style='background: #FFF'>
@@ -2500,10 +2502,10 @@ class link_library_plugin {
 			<td></td><td style='width=75px;padding-right:20px'></td>
 		</tr>
 		<tr>
-			<td colspan='1' class="tooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
+			<td colspan='1' class="lltooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
 				<?php _e('RSS Cache Directory', 'link-library'); ?>
 			</td>
-			<td colspan='5' class="tooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
+			<td colspan='5' class="lltooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
 				<input type="text" id="rsscachedir" name="rsscachedir" size="80" value="<?php if ($options['rsscachedir'] == '') echo ABSPATH . 'wp-content/cache/link-library'; else echo $options['rsscachedir']; ?>"/>
 			</td>
 		</tr>
@@ -2624,7 +2626,7 @@ class link_library_plugin {
 		<div>
 		<table>
 			<tr>
-				<td colspan=5 class="tooltip" title='<?php _e('Following this link shows a list of all links awaiting moderation', 'link-library'); ?>.'><a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove"><?php _e('View list of links awaiting moderation', 'link-library'); ?></a></td>
+				<td colspan=5 class="lltooltip" title='<?php _e('Following this link shows a list of all links awaiting moderation', 'link-library'); ?>.'><a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove"><?php _e('View list of links awaiting moderation', 'link-library'); ?></a></td>
 			</tr>
 			<tr>
 				<td style='width:200px'><?php _e('Show user links immediately', 'link-library'); ?></td>
@@ -4013,9 +4015,11 @@ class link_library_plugin {
 
 										if ($showname == true)
 										{
+											$output .= stripslashes($beforelink);
+											
 											if (($sourcename == 'primary' && $the_link != '#') || ($sourcename == 'secondary' && $the_second_link != '#'))
 											{
-												$output .= stripslashes($beforelink) . '<a href="';
+												$output .= '<a href="';
 
 												if ($sourcename == 'primary' || $sourcename == '')
 													$output .= $the_link;
@@ -4029,17 +4033,17 @@ class link_library_plugin {
 											
 											if (($sourcename == 'primary' && $the_link != '#') || ($sourcename == 'secondary' && $the_second_link != '#'))
 												$output .= '</a>';
-										}
 
-										if (($showadmineditlinks) && current_user_can("manage_links")) {
-											$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem['proper_link_id'] .'">(' . __('Edit', 'link-library') . ')</a>';
-										}
+											if (($showadmineditlinks) && current_user_can("manage_links")) {
+												$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem['proper_link_id'] .'">(' . __('Edit', 'link-library') . ')</a>';
+											}
 
-										if ($showupdated && $linkitem['recently_updated']) {
-											$output .= get_option('links_recently_updated_append');
-										}
+											if ($showupdated && $linkitem['recently_updated']) {
+												$output .= get_option('links_recently_updated_append');
+											}
 
-										$output .= stripslashes($afterlink);
+											$output .= stripslashes($afterlink);
+										}
 
 										break;
 
