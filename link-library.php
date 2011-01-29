@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.7.2
+Version: 4.7.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -57,6 +57,7 @@ $pagehooktop = "";
 $pagehookmoderate = "";
 $pagehooksettingssets = "";
 $pagehookstylesheet = "";
+$pagehookreciprocal = "";
 
 /*********************************** Link Library Class *****************************************************************************/
 class link_library_plugin {
@@ -85,6 +86,7 @@ class link_library_plugin {
 		add_action('admin_post_save_link_library_settingssets', array($this, 'on_save_changes_settingssets'));
 		add_action('admin_post_save_link_library_moderate', array($this, 'on_save_changes_moderate'));
 		add_action('admin_post_save_link_library_stylesheet', array($this, 'on_save_changes_stylesheet'));
+		add_action('admin_post_save_link_library_reciprocal', array($this, 'on_save_changes_reciprocal'));
 
 		// Add short codes
 		add_shortcode('link-library-cats', array($this, 'link_library_cats_func'));
@@ -467,6 +469,7 @@ class link_library_plugin {
 		$genoptions['moderationnotificationtitle'] = '';
 		$genoptions['linksubmissionthankyouurl'] = '';
 		$genoptions['usefirstpartsubmittername'] = '';
+		$genoptions['recipcheckaddress'] = get_bloginfo('wpurl');
 		
 		$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
 		$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
@@ -490,6 +493,50 @@ class link_library_plugin {
 			$newurl = $url;
 		
 		return $newurl; 
+	}
+	
+	function ReciprocalLinkChecker($RecipCheckAddress = '') {
+		global $wpdb;
+		
+		if ($RecipCheckAddress != '')
+		{		
+			$linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
+			$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
+			$linkquery .= "FROM " . $wpdb->prefix . "terms t ";
+			$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+			$linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+			$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links l ON (tr.object_id = l.link_id) ";
+			$linkquery .= "LEFT JOIN " . $wpdb->prefix . "links_extrainfo le ON (l.link_id = le.link_id) ";	
+			$linkquery .= "WHERE tt.taxonomy = 'link_category' ";
+			$linkquery .= "AND le.link_reciprocal <> '' ";
+			$linkquery .= "order by l.link_name ASC";
+			
+			$links = $wpdb->get_results($linkquery);
+			$output = "<strong>Reciprocal Link Checker Report</strong><br /><br />";
+
+			if ($links)
+			{
+				foreach($links as $link)
+				{
+					$sitecontent = file_get_contents($link->link_reciprocal);
+					$output .= "<a href='" . $link->link_url . "'>" . $link->link_name . "</a>: ";
+					if (strpos($sitecontent, $RecipCheckAddress) === false)
+					{
+						$output .= "<span style='color: #FF0000'>Not Found</span><br />";
+					}
+					elseif (strpos($sitecontent, $RecipCheckAddress) !== false)
+					{
+						$output .= "<span style='color: #00FF00'>OK</span><br />";
+					}
+				}
+			}
+			else
+			{
+				$output = "There are no links with reciprocal links associated with them.<br />";
+			}			
+			
+			return $output;
+		}
 	}
 
 	function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
@@ -551,7 +598,7 @@ class link_library_plugin {
 	//extend the admin menu
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
-		global $wpdb, $llpluginpath, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet;
+		global $wpdb, $llpluginpath, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal;
 		
 		$linkmoderatecount = 0;
 		
@@ -572,21 +619,26 @@ class link_library_plugin {
 			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , sprintf( __('Moderate', 'link-library') . ' %s', "<span class='update-plugins count-" . $linkmoderatecount . "'><span class='plugin-count'>" . number_format_i18n($linkmoderatecount) . "</span></span>"), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));	
 		
 		$pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
+		
+		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page')); 
+		
 		//register  callback gets call prior your own page gets rendered
 		add_action('load-'.$pagehooktop, array($this, 'on_load_page'));
 		add_action('load-'.$pagehooksettingssets, array($this, 'on_load_page'));
 		add_action('load-'.$pagehookmoderate, array($this, 'on_load_page'));
 		add_action('load-'.$pagehookstylesheet, array($this, 'on_load_page'));
+		add_action('load-'.$pagehookreciprocal, array($this, 'on_load_page'));
 	}
 
 	//will be executed if wordpress core detects this page has to be rendered
 	function on_load_page() {
 	
-		global $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet;
+		global $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal;
 		
 		//ensure, that the needed javascripts been loaded to allow drag/drop, expand/collapse and hide/show of boxes
 		wp_enqueue_script('tiptip', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/jquery.tipTip.minified.js', "jQuery", "1.0rc3");
 		wp_enqueue_style('tiptipstyle', get_bloginfo('wpurl').'/wp-content/plugins/link-library/tiptip/tipTip.css');
+		add_thickbox();
 		wp_enqueue_script('jquery-ui-sortable');
 		wp_enqueue_script('common');
 		wp_enqueue_script('wp-lists');
@@ -610,7 +662,9 @@ class link_library_plugin {
 		add_meta_box('linklibrary_settingssets_search_meta_box', __('Search Form Configuration', 'link-library'), array($this, 'settingssets_search_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_linksubmission_meta_box', __('Link User Submission', 'link-library'), array($this, 'settingssets_linksubmission_meta_box'), $pagehooksettingssets, 'normal', 'high');		
 		add_meta_box('linklibrary_settingssets_importexport_meta_box', __('Import / Export', 'link-library'), array($this, 'settingssets_importexport_meta_box'), $pagehooksettingssets, 'normal', 'high');		
-		add_meta_box('linklibrary_settingssets_side_meta_box_2', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $pagehooksettingssets, 'normal', 'high');		
+		add_meta_box('linklibrary_settingssets_side_meta_box_2', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_reciprocal_meta_box', __('Reciprocal Link Checker', 'link-library'), array($this, 'reciprocal_meta_box'), $pagehookreciprocal, 'normal', 'high');
+		add_meta_box('linklibrary_reciprocal_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehookreciprocal, 'normal', 'high');		
 	}
 
 	//executed to show the plugins complete admin page
@@ -859,12 +913,26 @@ class link_library_plugin {
 			elseif ($_GET['message'] == '2')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet reset to original state', 'link-library') . ".</strong></p></div>";			
 		}
+		elseif ($_GET['page'] == 'link-library-reciprocal')
+		{
+			$formvalue = 'save_link_library_reciprocal';
+			$pagetitle = "Link Library Reciprocal Link Checker";
+			
+			if ($_GET['message'] == '1')
+				echo "<div id='message' class='updated fade'><p><strong>" . __('Settings updated', 'link-library') . ".</strong></p></div>";
+			elseif ($_GET['message'] == '2')
+			{
+				echo "<div id='message' class='updated fade'><p>";
+				echo $this->ReciprocalLinkChecker($genoptions['recipcheckaddress']);
+				echo "</p></div>";
+			}
+		}		
 
 		$data = array();
 		$data['settings'] = $settings;
 		$data['options'] = $options;
 		$data['genoptions'] = $genoptions;
-		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets;
+		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets, $pagehookreciprocal;
 		?>
 		<div id="link-library-general" class="wrap">
 		<div class='icon32'><img src="<?php echo $llpluginpath . '/icons/folder-beige-internet-icon32.png'; ?>" /></div>
@@ -894,7 +962,9 @@ class link_library_plugin {
 							elseif ($_GET['page'] == 'link-library-moderate')
 								do_meta_boxes($pagehookmoderate, 'normal', $data); 
 							elseif ($_GET['page'] == 'link-library-stylesheet')
-								do_meta_boxes($pagehookstylesheet, 'normal', $data); 
+								do_meta_boxes($pagehookstylesheet, 'normal', $data);
+							elseif ($_GET['page'] == 'link-library-reciprocal')
+								do_meta_boxes($pagehookreciprocal, 'normal', $data); 
 						?>
 					</div>
 				</div>
@@ -917,6 +987,8 @@ class link_library_plugin {
 					echo $pagehookmoderate;
 				elseif ($_GET['page'] == 'link-library-stylesheet')
 					echo $pagehookstylesheet;
+				elseif ($_GET['page'] == 'link-library-reciprocal')
+					echo $pagehookreciprocal;
 				?>');
 		});
 		//]]>
@@ -955,7 +1027,7 @@ class link_library_plugin {
 
 		foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 						'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
-						'linksubmissionthankyouurl') as $option_name) {
+						'linksubmissionthankyouurl', 'recipcheckaddress') as $option_name) {
 			if (isset($_POST[$option_name])) {
 				$genoptions[$option_name] = $_POST[$option_name];
 			}
@@ -1443,6 +1515,39 @@ class link_library_plugin {
 		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
 		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . "&message=" . $message);
 	}
+	
+	function on_save_changes_reciprocal() {
+		//user permission check
+		if ( !current_user_can('manage_options') )
+			wp_die( __('Not allowed', 'link-library') );	
+		//cross check the given referer
+		check_admin_referer('link-library');
+		
+		$message = -1;
+		
+		$genoptions = get_option('LinkLibraryGeneral');
+
+		$genoptions['recipcheckaddress'] = $_POST['recipcheckaddress'];
+
+		update_option('LinkLibraryGeneral', $genoptions);
+		
+		if (!isset($_POST['recipcheck']))
+		{
+			$message = 1;
+		}
+		elseif (isset($_POST['recipcheck']))
+		{
+			$message = 2;
+		}
+		
+		if ($message != -1)
+			$messageend = "&message=" . $message;
+		else
+			$messageend = '';
+
+		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
+		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . $messageend);
+	}
 
 	function general_meta_box($data) {
 		$genoptions = $data['genoptions'];
@@ -1535,7 +1640,7 @@ class link_library_plugin {
 			</tr>			
 		</table>
 	<?php }
-
+	
 	function general_save_meta_box() {
 	?>
 		<div class="submitbox">
@@ -2872,6 +2977,20 @@ class link_library_plugin {
 		</table>
 
 	<?php }
+	
+	function reciprocal_meta_box($data) {
+		$genoptions = $data['genoptions'];
+	?>
+		<table>
+			<tr>
+				<td style='width: 250px'>Search string</td>
+				<td><input type="text" id="recipcheckaddress" name="recipcheckaddress" size="60" value="<?php echo $genoptions['recipcheckaddress']; ?>"/></td>
+				<td><input type='submit' id="recipcheck" name="recipcheck" value="Check Reciprocal Links" /></td>
+			</tr>
+		</table>
+		
+	<?php
+	}
 
 
 	/************************************************ Render Custom Meta Box in Link Editor *******************************************/

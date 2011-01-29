@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.7.3 =
+* Added reciprocal link checker
+
 = 4.7.2 =
 * Renamed tooltip class in admin to avoid conflict with other plugins (UAM in specific)
 * Changed default number of stylesets to 1 to make plugin easier to use for newcomers
