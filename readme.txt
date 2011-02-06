@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.7.4 =
+* Fixed problem with large description not being saved when a link is first submitted or first modified
+* Added ability to specify large description and no follow property in link importer
+
 = 4.7.3 =
 * Added reciprocal link checker
 

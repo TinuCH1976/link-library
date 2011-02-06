@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.7.3
+Version: 4.7.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1078,7 +1078,7 @@ class link_library_plugin {
 
 					if (!$skiprow)
 					{
-						if (count($data) == 12)
+						if (count($data) == 14)
 						{
 							$existingcatquery = "SELECT t.term_id FROM " . $wpdb->prefix . "terms t, " . $wpdb->prefix . "term_taxonomy tt ";
 							$existingcatquery .= "WHERE t.name = '" . $data[5] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
@@ -1116,7 +1116,8 @@ class link_library_plugin {
 							if ($newlinkid != 0)
 							{
 								$extradatatable = $wpdb->prefix . "links_extrainfo";
-								$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10] ), array( 'link_id' => $newlinkid ));
+								$nofollowvalue = ($data[13] == 'Y' ? true : false);
+								$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => $data[12], 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ));
 
 								$successfulimport += 1;
 							}
@@ -3204,7 +3205,7 @@ class link_library_plugin {
 		if ($extradata)
 			$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_textfield' => $_POST['link_textfield'], 'link_no_follow' => $_POST['link_no_follow'] ), array( 'link_id' => $link_id ));
 		else
-			$wpdb->insert( $extradatatable, array( 'link_id' => $link_id, 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_no_follow' => $_POST['link_no_follow'] ));
+			$wpdb->insert( $extradatatable, array( 'link_id' => $link_id, 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_textfield' => $_POST['link_textfield'], 'link_no_follow' => $_POST['link_no_follow'] ));
 	}
 
 	/************************************************ Delete extra field data when link is deleted ***********************************/
@@ -4351,7 +4352,7 @@ class link_library_plugin {
 
 										break;
 										
-									case 12: 	//------------------ Link Rating Output --------------------   
+									case 12: 	//------------------ Link Large Description Output --------------------   
 
 										if ($showlargedescription)
 										{
