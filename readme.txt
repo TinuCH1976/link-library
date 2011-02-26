@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.8.1 =
+* Removed some unnecessary colorbox code
+* Added option to allow users to submit a link without a url into the database
+
 = 4.8 =
 * Switched RSS Preview from using colorbox to thickbox since thickbox is delivered with Wordpress, simplifying compatibility
 * Validated support with final version of Wordpress 3.1

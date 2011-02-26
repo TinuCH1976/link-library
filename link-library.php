@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.8
+Version: 4.8.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -450,6 +450,7 @@ class link_library_plugin {
 		$options['customcaptchaquestion'] = __('Is boiling water hot or cold?', 'link-library');
 		$options['customcaptchaanswer'] = __('hot','link-library');
 		$options['rssfeedaddress'] = '';
+		$options['addlinknoaddress'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1315,7 +1316,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription')
+							'showlargedescription', 'addlinknoaddress')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -2810,6 +2811,10 @@ class link_library_plugin {
 				<td style='width:200px'><?php _e('Require login to display form', 'link-library'); ?></td>
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="addlinkreqlogin" name="addlinkreqlogin" <?php if ($options['addlinkreqlogin']) echo ' checked="checked" '; ?>/></td>
 <td style='width: 20px'></td>
+				<td style='width: 20px'></td>
+				<td style='width:250px'><?php _e('Allow link submission with empty link', 'link-library'); ?></td>
+				<td style='width:75px;padding-right:20px'><input type="checkbox" id="addlinknoaddress" name="addlinknoaddress" <?php if ($options['addlinknoaddress']) echo ' checked="checked" '; ?>/></td>
+				<td style='width: 20px'></td>
 			</tr>
 			<tr>
 				<td style='width:200px'><?php _e('Display captcha', 'link-library'); ?></td>
@@ -4567,21 +4572,6 @@ class link_library_plugin {
 			$output .= __('No links found', 'link-library') . ".\n";
 			$output .= "</div>";
 		}
-
-/* 		if ($rsspreview)
-		{
-			$output .= "<script type='text/javascript'>\n";
-			$output .= "jQuery(document).ready(function() {\n";
-			$output .= "\tjQuery('a.rssbox').colorbox(\n";
-			$output .= "\t\t{\n";
-			$output .= "\t\t\t'innerWidth'	:	" . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . ",\n";
-			$output .= "\t\t\t'innerHeight'	:	" . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . ",\n";
-			$output .= "\t\t\t'opacity'	:  0.2\n"; 
-			$output .= "\t\t}\n"; 
-			$output .= ");";
-			$output .= "});";
-			$output .= "</script>";
-		} */
 		
 		$output .= "\n<!-- End of Link Library Output -->\n\n";
 
@@ -5080,6 +5070,96 @@ class link_library_plugin {
 	
 	/********************************************** Function to Process [link-library-add-link] shortcode *********************************************/
 
+	function link_library_insert_link( $linkdata, $wp_error = false, $addlinknoaddress = false) {
+		global $wpdb;
+
+		$defaults = array( 'link_id' => 0, 'link_name' => '', 'link_url' => '', 'link_rating' => 0 );
+
+		$linkdata = wp_parse_args( $linkdata, $defaults );
+		$linkdata = sanitize_bookmark( $linkdata, 'db' );
+
+		extract( stripslashes_deep( $linkdata ), EXTR_SKIP );
+
+		$update = false;
+
+		if ( !empty( $link_id ) )
+			$update = true;
+
+		if ( trim( $link_name ) == '' ) {
+			if ( trim( $link_url ) != '' ) {
+				$link_name = $link_url;
+			} else {
+				return 0;
+			}
+		}
+
+		if ($addlinknoaddress == false)
+		{			
+			if ( trim( $link_url ) == '' )
+			return 0;
+		}		
+		
+		if ( empty( $link_rating ) )
+			$link_rating = 0;
+
+		if ( empty( $link_image ) )
+			$link_image = '';
+
+		if ( empty( $link_target ) )
+			$link_target = '';
+
+		if ( empty( $link_visible ) )
+			$link_visible = 'Y';
+
+		if ( empty( $link_owner ) )
+			$link_owner = get_current_user_id();
+
+		if ( empty( $link_notes ) )
+			$link_notes = '';
+
+		if ( empty( $link_description ) )
+			$link_description = '';
+
+		if ( empty( $link_rss ) )
+			$link_rss = '';
+
+		if ( empty( $link_rel ) )
+			$link_rel = '';
+
+		// Make sure we set a valid category
+		if ( ! isset( $link_category ) || 0 == count( $link_category ) || !is_array( $link_category ) ) {
+			$link_category = array( get_option( 'default_link_category' ) );
+		}
+
+		if ( $update ) {
+			if ( false === $wpdb->update( $wpdb->links, compact('link_url', 'link_name', 'link_image', 'link_target', 'link_description', 'link_visible', 'link_rating', 'link_rel', 'link_notes', 'link_rss'), compact('link_id') ) ) {
+				if ( $wp_error )
+					return new WP_Error( 'db_update_error', __( 'Could not update link in the database' ), $wpdb->last_error );
+				else
+					return 0;
+			}
+		} else {
+			if ( false === $wpdb->insert( $wpdb->links, compact('link_url', 'link_name', 'link_image', 'link_target', 'link_description', 'link_visible', 'link_owner', 'link_rating', 'link_rel', 'link_notes', 'link_rss') ) ) {
+				if ( $wp_error )
+					return new WP_Error( 'db_insert_error', __( 'Could not insert link into the database' ), $wpdb->last_error );
+				else
+					return 0;
+			}
+			$link_id = (int) $wpdb->insert_id;
+		}
+
+		wp_set_link_cats( $link_id, $link_category );
+
+		if ( $update )
+			do_action( 'edit_link', $link_id );
+		else
+			do_action( 'add_link', $link_id );
+
+		clean_bookmark_cache( $link_id );
+
+		return $link_id;
+	}
+
 	function link_library_addlink_func($atts, $content, $code) {
 		extract(shortcode_atts(array(
 			'settings' => '',
@@ -5275,7 +5355,7 @@ class link_library_plugin {
 							
 						$newlink = array("link_name" => wp_specialchars(stripslashes($_POST['link_name'])), "link_url" => wp_specialchars(stripslashes($_POST['link_url'])), "link_rss" => wp_specialchars(stripslashes($_POST['link_rss'])),
 							"link_description" => wp_specialchars(stripslashes($newlinkdesc)), "link_notes" => wp_specialchars(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
-						$newlinkid = wp_insert_link($newlink);
+						$newlinkid = $this->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
 						
 						$extradatatable = $wpdb->prefix . "links_extrainfo";
 						$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_submitter_name' => $_POST['ll_submittername'], 'link_submitter_email' => $_POST['ll_submitteremail']), array( 'link_id' => $newlinkid ));		
