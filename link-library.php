@@ -3,12 +3,12 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.7.4
+Version: 4.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright 2010 Yannick Lefebvre
+Copyright 2011 Yannick Lefebvre
 
 Translations:
 Danish Translation Courtesy of GeorgWP (http://wordpress.blogos.dk)
@@ -80,7 +80,12 @@ class link_library_plugin {
 		//add filter for WordPress 2.8 changed backend box system !
 		add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
 		//register callback for admin menu  setup
-		add_action('admin_menu', array($this, 'on_admin_menu')); 
+		add_action('admin_menu', array($this, 'on_admin_menu'));
+		//add_action('admin_init', array($this, 'action_admin_init' ));
+		
+		// wp_ajax_... is only run for logged usrs
+		//add_action( 'wp_ajax_scn_check_url_action', array( &$this, 'ajax_action_check_url' ) );
+		
 		//register the callback been used if options of page been submitted and needs to be processed
 		add_action('admin_post_save_link_library_general', array($this, 'on_save_changes_general'));
 		add_action('admin_post_save_link_library_settingssets', array($this, 'on_save_changes_settingssets'));
@@ -444,6 +449,7 @@ class link_library_plugin {
 		$options['showcustomcaptcha'] = false;
 		$options['customcaptchaquestion'] = __('Is boiling water hot or cold?', 'link-library');
 		$options['customcaptchaanswer'] = __('hot','link-library');
+		$options['rssfeedaddress'] = '';
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -594,6 +600,59 @@ class link_library_plugin {
 	function on_screen_layout_columns($columns, $screen) {
 		return $columns;
 	}
+	
+	/**
+	 * Returns the full URL of this plugin including trailing slash.
+	 */
+	function plugin_url() {
+		
+		return WP_PLUGIN_URL . '/' . str_replace( basename( __FILE__ ), "", plugin_basename( __FILE__ ) );
+	}
+	
+	function action_admin_init() {
+		
+		if ( current_user_can( 'edit_posts' ) 
+		  && current_user_can( 'edit_pages' ) 
+		  && get_user_option('rich_editing') == 'true' )  {
+		  	
+			add_filter( 'mce_buttons',          array( $this, 'filter_mce_buttons'          ) );
+			add_filter( 'mce_external_plugins', array( $this, 'filter_mce_external_plugins' ) );
+						
+			wp_register_style('scnStyles', $this->plugin_url() . 'css/styles.css');
+			wp_enqueue_style('scnStyles');
+		}
+	}
+	
+	function filter_mce_buttons( $buttons ) {
+		
+		array_push( $buttons, '|', 'scn_button');
+		return $buttons;
+	}
+	
+	function filter_mce_external_plugins( $plugins ) {
+		
+        $plugins['LinkLibraryPlugin'] = $this->plugin_url() . 'tinymce/editor_plugin.js';
+        return $plugins;
+	}
+	
+	function ajax_action_check_url() {
+
+		$hadError = true;
+
+		$url = isset( $_REQUEST['url'] ) ? $_REQUEST['url'] : '';
+
+		if ( strlen( $url ) > 0  && function_exists( 'get_headers' ) ) {
+				
+			$file_headers = @get_headers( $url );
+			$exists       = $file_headers && $file_headers[0] != 'HTTP/1.1 404 Not Found';
+			$hadError     = false;
+		}
+
+		echo '{ "exists": '. ($exists ? '1' : '0') . ($hadError ? ', "error" : 1 ' : '') . ' }';
+
+		die();
+	}
+
 
 	//extend the admin menu
 	function on_admin_menu() {
@@ -1244,7 +1303,8 @@ class link_library_plugin {
 							'maxlinks', 'beforedate', 'afterdate', 'beforeimage', 'afterimage', 'beforerss','afterrss', 'beforenote', 'afternote',
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
-							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer') as $option_name) {
+							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
+							'rssfeedaddress') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -2704,6 +2764,9 @@ class link_library_plugin {
 		<tr>
 			<td><?php _e('RSS Feed Description', 'link-library'); ?></td><td colspan=3><input type="text" id="rssfeeddescription" name="rssfeeddescription" size="80" value="<?php echo strval(wp_specialchars(stripslashes($options['rssfeeddescription']))); ?>"/></td>
 		</tr>
+		<tr>
+			<td><?php _e('RSS Feed Web Address (default /linkrss/1)', 'link-library'); ?></td><td colspan=3><input type="text" id="rssfeedaddress" name="rssfeedaddress" size="80" value="<?php echo strval(wp_specialchars(stripslashes($options['rssfeedaddress']))); ?>"/></td>
+		</tr>
 		</table>
 
 	<?php }
@@ -3307,6 +3370,14 @@ class link_library_plugin {
 				
 				if ($options['enablerewrite'] == true && $options['rewritepage'] != '')
 					$newrules['(' . $options['rewritepage'] . ')/(.+?)$'] = 'index.php?pagename=$matches[1]&cat_name=$matches[2]';
+					
+				if ($options['publishrssfeed'] == true)
+				{
+					if ($options['rssfeedaddress'] != '')
+						$newrules['(' . $options['rssfeedaddress'] . ')/(.+?)$'] = '/wp-content/plugins/link-library/rssfeed.php?settingset=$matches[1]';
+					elseif ($options['rssfeedaddress'] == '')
+						$newrules['(linkrss)/(.+?)$'] = '/wp-content/plugins/link-library/rssfeed.php?settingset=$matches[1]';
+				}		
 			}
 		}
 		
@@ -4204,9 +4275,9 @@ class link_library_plugin {
 										}
 										if ($rsspreview && $linkitem['link_rss'] != '')
 										{
-											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="rssbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
+											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
 										}
-
+										
 										if ($show_rss || $show_rss_icon || $rsspreview)
 											$output .= '</div>' . stripslashes($afterrss);
 
@@ -4497,7 +4568,7 @@ class link_library_plugin {
 			$output .= "</div>";
 		}
 
-		if ($rsspreview)
+/* 		if ($rsspreview)
 		{
 			$output .= "<script type='text/javascript'>\n";
 			$output .= "jQuery(document).ready(function() {\n";
@@ -4510,7 +4581,7 @@ class link_library_plugin {
 			$output .= ");";
 			$output .= "});";
 			$output .= "</script>";
-		}
+		} */
 		
 		$output .= "\n<!-- End of Link Library Output -->\n\n";
 
@@ -4561,15 +4632,15 @@ class link_library_plugin {
 			$output .= "<table>\n";
 
 			if ($linknamelabel == "") $linknamelabel = __('Link name', 'link-library');
-			$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . $captureddata['link_name'] . "' /></td></tr>\n";
+			$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . wp_specialchars(stripslashes($captureddata['link_name']), '1') . "' /></td></tr>\n";
 
 			if ($linkaddrlabel == "") $linkaddrlabel = __('Link address', 'link-library');
-			$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . $captureddata['link_url']. "' /></td></tr>\n";
+			$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . wp_specialchars(stripslashes($captureddata['link_url']), '1') . "' /></td></tr>\n";
 
 			if ($showaddlinkrss)
 			{
 				if ($linkrsslabel == "") $linkrsslabel = __('Link RSS', 'link-library');
-				$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . $captureddata['link_rss'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . wp_specialchars(stripslashes($captureddata['link_rss']), '1') . "' /></td></tr>\n";
 			}
 
 			$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
@@ -4620,7 +4691,7 @@ class link_library_plugin {
 					}
 					
 					if ($addlinkcustomcat)
-						$output .= "<OPTION VALUE='new'>" . $linkcustomcatlistentry . "\n";
+						$output .= "<OPTION VALUE='new'>" . stripslashes($linkcustomcatlistentry) . "\n";
 					
 					$output .= "</SELECT></td></tr>\n";
 				}
@@ -4630,61 +4701,61 @@ class link_library_plugin {
 				}
 				
 				if ($addlinkcustomcat)
-					$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . $captureddata['link_user_category'] . "' /></td></tr>\n";			
+					$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . wp_specialchars(stripslashes($captureddata['link_user_category']), '1') . "' /></td></tr>\n";			
 			}		
 			
 			if ($showaddlinkdesc)
 			{
 				if ($linkdesclabel == "") $linkdesclabel = __('Link description', 'link-library');
-				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . $captureddata['link_description'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . wp_specialchars(stripslashes($captureddata['link_description']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinknotes)
 			{
 				if ($linknoteslabel == "") $linknoteslabel = __('Link notes', 'link-library');
-				$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' value='" . $captureddata['link_notes'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' value='" . wp_specialchars(stripslashes($captureddata['link_notes']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinkreciprocal)
 			{
 				if ($linkreciprocallabel == "") $linkreciprocallabel = __('Reciprocal Link', 'link-library');
-				$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . $captureddata['link_reciprocal'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . wp_specialchars(stripslashes($captureddata['link_reciprocal']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinksecondurl)
 			{
 				if ($linksecondurllabel == "") $linksecondurllabel = __('Secondary Address', 'link-library');
-				$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . $captureddata['ll_secondwebaddr'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . wp_specialchars(stripslashes($captureddata['ll_secondwebaddr']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinktelephone)
 			{
 				if ($linktelephonelabel == "") $linktelephonelabel = __('Telephone', 'link-library');
-				$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . $captureddata['ll_telephone'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . wp_specialchars(stripslashes($captureddata['ll_telephone']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinkemail)
 			{
 				if ($linkemaillabel == "") $linkemaillabel = __('E-mail', 'link-library');
-				$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . $captureddata['ll_email'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . wp_specialchars(stripslashes($captureddata['ll_email']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showlinksubmittername)
 			{
 				if ($linksubmitternamelabel == "") $linksubmitternamelabel = __('Submitter Name', 'link-library');
-				$output .= "<tr><th>" . $linksubmitternamelabel . "</th><td><input type='text' name='ll_submittername' id='ll_submittername' value='" . $captureddata['ll_submittername'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linksubmitternamelabel . "</th><td><input type='text' name='ll_submittername' id='ll_submittername' value='" . wp_specialchars(stripslashes($captureddata['ll_submittername']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinksubmitteremail)
 			{
 				if ($linksubmitteremaillabel == "") $linksubmitteremaillabel = __('Submitter E-mail', 'link-library');
-				$output .= "<tr><th>" . $linksubmitteremaillabel . "</th><td><input type='text' name='ll_submitteremail' id='ll_submitteremail' value='" . $captureddata['ll_submitteremail'] . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linksubmitteremaillabel . "</th><td><input type='text' name='ll_submitteremail' id='ll_submitteremail' value='" . wp_specialchars(stripslashes($captureddata['ll_submitteremail']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showlinksubmittercomment)
 			{
 				if ($linksubmittercommentlabel == "") $linksubmittercommentlabel = __('Submitter Comment', 'link-library');
-				$output .= "<tr><th style='vertical-align: top;'>" . $linksubmittercommentlabel . "</th><td><textarea name='ll_submittercomment' id='ll_submittercomment' cols='38''>" . $captureddata['ll_submittercomment'] . "</textarea></td></tr>\n";
+				$output .= "<tr><th style='vertical-align: top;'>" . $linksubmittercommentlabel . "</th><td><textarea name='ll_submittercomment' id='ll_submittercomment' cols='38''>" . wp_specialchars(stripslashes($captureddata['ll_submittercomment']), '1') . "</textarea></td></tr>\n";
 			}
 			
 			if ($showcaptcha)
@@ -5399,7 +5470,7 @@ class link_library_plugin {
 		if (empty($posts)) return $posts;
 		
 		$load_jquery = false;
-		$load_colorbox = false;
+		$load_thickbox = false;
 		$load_style = false;
 		global $testvar;
 		
@@ -5408,7 +5479,7 @@ class link_library_plugin {
 		if (is_admin()) 
 		{
 			$load_jquery = false;
-			$load_colorbox = false;
+			$load_thickbox = false;
 			$load_style = false;
 		}
 		else
@@ -5470,7 +5541,7 @@ class link_library_plugin {
 			
 					if ($options['rsspreview'])
 					{
-						$load_colorbox = true;
+						$load_thickbox = true;
 					}
 
 					if ($options['publishrssfeed'] == true)			
@@ -5488,7 +5559,7 @@ class link_library_plugin {
 					if (is_page($pageid))
 					{
 						$load_jquery = true;
-						$load_colorbox = true;
+						$load_thickbox = true;
 						$load_style = true;
 					}
 				}
@@ -5511,10 +5582,10 @@ class link_library_plugin {
 			wp_enqueue_script('jquery');
 		}
 			
-		if ($load_colorbox)
+		if ($load_thickbox)
 		{
-			wp_enqueue_script('colorbox', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/colorbox/jquery.colorbox-min.js', "", "1.3.9");
-			wp_enqueue_style('colorboxstyle', get_bloginfo('wpurl') . '/wp-content/plugins/link-library/colorbox/colorbox.css');	
+			wp_enqueue_script('thickbox');
+			wp_enqueue_style ('thickbox');
 		}
 	 
 		return $posts;

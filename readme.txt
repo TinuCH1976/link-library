@@ -59,6 +59,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.8 =
+* Switched RSS Preview from using colorbox to thickbox since thickbox is delivered with Wordpress, simplifying compatibility
+* Validated support with final version of Wordpress 3.1
+
+= 4.7.5 =
+* Fixed: Now stripping slashes in user link submission form if user does not enter captcha or some informations correctly when data is re-displayed in the fields.
+
 = 4.7.4 =
 * Fixed problem with large description not being saved when a link is first submitted or first modified
 * Added ability to specify large description and no follow property in link importer
