@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.8.3 =
+* Fixed broken 2.9.2 compatibility issue introduced in version 4.8.2
+
 = 4.8.2 =
 * Changed table name creation from using prefix to get_blog_prefix() to be compatible with network sites
 
