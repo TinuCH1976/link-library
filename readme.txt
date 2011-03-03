@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.8.2 =
+* Changed table name creation from using prefix to get_blog_prefix() to be compatible with network sites
+
 = 4.8.1 =
 * Removed some unnecessary colorbox code
 * Added option to allow users to submit a link without a url into the database
