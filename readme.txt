@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.8.4 =
+* Fixed bug which delete all custom field data when generating thumbnails
+
 = 4.8.3 =
 * Fixed broken 2.9.2 compatibility issue introduced in version 4.8.2
 

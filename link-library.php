@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.8.3
+Version: 4.8.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3278,10 +3278,34 @@ class link_library_plugin {
 
 		$username = $current_user->user_login;
 		
+		$updatearray = array();
+		
+		if (isset($_POST['ll_secondwebaddr']))
+			$updatearray['link_second_url'] = $_POST['ll_secondwebaddr'];
+			
+		if (isset($_POST['ll_telephone']))
+			$updatearray['link_telephone'] = $_POST['ll_telephone'];
+			
+		if (isset($_POST['ll_email']))
+			$updatearray['link_email'] = $_POST['ll_email'];
+			
+		if (isset($_POST['ll_reciprocal']))
+			$updatearray['link_reciprocal'] = $_POST['ll_reciprocal'];
+		
+		if (isset($_POST['link_textfield']))
+			$updatearray['link_textfield'] = $_POST['link_textfield'];
+			
+		if (isset($_POST['link_no_follow']))
+			$updatearray['link_no_follow'] = $_POST['link_no_follow'];
+
 		if ($extradata)
-			$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_textfield' => $_POST['link_textfield'], 'link_no_follow' => $_POST['link_no_follow'] ), array( 'link_id' => $link_id ));
+			$wpdb->update( $extradatatable, $updatearray, array( 'link_id' => $link_id ));
 		else
-			$wpdb->insert( $extradatatable, array( 'link_id' => $link_id, 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_textfield' => $_POST['link_textfield'], 'link_no_follow' => $_POST['link_no_follow'] ));
+		{
+			$updatearray['link_id'] = $link_id;
+			$updatearray['link_submitter'] = $username;
+			$wpdb->insert( $extradatatable, $updatearray );
+		}
 	}
 
 	/************************************************ Delete extra field data when link is deleted ***********************************/
