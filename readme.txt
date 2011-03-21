@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.8.5 =
+* Fix to accept more than one link without a URL
+
 = 4.8.4 =
 * Fixed bug which delete all custom field data when generating thumbnails
 

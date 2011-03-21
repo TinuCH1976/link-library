@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.8.4
+Version: 4.8.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -5295,7 +5295,11 @@ class link_library_plugin {
 			}
 			elseif ($valid || ($options['showcaptcha'] == false && $options['showcustomcaptcha'] == false))
 			{			
-				$existinglinkquery = "SELECT * from " . $this->db_prefix() . "links l where l.link_url = '" . $_POST['link_url'] . "' or l.link_name = '" . $_POST['link_name'] . "'";
+				$existinglinkquery = "SELECT * from " . $this->db_prefix() . "links l where l.link_name = '" . $_POST['link_name'] . "' ";
+				
+				if ( ( $options['addlinknoaddress'] == false ) || ( $options['addlinknoaddress'] == true && $_POST['link_url'] != "" ) )
+					$existinglinkquery = "l.link_url = '" . $_POST['link_url'] . "'";
+				
 				$existinglink = $wpdb->get_var($existinglinkquery);
 				
 				if ($existinglink == null)
