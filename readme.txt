@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9 =
+* Added new div around each category output
+* Added new featured link check box under link editor along with featured link sorting option in setting set configuration
+
 = 4.8.5 =
 * Fix to accept more than one link without a URL
 

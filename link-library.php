@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.8.5
+Version: 4.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -191,6 +191,13 @@ class link_library_plugin {
 			{
 				$genoptions['schemaversion'] = "4.7";
 				$wpdb->get_results("ALTER TABLE `" . $this->db_prefix() . "links_extrainfo` ADD `link_no_follow` VARCHAR( 1 ) NULL;");
+				
+				update_option('LinkLibraryGeneral', $genoptions);
+			}
+			elseif (floatval($genoptions['schemaversion']) < "4.9")
+			{
+				$genoptions['schemaversion'] = "4.9";
+				$wpdb->get_results("ALTER TABLE `" . $this->db_prefix() . "links_extrainfo` ADD `link_featured` VARCHAR( 1 ) NULL;");
 				
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
@@ -459,6 +466,7 @@ class link_library_plugin {
 		$options['customcaptchaanswer'] = __('hot','link-library');
 		$options['rssfeedaddress'] = '';
 		$options['addlinknoaddress'] = false;
+		$options['featuredfirst'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1324,7 +1332,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -2168,6 +2176,10 @@ class link_library_plugin {
 					<option value="left"<?php if ($options['catdescpos'] == 'left') { echo ' selected="selected"';} ?>><?php _e('Left', 'link-library'); ?></option>
 				</select>
 			</td>
+		</tr>
+		<tr>
+			<td><?php _e('List Featured Links ahead of Regular Links', 'link-library'); ?></td>
+			<td><input type="checkbox" id="featuredfirst" name="featuredfirst" <?php if ($options['featuredfirst']) echo ' checked="checked" '; ?>/></td>
 		</tr>
 		<tr>
 			<td class="lltooltip" title='<?php _e('Except for My Link Order mode', 'link-library'); ?>'>
@@ -3099,9 +3111,13 @@ class link_library_plugin {
 	?>
 		<table>
 			<tr>
+				<td style='width: 200px'><?php _e('Featured Link', 'link-library'); ?></td>
+				<td><input type="checkbox" id="link_featured" name="link_featured" <?php if ($extradata['link_featured']) echo ' checked="checked" '; ?>/></td>
+			</tr>
+			<tr>
 				<td style='width: 200px'><?php _e('No Follow', 'link-library'); ?></td>
 				<td><input type="checkbox" id="link_no_follow" name="link_no_follow" <?php if ($extradata['link_no_follow']) echo ' checked="checked" '; ?>/></td>
-			</tr>
+			</tr>		
 			<tr>
 				<td style='width: 200px'><?php _e('Secondary Web Address', 'link-library'); ?></td>
 				<td><input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo $extradata['link_second_url']; ?>"/> <?php if ($extradata['link_second_url'] != "") echo " <a href=" . $extradata['link_second_url'] . ">" . __('Visit', 'link-library') . "</a>"; ?></td></td>
@@ -3297,6 +3313,9 @@ class link_library_plugin {
 			
 		if (isset($_POST['link_no_follow']))
 			$updatearray['link_no_follow'] = $_POST['link_no_follow'];
+			
+		if (isset($_POST['link_featured']))
+			$updatearray['link_featured'] = $_POST['link_featured'];
 
 		if ($extradata)
 			$wpdb->update( $extradatatable, $updatearray, array( 'link_id' => $link_id ));
@@ -3693,7 +3712,7 @@ class link_library_plugin {
 									$beforeweblink = '', $afterweblink = '', $weblinklabel = '', $beforetelephone = '', $aftertelephone = '', $telephonelabel = '',
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
-									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '') {
+									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false) {
 
 		global $wpdb;
 		
@@ -3745,14 +3764,19 @@ class link_library_plugin {
 
 			$mode = "normal";
 
+			$catquery .= " ORDER by ";
+			
+			if ($featuredfirst == true)
+				$catquery .= "link_featured DESC, ";
+
 			if ($order == "name")
-				$catquery .= " ORDER by name " . $direction;
+				$catquery .= " name " . $direction;
 			elseif ($order == "id")
-				$catquery .= " ORDER by t.term_id " . $direction;
+				$catquery .= " t.term_id " . $direction;
 			elseif ($order == "order")
-				$catquery .= " ORDER by t.term_order " . $direction;
+				$catquery .= " t.term_order " . $direction;
 			elseif ($order == "catlist")
-				$catquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
+				$catquery .= " FIELD(t.term_id," . $categorylist . ") ";
 
 			if ($linkorder == "name")
 				$catquery .= ", link_name " . $linkdirection;
@@ -3834,15 +3858,20 @@ class link_library_plugin {
 		}
 		else
 			$mode = "normal";
+			
+		$linkquery .= " ORDER by ";
+			
+		if ($featuredfirst == true)
+			$linkquery .= "link_featured DESC, ";
 
 		if ($order == "name")
-			$linkquery .= " ORDER by name " . $direction;
+			$linkquery .= " name " . $direction;
 		elseif ($order == "id")
-			$linkquery .= " ORDER by t.term_id " . $direction;
+			$linkquery .= " t.term_id " . $direction;
 		elseif ($order == "order")
-			$linkquery .= " ORDER by t.term_order " . $direction;
+			$linkquery .= " t.term_order " . $direction;
 		elseif ($order == "catlist")
-			$linkquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
+			$linkquery .= " FIELD(t.term_id," . $categorylist . ") ";
 
 		if ($linkorder == "name" || $linkorder == 'random')
 			$linkquery .= ", l.link_name " . $linkdirection;
@@ -3938,11 +3967,14 @@ class link_library_plugin {
 							
 						if ($catlistwrappers != '')
 							$output .= "</div>";
+							
+						$output .= "</div>";
 
 						$currentcategory = $currentcategory + 1;
 					}
 
 					$currentcategoryid = $linkitem['term_id'];
+					$output .= "<div class='LinkLibraryCat" . $currentcategoryid . "'>";
 					$linkcount = 0;
 
 					if ($catlistwrappers == 1)
@@ -4209,7 +4241,7 @@ class link_library_plugin {
 											elseif ($sourceimage == 'secondary')
 												$imageoutput .= $the_second_link;
 
-											$imageoutput .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link" ' . $rel . $title . $target. '>';
+											$imageoutput .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
 											if ($usethumbshotsforimages)
 											{
@@ -4254,7 +4286,7 @@ class link_library_plugin {
 												elseif ($sourcename == 'secondary')
 													$output .= $the_second_link;
 
-												$output .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link" ' . $rel . $title . $target. '>';
+												$output .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 											}
 											
 											$output .= $name;
@@ -4494,6 +4526,8 @@ class link_library_plugin {
 
 			if ($catlistwrappers != '')
 				$output .= "</div>";
+				
+			$output .= "</div>";
 
 			if ($pagination && $mode != "search")
 			{
@@ -4989,7 +5023,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '') {
+									$afterlargedescription = '', $featuredfirst = false) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -5022,7 +5056,7 @@ class link_library_plugin {
 									  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
-									  $options['afterlargedescription']);	
+									  $options['afterlargedescription'], $options['featuredfirst']);	
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -5040,7 +5074,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription);
+									$afterlargedescription, $featuredfirst);
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -5576,7 +5610,7 @@ class link_library_plugin {
 									  $options['telephonelabel'], $options['beforeemail'], $options['afteremail'], $options['emaillabel'], $options['beforelinkhits'],
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
-									  $options['beforelargedescription'], $options['afterlargedescription']); 
+									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst']); 
 			
 		return $linklibraryoutput;
 	}
