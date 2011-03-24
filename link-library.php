@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.9
+Version: 4.9.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -687,7 +687,7 @@ class link_library_plugin {
 		
 		$pagehooktop = add_menu_page(__('Link Library General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . '/icons/folder-beige-internet-icon.png');
 		
-		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Settings Sets', 'link-library') , __('Settings Sets', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
+		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library Settings', 'link-library') , __('Library Settings', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
 		if ($linkmoderatecount == 0)
 			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));
@@ -726,7 +726,7 @@ class link_library_plugin {
 		add_meta_box('linklibrary_general_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_moderation_meta_box', __('Links awaiting moderation', 'link-library'), array($this, 'moderate_meta_box'), $pagehookmoderate, 'normal', 'high');
 		add_meta_box('linklibrary_stylesheet_meta_box', __('Editor', 'link-library'), array($this, 'stylesheet_meta_box'), $pagehookstylesheet, 'normal', 'high');
-		add_meta_box('linklibrary_settingssets_usage_meta_box', __('Setting Set Selection and Usage Instructions', 'link-library'), array($this, 'settingssets_usage_meta_box'), $pagehooksettingssets, 'normal', 'high');
+		add_meta_box('linklibrary_settingssets_usage_meta_box', __('Library Selection and Usage Instructions', 'link-library'), array($this, 'settingssets_usage_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_side_meta_box', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $pagehooksettingssets, 'normal', 'high');				
 		add_meta_box('linklibrary_settingssets_common_meta_box', __('Common Parameters', 'link-library'), array($this, 'settingssets_common_meta_box'), $pagehooksettingssets, 'normal', 'high');
  		add_meta_box('linklibrary_settingssets_categories_meta_box', __('Link Categories Settings', 'link-library'), array($this, 'settingssets_categories_meta_box'), $pagehooksettingssets, 'normal', 'high');
@@ -914,7 +914,7 @@ class link_library_plugin {
 				$options = get_option($settingsname);
 			}
 			
-			$pagetitle = "Link Library Setting Set " . $settings . " - " . $options['settingssetname'];
+			$pagetitle = "Link Library #" . $settings . " - " . $options['settingssetname'];
 
 			if (isset($_GET['messages']))
 			{
@@ -925,7 +925,7 @@ class link_library_plugin {
 					switch($message) {
 
 						case '1':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Settings Set', 'link-library') . $settingsetid . " " . __('Updated', 'link-library') . "!</strong></p></div>";				
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library #', 'link-library') . $settingsetid . " " . __('Updated', 'link-library') . "!</strong></p></div>";				
 							break;
 
 						case '2':
@@ -941,7 +941,7 @@ class link_library_plugin {
 							break;
 
 						case '5':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Setting Set Exported', 'link-library') . ". <a href='" . $llpluginpath . "SettingSet" . $settings . "Export.csv'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . $llpluginpath . "SettingSet" . $settings . "Export.csv'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
 							break;
 
 						case '6':
@@ -949,11 +949,11 @@ class link_library_plugin {
 							break;
 
 						case '7':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Setting Set imported successfully', 'link-library') . ".</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings imported successfully', 'link-library') . ".</strong></p></div>";
 							break;
 
 						case '8':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Setting Set Upload Failed', 'link-library') . "</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Upload Failed', 'link-library') . "</strong></p></div>";
 							break;
 
 						case '9':
@@ -1640,7 +1640,7 @@ class link_library_plugin {
 				<td class='lltooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-stylesheet&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
 				</tr>
 				<tr>
-				<td><?php _e('Number of Style Sets','link-library'); ?></td>
+				<td><?php _e('Number of Libraries','link-library'); ?></td>
 				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '1'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
 				<tr>
@@ -1826,13 +1826,13 @@ class link_library_plugin {
 		$genoptions = $data['genoptions'];
 	?>
 			<div>
-						<?php _e('Change Current Style Set', 'link-library'); ?> : 
+						<?php _e('Select Current Library Settings', 'link-library'); ?> : 
 						<SELECT id="settingsetlist" name="settingsetlist" style='width: 300px'>
 						<?php if ($genoptions['numberstylesets'] == '') $numberofsets = 1; else $numberofsets = $genoptions['numberstylesets'];
 							for ($counter = 1; $counter <= $numberofsets; $counter++): ?>
 								<?php $tempoptionname = "LinkLibraryPP" . $counter;
 								   $tempoptions = get_option($tempoptionname); ?>
-								   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>><?php _e('Setting Set', 'link-library'); ?> <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
+								   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>><?php _e('Library', 'link-library'); ?> <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
 							<?php endfor; ?>
 						</SELECT>
 						<INPUT type="button" name="go" value="<?php _e('Go', 'link-library'); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=' + jQuery('#settingsetlist').val()">
@@ -1843,7 +1843,7 @@ class link_library_plugin {
 								<?php $tempoptionname = "LinkLibraryPP" . $counter;
 								   $tempoptions = get_option($tempoptionname); 
 								   if ($counter != $settings):?>
-								   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>><?php _e('Setting Set', 'link-library'); ?> <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
+								   <option value="<?php echo $counter ?>" <?php if ($settings == $counter) echo 'SELECTED';?>><?php _e('Library', 'link-library'); ?> <?php echo $counter ?><?php if ($tempoptions != "") echo " (" . $tempoptions['settingssetname'] . ")"; ?></option>
 								   <?php endif; 
 								endfor;
 							?>
@@ -1856,10 +1856,10 @@ class link_library_plugin {
 					<thead>
 					<tr>
 						<th style='width:40px' class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
-							<?php _e('Set #', 'link-library'); ?>
+							<?php _e('Library #', 'link-library'); ?>
 						</th>
 						<th style='width:130px' class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
-							<?php _e('Set Name', 'link-library'); ?>
+							<?php _e('Library Name', 'link-library'); ?>
 						</th>
 						<th style='width: 230px'><?php _e('Feature', 'link-library'); ?></th>
 						<th class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
@@ -1887,9 +1887,9 @@ class link_library_plugin {
 				<table>
 				<tr>
 					<td style='text-align:right'>
-						<span><a href='admin.php?page=link-library-settingssets&amp;deletesettings=<?php echo $settings ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Setting Set '%s'\n  'Cancel' to stop, 'OK' to delete.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Delete Settings Set', 'link-library'); ?> <?php echo $settings ?></a></span>
-						<span><a href='admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings ?>&reset=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s'\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Reset current Settings Set', 'link-library'); ?></a></span>
-						<span><a href='admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings ?>&resettable=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Setting Set '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Reset current Setting Set for table layout', 'link-library'); ?></a></span>
+						<span><a href='admin.php?page=link-library-settingssets&amp;deletesettings=<?php echo $settings ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Library #'%s'\n  'Cancel' to stop, 'OK' to delete.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Delete Library', 'link-library'); ?> <?php echo $settings ?></a></span>
+						<span><a href='admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings ?>&reset=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Library '%s'\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Reset current Library', 'link-library'); ?></a></span>
+						<span><a href='admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings ?>&resettable=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Library '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Reset current Library for table layout', 'link-library'); ?></a></span>
 					</td>
 				</tr>
 				</table>
@@ -1907,7 +1907,7 @@ class link_library_plugin {
 
 		<tr>
 			<td style='width: 300px;padding-right: 50px'>
-				<?php _e('Current Settings Set Name', 'link-library'); ?>
+				<?php _e('Current Library Name', 'link-library'); ?>
 			</td>
 			<td>
 				<input type="text" id="settingssetname" name="settingssetname" size="40" value="<?php echo $options['settingssetname']; ?>"/>
@@ -2018,7 +2018,7 @@ class link_library_plugin {
 					<option value="name"<?php if ($options['order'] == 'name') { echo ' selected="selected"';} ?>><?php _e('Order by Name', 'link-library'); ?></option>
 					<option value="id"<?php if ($options['order'] == 'id') { echo ' selected="selected"';} ?>><?php _e('Order by ID', 'link-library'); ?></option>
 					<option value="catlist"<?php if ($options['order'] == 'catlist') { echo ' selected="selected"';} ?>><?php _e('Order of categories based on included category list', 'link-library'); ?></option>
-					<option value="order"<?php if ($options['order'] == 'order') { echo ' selected="selected"';} ?>><?php _e('Order set by', 'link-library'); ?> 'My Link Order' <?php _e('Wordpress Plugin', 'link-library'); ?></option>
+					<option value="order"<?php if ($options['order'] == 'order') { echo ' selected="selected"';} ?>><?php _e('Order by', 'link-library'); ?> 'My Link Order' <?php _e('Wordpress Plugin', 'link-library'); ?></option>
 				</select>
 			</td>
 			<td style='width:100px'></td>
@@ -3055,13 +3055,13 @@ class link_library_plugin {
 		<input type='hidden' value='<?php echo $settings; ?>' name='settingsetid' id='settingsetid' />
 		<table>
 			<tr>
-				<td class='tooltip' title='<?php _e('Overwrites current setting set with contents of CSV file', 'link-library'); ?>' style='width: 330px'><?php _e('Setting Set CSV file to import', 'link-library'); ?></td>
+				<td class='tooltip' title='<?php _e('Overwrites current library settings with contents of CSV file', 'link-library'); ?>' style='width: 330px'><?php _e('Library Settings CSV file to import', 'link-library'); ?></td>
 				<td><input size="80" name="settingsfile" type="file" /></td>
-				<td><input type="submit" name="importsettings" value="<?php _e('Import Settings Set', 'link-library'); ?>" /></td>
+				<td><input type="submit" name="importsettings" value="<?php _e('Import Library Settings', 'link-library'); ?>" /></td>
 			</tr>
 			<tr>
-				<td class='tooltip' style='width: 330px' title='<?php _e('Generates CSV file with current setting set configuration for download', 'link-library'); ?>'><?php _e('Export current setting set', 'link-library'); ?></td>
-				<td><input type="submit" name="exportsettings" value="<?php _e('Export Settings Set', 'link-library'); ?>" /></td>
+				<td class='tooltip' style='width: 330px' title='<?php _e('Generates CSV file with current library configuration for download', 'link-library'); ?>'><?php _e('Export current library settings', 'link-library'); ?></td>
+				<td><input type="submit" name="exportsettings" value="<?php _e('Export Library Settings', 'link-library'); ?>" /></td>
 			</tr>
 		</table>
 
@@ -5585,7 +5585,7 @@ class link_library_plugin {
 		}
 		
 		if ($genoptions['debugmode'] == true)
-			$linklibraryoutput .= "\n<!-- Setting Set Info:" . print_r($options, TRUE) . "-->\n";
+			$linklibraryoutput .= "\n<!-- Library Settings Info:" . print_r($options, TRUE) . "-->\n";
 			
 		$linklibraryoutput .= $this->PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 									  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
