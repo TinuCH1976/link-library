@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9.2 =
+* Added ability for user link submissions to accept large descriptions
+
 = 4.9.1 =
 * Changed terminology from Setting Set to Library Settings or Library to make it more obvious to new users
 

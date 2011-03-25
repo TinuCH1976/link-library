@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.9.1
+Version: 4.9.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -467,6 +467,8 @@ class link_library_plugin {
 		$options['rssfeedaddress'] = '';
 		$options['addlinknoaddress'] = false;
 		$options['featuredfirst'] = false;
+		$options['linklargedesclabel'] = __('Large Description', 'link-library');
+		$options['showuserlargedescription'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -925,7 +927,7 @@ class link_library_plugin {
 					switch($message) {
 
 						case '1':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Library #', 'link-library') . $settingsetid . " " . __('Updated', 'link-library') . "!</strong></p></div>";				
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library #', 'link-library') . $settings . " " . __('Updated', 'link-library') . "!</strong></p></div>";				
 							break;
 
 						case '2':
@@ -1296,9 +1298,9 @@ class link_library_plugin {
 			$settings = $_POST['settingsetid'];
 
 			$settingsname = 'LinkLibraryPP' . $settingsetid;
-
+			
 			$options = get_option($settingsname);
-
+			
 			foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'position',
 						   'beforecatlist1', 'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 
 						   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount', 'linksperpage', 'catdescpos',
@@ -1321,7 +1323,7 @@ class link_library_plugin {
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-							'rssfeedaddress') as $option_name) {
+							'rssfeedaddress', 'linklargedesclabel') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -1343,7 +1345,7 @@ class link_library_plugin {
 
 			foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes','addlinkcustomcat',
 						  'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
-						  'showaddlinksubmitteremail', 'showlinksubmittercomment') as $option_name) {
+						  'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription') as $option_name) {
 				if ($_POST[$option_name] == 'true')
 					$options[$option_name] = true;
 				elseif ($_POST[$option_name] == 'false')
@@ -2749,10 +2751,10 @@ class link_library_plugin {
 
 		<table>
 		<tr>
-			<td style='width: 400px' class='tooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.'>
+			<td style='width: 400px' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.'>
 				<?php _e('Use Thumbshots.org for dynamic link images', 'link-library'); ?>
 			</td>
-			<td colspan='2' class='tooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.' style='width=75px;padding-right:20px'>
+			<td colspan='2' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.' style='width=75px;padding-right:20px'>
 				<input type="checkbox" id="usethumbshotsforimages" name="usethumbshotsforimages" <?php if ($options['usethumbshotsforimages']) echo ' checked="checked" '; ?>/>
 			</td>
 		</tr>
@@ -2841,7 +2843,7 @@ class link_library_plugin {
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="showcaptcha" name="showcaptcha" <?php if ($options['showcaptcha']) echo ' checked="checked" '; ?>/></td>
 <td style='width: 20px'></td>
 				<td style='width: 20px'></td>
-				<td class='tooltip' title='<?php _e('This function will only store data when users are logged in to Wordpress', 'link-library'); ?>.' style='width:250px'><?php _e('Store login name on link submission', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('This function will only store data when users are logged in to Wordpress', 'link-library'); ?>.' style='width:250px'><?php _e('Store login name on link submission', 'link-library'); ?></td>
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="storelinksubmitter" name="storelinksubmitter" <?php if ($options['storelinksubmitter']) echo ' checked="checked" '; ?>/></td>
 				<td style='width: 20px'></td>				
 			</tr>
@@ -2883,8 +2885,8 @@ class link_library_plugin {
 					</select>
 				</td>
 				<td style='width: 20px'></td>
-				<td style='width:200px' class='tooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4)', 'link-library'); ?>'><?php _e('Link category selection list', 'link-library'); ?></td>
-				<td colspan=3 class='tooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4)', 'link-library'); ?>'><input type="text" id="addlinkcatlistoverride" name="addlinkcatlistoverride" size="50" value="<?php echo $options['addlinkcatlistoverride']; ?>" />
+				<td style='width:200px' class='lltooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4)', 'link-library'); ?>'><?php _e('Link category selection list', 'link-library'); ?></td>
+				<td colspan=3 class='lltooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4)', 'link-library'); ?>'><input type="text" id="addlinkcatlistoverride" name="addlinkcatlistoverride" size="50" value="<?php echo $options['addlinkcatlistoverride']; ?>" />
 				<td style='width:200px'></td>
 			</tr>
 			<tr>
@@ -2997,6 +2999,16 @@ class link_library_plugin {
 						<option value="true"<?php if ($options['showlinksubmittercomment'] == true) { echo ' selected="selected"';} ?>><?php _e('Show', 'link-library'); ?></option>
 					</select>
 				</td>
+				<td style='width: 20px'></td>
+				<td style='width:200px'><?php _e('Large Description Label', 'link-library'); ?></td>
+				<?php if ($options['linklargedesclabel'] == "") $options['linklargedesclabel'] = __('Large Description', 'link-library'); ?>
+				<td><input type="text" id="linklargedesclabel" name="linklargedesclabel" size="30" value="<?php echo $options['linklargedesclabel']; ?>"/></td>
+				<td>
+					<select name="showuserlargedescription" id="showuserlargedescription" style="width:60px;">
+						<option value="false"<?php if ($options['showuserlargedescription'] == false) { echo ' selected="selected"';} ?>><?php _e('Hide', 'link-library'); ?></option>
+						<option value="true"<?php if ($options['showuserlargedescription'] == true) { echo ' selected="selected"';} ?>><?php _e('Show', 'link-library'); ?></option>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<td style='width:200px'><?php _e('Custom Captcha Question', 'link-library'); ?></td>
@@ -3041,7 +3053,7 @@ class link_library_plugin {
 
 		<table>
 			<tr>
-				<td class='tooltip' title='<?php _e('Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.', 'link-library'); ?>' style='width: 330px'><?php _e('CSV file to upload to import links', 'link-library'); ?> (<a href="<?php echo $llpluginpath . 'importtemplate.csv'; ?>"><?php _e('file template', 'link-library'); ?></a>)</td>
+				<td class='lltooltip' title='<?php _e('Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.', 'link-library'); ?>' style='width: 330px'><?php _e('CSV file to upload to import links', 'link-library'); ?> (<a href="<?php echo $llpluginpath . 'importtemplate.csv'; ?>"><?php _e('file template', 'link-library'); ?></a>)</td>
 				<td><input size="80" name="linksfile" type="file" /></td>
 				<td><input type="submit" name="importlinks" value="<?php _e('Import Links', 'link-library'); ?>" /></td>
 			</tr>
@@ -3055,12 +3067,12 @@ class link_library_plugin {
 		<input type='hidden' value='<?php echo $settings; ?>' name='settingsetid' id='settingsetid' />
 		<table>
 			<tr>
-				<td class='tooltip' title='<?php _e('Overwrites current library settings with contents of CSV file', 'link-library'); ?>' style='width: 330px'><?php _e('Library Settings CSV file to import', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Overwrites current library settings with contents of CSV file', 'link-library'); ?>' style='width: 330px'><?php _e('Library Settings CSV file to import', 'link-library'); ?></td>
 				<td><input size="80" name="settingsfile" type="file" /></td>
 				<td><input type="submit" name="importsettings" value="<?php _e('Import Library Settings', 'link-library'); ?>" /></td>
 			</tr>
 			<tr>
-				<td class='tooltip' style='width: 330px' title='<?php _e('Generates CSV file with current library configuration for download', 'link-library'); ?>'><?php _e('Export current library settings', 'link-library'); ?></td>
+				<td class='lltooltip' style='width: 330px' title='<?php _e('Generates CSV file with current library configuration for download', 'link-library'); ?>'><?php _e('Export current library settings', 'link-library'); ?></td>
 				<td><input type="submit" name="exportsettings" value="<?php _e('Export Library Settings', 'link-library'); ?>" /></td>
 			</tr>
 		</table>
@@ -4668,7 +4680,7 @@ class link_library_plugin {
 											$showcaptcha = false, $captureddata = '', $linksubmitternamelabel = '', $showlinksubmittername = false,
 											$linksubmitteremaillabel = '', $showaddlinksubmitteremail = false, $linksubmittercommentlabel = '',
 											$showlinksubmittercomment = false, $linksubmissionthankyouurl = '', $addlinkcatlistoverride = '',
-											$showcustomcaptcha = false, $customcaptchaquestion = '') {
+											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false) {
 											
 		global $wpdb, $llpluginpath;
 		
@@ -4766,6 +4778,12 @@ class link_library_plugin {
 				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . wp_specialchars(stripslashes($captureddata['link_description']), '1') . "' /></td></tr>\n";
 			}
 			
+			if ($showuserlargedescription)
+			{
+				if ($linklargedesclabel == "") $linklargedesclabel = __('Large description', 'link-library');
+				$output .= "<tr><th style='vertical-align: top'>" . $linklargedesclabel . "</th><td><textarea name='link_textfield' id='link_textfield' cols='66'>" . wp_specialchars(stripslashes($captureddata['link_textfield']), '1') . "</textarea></td></tr>\n";
+			}
+			
 			if ($showaddlinknotes)
 			{
 				if ($linknoteslabel == "") $linknoteslabel = __('Link notes', 'link-library');
@@ -4817,7 +4835,7 @@ class link_library_plugin {
 			if ($showcaptcha)
 			{
 				$output .= "<tr><td></td><td><span id='captchaimage'><img src='" . $llpluginpath . "captcha/easycaptcha.php' /></span></td></tr>\n";
-				$output .= "<tr><td>" . __('Enter code from above image', 'link-library') . "</td><td><input type='text' name='confirm_code' /></td></tr>\n";
+				$output .= "<tr><th>" . __('Enter code from above image', 'link-library') . "</th><td><input type='text' name='confirm_code' /></td></tr>\n";
 			}
 			
 			if ($showcustomcaptcha)
@@ -5314,6 +5332,7 @@ class link_library_plugin {
 				$captureddata['link_category'] = $_POST['link_category'];
 				$captureddata['link_user_category'] = $_POST['link_user_category'];
 				$captureddata['link_description'] = $_POST['link_description'];
+				$captureddata['link_textfield'] = $_POST['link_textfield'];
 				$captureddata['link_name'] = $_POST['link_name'];
 				$captureddata['link_url'] = $_POST['link_url'];
 				$captureddata['link_rss'] = $_POST['link_rss'];
@@ -5428,7 +5447,7 @@ class link_library_plugin {
 						$newlinkid = $this->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
 						
 						$extradatatable = $this->db_prefix() . "links_extrainfo";
-						$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_submitter_name' => $_POST['ll_submittername'], 'link_submitter_email' => $_POST['ll_submitteremail']), array( 'link_id' => $newlinkid ));		
+						$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_submitter_name' => $_POST['ll_submittername'], 'link_submitter_email' => $_POST['ll_submitteremail'], 'link_textfield' => $_POST['link_textfield']), array( 'link_id' => $newlinkid ));		
 						
 						if ($options['emailnewlink'])
 						{
@@ -5441,6 +5460,7 @@ class link_library_plugin {
 							$message .= __('Link Address', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_url'])) . "<br />";
 							$message .= __('Link RSS', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_rss'])) . "<br />";
 							$message .= __('Link Description', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_description'])) . "<br />";
+							$message .= __('Link Large Description', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_textfield'])) . "<br />";
 							$message .= __('Link Notes', 'link-library') . ": " . wp_specialchars(stripslashes($_POST['link_notes'])) . "<br />";
 							$message .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
 							$message .= __('Reciprocal Link', 'link-library') . ": " . $_POST['ll_reciprocal'] . "<br /><br />";
@@ -5507,7 +5527,7 @@ class link_library_plugin {
 											 $options['showcaptcha'], $captureddata, $options['linksubmitternamelabel'], $options['showlinksubmittername'],
 											 $options['linksubmitteremaillabel'], $options['showaddlinksubmitteremail'], $options['linksubmittercommentlabel'],
 											 $options['showlinksubmittercomment'], $genoptions['linksubmissionthankyouurl'], $options['addlinkcatlistoverride'],
-											 $options['showcustomcaptcha'], $options['customcaptchaquestion']);	
+											 $options['showcustomcaptcha'], $options['customcaptchaquestion'], $options['linklargedesclabel'], $options['showuserlargedescription']);	
 		
 		
 	}
