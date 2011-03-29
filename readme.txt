@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9.3 =
+* Added missing field to table creation code for new users
+
 = 4.9.2 =
 * Added ability for user link submissions to accept large descriptions
 

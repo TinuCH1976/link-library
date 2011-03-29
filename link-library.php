@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.9.2
+Version: 4.9.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -168,6 +168,7 @@ class link_library_plugin {
 				`link_submitter_email` VARCHAR( 128 ) NULL,
 				`link_textfield` TEXT NULL,
 				`link_no_follow` VARCHAR(1) NULL,
+				`link_featured` VARCHAR(1) NULL
 				PRIMARY KEY (`link_id`)
 				) $charset_collate"); 
 
