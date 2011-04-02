@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9.4 =
+* Corrected bug with extrainfo table creation code
+
 = 4.9.3 =
 * Added missing field to table creation code for new users
 
