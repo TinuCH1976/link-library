@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9.5 =
+* Added call to strip slashes off the large description field when displayed
+
 = 4.9.4 =
 * Corrected bug with extrainfo table creation code
 
