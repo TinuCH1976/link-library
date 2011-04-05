@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9.7 =
+* Highlight the search result string if found in large description
+
 = 4.9.6 =
 * Added Large Description field to link search
 

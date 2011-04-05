@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.9.6
+Version: 4.9.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4202,6 +4202,7 @@ class link_library_plugin {
 					}
 
 					$cleanname = wp_specialchars($linkitem['link_name'], ENT_QUOTES);
+					$textfield = stripslashes($linkitem['link_textfield']);
 
 					if ($mode == "search")
 					{
@@ -4210,6 +4211,7 @@ class link_library_plugin {
 							$descnotes = $this->ll_highlight_phrase($descnotes, $searchterm, '<span class="highlight_word">', '</span>');
 							$desc = $this->ll_highlight_phrase($desc, $searchterm, '<span class="highlight_word">', '</span>');
 							$name = $this->ll_highlight_phrase($linkitem['link_name'], $searchterm, '<span class="highlight_word">', '</span>');
+							$textfield = $this->ll_highlight_phrase($textfield, $searchterm, '<span class="highlight_word">', '</span>');
 						}
 				}
 					else
@@ -4513,7 +4515,7 @@ class link_library_plugin {
 										{
 											$output .= $between . stripslashes($beforelargedescription);
 
-											$output .= stripslashes($linkitem['link_textfield']);
+											$output .= $textfield;
 
 											$output .= stripslashes($afterlargedescription);
 										}
