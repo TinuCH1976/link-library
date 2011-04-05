@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.9.5
+Version: 4.9.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3864,6 +3864,8 @@ class link_library_plugin {
 						$linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
 					if ($showdescription)
 						$linkquery .= " OR link_description like '%" . $searchterm . "%' ";
+					if ($showlargedescription)
+						$linkquery .= " OR link_textfield like '%" . $searchterm . "%' ";
 				}
 
 				$linkquery .= ")";

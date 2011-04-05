@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 4.9.6 =
+* Added Large Description field to link search
+
 = 4.9.5 =
 * Added call to strip slashes off the large description field when displayed
 
