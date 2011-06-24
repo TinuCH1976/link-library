@@ -3,7 +3,7 @@ Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch
 Requires at least: 2.7
-Tested up to: 3.1
+Tested up to: 3.2
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -58,6 +58,10 @@ In addition to specifying a setting set, categories to be displayed can be speci
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 4.9.8 =
+* Tested with Wordpress 3.2
+* Added missing tooltip for URL submission acknowledgement page
 
 = 4.9.7 =
 * Highlight the search result string if found in large description
@@ -627,6 +631,10 @@ The category IDs are numeric IDs. You can find them by going to the page to see 
 
 If you want all of your link pages to have the same layout, create a single setting set, then specify the category to be displayed when you add the short code to each page. For example: [link-library categorylistoverride="28"]
 If the different pages have different styles for different categories, then you should create distinct setting sets for each page and set the categories to be displayed in the "Categories to be Displayed" field in the admin panel.
+
+= After assigning a Link Acknowledgement URL, why do links no longer get added to my database? =
+
+When using this option, the short code [link-library-addlinkcustommsg] should be placed on the destination page.
 
 = How can I override some of the options when using shortcodes in my pages =
 

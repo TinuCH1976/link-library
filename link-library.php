@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 4.9.7
+Version: 4.9.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1681,7 +1681,7 @@ class link_library_plugin {
 		<table>
 			<tr>
 				<td class='lltooltip' title='<?php _e('URL that user will be redirected to after submitting new link. When used, the short code [link-library-addlinkcustommsg] should be placed on the destination page.', 'link-library'); ?>.' style='width:250px'><?php _e('Link Acknowledgement URL', 'link-library'); ?></td>
-				<td style='width:75px;padding-right:20px'><input type="text" id="linksubmissionthankyouurl" name="linksubmissionthankyouurl" size="60" value='<?php echo $genoptions['linksubmissionthankyouurl']; ?>' /></td>
+				<td class='lltooltip' style='width:75px;padding-right:20px' title='<?php _e('URL that user will be redirected to after submitting new link. When used, the short code [link-library-addlinkcustommsg] should be placed on the destination page.', 'link-library'); ?>.'><input type="text" id="linksubmissionthankyouurl" name="linksubmissionthankyouurl" size="60" value='<?php echo $genoptions['linksubmissionthankyouurl']; ?>' /></td>
 			</tr>
 			<tr>
 				<td class='lltooltip' title='<?php _e('Title of e-mail sent to site admin when new links are submitted. Use %linkname% as a variable to be replaced by the actual link name', 'link-library'); ?>.' style='width:250px'><?php _e('Moderation Notification Title', 'link-library'); ?></td>
