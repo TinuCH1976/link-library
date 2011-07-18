@@ -202,7 +202,7 @@ class link_library_plugin {
 				
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
-
+			
 			for ($i = 1; $i <= $genoptions['numberstylesets']; $i++) {
 				$settingsname = 'LinkLibraryPP' . $i;
 				$options = get_option($settingsname);
@@ -234,8 +234,9 @@ class link_library_plugin {
 							$options['dragndroporder'] = '2,3,4,5,6,1,7,8,9,10';
 					}
 					else if ($options['dragndroporder'] != '')
-						$elementarray = explode(',', $options['dragndroporder']);
 					{
+						$elementarray = explode(',', $options['dragndroporder']);
+					
 						$allelements = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12');
 						foreach ($allelements as $element)
 						{
@@ -247,6 +248,8 @@ class link_library_plugin {
 						}
 					}
 					
+					if ($options['flatlist'] === true) $options['flatlist'] = 'unordered';
+					elseif ($options['flatlist'] === false) $options['flatlist'] = 'table';				
 				}
 
 				update_option($settingsname, $options);
@@ -347,7 +350,7 @@ class link_library_plugin {
 		$options['hide_if_empty'] = true;
 		$options['table_width'] = 100;
 		$options['catanchor'] = true;
-		$options['flatlist'] = false;
+		$options['flatlist'] = 'table';
 		$options['categorylist'] = null;
 		$options['excludecategorylist'] = null;
 		$options['showrating'] = false;
@@ -1324,7 +1327,7 @@ class link_library_plugin {
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-							'rssfeedaddress', 'linklargedesclabel') as $option_name) {
+							'rssfeedaddress', 'linklargedesclabel', 'flatlist') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -1344,7 +1347,7 @@ class link_library_plugin {
 				}
 			}
 
-			foreach(array('flatlist', 'displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes','addlinkcustomcat',
+			foreach(array('displayastable', 'divorheader','showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes','addlinkcustomcat',
 						  'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
 						  'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription') as $option_name) {
 				if ($_POST[$option_name] == 'true')
@@ -1424,6 +1427,8 @@ class link_library_plugin {
 		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'importrowscount');
 		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'successimportcount');
 		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'copy');
+		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'reset');
+		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'resettable');		
 		$cleanredirecturl = $this->remove_querystring_var($cleanredirecturl, 'source');
 		$redirecturl = $cleanredirecturl;
 
@@ -2030,8 +2035,9 @@ class link_library_plugin {
 			</td>
 			<td>
 				<select name="flatlist" id="flatlist" style="width:200px;">
-					<option value="false"<?php if ($options['flatlist'] == false) { echo ' selected="selected"';} ?>><?php _e('Table', 'link-library'); ?></option>
-					<option value="true"<?php if ($options['flatlist'] == true) { echo ' selected="selected"';} ?>><?php _e('Unordered List', 'link-library'); ?></option>
+					<option value="table"<?php if ($options['flatlist'] == 'table') { echo ' selected="selected"';} ?>><?php _e('Table', 'link-library'); ?></option>
+					<option value="unordered"<?php if ($options['flatlist'] == 'unordered') { echo ' selected="selected"';} ?>><?php _e('Unordered List', 'link-library'); ?></option>
+					<option value="dropdown"<?php if ($options['flatlist'] == 'dropdown') { echo ' selected="selected"';} ?>><?php _e('Drop-Down List', 'link-library'); ?></option>					
 				</select>
 			</td>
 		</tr>	
@@ -2636,18 +2642,18 @@ class link_library_plugin {
 		<br />
 		<table>
 		<tr>
-			<td style='width=150px'>
+			<td style='width:150px'>
 				<?php _e('Show Link Updated Flag', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding:0px 20px 0px 20px'>
+			<td style='width:75px;padding:0px 20px 0px 20px'>
 				<input type="checkbox" id="showupdated" name="showupdated" <?php if ($options['showupdated']) echo ' checked="checked" '; ?>/>
 			</td>
-			<td style='width=20px'>
+			<td style='width:20px'>
 			</td>
 			<td>
 				<?php _e('Convert [] to &lt;&gt; in Link Description and Notes', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding:0px 20px 0px 20px'>
+			<td style='width:75px;padding:0px 20px 0px 20px'>
 				<input type="checkbox" id="use_html_tags" name="use_html_tags" <?php if ($options['use_html_tags']) echo ' checked="checked" '; ?>/>
 			</td>
 		</tr>
@@ -2655,14 +2661,14 @@ class link_library_plugin {
 			<td>
 				<?php _e('Add nofollow tag to outgoing links', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding:0px 20px 0px 20px'>
+			<td style='width:75px;padding:0px 20px 0px 20px'>
 				<input type="checkbox" id="nofollow" name="nofollow" <?php if ($options['nofollow']) echo ' checked="checked" '; ?>/>
 			</td>
 			<td></td>
 			<td>
 				<?php _e('Show edit links when logged in as editor or administrator', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding:0px 20px 0px 20px'>
+			<td style='width:75px;padding:0px 20px 0px 20px'>
 				<input type="checkbox" id="showadmineditlinks" name="showadmineditlinks" <?php if ($options['showadmineditlinks']) echo ' checked="checked" '; ?>/>
 			</td>
 		</tr>
@@ -2680,16 +2686,16 @@ class link_library_plugin {
 			<td>
 				<?php _e('Show RSS Link using Text', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding-right:20px'>
+			<td style='width:75px;padding-right:20px'>
 				<input type="checkbox" id="show_rss" name="show_rss" <?php if ($options['show_rss']) echo ' checked="checked" '; ?>/>
 			</td>
 			<td>
 				<?php _e('Show RSS Link using Standard Icon', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding-right:20px'>
+			<td style='width:75px;padding-right:20px'>
 				<input type="checkbox" id="show_rss_icon" name="show_rss_icon" <?php if ($options['show_rss_icon']) echo ' checked="checked" '; ?>/>
 			</td>
-			<td></td><td style='width=75px;padding-right:20px'></td>
+			<td></td><td style='width:75px;padding-right:20px'></td>
 		</tr>
 		<tr>
 			<td colspan='1' class="lltooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
@@ -2755,14 +2761,14 @@ class link_library_plugin {
 			<td style='width: 400px' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.'>
 				<?php _e('Use Thumbshots.org for dynamic link images', 'link-library'); ?>
 			</td>
-			<td colspan='2' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.' style='width=75px;padding-right:20px'>
+			<td colspan='2' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.' style='width:75px;padding-right:20px'>
 				<input type="checkbox" id="usethumbshotsforimages" name="usethumbshotsforimages" <?php if ($options['usethumbshotsforimages']) echo ' checked="checked" '; ?>/>
 			</td>
 		</tr>
 		<tr>
 			<td><?php _e('Generate Images / Favorite Icons', 'link-library'); ?></td>
 			<td><INPUT type="button" name="genthumbs" value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
-			<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width=75px;padding-right:20px'></td>
+			<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width:75px;padding-right:20px'></td>
 		</tr>
 		</table>
 	<?php }
@@ -2777,10 +2783,10 @@ class link_library_plugin {
 			<td>
 				<?php _e('Publish RSS Feed', 'link-library'); ?>
 			</td>
-			<td style='width=75px;padding-right:20px'>
+			<td style='width:75px;padding-right:20px'>
 				<input type="checkbox" id="publishrssfeed" name="publishrssfeed" <?php if ($options['publishrssfeed']) echo ' checked="checked" '; ?>/>
 			</td>
-			<td><?php _e('Number of items in RSS feed', 'link-library'); ?></td><td style='width=75px;padding-right:20px'><input type="text" id="numberofrssitems" name="numberofrssitems" size="3" value="<?php if ($options['numberofrssitems'] == '') echo '10'; else echo strval($options['numberofrssitems']); ?>"/></td>
+			<td><?php _e('Number of items in RSS feed', 'link-library'); ?></td><td style='width:75px;padding-right:20px'><input type="text" id="numberofrssitems" name="numberofrssitems" size="3" value="<?php if ($options['numberofrssitems'] == '') echo '10'; else echo strval($options['numberofrssitems']); ?>"/></td>
 		</tr>	
 		<tr>
 			<td><?php _e('RSS Feed Title', 'link-library'); ?></td><td colspan=3><input type="text" id="rssfeedtitle" name="rssfeedtitle" size="80" value="<?php echo strval(wp_specialchars(stripslashes($options['rssfeedtitle']))); ?>"/></td>
@@ -3463,7 +3469,7 @@ class link_library_plugin {
 	/*********************************************** Private Link Library Categories Function *************************************/
 
 	function PrivateLinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
-				   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
+				   $flatlist = 'table', $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 				   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
 				   $debugmode = false, $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX',
 				   $cattargetaddress = '', $rewritepage = '', $showinvisible = false) {
@@ -3471,6 +3477,9 @@ class link_library_plugin {
 		global $wpdb;
 
 		$output = '';
+		
+		if (isset($_GET['cat_id']))
+			$categoryid = $_GET['cat_id'];
 
 		if (!isset($_GET['searchll']))
 		{
@@ -3550,10 +3559,12 @@ class link_library_plugin {
 
 				$output .=  "<div id=\"linktable\" class=\"linktable\">";
 
-				if (!$flatlist)
+				if ($flatlist == 'table')
 					$output .= "<table width=\"" . $table_width . "%\">\n";
-				else
+				elseif ($flatlist == 'unordered')
 					$output .= "<ul class='menu'>\n";
+				elseif ($flatlist == 'dropdown')
+					$output .= "<form name='catselect'><select name='catdropdown' class='catdropdown'>";
 
 				$linkcount = 0;
 
@@ -3562,23 +3573,40 @@ class link_library_plugin {
 					// First, fix the sort_order info
 					//$orderby = $cat['sort_order'];
 					//$orderby = (bool_from_yn($cat['sort_desc'])?'_':'') . $orderby;
+					
+					$catfront = '';
+					$cattext = '';
+					$catitem = '';
 
 					// Display the category name
 					$countcat += 1;
-					if (!$flatlist and (($countcat % $num_columns == 1) or ($num_columns == 1) )) $output .= "<tr>\n";
+					if ($flatlist == 'table' and (($countcat % $num_columns == 1) or ($num_columns == 1) )) $output .= "<tr>\n";
 
-					if (!$flatlist)
+					if ($flatlist == 'table')
 						$catfront = '	<td>';
-					else
+					elseif ($flatlist == 'unordered')
 						$catfront = '	<li>';
+					elseif ($flatlist == 'dropdown')
+					{
+						$catfront = '	<option ';
+						if ($categoryid != '' && $categoryid == $catname->term_id)
+							$catfront .= 'selected="selected" ';
+						$catfront .= 'value="';
+					}
 
 					if ($showonecatonly)
 					{
 						if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-							$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', 1);return false;\" >";
+						{
+							if ($flatlist != 'dropdown')
+								$cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', 1);return false;\" >";
+							elseif ($flatlist == 'dropdown')
+								$cattext = $catname->term_id;
+						}
 						elseif ($showonecatmode == 'HTMLGET')
 						{
-							$cattext = "<a href='";
+							if ($flatlist != 'dropdown')
+								$cattext = "<a href='";
 
 							if ($cattargetaddress != '' && strpos($cattargetaddress, "?") != false)
 							{
@@ -3593,17 +3621,34 @@ class link_library_plugin {
 							elseif ($cattargetaddress == '')
 								$cattext .= "?cat_id=";
 
-							$cattext .= $catname->term_id . "'>";
+							$cattext .= $catname->term_id;
+							
+							if ($flatlist != 'dropdown')
+								$cattext .= "'>";
 						}
 						elseif ($showonecatmode == 'HTMLGETPERM')
 						{
-							$cattext = "<a href='/" . $rewritepage . "/" . $catname->category_nicename . "'>";
+							if ($flatlist != 'dropdown')
+								$cattext = "<a href='";
+								
+							$cattext .= "/" . $rewritepage . "/" . $catname->category_nicename;
+							
+							if ($flatlist != 'dropdown')
+								$cattext .= "'>";
 						}
 					}
 					else if ($catanchor)
 					{
 						if (!$pagination)
-							$cattext = '<a href="#' . $catname->category_nicename . '">';
+						{
+							if ($flatlist != 'dropdown')
+								$cattext = '<a href="';
+							
+							$cattext .= '#' . $catname->category_nicename;
+							
+							if ($flatlist != 'dropdown')
+								$cattext .= '">';
+						}
 						elseif ($pagination)
 						{
 							if ($linksperpage == 0 && $linksperpage == '')
@@ -3612,15 +3657,34 @@ class link_library_plugin {
 							$pageposition = $linkcount / $linksperpage;
 							$pageposition = ceil($pageposition);
 							if ($pageposition == 0 && !isset($_GET['linkresultpage']))
-								$cattext = '<a href="' . get_permalink() . '#' . $catname->category_nicename . '">';
+							{
+								if ($flatlist != 'dropdown')
+									$cattext = '<a href="';
+								
+								$cattext .= get_permalink() . '#' . $catname->category_nicename;
+								
+								if ($flatlist != 'dropdown')
+									$cattext .= '">';
+							}
 							else
-								$cattext = '<a href="?linkresultpage=' . ($pageposition == 0 ? 1 : $pageposition) . '#' . $catname->category_nicename . '">';
+							{
+								if ($flatlist != 'dropdown')
+									$cattext = '<a href="';
+									
+								$cattext .= '?linkresultpage=' . ($pageposition == 0 ? 1 : $pageposition) . '#' . $catname->category_nicename;
+									
+								if ($flatlist != 'dropdown')
+									$cattext .= '">';
+							}
 
 							$linkcount = $linkcount + $catname->linkcount;
 						}
 					}
 					else
 						$cattext = '';
+					
+					if ($flatlist == 'dropdown')
+						$cattext .= '">';
 
 					$catitem = '';
 					if ($catlistdescpos == 'right' || $catlistdescpos == '')
@@ -3646,35 +3710,60 @@ class link_library_plugin {
 							$catitem .= " (" . $catname->linkcount . ")";
 					}
 
-					if ($catanchor || $showonecatonly)
+					if (($catanchor || $showonecatonly) && $flatlist != 'dropdown')
 						$catitem .= "</a>";
 
 					$output .= ($catfront . $cattext . $catitem );
 
-					if (!$flatlist)
+					if ($flatlist == 'table')
 						$catterminator = "	</td>\n";
-					else
-					{
+					elseif ($flatlist == 'unordered')
 						$catterminator = "	</li>\n";
-					}
+					elseif ($flatlist == 'dropdown')
+						$catterminator = "	</option>\n";
 
 					$output .= ($catterminator);
 
-					if (!$flatlist and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
+					if ($flatlist == "table" and ($countcat % $num_columns == 0)) $output .= "</tr>\n";
 				}
 
-				if (!$flatlist and ($countcat % $num_columns == 3)) $output .= "</tr>\n";
-				if (!$flatlist && $catnames)
+				if ($flatlist == "table" and ($countcat % $num_columns == 3)) $output .= "</tr>\n";
+				if ($flatlist == "table" && $catnames)
 					$output .= "</table>\n";
-				else if ($catnames)
+				elseif ($flatlist == 'unordered' && $catnames)
 					$output .= "</ul>\n";
+				elseif ($flatlist == 'dropdown' && $catnames)
+				{
+					$output .= "</select>\n";
+					$output .= "<button type='button' onclick='showcategory()'>Go!</button>";
+					$output .= "</form>";
+				}
 					
 				$output .= "</div>\n";
-
+				
 				if ($showonecatonly && ($showonecatmode == 'AJAX' || $showonecatmode == ''))
 				{
 					if ($loadingicon == '') $loadingicon = '/icons/Ajax-loader.gif';
 					$output .= "<div class='contentLoading' id='contentLoading' style='display: none;'><img src='" . WP_PLUGIN_URL . "/link-library" . $loadingicon . "' alt='Loading data, please wait...'></div>\n";
+				}
+				
+				if ($flatlist == 'dropdown')
+				{
+					$output .= "<SCRIPT TYPE='text/javascript'>\n";
+					$output .= "\tfunction showcategory(){\n";
+					
+					if ($showonecatonly && ($showonecatmode == 'AJAX' || $showonecatmode == '') )
+					{
+						$output .= "catidvar = document.catselect.catdropdown.options[document.catselect.catdropdown.selectedIndex].value;";
+						$output .= "showLinkCat(catidvar, '" . $settings . "', 1);return false; }";
+					}
+					else
+					{
+						$output .= "\t\tlocation=\n";
+						$output .= "document.catselect.catdropdown.options[document.catselect.catdropdown.selectedIndex].value }\n";
+					
+					}
+					$output .= "</SCRIPT>\n";
 				}
 			}
 			else
@@ -4875,7 +4964,7 @@ class link_library_plugin {
 	 *   table_witdh (default 100) - Width of table, percentage
 	 *   num_columns (default 1) - Number of columns in table
 	 *   catanchor (default true) - Determines if links to generated anchors should be created
-	 *   flatlist (default false) - When set to true, displays an unordered list instead of a table
+	 *   flatlist (default 'table') - When set to true, displays an unordered list instead of a table
 	 *   categorylist (default null) - Specifies a comma-separate list of the only categories that should be displayed
 	 *   excludecategorylist (default null) - Specifies a comma-separate list of the categories that should not be displayed
 	 *   showcategorydescheaders (default null) - Show category descriptions in category list
@@ -4894,7 +4983,7 @@ class link_library_plugin {
 	 */
 
 	function LinkLibraryCategories($order = 'name', $hide_if_empty = true, $table_width = 100, $num_columns = 1, $catanchor = true, 
-								   $flatlist = false, $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
+								   $flatlist = 'table', $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 								   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false,
 								   $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX', $cattargetaddress = '',
 								   $rewritepage = '', $showinvisible = false) {

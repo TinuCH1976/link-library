@@ -59,6 +59,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0 =
+* Added new mode to show link categories in a drop-down list
+* Replaced calls to wp_specialchars with esc_html since the previous function was deprecated in WP 2.8
+* Corrected bad CSS styling in admin sections
+* Added bookmarklet creation section in admin to allow for quick link creation
+* Fixed problem where settings became "sticky" until you went out of plugin admin and came back after resetting them
+
 = 4.9.8 =
 * Tested with Wordpress 3.2
 * Added missing tooltip for URL submission acknowledgement page
