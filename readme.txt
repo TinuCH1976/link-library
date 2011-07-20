@@ -53,7 +53,7 @@ To get a basic Link Library list showing on one of your Wordpress pages:<br />
 1. To add a form for users to be able to submit new links:<br />
    [link-library-addlink settings=#]
    
-In addition to specifying a setting set, categories to be displayed can be specified using addition keywords. Read the FAQ for more information on this topic.
+In addition to specifying a library, categories to be displayed can be specified using addition keywords. Read the FAQ for more information on this topic.
    
 Further configuration is available under the Link Library Settings panel.
 
@@ -692,9 +692,9 @@ Here would be the installation procedure:
 1. Activate the plugin in the Wordpress Admin
 1. Use the following functions in a [new template](http://codex.wordpress.org/Pages#Page_Templates) and select this template for your page that should display your Link Library.
 
-`&lt;?php echo LinkLibraryCategories('name', 1, 100, 3, 1, 0, '', '', '', false, '', ''); ?&gt;<br />
+`&lt;?php echo $my_link_library_plugin->LinkLibraryCategories('name', 1, 100, 3, 1, 0, '', '', '', false, '', ''); ?&gt;<br />
 `&lt;br /&gt;<br />
-&lt;?php echo LinkLibrary('name', 1, 1, 1, 1, 0, 0, '', 0, 0, 1, 1, '&lt;td>', '&lt;/td&gt;', 1, '', '&lt;tr&gt;', '&lt;/tr&gt;', '&lt;td&gt;', '&lt;/td&gt;', 1, '&lt;td&gt;', '&lt;/td&gt;', 1, "Application", "Description", "Similar to", 1, '', '', '', false, 'linklistcatname', false, 0, null, null, null, false, false, false, false, '', ''); ?&gt;
+&lt;?php echo $my_link_library_plugin->LinkLibrary('name', 1, 1, 1, 1, 0, 0, '', 0, 0, 1, 1, '&lt;td>', '&lt;/td&gt;', 1, '', '&lt;tr&gt;', '&lt;/tr&gt;', '&lt;td&gt;', '&lt;/td&gt;', 1, '&lt;td&gt;', '&lt;/td&gt;', 1, "Application", "Description", "Similar to", 1, '', '', '', false, 'linklistcatname', false, 0, null, null, null, false, false, false, false, '', ''); ?&gt;
 
 =function LinkLibraryCategories()=
 
@@ -714,7 +714,7 @@ Here would be the installation procedure:
    settings (default NULL) - Settings Set ID, only used when showonecatonly is true<br/>
    loadingicon (default NULL) - Path to icon to display when only show one category at a time<br/>
 
-=function LinkCategory()=
+=function LinkLibrary()=
 
  Output a list of all links, listed by category, using the settings in $wpdb->linkcategories and output it as a nested HTML unordered list. Can also insert anchors for categories
 
