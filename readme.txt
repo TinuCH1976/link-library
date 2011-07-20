@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0.1 =
+* Added code to escape special characters in large description field when importing links
+
 = 5.0 =
 * Added new mode to show link categories in a drop-down list
 * Replaced calls to wp_specialchars with esc_html since the previous function was deprecated in WP 2.8
