@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0.2 =
+* Corrected a problem where slashes were getting added in front of quote and apostrophes when editing large descriptions
+
 = 5.0.1 =
 * Added code to escape special characters in large description field when importing links
 

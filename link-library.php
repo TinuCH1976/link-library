@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.0.1
+Version: 5.0.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -227,11 +227,11 @@ class link_library_plugin {
 					if ($options['dragndroporder'] == '')
 					{
 						if ($options['imagepos'] == 'beforename')
-							$options['dragndroporder'] = '1,2,3,4,5,6,7,8,9,10';
+							$options['dragndroporder'] = '1,2,3,4,5,6,7,8,9,10,11,12';
 						elseif ($options['imagepos'] == 'aftername')
-							$options['dragndroporder'] = '2,1,3,4,5,6,7,8,9,10';
+							$options['dragndroporder'] = '2,1,3,4,5,6,7,8,9,10,11,12';
 						elseif ($options['imagepos'] == 'afterrssicons')
-							$options['dragndroporder'] = '2,3,4,5,6,1,7,8,9,10';
+							$options['dragndroporder'] = '2,3,4,5,6,1,7,8,9,10,11,12';
 					}
 					else if ($options['dragndroporder'] != '')
 					{
@@ -425,7 +425,7 @@ class link_library_plugin {
 		$options['linkcustomcatlabel'] = __('User-submitted category', 'link-library');
 		$options['linkcustomcatlistentry'] = __('User-submitted category (define below)', 'link-library');
 		$options['searchlabel'] = 'Search';
-		$options['dragndroporder'] = '1,2,3,4,5,6,7,8,9,10';
+		$options['dragndroporder'] = '1,2,3,4,5,6,7,8,9,10,11,12';
 		$options['showname'] = true;
 		$options['cattargetaddress'] = '';
 		$options['displayweblink'] = 'false';
@@ -3181,7 +3181,7 @@ class link_library_plugin {
 			</tr>
 			<tr>
 				<td><?php _e('Link Large Description', 'link-library'); ?></td>
-				<td><textarea id="link_textfield" name="link_textfield" cols='66'><?php echo $extradata['link_textfield']; ?></textarea></td>			
+				<td><textarea id="link_textfield" name="link_textfield" cols='66'><?php echo stripslashes($extradata['link_textfield']); ?></textarea></td>			
 			</tr>
 			<tr>
 				<td><?php _e('Current Link Image', 'link-library'); ?></td>
@@ -3338,7 +3338,7 @@ class link_library_plugin {
 			$updatearray['link_reciprocal'] = $_POST['ll_reciprocal'];
 		
 		if (isset($_POST['link_textfield']))
-			$updatearray['link_textfield'] = $_POST['link_textfield'];
+			$updatearray['link_textfield'] = esc_html($_POST['link_textfield']);
 			
 		if (isset($_POST['link_no_follow']))
 			$updatearray['link_no_follow'] = $_POST['link_no_follow'];
