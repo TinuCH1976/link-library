@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.0.2
+Version: 5.0.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -473,6 +473,7 @@ class link_library_plugin {
 		$options['featuredfirst'] = false;
 		$options['linklargedesclabel'] = __('Large Description', 'link-library');
 		$options['showuserlargedescription'] = false;
+		$options['usetextareaforusersubmitnotes'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -547,16 +548,22 @@ class link_library_plugin {
 			{
 				foreach($links as $link)
 				{
-					$sitecontent = file_get_contents($link->link_reciprocal);
+					$sitecontent = @file_get_contents($link->link_reciprocal);
+
 					$output .= "<a href='" . $link->link_url . "'>" . $link->link_name . "</a>: ";
-					if (strpos($sitecontent, $RecipCheckAddress) === false)
-					{
-						$output .= "<span style='color: #FF0000'>Not Found</span><br />";
+					
+					if (strpos($http_response_header[0], "200")) {
+						if (strpos($sitecontent, $RecipCheckAddress) === false)
+						{
+							$output .= "<span style='color: #FF0000'>Not Found</span><br />";
+						}
+						elseif (strpos($sitecontent, $RecipCheckAddress) !== false)
+						{
+							$output .= "<span style='color: #00FF00'>OK</span><br />";
+						}
 					}
-					elseif (strpos($sitecontent, $RecipCheckAddress) !== false)
-					{
-						$output .= "<span style='color: #00FF00'>OK</span><br />";
-					}
+					else 
+						$output .= "Website Unreachable";
 				}
 			}
 			else
@@ -1339,7 +1346,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress', 'featuredfirst')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -1760,16 +1767,22 @@ class link_library_plugin {
 				<tr>
 					<th style='width: 30px'></th>
 					<th style='width: 200px'><?php _e('Link Name', 'link-library'); ?></th>
+					<th style='width: 200px'><?php _e('Link Category', 'link-library'); ?></th>
 					<th style='width: 300px'><?php _e('Link URL', 'link-library'); ?></th>
 					<th><?php _e('Link Description', 'link-library'); ?></th>
 				</tr>
 			<?php global $wpdb;
 
 				$linkquery = "SELECT distinct * ";
-				$linkquery .= "FROM " . $this->db_prefix() . "links l ";
-				$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+				$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "links l ON (tr.object_id = l.link_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";	
+				$linkquery .= "WHERE tt.taxonomy = 'link_category'";				
+				$linkquery .= "AND l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 				$linkquery .= " ORDER by link_name ASC";
-
+				
 				$linkitems = $wpdb->get_results($linkquery);
 
 				if ($linkitems) {
@@ -1786,6 +1799,7 @@ class link_library_plugin {
 					<tr style='background: #FFF'>
 						<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
 						<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . WP_ADMIN_URL . "/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
+						<td><?php echo $linkitem->name; ?></td>
 						<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
 						<td><?php echo $newlinkdesc; ?></td>
 					</tr>
@@ -2944,6 +2958,14 @@ class link_library_plugin {
 				</td>
 			</tr>
 			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>Use Text Area for Notes</td>
+				<td><input type="checkbox" id="usetextareaforusersubmitnotes" name="usetextareaforusersubmitnotes" <?php if ($options['usetextareaforusersubmitnotes']) echo ' checked="checked" '; ?>/></td>
+			</tr>
+			<tr>
 				<td style='width:200px'><?php _e('Reciprocal Link label', 'link-library'); ?></td>
 				<?php if ($options['linkreciprocallabel'] == "") $options['linkreciprocallabel'] = __('Reciprocal Link', 'link-library'); ?>
 				<td><input type="text" id="linkreciprocallabel" name="linkreciprocallabel" size="30" value="<?php echo $options['linkreciprocallabel']; ?>"/></td>
@@ -3149,19 +3171,19 @@ class link_library_plugin {
 			</tr>		
 			<tr>
 				<td style='width: 200px'><?php _e('Secondary Web Address', 'link-library'); ?></td>
-				<td><input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo $extradata['link_second_url']; ?>"/> <?php if ($extradata['link_second_url'] != "") echo " <a href=" . $extradata['link_second_url'] . ">" . __('Visit', 'link-library') . "</a>"; ?></td></td>
+				<td><input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo $extradata['link_second_url']; ?>"/> <?php if ($extradata['link_second_url'] != "") echo " <a href=" . stripslashes($extradata['link_second_url']) . ">" . __('Visit', 'link-library') . "</a>"; ?></td></td>
 			</tr>
 			<tr>
 				<td><?php _e('Telephone', 'link-library'); ?></td>
-				<td><input type="text" id="ll_telephone" name="ll_telephone" size="80" value="<?php echo $extradata['link_telephone']; ?>"/></td>
+				<td><input type="text" id="ll_telephone" name="ll_telephone" size="80" value="<?php echo stripslashes($extradata['link_telephone']); ?>"/></td>
 			</tr>
 			<tr>
 				<td><?php _e('E-mail', 'link-library'); ?></td>
-				<td><input type="text" id="ll_email" name="ll_email" size="80" value="<?php echo $extradata['link_email']; ?>"/></td>
+				<td><input type="text" id="ll_email" name="ll_email" size="80" value="<?php echo stripslashes($extradata['link_email']); ?>"/></td>
 			</tr>
 			<tr>
 				<td><?php _e('Reciprocal Link', 'link-library'); ?></td>
-				<td><input type="text" id="ll_reciprocal" name="ll_reciprocal" size="80" value="<?php echo $extradata['link_reciprocal']; ?>"/> <?php if ($extradata['link_reciprocal'] != "") echo " <a href=" . $extradata['link_reciprocal'] . ">" . __('Visit', 'link-library') . "</a>"; ?></td>
+				<td><input type="text" id="ll_reciprocal" name="ll_reciprocal" size="80" value="<?php echo $extradata['link_reciprocal']; ?>"/> <?php if ($extradata['link_reciprocal'] != "") echo " <a href=" . stripslashes($extradata['link_reciprocal']) . ">" . __('Visit', 'link-library') . "</a>"; ?></td>
 			</tr>	
 			<tr>
 				<td><?php _e('Number of link views', 'link-library'); ?></td>
@@ -3169,15 +3191,15 @@ class link_library_plugin {
 			</tr>
 			<tr>
 				<td><?php _e('Link Submitter', 'link-library'); ?></td>
-				<td><input disabled type="text" id="ll_submitter" name="ll_submitter" size="80" value="<?php echo $extradata['link_submitter']; ?>"/></td>			
+				<td><input disabled type="text" id="ll_submitter" name="ll_submitter" size="80" value="<?php echo stripslashes($extradata['link_submitter']); ?>"/></td>			
 			</tr>
 			<tr>
 				<td><?php _e('Link Submitter Name', 'link-library'); ?></td>
-				<td><input disabled type="text" id="link_submitter_name" name="link_submitter_name" size="80" value="<?php echo $extradata['link_submitter_name']; ?>"/>			</td>			
+				<td><input disabled type="text" id="link_submitter_name" name="link_submitter_name" size="80" value="<?php echo stripslashes($extradata['link_submitter_name']); ?>"/></td>			
 			</tr>
 			<tr>
 				<td><?php _e('Link Submitter E-mail', 'link-library'); ?></td>
-				<td><input disabled type="text" id="link_submitter_email" name="link_submitter_email" size="80" value="<?php echo $extradata['link_submitter_email']; ?>"/>			   </td>			
+				<td><input disabled type="text" id="link_submitter_email" name="link_submitter_email" size="80" value="<?php echo stripslashes($extradata['link_submitter_email']); ?>"/></td>			
 			</tr>
 			<tr>
 				<td><?php _e('Link Large Description', 'link-library'); ?></td>
@@ -4357,7 +4379,7 @@ class link_library_plugin {
 											elseif ($sourceimage == 'secondary')
 												$imageoutput .= $the_second_link;
 
-											$imageoutput .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
+											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
 											if ($usethumbshotsforimages)
 											{
@@ -4402,7 +4424,7 @@ class link_library_plugin {
 												elseif ($sourcename == 'secondary')
 													$output .= $the_second_link;
 
-												$output .= '" id="' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
+												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 											}
 											
 											$output .= $name;
@@ -4502,7 +4524,7 @@ class link_library_plugin {
 											elseif ($sourceweblink == "secondary")
 												$output .= $the_second_link;
 
-											$output .= "' id='" . $linkitem['proper_link_id'] . "' class='track_this_link' " . $target . ">";
+											$output .= "' id='link-" . $linkitem['proper_link_id'] . "' class='track_this_link' " . $target . ">";
 
 											if ($displayweblink == 'address')
 											{
@@ -4533,7 +4555,7 @@ class link_library_plugin {
 												elseif ($sourcetelephone == "secondary" && $the_second_link != '')
 													$output .= $the_second_link;
 
-												$output .= "' id='" . $linkitem['proper_link_id'] . "' class='track_this_link' >";
+												$output .= "' id='link-" . $linkitem['proper_link_id'] . "' class='track_this_link' >";
 											}
 
 											if ($showtelephone == 'link' || $showtelephone == "plain")
@@ -4737,7 +4759,9 @@ class link_library_plugin {
 			$output .= "jQuery(document).ready(function()\n";
 			$output .= "{\n";
 			$output .= "jQuery('a.track_this_link').click(function() {\n";
-			$output .= "jQuery.post('" . WP_PLUGIN_URL . "/link-library/tracker.php', {id:this.id});\n";
+			$output .= "linkid = this.id;\n";
+			$output .= "linkid = linkid.substring(5);";
+			$output .= "jQuery.post('" . WP_PLUGIN_URL . "/link-library/tracker.php', {id:linkid});\n";
 			$output .= "return true;\n";
 			$output .= "});\n";
 			$output .= "});\n";
@@ -4784,7 +4808,7 @@ class link_library_plugin {
 											$showcaptcha = false, $captureddata = '', $linksubmitternamelabel = '', $showlinksubmittername = false,
 											$linksubmitteremaillabel = '', $showaddlinksubmitteremail = false, $linksubmittercommentlabel = '',
 											$showlinksubmittercomment = false, $linksubmissionthankyouurl = '', $addlinkcatlistoverride = '',
-											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false) {
+											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false, $usetextareaforusersubmitnotes = false) {
 											
 		global $wpdb, $llpluginpath;
 		
@@ -4891,7 +4915,21 @@ class link_library_plugin {
 			if ($showaddlinknotes)
 			{
 				if ($linknoteslabel == "") $linknoteslabel = __('Link notes', 'link-library');
-				$output .= "<tr><th>" . $linknoteslabel . "</th><td><input type='text' name='link_notes' id='link_notes' value='" . esc_html(stripslashes($captureddata['link_notes']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linknoteslabel . "</th><td>";
+				
+				if ($usetextareaforusersubmitnotes == false || $usetextareaforusersubmitnotes == '')
+					$output .= "<input type='text' name='link_notes' id='link_notes' value='";
+				elseif ($usetextareaforusersubmitnotes == true)
+					$output .= "<textarea name='link_notes' id='link_notes'>";
+				
+				$output .= esc_html(stripslashes($captureddata['link_notes']), '1');
+				
+				if ($usetextareaforusersubmitnotes == false || $usetextareaforusersubmitnotes == '')
+					$output .= "' />";
+				elseif ($usetextareaforusersubmitnotes == true)
+					$output .= "</textarea>";
+				
+				$output .= "</td></tr>\n";
 			}
 			
 			if ($showaddlinkreciprocal)
@@ -5631,7 +5669,7 @@ class link_library_plugin {
 											 $options['showcaptcha'], $captureddata, $options['linksubmitternamelabel'], $options['showlinksubmittername'],
 											 $options['linksubmitteremaillabel'], $options['showaddlinksubmitteremail'], $options['linksubmittercommentlabel'],
 											 $options['showlinksubmittercomment'], $genoptions['linksubmissionthankyouurl'], $options['addlinkcatlistoverride'],
-											 $options['showcustomcaptcha'], $options['customcaptchaquestion'], $options['linklargedesclabel'], $options['showuserlargedescription']);	
+											 $options['showcustomcaptcha'], $options['customcaptchaquestion'], $options['linklargedesclabel'], $options['showuserlargedescription'], $options['usetextareaforusersubmitnotes']);	
 		
 		
 	}

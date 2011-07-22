@@ -59,9 +59,15 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
-= 5.0.2 =
-* Corrected a problem where slashes were getting added in front of quote and apostrophes when editing large descriptions
+= 5.0.3 =
+* Changed link id field to contain text before their numeric ID to be xhtml compliant
+* Added code to strip slashes on custom fields in link editor
+* Added link category to link moderation screen
+* Add option to use textarea instead of input field for link notes in user submission form
+* Added check in Reciprocal checked to see if site is dead. Display appropriate message if it is.
 
+= 5.0.2 =
+* Corrected a problem where slashes were getting added in front of quote and apostrophes when editing large description
 = 5.0.1 =
 * Added code to escape special characters in large description field when importing links
 
