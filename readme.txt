@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0.4 =
+* Made code change to always load jQuery as soon as Link Library is rendered on a site to enable link click tracking
+
 = 5.0.3 =
 * Changed link id field to contain text before their numeric ID to be xhtml compliant
 * Added code to strip slashes on custom fields in link editor
