@@ -14,7 +14,7 @@ Translations:
 Danish Translation Courtesy of GeorgWP (http://wordpress.blogos.dk)
 
 This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
+modify it under the terms of the GNUs General Public License
 as published by the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
@@ -500,6 +500,7 @@ class link_library_plugin {
 		$genoptions['linksubmissionthankyouurl'] = '';
 		$genoptions['usefirstpartsubmittername'] = '';
 		$genoptions['recipcheckaddress'] = get_bloginfo('wpurl');
+		$genoptions['recipcheckdelete403'] = false;
 		
 		$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
 		$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
@@ -525,7 +526,7 @@ class link_library_plugin {
 		return $newurl; 
 	}
 	
-	function ReciprocalLinkChecker($RecipCheckAddress = '') {
+	function ReciprocalLinkChecker($RecipCheckAddress = '', $recipcheckdelete403 = false) {
 		global $wpdb;
 		
 		if ($RecipCheckAddress != '')
@@ -562,7 +563,12 @@ class link_library_plugin {
 							$output .= "<span style='color: #00FF00'>OK</span><br />";
 						}
 					}
-					else 
+					elseif (strpos($http_response_header[0], "403") && $recipcheckdelete403 == true)
+					{
+						wp_delete_link($link->link_id);
+						$output .= "Error 403: Link Deleted";
+					}
+					else
 						$output .= "Website Unreachable";
 				}
 			}
@@ -1013,7 +1019,7 @@ class link_library_plugin {
 			elseif ($_GET['message'] == '2')
 			{
 				echo "<div id='message' class='updated fade'><p>";
-				echo $this->ReciprocalLinkChecker($genoptions['recipcheckaddress']);
+				echo $this->ReciprocalLinkChecker($genoptions['recipcheckaddress'], $genoptions['recipcheckdelete403']);
 				echo "</p></div>";
 			}
 		}		
@@ -1622,6 +1628,7 @@ class link_library_plugin {
 		$genoptions = get_option('LinkLibraryGeneral');
 
 		$genoptions['recipcheckaddress'] = $_POST['recipcheckaddress'];
+		$genoptions['recipcheckdelete403'] = $_POST['recipcheckdelete403'];
 
 		update_option('LinkLibraryGeneral', $genoptions);
 		
@@ -3126,6 +3133,10 @@ class link_library_plugin {
 				<td style='width: 250px'>Search string</td>
 				<td><input type="text" id="recipcheckaddress" name="recipcheckaddress" size="60" value="<?php echo $genoptions['recipcheckaddress']; ?>"/></td>
 				<td><input type='submit' id="recipcheck" name="recipcheck" value="Check Reciprocal Links" /></td>
+			</tr>
+			<tr>
+				<td>Delete links that return a 403 error</td>
+				<td><input type="checkbox" id="recipcheckdelete403" name="recipcheckdelete403" <?php if ($genoptions['recipcheckdelete403']) echo ' checked="checked" '; ?>/></td>
 			</tr>
 		</table>
 		
