@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.0.4
+Version: 5.0.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3329,7 +3329,7 @@ class link_library_plugin {
 			if (!file_exists($uploads['basedir'] . '/link-library-images'))
 				mkdir($uploads['basedir'] . '/link-library-images');
 			$target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
-			$file_path = $uploads['baseurl'] . "/uploads/link-library-images/" . $link_id . ".jpg";
+			$file_path = $uploads['baseurl'] . "/link-library-images/" . $link_id . ".jpg";
 			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
 				$withimage = true;
 			else

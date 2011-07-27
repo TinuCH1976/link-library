@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0.6 =
+* Fixed problem with path of images uploaded for links
+
 = 5.0.5 =
 * Added option in reciprocal checker to delete links that return a 403 error during check
 
