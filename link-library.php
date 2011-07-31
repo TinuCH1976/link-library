@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.0.6
+Version: 5.0.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -15,7 +15,7 @@ Danish Translation Courtesy of GeorgWP (http://wordpress.blogos.dk)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNUs General Public License
-as published by the Free Software Foundation; either version 2
+as published addlinkcatlistoverrideby the Free Software Foundation; either version 2
 of the License, or (at your option) any later version.
 
 This program is distributed in the hope that it will be useful,
@@ -2923,7 +2923,7 @@ class link_library_plugin {
 					</select>
 				</td>
 				<td style='width: 20px'></td>
-				<td style='width:200px' class='lltooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4)', 'link-library'); ?>'><?php _e('Link category selection list', 'link-library'); ?></td>
+				<td style='width:200px' class='lltooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4) instead of displaying the set of categories specified by the library.', 'link-library'); ?>'><?php _e('Link category override selection list', 'link-library'); ?></td>
 				<td colspan=3 class='lltooltip' title='<?php _e('Comma-seperated list of categories to be displayed in category selection box (e.g. 1,5,4)', 'link-library'); ?>'><input type="text" id="addlinkcatlistoverride" name="addlinkcatlistoverride" size="50" value="<?php echo $options['addlinkcatlistoverride']; ?>" />
 				<td style='width:200px'></td>
 			</tr>
@@ -5604,7 +5604,10 @@ class link_library_plugin {
 						
 						if ($options['emailnewlink'])
 						{
-							$adminmail = get_option('admin_email');
+							if ($genoptions['moderatoremail'] != '')
+								$adminmail = $genoptions['moderatoremail'];
+							else
+								$adminmail = $get_option['admin_email'];
 							$headers = "MIME-Version: 1.0\r\n";
 							$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 							
