@@ -69,6 +69,7 @@
 	{
 		foreach ($linkitems as $linkitem)
 		{
+			if ($linkitem->link_url != '')
 			// ITEM
 			$rss->addItem (
                              $linkitem->link_name, // Title

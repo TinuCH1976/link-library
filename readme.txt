@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0.8 =
+* Fixed RSS Feed generation code to accept https links
+
 = 5.0.7 =
 * Added details on use of catogory list in link submission form
 * Now using Moderator E-mail (if present) as destination address for moderation notifications

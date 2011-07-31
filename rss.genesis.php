@@ -105,7 +105,7 @@
       $title = (empty ($title)) ? "RSS Feed - RSS Genesis 1.1" : $title;
       
       // Link parser // Checks absolutes URIs
-      if (!preg_match ("(^(ht|f)tp://)", $link)) :
+      if (!preg_match ("(^(ht|f)tp(s)?://)", $link)) :
       
         $link = "http://rssgenesis.sourceforge.net/";
       
@@ -403,7 +403,7 @@
       endif;
       
       // Link parser // Checks absolutes URIs
-      if (!preg_match ("(^(ht|f)tp://)", $link)) :
+      if (!preg_match ("(^(ht|f)tp(s)?://)", $link)) :
       
         die ("<font face=\"verdana\" size=\"2\">Error code: <strong>002</strong> - Item's element link is mandatory! - <a href=\"http://rssgenesis.sourceforge.net/index.html#ec002\" target=\"_blank\">Documentation</a></font>");
       
