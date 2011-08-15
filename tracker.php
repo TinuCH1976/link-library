@@ -2,7 +2,7 @@
 	require_once('../../../wp-load.php');
 	require_once('link-library.php');
 	
-	$link_id = $_POST['id'];
+	$link_id = intval($_POST['id']);
 	echo "Received ID is: " . $link_id;
 	
 	global $wpdb;

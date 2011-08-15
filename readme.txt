@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.0.9 =
+* Security fix
+
 = 5.0.8 =
 * Fixed RSS Feed generation code to accept https links
 
