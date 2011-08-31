@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.0.9
+Version: 5.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4489,11 +4489,11 @@ class link_library_plugin {
 											$output .= $between . '<a class="rss" href="' . $linkitem['link_rss'] . '">RSS</a>';
 										}
 										if ($show_rss_icon && ($linkitem['link_rss'] != '')) {
-											$output .= $between . '<a class="rssicon" href="' . $linkitem['link_rss'] . '"><img src="' . $llpluginpath . '/icons/feed-icon-14x14.png" /></a>';
+											$output .= $between . '<a class="rssicon" href="' . $linkitem['link_rss'] . '"><img src="' . $llpluginpath . 'icons/feed-icon-14x14.png" /></a>';
 										}
 										if ($rsspreview && $linkitem['link_rss'] != '')
 										{
-											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . '/icons/preview-16x16.png" /></a>';
+											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . 'icons/preview-16x16.png" /></a>';
 										}
 										
 										if ($show_rss || $show_rss_icon || $rsspreview)

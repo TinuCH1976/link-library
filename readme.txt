@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.0 =
+* Correct path for RSS Icon and RSS Preview Icons
+
 = 5.0.9 =
 * Security fix
 
