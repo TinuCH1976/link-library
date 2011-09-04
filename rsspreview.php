@@ -1,8 +1,6 @@
 <?php
 
-	ini_set('display_errors', '0');
-
-	require_once('simplepie.inc');
+	require_once('rss_php.php');
 	require_once('../../../wp-load.php');
 	
 	$linkid = $_GET['linkid'];
@@ -10,39 +8,22 @@
 	
 	$link = get_bookmark( $linkid );
 	
-	$feed = new SimplePie();
-	
-	$feed->set_item_limit($itemcount);
-	
+	$feed = new rss_php;
+		
 	// Use the URL that was passed to the page in SimplePie
-	$feed->set_feed_url($link->link_rss);
+	$feed->load($link->link_rss);
 	
-	// XML dump
-	$feed->enable_xml_dump(isset($_GET['xmldump']) ? true : false);
-	
-	// We'll enable the discovering and caching of favicons.
-	$feed->set_favicon_handler('./handler_image.php');
-	
-	$feed->enable_cache(false);
-	
-	// Initialize the whole SimplePie object.  Read the feed, process it, parse it, cache it, and 
-	// all that other good stuff.  The feed's information will not be available to SimplePie before 
-	// this is called.
-	$success = $feed->init();
-
-	// We'll make sure that the right content type and character encoding gets set automatically.
-	// This function will grab the proper character encoding, as well as set the content type to text/html.
-	$feed->handle_content_type();
-	
+	$channeldata = $feed->getChannel();
+	$channelitems = $feed->getItems();
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><?php echo (empty($_GET['feed'])) ? 'SimplePie' : 'SimplePie: ' . $feed->get_title(); ?></title>
+<title><?php echo (empty($_GET['feed'])) ? 'RSS_PHP' : 'RSS_PHP: ' . $channeldata['title']; ?></title>
 
 <!-- META HTTP-EQUIV -->
-<meta http-equiv="content-type" content="text/html; charset=<?php echo ($feed->get_encoding()) ? $feed->get_encoding() : 'UTF-8'; ?>" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8; ?>" />
 <meta http-equiv="imagetoolbar" content="false" />
 
 <style type="text/css">
@@ -121,15 +102,20 @@ a.button:active span {
 
 <body>
 	<div id="sp_results">
-		<?php if ($feed->data): ?>
-			<?php $items = $feed->get_items(0,$itemcount); ?>
-			<?php foreach($items as $item): ?>
+		<?php if ($channelitems):
+			$itemcounter = 0; ?>
+			<?php foreach($channelitems as $item): ?>
 				<div class="chunk" style="padding:0 5px 5px;">
-					<h1><a target="feedwindow" href="<?php echo $item->get_permalink(); ?>"><?php echo $item->get_title(); ?></a><div class='date'><?php echo $item->get_date('j M Y'); ?></div></h1>
-					<div class='content'><?php echo $item->get_content(); ?></div>
+					<h1><a target="feedwindow" href="<?php echo $item['link']; ?>"><?php echo $item['title']; ?></a><div class='date'><?php echo $item['pubDate']; ?></div></h1>
+					<div class='content'><?php echo $item['description']; ?></div>
 				</div>
 				<br />
-			<?php endforeach; ?>
+			<?php 
+				$itemcounter++;
+				if ($itemcounter >= $itemcount)
+					break;
+				endforeach;
+			?>
 			<br />
 			<div>
 				<a class="button" target="feedwindow" href="<?php echo $link->link_rss; ?>"><span>More News from this Feed</span></a> <a class="button" target="sitewindow" href="<?php echo $link->link_url; ?>"><span>See Full Web Site</span></a>

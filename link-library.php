@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1
+Version: 5.1.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -76,6 +76,8 @@ class link_library_plugin {
 		// Functions to be called when plugin is activated and deactivated
 		register_activation_hook(LL_FILE, array($this, 'll_install'));
 		register_deactivation_hook(LL_FILE, array($this, 'll_uninstall'));
+		
+		add_action( 'wpmu_new_blog', array($this, 'new_network_site'), 10, 6);
 
 		//add filter for WordPress 2.8 changed backend box system !
 		add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
@@ -142,7 +144,42 @@ class link_library_plugin {
 	/************************** Link Library Installation Function **************************/
 	function ll_install() {
 		global $wpdb;
-
+		
+		if (function_exists('is_multisite') && is_multisite()) {
+			if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1))
+			{
+				$originalblog = $wpdb->blogid;
+				
+				$bloglist = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+				foreach ($bloglist as $blog) {
+					switch_to_blog($blog);
+					$this->create_table_and_settings();
+				}
+				switch_to_blog($originalblog);
+				return;
+			}	
+		}
+		$this->create_table_and_settings();
+	}
+	
+	function new_network_site($blog_id, $user_id, $domain, $path, $site_id, $meta )
+	{
+		global $wpdb;
+		
+		if ( ! function_exists('is_plugin_active_for_network') )
+			require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+   
+		if (is_plugin_active_for_network('link-library/link-library.php')) {
+			$originalblog = $wpdb->blogid;
+			switch_to_blog($blog_id);
+			$this->create_table_and_settings();
+			switch_to_blog($originalblog);
+		}
+	}
+	
+	function create_table_and_settings()
+	{
+		global $wpdb;
 		$charset_collate = '';
 		if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
 			if (!empty($wpdb->charset)) {
@@ -382,7 +419,6 @@ class link_library_plugin {
 		$options['rssfeedinline'] = false;
 		$options['rssfeedinlinecontent'] = false;
 		$options['rssfeedinlinecount'] = 1;
-		$options['rsscachedir'] = ABSPATH . 'wp-content/cache/link-library';
 		$options['direction'] = 'ASC';
 		$options['linkdirection'] = 'ASC';
 		$options['linkorder'] = 'name';
@@ -1330,7 +1366,7 @@ class link_library_plugin {
 				}
 			}
 
-			foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon','rsscachedir',
+			foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon',
 							'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
 							'linkcatlabel', 'linkdesclabel', 'linknoteslabel', 'addlinkbtnlabel', 'newlinkmsg', 'moderatemsg', 'imagepos',
 							'imageclass', 'rssfeedtitle', 'rssfeeddescription', 'showonecatmode', 'linkcustomcatlabel', 'linkcustomcatlistentry',
@@ -2727,14 +2763,6 @@ class link_library_plugin {
 				<input type="checkbox" id="show_rss_icon" name="show_rss_icon" <?php if ($options['show_rss_icon']) echo ' checked="checked" '; ?>/>
 			</td>
 			<td></td><td style='width:75px;padding-right:20px'></td>
-		</tr>
-		<tr>
-			<td colspan='1' class="lltooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
-				<?php _e('RSS Cache Directory', 'link-library'); ?>
-			</td>
-			<td colspan='5' class="lltooltip" title='<?php _e('Used for RSS Preview and RSS Inline Articles options below. Must have write access to directory', 'link-library'); ?>.'>
-				<input type="text" id="rsscachedir" name="rsscachedir" size="80" value="<?php if ($options['rsscachedir'] == '') echo ABSPATH . 'wp-content/cache/link-library'; else echo $options['rsscachedir']; ?>"/>
-			</td>
 		</tr>
 		<tr>
 			<td>
@@ -4261,30 +4289,12 @@ class link_library_plugin {
 
 				if ($rssfeedinline)
 				{
-					ini_set('display_errors', '0');
-
-					if( !class_exists('SimplePie'))
+					if( !class_exists('rss_php'))
 					{
-						require_once( 'simplepie.inc' );
+						require_once( 'rss_php.php' );
 					}
-
-					$feed = new SimplePie();
-
-					// We'll enable the discovering and caching of favicons.
-					$feed->set_favicon_handler('./handler_image.php');
-
-					$feed->set_item_limit($rssfeedinlinecount);
-
-					$feed->enable_cache(true);
-					if ($rsscachedir == '')
-						$rsscachedir = ABSPATH . 'wp-content/cache/link-library';
-					$feed->set_cache_location($rsscachedir);
-
-					$feed->set_stupidly_fast(true);
-
-					// We'll make sure that the right content type and character encoding gets set automatically.
-					// This function will grab the proper character encoding, as well as set the content type to text/html.
-					$feed->handle_content_type();
+					
+					$feed = new rss_php;
 				}
 
 				if ($showuserlinks == true || strpos($linkitem['link_description'], "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false)
@@ -4501,29 +4511,31 @@ class link_library_plugin {
 
 										if ($rssfeedinline && $linkitem['link_rss'])
 										{
-											$feed->set_feed_url($linkitem['link_rss']);
+											$feed->load($linkitem['link_rss']);
+											
+											$feeditems = $feed->getItems();
 
-											$feed->init();
-
-												if ($feed->data && $feed->get_item_quantity() > 0)
+												if ($feeditems && count($feeditems) > 0)
 												{
 													$output .= '<div id="ll_rss_results">';
+													$itemcounter = 0;
 
-													$items = $feed->get_items(0, $rssfeedinlinecount);
-													foreach($items as $item)
+													foreach($feeditems as $item)
 													{
 														$output .= '<div class="chunk" style="padding:0 5px 5px;">';
-														$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item->get_permalink() . '">' . $item->get_title() . '</a> - ' . $item->get_date("j M Y") . '</div>';
-														if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item->get_content() . '</div>';
+														$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item['link'] . '">' . $item['title'] . '</a> - ' . $item['pubDate'] . '</div>';
+														if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item['description'] . '</div>';
 														$output .= '</div>';
 														$output .= '<br />';
+														
+														$itemcounter++;
+														if ($itemcounter >= $rssfeedinlinecount)
+															break;
 													}
 
 													$output .= '</div>';
 												}
-												
-											ini_set('display_errors', '1');
-										}
+											}
 										break;
 									case 7: 	//------------------ Web Link Output --------------------   
 
