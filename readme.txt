@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.2 =
+* Changed RSS parsing library back to Simplepie, but using version supplied with Wordpress with extra layer
+
 = 5.1.1 =
 * Corrected plugin installation function to properly create custom tables in multi-site environment
 * Replaced SimplePie with PHP_RSS library to avoid PHP5 validation errors and have simpler code base

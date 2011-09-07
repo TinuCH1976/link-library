@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1.1
+Version: 5.1.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4285,17 +4285,8 @@ class link_library_plugin {
 
 				$between = "\n";
 
-				$feed = NULL;
-
-				if ($rssfeedinline)
-				{
-					if( !class_exists('rss_php'))
-					{
-						require_once( 'rss_php.php' );
-					}
-					
-					$feed = new rss_php;
-				}
+				if ($rssfeedinline == true) 
+					include_once(ABSPATH . WPINC . '/feed.php');
 
 				if ($showuserlinks == true || strpos($linkitem['link_description'], "LinkLibrary:AwaitingModeration:RemoveTextToApprove") == false)
 				{
@@ -4511,31 +4502,29 @@ class link_library_plugin {
 
 										if ($rssfeedinline && $linkitem['link_rss'])
 										{
-											$feed->load($linkitem['link_rss']);
-											
-											$feeditems = $feed->getItems();
+											$rss = fetch_feed($linkitem['link_rss']);
+											if (!is_wp_error( $rss ) ) : 
+												$maxitems = $rss->get_item_quantity($rssfeedinlinecount); 
 
-												if ($feeditems && count($feeditems) > 0)
+												$rss_items = $rss->get_items(0, $maxitems);
+												
+												if ($rss_items)
 												{
 													$output .= '<div id="ll_rss_results">';
-													$itemcounter = 0;
 
-													foreach($feeditems as $item)
+													foreach($rss_items as $item)
 													{
 														$output .= '<div class="chunk" style="padding:0 5px 5px;">';
-														$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item['link'] . '">' . $item['title'] . '</a> - ' . $item['pubDate'] . '</div>';
-														if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item['description'] . '</div>';
+														$output .= '<div class="rsstitle"><a target="feedwindow" href="' . $item->get_permalink() . '">' . $item->get_title() . '</a> - ' . $item->get_date('j F Y | g:i a') . '</div>';
+														if ($rssfeedinlinecontent) $output .= '<div class="rsscontent">' . $item->get_description() . '</div>';
 														$output .= '</div>';
-														$output .= '<br />';
-														
-														$itemcounter++;
-														if ($itemcounter >= $rssfeedinlinecount)
-															break;
-													}
+														$output .= '<br />';													}
 
 													$output .= '</div>';
 												}
-											}
+
+											endif;
+										}
 										break;
 									case 7: 	//------------------ Web Link Output --------------------   
 
