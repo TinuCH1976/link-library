@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1.4
+Version: 5.1.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3378,22 +3378,10 @@ class link_library_plugin {
 			
 		$tablename = $this->db_prefix() . "links";
 		
-		if (isset($_POST['ll_updated_manual']))
-		{
-			$link_updated = $_POST['ll_link_updated'];
-			$link_manual_updated = 'Y';
-		}
-		else
-		{
-			$link_updated = date("Y-m-d H:i");
-			$link_manual_updated = 'N';
-		}
-		
-
 		if ($withimage == true)
-			$wpdb->update( $tablename, array( 'link_updated' => $link_updated, 'link_image' => $file_path ), array( 'link_id' => $link_id ));
+			$wpdb->update( $tablename, array( 'link_updated' => $_POST['ll_link_updated'], 'link_image' => $file_path ), array( 'link_id' => $link_id ));
 		else
-			$wpdb->update( $tablename, array( 'link_updated' => $link_updated ), array( 'link_id' => $link_id ));
+			$wpdb->update( $tablename, array( 'link_updated' => $_POST['ll_link_updated'] ), array( 'link_id' => $link_id ));
 				
 		$extradatatable = $this->db_prefix() . "links_extrainfo";
 		
