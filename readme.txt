@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.6 =
+* Corrected problem with link moderation list screen
+
 = 5.1.5 =
 * Corrected a problem with new link submission in admin editor
 

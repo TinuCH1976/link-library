@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1.5
+Version: 5.1.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1810,7 +1810,7 @@ class link_library_plugin {
 				</tr>
 			<?php global $wpdb;
 
-				$linkquery = "SELECT distinct * ";
+				$linkquery = "SELECT distinct *, l.link_id as true_link_id ";
 				$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
@@ -1821,7 +1821,7 @@ class link_library_plugin {
 				$linkquery .= " ORDER by link_name ASC";
 				
 				$linkitems = $wpdb->get_results($linkquery);
-
+				
 				if ($linkitems) {
 					foreach($linkitems as $linkitem) {
 
@@ -1834,7 +1834,7 @@ class link_library_plugin {
 					}
 			?>
 					<tr style='background: #FFF'>
-						<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->link_id; ?>" /></td>
+						<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->true_link_id; ?>" /></td>
 						<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . WP_ADMIN_URL . "/link.php?action=edit&link_id=" . $linkitem->link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
 						<td><?php echo $linkitem->name; ?></td>
 						<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
