@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.3 =
+* Added new sort mode to display links based on updated date
+* Added field to links editor to see updated date and be able to manually change it
+
 = 5.1.2 =
 * Changed RSS parsing library back to Simplepie, but using version supplied with Wordpress with extra layer
 

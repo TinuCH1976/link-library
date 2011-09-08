@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1.2
+Version: 5.1.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -180,34 +180,28 @@ class link_library_plugin {
 	function create_table_and_settings()
 	{
 		global $wpdb;
-		$charset_collate = '';
-		if ( version_compare(mysql_get_server_info(), '4.1.0', '>=') ) {
-			if (!empty($wpdb->charset)) {
-				$charset_collate .= " DEFAULT CHARACTER SET $wpdb->charset";
-			}
-			if (!empty($wpdb->collate)) {
-				$charset_collate .= " COLLATE $wpdb->collate";
-			}
-		}
 
 		$wpdb->links_extrainfo = $this->db_prefix().'links_extrainfo';
 
-		$result = $wpdb->query("
-				CREATE TABLE IF NOT EXISTS `$wpdb->links_extrainfo` (
-				`link_id` bigint(20) NOT NULL DEFAULT '0',
-				`link_second_url` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
-				`link_telephone` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
-				`link_email` varchar(128) CHARACTER SET utf8 DEFAULT NULL,
-				`link_visits` bigint(20) DEFAULT '0',
-				`link_reciprocal` varchar(255) DEFAULT NULL,
-				`link_submitter` varchar(255) DEFAULT NULL,
-				`link_submitter_name` VARCHAR( 128 ) NULL,
-				`link_submitter_email` VARCHAR( 128 ) NULL,
-				`link_textfield` TEXT NULL,
-				`link_no_follow` VARCHAR(1) NULL,
-				`link_featured` VARCHAR(1) NULL,
-				PRIMARY KEY (`link_id`)
-				) $charset_collate"); 
+		$creationquery = "CREATE TABLE " . $wpdb->links_extrainfo . " (
+				link_id bigint(20) NOT NULL DEFAULT '0',
+				link_second_url varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+				link_telephone varchar(128) CHARACTER SET utf8 DEFAULT NULL,
+				link_email varchar(128) CHARACTER SET utf8 DEFAULT NULL,
+				link_visits bigint(20) DEFAULT '0',
+				link_reciprocal varchar(255) DEFAULT NULL,
+				link_submitter varchar(255) DEFAULT NULL,
+				link_submitter_name VARCHAR( 128 ) NULL,
+				link_submitter_email VARCHAR( 128 ) NULL,
+				link_textfield TEXT NULL,
+				link_no_follow VARCHAR(1) NULL,
+				link_featured VARCHAR(1) NULL,
+				link_manual_updated VARCHAR(1) NULL,
+				UNIQUE KEY  link_id (link_id)
+				);";
+		
+		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		dbDelta($creationquery);
 
 		$genoptions = get_option('LinkLibraryGeneral');
 
@@ -2237,7 +2231,8 @@ class link_library_plugin {
 					<option value="name"<?php if ($options['linkorder'] == 'name') { echo ' selected="selected"';} ?>><?php _e('Order by Name', 'link-library'); ?></option>
 					<option value="id"<?php if ($options['linkorder'] == 'id') { echo ' selected="selected"';} ?>><?php _e('Order by ID', 'link-library'); ?></option>
 					<option value="order"<?php if ($options['linkorder'] == 'order') { echo ' selected="selected"';} ?>><?php _e('Order set by ', 'link-library'); ?>'My Link Order' <?php _e('Wordpress Plugin', 'link-library'); ?></option>
-					<option value="random"<?php if ($options['linkorder'] == 'random') { echo ' selected="selected"';} ?>><?php _e('Order randomly', 'link-library'); ?></option>                                                                
+					<option value="random"<?php if ($options['linkorder'] == 'random') { echo ' selected="selected"';} ?>><?php _e('Order randomly', 'link-library'); ?></option>
+					<option value="date"<?php if ($options['linkorder'] == 'date') { echo ' selected="selected"';} ?>><?php _e('Order by updated date', 'link-library'); ?></option>                     
 				</select>
 			</td>
 			<td style='width:100px'></td>
@@ -3185,6 +3180,9 @@ class link_library_plugin {
 
 		if ($link->link_id != '')
 		{
+			$link_updated_query = "select link_updated from " . $this->db_prefix() . "links where link_id = " . $link->link_id;
+			$link_updated = $wpdb->get_var($link_updated_query);
+			
 			$linkextradataquery = "select * from " . $this->db_prefix() . "links_extrainfo where link_id = " . $link->link_id;
 			$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
 			
@@ -3195,6 +3193,7 @@ class link_library_plugin {
 		}
 		else
 		{
+			$link_updated = date("Y-m-d H:i");
 			$extradata = array();
 			$originaldata = array();
 		}
@@ -3207,10 +3206,14 @@ class link_library_plugin {
 			<tr>
 				<td style='width: 200px'><?php _e('No Follow', 'link-library'); ?></td>
 				<td><input type="checkbox" id="link_no_follow" name="link_no_follow" <?php if ($extradata['link_no_follow']) echo ' checked="checked" '; ?>/></td>
-			</tr>		
+			</tr>
+			<tr>
+				<td style='width: 200px'><?php _e('Updated Date', 'link-library'); ?></td>
+				<td>Set Manually  <input type="checkbox" id="ll_updated_manual" name="ll_updated_manual" <?php if ($extradata['link_manual_updated'] == 'Y') echo ' checked="checked" '; ?>/> <input type="text" <?php if ($extradata['link_manual_updated'] == 'N' || $extradata['link_manual_updated'] == '') echo 'disabled="disabled"'; ?> id="ll_link_updated" name="ll_link_updated" size="80" value="<?php echo $link_updated; ?>"/></td>
+			</tr>
 			<tr>
 				<td style='width: 200px'><?php _e('Secondary Web Address', 'link-library'); ?></td>
-				<td><input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo $extradata['link_second_url']; ?>"/> <?php if ($extradata['link_second_url'] != "") echo " <a href=" . stripslashes($extradata['link_second_url']) . ">" . __('Visit', 'link-library') . "</a>"; ?></td></td>
+				<td><input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo $extradata['link_second_url']; ?>"/> <?php if ($extradata['link_second_url'] != "") echo " <a href=" . stripslashes($extradata['link_second_url']) . ">" . __('Visit', 'link-library') . "</a>"; ?></td>
 			</tr>
 			<tr>
 				<td><?php _e('Telephone', 'link-library'); ?></td>
@@ -3282,6 +3285,13 @@ class link_library_plugin {
 		<script type="text/javascript">
 			jQuery(document).ready(function()
 			{
+				jQuery("#ll_updated_manual").click(function() {
+					 if (jQuery('#ll_updated_manual').is(':checked')) {
+					   jQuery('#ll_link_updated').attr('disabled', false);
+					 } else {
+					   jQuery('#ll_link_updated').attr('disabled', true);
+					 } 
+				});
 			    // Using jQuery, set both the enctype and the encoding
 				// attributes to be multipart/form-data.
 				jQuery( "form#editlink" )
@@ -3367,11 +3377,23 @@ class link_library_plugin {
 			$withimage = false;
 			
 		$tablename = $this->db_prefix() . "links";
+		
+		if (isset($_POST['ll_updated_manual']))
+		{
+			$link_updated = $_POST['ll_link_updated'];
+			$link_manual_updated = 'Y';
+		}
+		else
+		{
+			$link_updated = date("Y-m-d H:i");
+			$link_manual_updated = 'N';
+		}
+		
 
 		if ($withimage == true)
-			$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i"), 'link_image' => $file_path ), array( 'link_id' => $link_id ));
+			$wpdb->update( $tablename, array( 'link_updated' => $link_updated, 'link_image' => $file_path ), array( 'link_id' => $link_id ));
 		else
-			$wpdb->update( $tablename, array( 'link_updated' => date("Y-m-d H:i") ), array( 'link_id' => $link_id ));
+			$wpdb->update( $tablename, array( 'link_updated' => $link_updated ), array( 'link_id' => $link_id ));
 				
 		$extradatatable = $this->db_prefix() . "links_extrainfo";
 		
@@ -3385,6 +3407,11 @@ class link_library_plugin {
 		$username = $current_user->user_login;
 		
 		$updatearray = array();
+		
+		if (isset($_POST['ll_updated_manual']))
+			$updatearray['link_manual_updated'] = 'Y';
+		else
+			$updatearray['link_manual_updated'] = 'N';
 		
 		if (isset($_POST['ll_secondwebaddr']))
 			$updatearray['link_second_url'] = $_POST['ll_secondwebaddr'];
@@ -3957,6 +3984,8 @@ class link_library_plugin {
 				$catquery .= ", link_id " . $linkdirection;
 			elseif ($linkorder == "order")
 				$catquery .= ", link_order ". $linkdirection;
+			elseif ($linkorder == "date")
+				$catquery .= ", link_updated ". $linkdirection;
 				
 			$catitems = $wpdb->get_results($catquery);
 
@@ -4054,6 +4083,8 @@ class link_library_plugin {
 			$linkquery .= ", l.link_id " . $linkdirection;
 		elseif ($linkorder == "order")
 			$linkquery .= ", l.link_order ". $linkdirection;
+		elseif ($linkorder == "date")
+			$linkquery .= ", l.link_updated ". $linkdirection;
 
 		if ($pagination && $mode != 'search')
 		{
@@ -4077,6 +4108,10 @@ class link_library_plugin {
 		}
 		
 		$linkitems = $wpdb->get_results($linkquery, ARRAY_A);
+		
+		print_r($linkquery);
+		
+		print_r($linkitems);
 
 		if ($debugmode)
 		{
