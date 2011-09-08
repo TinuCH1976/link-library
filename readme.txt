@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.4 =
+* Removed extra debugging code
+
 = 5.1.3 =
 * Added new sort mode to display links based on updated date
 * Added field to links editor to see updated date and be able to manually change it
