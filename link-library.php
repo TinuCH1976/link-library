@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Link Library
+Plugin Name: Link LibraryLinkLibraryCategories
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
 Version: 5.1.7
@@ -1452,7 +1452,7 @@ class link_library_plugin {
 					$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
 
 					$linkcatquery .= " AND t.term_id = " . $categoryid;
-
+					
 					$catnames = $wpdb->get_results($linkcatquery);
 
 					if (!$catnames)
@@ -1819,8 +1819,6 @@ class link_library_plugin {
 				$linkquery .= "WHERE tt.taxonomy = 'link_category'";				
 				$linkquery .= "AND l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 				$linkquery .= " ORDER by link_name ASC";
-				
-				print_r($linkquery);
 				
 				$linkitems = $wpdb->get_results($linkquery);
 				
@@ -3560,7 +3558,7 @@ class link_library_plugin {
 				   $flatlist = 'table', $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 				   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
 				   $debugmode = false, $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX',
-				   $cattargetaddress = '', $rewritepage = '', $showinvisible = false) {
+				   $cattargetaddress = '', $rewritepage = '', $showinvisible = false, $showuserlinks = false) {
 
 		global $wpdb;
 
@@ -3602,25 +3600,28 @@ class link_library_plugin {
 			
 			$linkcatquery = "SELECT count(l.link_name) as linkcount, t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 			$linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id)";
+			$linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 
-			$linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) LEFT JOIN " . $this->db_prefix() . "links l on (tr.object_id = l.link_id) ";
+			$linkcatquery .= " LEFT OUTER JOIN " . $this->db_prefix() . "links l on (tr.object_id = l.link_id";
+			
+			if ($showinvisible == false)
+				$linkcatquery .= " AND l.link_visible != 'N'";
+			
+			if (!$showuserlinks)
+				$linkcatquery .= " AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+				
+			$linkcatquery .= " ) ";
 
 			$linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
 
-			if ($hide_if_empty)
-			{
-				if (!$showuserlinks)
-					$linkcatquery .= " AND l.link_description not like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
-			}
-
-			if ($showinvisible == false)
-				$linkcatquery .= " AND l.link_visible != 'N'";
-				
 			if ($categorylist != "")
 				$linkcatquery .= " AND t.term_id in (" . $categorylist. ")";
 
 			if ($excludecategorylist != "")
 				$linkcatquery .= " AND t.term_id not in (" . $excludecategorylist . ")";
+			
+			if ($hide_if_empty == true)
+				$linkcatquery .= " AND l.link_name != '' ";
 
 			$linkcatquery .= " GROUP BY t.name ";
 
@@ -3632,7 +3633,7 @@ class link_library_plugin {
 				$linkcatquery .= " ORDER by t.term_order " . $direction;
 			elseif ($order == "catlist")
 				$linkcatquery .= " ORDER by FIELD(t.term_id," . $categorylist . ") ";
-
+			
 			$catnames = $wpdb->get_results($linkcatquery);
 			
 			if ($debugmode)
@@ -5065,7 +5066,7 @@ class link_library_plugin {
 								   $flatlist = 'table', $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 								   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false,
 								   $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX', $cattargetaddress = '',
-								   $rewritepage = '', $showinvisible = false) {
+								   $rewritepage = '', $showinvisible = false, $showuserlinks = true) {
 		
 		if (strpos($order, 'AdminSettings') != false)
 		{
@@ -5078,12 +5079,12 @@ class link_library_plugin {
 			return $this->PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 									 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
 									 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
-									 $options['showcatlinkcount'], $options['showonecatmode'], $options['cattargetaddress'], $options['rewritepage'], $options['showinvisible']);   
+									 $options['showcatlinkcount'], $options['showonecatmode'], $options['cattargetaddress'], $options['rewritepage'], $options['showinvisible'], $options['showuserlinks']);   
 		}
 		else
 			return $this->PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
 			$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage, $showcatlinkcount, $showonecatmode, $cattargetaddress,
-			$rewritepage, $showinvisible);   
+			$rewritepage, $showinvisible, $showuserlinks);   
 		
 	}
 
@@ -5304,7 +5305,7 @@ class link_library_plugin {
 									 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
 									 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
 									 $options['showcatlinkcount'], $options['showonecatmode'], $options['cattargetaddress'], $options['rewritepage'],
-									 $options['showinvisible']);
+									 $options['showinvisible'], $options['showuserlinks']);
 	}
 	
 	/********************************************** Function to Process [link-library-search] shortcode *********************************************/

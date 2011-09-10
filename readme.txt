@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.8 =
+* Removed debug code in link moderation screen
+* Fixed problem with empty categories not showing up even if Hide when empty is not checked
+
 = 5.1.7 =
 * Fixed problem with category drop-down in user-submission form that prevented it from appearing in some situations
 * Added data type validation code to avoid security exploits
