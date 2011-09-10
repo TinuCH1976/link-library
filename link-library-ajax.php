@@ -2,9 +2,9 @@
 	require_once('../../../wp-load.php');
 	require_once('link-library.php');
 	
-	$catID = $_GET['id'];
-	$settingsID = $_GET['settings'];
-	$pageID = $_GET['linkresultpage'];
+	$catID = intval($_GET['id']);
+	$settingsID = intval($_GET['settings']);
+	$pageID = intval($_GET['linkresultpage']);
 	
 	$settingsname = 'AdminSettings' . $settingsID;
 	

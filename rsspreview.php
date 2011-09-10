@@ -2,8 +2,8 @@
 
 	require_once('../../../wp-load.php');
 	
-	$linkid = $_GET['linkid'];
-	$itemcount = $_GET['previewcount'];
+	$linkid = intval($_GET['linkid']);
+	$itemcount = intval($_GET['previewcount']);
 	
 	$link = get_bookmark( $linkid );
 	

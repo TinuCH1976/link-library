@@ -4,7 +4,7 @@
 	
 	global $wpdb;
 	
-	$settingsetid = $_GET['settingset'];
+	$settingsetid = intval($_GET['settingset']);
 	
 	$settingsname = 'LinkLibraryPP' . $settingsetid;
 	$options = get_option($settingsname);

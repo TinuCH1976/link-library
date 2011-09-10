@@ -7,7 +7,7 @@
 	$mode = $_GET['mode'];
 	$cid = $_GET['cid'];
 	$filepath = $_GET['filepath'];
-	$linkid = $_GET['linkid'];
+	$linkid = intval($_GET['linkid']);
 	
 	echo $my_link_library_plugin->ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath);
 ?>

@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1.6
+Version: 5.1.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1820,6 +1820,8 @@ class link_library_plugin {
 				$linkquery .= "AND l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 				$linkquery .= " ORDER by link_name ASC";
 				
+				print_r($linkquery);
+				
 				$linkitems = $wpdb->get_results($linkquery);
 				
 				if ($linkitems) {
@@ -3473,7 +3475,7 @@ class link_library_plugin {
 		$genoptions = get_option('LinkLibraryGeneral');
 		
 		$categoryname = $wp_query->query_vars['cat_name'];
-		$catid = $_GET['cat_id'];
+		$catid = intval($_GET['cat_id']);
 		
 		$linkcatquery = "SELECT t.name ";
 		$linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id) ";
@@ -3565,7 +3567,7 @@ class link_library_plugin {
 		$output = '';
 		
 		if (isset($_GET['cat_id']))
-			$categoryid = $_GET['cat_id'];
+			$categoryid = intval($_GET['cat_id']);
 
 		if (!isset($_GET['searchll']))
 		{
@@ -3914,7 +3916,7 @@ class link_library_plugin {
 		}
 		elseif ($showonecatonly && $showonecatmode == 'HTMLGET' && isset($_GET['cat_id']) && $_GET['searchll'] == "")
 		{
-			$categorylist = $_GET['cat_id'];
+			$categorylist = intval($_GET['cat_id']);
 			$AJAXcatid = $categorylist;
 		}
 		elseif ($showonecatonly && $showonecatmode == 'HTMLGETPERM' && $_GET['searchll'] == "")
@@ -4879,14 +4881,12 @@ class link_library_plugin {
 
 			if ($selectedcategorylist != "")
 			{
-				if ($hide_if_empty) $linkcatquery .= " AND ";
-				$linkcatquery .= " t.term_id in (" . $selectedcategorylist. ")";
+				$linkcatquery .= " AND t.term_id in (" . $selectedcategorylist. ")";
 			}
 
 			if ($excludedcategorylist != "")
 			{
-				if ($hide_if_empty || $selectedcategorylist != "") $linkcatquery .= " AND ";
-				$linkcatquery .= " t.term_id not in (" . $excludedcategorylist . ")";
+				$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
 			}
 
 			$linkcatquery .= " ORDER by t.name " . $direction;
