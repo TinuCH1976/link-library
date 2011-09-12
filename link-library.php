@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2
+Version: 5.2.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -504,6 +504,7 @@ class link_library_plugin {
 		$options['linklargedesclabel'] = __('Large Description', 'link-library');
 		$options['showuserlargedescription'] = false;
 		$options['usetextareaforusersubmitnotes'] = false;
+		$options['showcatonsearchresults'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1382,7 +1383,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -2110,10 +2111,8 @@ class link_library_plugin {
 				<input type="checkbox" id="showcatlinkcount" name="showcatlinkcount" <?php if ($options['showcatlinkcount']) echo ' checked="checked" '; ?>/>
 			</td>
 			<td style='width:100px'></td>
-			<td style='width:200px'>
-			</td>
-			<td>
-			</td>
+			<td style='width:200px'><?php _e('Display categories with search results', 'link-library'); ?>	</td>
+			<td><input type="checkbox" id="showcatonsearchresults" name="showcatonsearchresults" <?php if ($options['showcatonsearchresults']) echo ' checked="checked" '; ?>/></td>
 		</tr>
 		<tr>
 			<td class="lltooltip" title="<?php _e('This setting does not apply when selecting My Link Order for the order', 'link-library'); ?>">
@@ -3563,7 +3562,7 @@ class link_library_plugin {
 				   $flatlist = 'table', $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false, 
 				   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right',
 				   $debugmode = false, $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX',
-				   $cattargetaddress = '', $rewritepage = '', $showinvisible = false, $showuserlinks = false) {
+				   $cattargetaddress = '', $rewritepage = '', $showinvisible = false, $showuserlinks = false, $showcatonsearchresults = false) {
 
 		global $wpdb;
 
@@ -3572,7 +3571,7 @@ class link_library_plugin {
 		if (isset($_GET['cat_id']))
 			$categoryid = intval($_GET['cat_id']);
 
-		if (!isset($_GET['searchll']))
+		if (!isset($_GET['searchll']) || $showcatonsearchresults == true)
 		{
 			$countcat = 0;
 
@@ -5071,7 +5070,7 @@ class link_library_plugin {
 								   $flatlist = 'table', $categorylist = '', $excludecategorylist = '', $showcategorydescheaders = false,
 								   $showonecatonly = false, $settings = '', $loadingicon = '/icons/Ajax-loader.gif', $catlistdescpos = 'right', $debugmode = false,
 								   $pagination = false, $linksperpage = 5, $showcatlinkcount = false, $showonecatmode = 'AJAX', $cattargetaddress = '',
-								   $rewritepage = '', $showinvisible = false, $showuserlinks = true) {
+								   $rewritepage = '', $showinvisible = false, $showuserlinks = true, $showcatonsearchresults = false) {
 		
 		if (strpos($order, 'AdminSettings') != false)
 		{
@@ -5084,12 +5083,12 @@ class link_library_plugin {
 			return $this->PrivateLinkLibraryCategories($options['order'], $options['hide_if_empty'], $options['table_width'], $options['num_columns'], $options['catanchor'], $options['flatlist'],
 									 $options['categorylist'], $options['excludecategorylist'], $options['showcategorydescheaders'], $options['showonecatonly'], '',
 									 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
-									 $options['showcatlinkcount'], $options['showonecatmode'], $options['cattargetaddress'], $options['rewritepage'], $options['showinvisible'], $options['showuserlinks']);   
+									 $options['showcatlinkcount'], $options['showonecatmode'], $options['cattargetaddress'], $options['rewritepage'], $options['showinvisible'], $options['showuserlinks'], $options['showcatonsearchresults']);   
 		}
 		else
 			return $this->PrivateLinkLibraryCategories($order, $hide_if_empty, $table_width, $num_columns, $catanchor, $flatlist, $categorylist, $excludecategorylist, $showcategorydescheaders,
 			$showonecatonly, $settings, $loadingicon, $catlistdescpos, $debugmode, $pagination, $linksperpage, $showcatlinkcount, $showonecatmode, $cattargetaddress,
-			$rewritepage, $showinvisible, $showuserlinks);   
+			$rewritepage, $showinvisible, $showuserlinks, $showcatonsearchresults);   
 		
 	}
 
@@ -5310,7 +5309,7 @@ class link_library_plugin {
 									 $selectedcategorylist, $excludedcategorylist, $options['showcategorydescheaders'], $options['showonecatonly'], $settings,
 									 $options['loadingicon'], $options['catlistdescpos'], $genoptions['debugmode'], $options['pagination'], $options['linksperpage'],
 									 $options['showcatlinkcount'], $options['showonecatmode'], $options['cattargetaddress'], $options['rewritepage'],
-									 $options['showinvisible'], $options['showuserlinks']);
+									 $options['showinvisible'], $options['showuserlinks'], $options['showcatonsearchresults']);
 	}
 	
 	/********************************************** Function to Process [link-library-search] shortcode *********************************************/

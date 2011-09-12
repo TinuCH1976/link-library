@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.2.1 =
+* Added an option to display link category list on search results page
+
 = 5.2 =
 * Added span tag to link category description to allow for styling
 
