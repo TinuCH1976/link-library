@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.1.9
+Version: 5.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3794,7 +3794,7 @@ class link_library_plugin {
 						$catname->category_description = str_replace("[", "<", $catname->category_description);
 						$catname->category_description = str_replace("]", ">", $catname->category_description);
 						$catname->category_description = str_replace("&quot;", "\"", $catname->category_description);
-						$catitem .= $catname->category_description;
+						$catitem .= "<span class='linkcatdesc'>" . $catname->category_description . "</span>";
 					}
 
 					if ($catlistdescpos == 'left')
