@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.1.9 =
+* Fixed updated date mechanism
+
 = 5.1.8 =
 * Removed debug code in link moderation screen
 * Fixed problem with empty categories not showing up even if Hide when empty is not checked
