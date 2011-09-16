@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.1
+Version: 5.2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4032,24 +4032,27 @@ class link_library_plugin {
 
 				foreach($searchterms as $searchterm)
 				{
-					if ($termnb == 1)
+					if (ctype_alpha($searchterm) == true)
 					{
-						$linkquery .= " AND (link_name like '%" . $searchterm . "%' ";
-						$termnb++;
-					}
-					else
-					{
-						$linkquery .= " OR link_name like '%" . $searchterm . "%' ";
-					}
+						if ($termnb == 1)
+						{
+							$linkquery .= " AND (link_name like '%" . $searchterm . "%' ";
+							$termnb++;
+						}
+						else
+						{
+							$linkquery .= " OR link_name like '%" . $searchterm . "%' ";
+						}
 
-					if ($hidecategorynames == false)
-						$linkquery .= " OR name like '%" . $searchterm . "%' ";
-					if ($shownotes)
-						$linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
-					if ($showdescription)
-						$linkquery .= " OR link_description like '%" . $searchterm . "%' ";
-					if ($showlargedescription)
-						$linkquery .= " OR link_textfield like '%" . $searchterm . "%' ";
+						if ($hidecategorynames == false)
+							$linkquery .= " OR name like '%" . $searchterm . "%' ";
+						if ($shownotes)
+							$linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
+						if ($showdescription)
+							$linkquery .= " OR link_description like '%" . $searchterm . "%' ";
+						if ($showlargedescription)
+							$linkquery .= " OR link_textfield like '%" . $searchterm . "%' ";
+					}
 				}
 
 				$linkquery .= ")";
