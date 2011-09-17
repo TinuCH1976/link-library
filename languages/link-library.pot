@@ -209,6 +209,11 @@ msgid "Check All"
 msgstr ""
 
 #. Text in echo
+#: link-library.php:3158
+msgid "Check Reciprocal Links"
+msgstr ""
+
+#. Text in echo
 #: link-library.php:2487
 msgid "Check to display link date"
 msgstr ""

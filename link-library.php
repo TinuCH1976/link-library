@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.5
+Version: 5.2.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3155,7 +3155,7 @@ class link_library_plugin {
 			<tr>
 				<td style='width: 250px'><?php _e('Search string', 'link-library'); ?></td>
 				<td><input type="text" id="recipcheckaddress" name="recipcheckaddress" size="60" value="<?php echo $genoptions['recipcheckaddress']; ?>"/></td>
-				<td><input type='submit' id="recipcheck" name="recipcheck" value="Check Reciprocal Links" /></td>
+				<td><input type='submit' id="recipcheck" name="recipcheck" value="<?php _e('Check Reciprocal Links', 'link-library'); ?>" /></td>
 			</tr>
 			<tr>
 				<td><?php _e('Delete links that return a 403 error', 'link-library'); ?></td>

@@ -216,6 +216,11 @@ msgid "Check All"
 msgstr "Cocher tous les choix"
 
 #. Text in echo
+#: link-library.php:3158
+msgid "Check Reciprocal Links"
+msgstr "Vérifier les liens réciproques"
+
+#. Text in echo
 #: link-library.php:2487
 msgid "Check to display link date"
 msgstr "Cocher pour afficher la date de mise à jour du lien"
