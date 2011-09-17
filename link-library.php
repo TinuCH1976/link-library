@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.2
+Version: 5.2.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -12,6 +12,7 @@ Copyright 2011 Yannick Lefebvre
 
 Translations:
 Danish Translation Courtesy of GeorgWP (http://wordpress.blogos.dk)
+Italian Translation Courtesy of Gianni Diurno
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNUs General Public License
@@ -735,18 +736,18 @@ class link_library_plugin {
 
 		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
 		
-		$pagehooktop = add_menu_page(__('Link Library General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . '/icons/folder-beige-internet-icon.png');
+		$pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . '/icons/folder-beige-internet-icon.png');
 		
-		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library Settings', 'link-library') , __('Library Settings', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
+		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Settings', 'link-library') , __('Library Settings', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
 		if ($linkmoderatecount == 0)
-			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));
+			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Moderate', 'link-library') , __('Moderate', 'link-library'), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));
 		else
-			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Moderate', 'link-library') , sprintf( __('Moderate', 'link-library') . ' %s', "<span class='update-plugins count-" . $linkmoderatecount . "'><span class='plugin-count'>" . number_format_i18n($linkmoderatecount) . "</span></span>"), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));	
+			$pagehookmoderate = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Moderate', 'link-library') , sprintf( __('Moderate', 'link-library') . ' %s', "<span class='update-plugins count-" . $linkmoderatecount . "'><span class='plugin-count'>" . number_format_i18n($linkmoderatecount) . "</span></span>"), 'manage_options', 'link-library-moderate', array($this,'on_show_page'));	
 		
-		$pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
+		$pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
 		
-		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, __('Link Library - Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page')); 
+		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' , __('Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page')); 
 		
 		//register  callback gets call prior your own page gets rendered
 		add_action('load-'.$pagehooktop, array($this, 'on_load_page'));
@@ -903,7 +904,7 @@ class link_library_plugin {
 			if ($_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('General Settings Saved', 'link-library') . ".</strong></p></div>";
 			$formvalue = 'save_link_library_general';
-			$pagetitle = "Link Library General Settings";
+			$pagetitle = 'Link Library ' . __('General Settings', 'link-library');
 		}
 		elseif ($_GET['page'] == 'link-library-settingssets')
 		{
@@ -965,7 +966,7 @@ class link_library_plugin {
 				$options = get_option($settingsname);
 			}
 			
-			$pagetitle = "Link Library #" . $settings . " - " . $options['settingssetname'];
+			$pagetitle = 'Link Library - ' . __('Library', 'link-library') . ' #' . $settings . " - " . $options['settingssetname'];
 
 			if (isset($_GET['messages']))
 			{
@@ -1019,7 +1020,7 @@ class link_library_plugin {
 		elseif ($_GET['page'] == 'link-library-moderate')
 		{
 			$formvalue = 'save_link_library_moderate';
-			$pagetitle = "Link Library Link Moderation";
+			$pagetitle = 'Link Library - ' . __('Link Moderation', 'link-library');
 
 			if ($_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Link(s) Approved', 'link-library') . "</strong></p></div>";
@@ -1033,7 +1034,7 @@ class link_library_plugin {
 		elseif ($_GET['page'] == 'link-library-stylesheet')
 		{
 			$formvalue = 'save_link_library_stylesheet';
-			$pagetitle = "Link Library Stylesheet Editor";
+			$pagetitle = 'Link Library ' . __('Stylesheet Editor', 'link-library');
 
 			if ($_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet updated', 'link-library') . ".</strong></p></div>";
@@ -1043,7 +1044,7 @@ class link_library_plugin {
 		elseif ($_GET['page'] == 'link-library-reciprocal')
 		{
 			$formvalue = 'save_link_library_reciprocal';
-			$pagetitle = "Link Library Reciprocal Link Checker";
+			$pagetitle = 'Link Library ' . __('Reciprocal Link Checker', 'link-library');
 			
 			if ($_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Settings updated', 'link-library') . ".</strong></p></div>";
@@ -1729,9 +1730,9 @@ class link_library_plugin {
 	function general_meta_bookmarklet_box($data) {
 			$bookmarkletcode = 'javascript:void(linkmanpopup=window.open(\''.get_bloginfo('wpurl').'/wp-admin/link-add.php?action=popup&linkurl=\'+escape(location.href)+\'&name=\'+(document.title),\'LinkManager\',\'scrollbars=yes,width=900px,height=600px,left=15,top=15,status=yes,resizable=yes\'));linkmanpopup.focus();window.focus();linkmanpopup.focus();';
 			?>
-			<p>Add new links to your site with this bookmarklet.</p>
-			<p>To use this feature, drag-and-drop the button below to your favorite / bookmark toolbar.</p>
-			<a href="<?php echo $bookmarkletcode; ?>" class='button' title="Add to Links">Add to Links</a>
+			<p><?php _e('Add new links to your site with this bookmarklet.', 'link-library'); ?></p>
+			<p><?php _e('To use this feature, drag-and-drop the button below to your favorite / bookmark toolbar.', 'link-library'); ?></p>
+			<a href="<?php echo $bookmarkletcode; ?>" class='button' title="Add to Links"><?php _e('Add to Links', 'link-library'); ?></a>
 		
 	<?php }
 		
@@ -3152,12 +3153,12 @@ class link_library_plugin {
 	?>
 		<table>
 			<tr>
-				<td style='width: 250px'>Search string</td>
+				<td style='width: 250px'><?php _e('Search string', 'link-library'); ?></td>
 				<td><input type="text" id="recipcheckaddress" name="recipcheckaddress" size="60" value="<?php echo $genoptions['recipcheckaddress']; ?>"/></td>
 				<td><input type='submit' id="recipcheck" name="recipcheck" value="Check Reciprocal Links" /></td>
 			</tr>
 			<tr>
-				<td>Delete links that return a 403 error</td>
+				<td><?php _e('Delete links that return a 403 error', 'link-library'); ?></td>
 				<td><input type="checkbox" id="recipcheckdelete403" name="recipcheckdelete403" <?php if ($genoptions['recipcheckdelete403']) echo ' checked="checked" '; ?>/></td>
 			</tr>
 		</table>
@@ -5399,14 +5400,14 @@ class link_library_plugin {
 		if ( $update ) {
 			if ( false === $wpdb->update( $wpdb->links, compact('link_url', 'link_name', 'link_image', 'link_target', 'link_description', 'link_visible', 'link_rating', 'link_rel', 'link_notes', 'link_rss'), compact('link_id') ) ) {
 				if ( $wp_error )
-					return new WP_Error( 'db_update_error', __( 'Could not update link in the database' ), $wpdb->last_error );
+					return new WP_Error( 'db_update_error', __( 'Could not update link in the database', 'link-library' ), $wpdb->last_error );
 				else
 					return 0;
 			}
 		} else {
 			if ( false === $wpdb->insert( $wpdb->links, compact('link_url', 'link_name', 'link_image', 'link_target', 'link_description', 'link_visible', 'link_owner', 'link_rating', 'link_rel', 'link_notes', 'link_rss') ) ) {
 				if ( $wp_error )
-					return new WP_Error( 'db_insert_error', __( 'Could not insert link into the database' ), $wpdb->last_error );
+					return new WP_Error( 'db_insert_error', __( 'Could not insert link into the database', 'link-library' ), $wpdb->last_error );
 				else
 					return 0;
 			}
