@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -854,6 +854,11 @@ msgstr ""
 msgid "Is boiling water hot or cold?"
 msgstr ""
 
+#. Text in function
+#: link-library.php:1
+msgid "It will appear in the list once moderated. Thank you."
+msgstr ""
+
 #. Text in echo
 #: link-library.php:2555
 #: link-library.php:2583
@@ -1342,9 +1347,13 @@ msgid "New link added"
 msgstr ""
 
 #. Text in function
-#: link-library.php:1
 #: link-library.php:3104
 msgid "New link submitted"
+msgstr ""
+
+#. Text in function
+#: link-library.php:1
+msgid "New link submitted."
 msgstr ""
 
 #. Text in function
@@ -2282,7 +2291,6 @@ msgid "is invalid. Please check the ID in the Link Category editor."
 msgstr ""
 
 #. Text in function
-#: link-library.php:1
 #: link-library.php:3109
 msgid "it will appear in the list once moderated. Thank you."
 msgstr ""

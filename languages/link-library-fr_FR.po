@@ -861,6 +861,11 @@ msgstr "Nombre de colonnes invalide pour le lien de la ligne"
 msgid "Is boiling water hot or cold?"
 msgstr "Est-ce que l'eau bouillante est froide ou chaude?"
 
+#. Text in function
+#: link-library.php:1
+msgid "It will appear in the list once moderated. Thank you."
+msgstr "Il apparaîtra dans la liste une fois modéré. Merci."
+
 #. Text in echo
 #: link-library.php:2555
 #: link-library.php:2583
@@ -1350,10 +1355,14 @@ msgid "New link added"
 msgstr "Nouveau lien soumis"
 
 #. Text in function
-#: link-library.php:1
 #: link-library.php:3104
 msgid "New link submitted"
 msgstr "Nouveau lien soumis"
+
+#. Text in function
+#: link-library.php:1
+msgid "New link submitted."
+msgstr "Nouveau lien soumis."
 
 #. Text in function
 #: link-library.php:3356
@@ -2302,7 +2311,6 @@ msgid "is invalid. Please check the ID in the Link Category editor."
 msgstr "est invalide. Veuillez vérifier l'identifiant dans l'éditeur de catégories de liens."
 
 #. Text in function
-#: link-library.php:1
 #: link-library.php:3109
 msgid "it will appear in the list once moderated. Thank you."
 msgstr "il apparaîtra dans la liste une fois modéré. Merci."

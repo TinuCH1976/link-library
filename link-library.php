@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.4
+Version: 5.2.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -433,8 +433,8 @@ class link_library_plugin {
 		$options['linkdesclabel'] = __('Link Description', 'link-library');
 		$options['linknoteslabel'] = __('Link Notes', 'link-library');
 		$options['addlinkbtnlabel'] = __('Add Link', 'link-library');
-		$options['newlinkmsg'] = __('New link submitted', 'link-library');
-		$options['moderatemsg'] = __('it will appear in the list once moderated. Thank you.', 'link-library');
+		$options['newlinkmsg'] = __('New link submitted.', 'link-library');
+		$options['moderatemsg'] = __('It will appear in the list once moderated. Thank you.', 'link-library');
 		$options['rsspreviewwidth'] = 900;
 		$options['rsspreviewheight'] = 700;
 		$options['imagepos'] = 'beforename';
@@ -5565,9 +5565,7 @@ class link_library_plugin {
 						
 						$message = "<div class='llmessage'>" . $options['newlinkmsg'];
 						if ($options['showuserlinks'] == false)
-							$message .= ", " . $options['moderatemsg'];
-						else
-							$message .= ".";
+							$message .= " " . $options['moderatemsg'];
 							
 						$message .= "</div>";	
 						

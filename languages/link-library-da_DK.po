@@ -1,4 +1,4 @@
-msgid ""
+﻿msgid ""
 msgstr ""
 "Project-Id-Version: Link Library 4.5.7\n"
 "Report-Msgid-Bugs-To: \n"

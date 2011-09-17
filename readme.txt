@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.2.5 =
+* Split a sentence in two full pieces to facilitate translation.
+
 = 5.2.4 =
 * Fixed glitch with reciprocal check menu item disappearing
 
