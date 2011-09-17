@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.2.4 =
+* Fixed glitch with reciprocal check menu item disappearing
+
 = 5.2.3 =
 * Added italian translation (Thanks to Gianni Diurno!)
 * Fixed some text strings which could not be translated

@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.3
+Version: 5.2.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -747,7 +747,7 @@ class link_library_plugin {
 		
 		$pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
 		
-		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' , __('Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page')); 
+		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page')); 
 		
 		//register  callback gets call prior your own page gets rendered
 		add_action('load-'.$pagehooktop, array($this, 'on_load_page'));
