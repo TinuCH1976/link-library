@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.2.8 =
+* Updated translation file to add text for new option introduced in 5.2.7
+
 = 5.2.7 =
 * Added option to replace image with link name if no image is assigned to a link
 
