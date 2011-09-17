@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.2.7 =
+* Added option to replace image with link name if no image is assigned to a link
+
 = 5.2.6 =
 * Added missing translation for UI element
 

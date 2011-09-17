@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.6
+Version: 5.2.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -506,6 +506,7 @@ class link_library_plugin {
 		$options['showuserlargedescription'] = false;
 		$options['usetextareaforusersubmitnotes'] = false;
 		$options['showcatonsearchresults'] = false;
+		$options['shownameifnoimage'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1384,7 +1385,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -2734,6 +2735,14 @@ class link_library_plugin {
 				<input type="checkbox" id="showadmineditlinks" name="showadmineditlinks" <?php if ($options['showadmineditlinks']) echo ' checked="checked" '; ?>/>
 			</td>
 		</tr>
+		<tr>
+			<td>
+				<?php _e('Show link name when no image is assigned', 'link-library'); ?>
+			</td>
+			<td style='width:75px;padding:0px 20px 0px 20px'>
+				<input type="checkbox" id="shownameifnoimage" name="shownameifnoimage" <?php if ($options['shownameifnoimage']) echo ' checked="checked" '; ?>/>
+			</td>
+		</tr>
 		</table>
 
 	<?php }
@@ -3908,7 +3917,7 @@ class link_library_plugin {
 									$beforeweblink = '', $afterweblink = '', $weblinklabel = '', $beforetelephone = '', $aftertelephone = '', $telephonelabel = '',
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
-									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false) {
+									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false) {
 
 		global $wpdb;
 		
@@ -4155,7 +4164,7 @@ class link_library_plugin {
 			$currentcategoryid = -1;
 
 			foreach ( $linkitems as $linkitem ) {
-
+				
 				if ($currentcategoryid != $linkitem['term_id'])
 				{
 					if ($currentcategoryid != -1 && $showonecatonly && $_GET['searchll'] == "")
@@ -4404,7 +4413,7 @@ class link_library_plugin {
 					}
 					
 					global $llpluginpath;
-
+					
 					if ($dragndroporder == '') $dragndroporder = '1,2,3,4,5,6,7,8,9,10';
 						$dragndroparray = explode(',', $dragndroporder);
 						if ($dragndroparray)
@@ -4412,8 +4421,8 @@ class link_library_plugin {
 							foreach ($dragndroparray as $arrayelements) {
 								switch ($arrayelements) {
 									case 1: 	//------------------ Image Output --------------------
-
-										if ( ($linkitem['link_image'] != null || $usethumbshotsforimages) && ($show_images)) {
+										
+										if ( (($linkitem['link_image'] != '' || $usethumbshotsforimages)) && ($show_images)) {
 											$imageoutput = stripslashes($beforeimage) . '<a href="';
 
 											if ($sourceimage == 'primary' || $sourceimage == '')
@@ -4446,14 +4455,15 @@ class link_library_plugin {
 											$imageoutput .= '</a>' . stripslashes($afterimage);
 										}
 
-										if ( ($linkitem['link_image'] != null || $usethumbshotsforimages) && ($show_images) ) {
+										if ( ($linkitem['link_image'] != '' || $usethumbshotsforimages) && ($show_images) ) {
 											$output .= $imageoutput;
+											break;
 										}
-										break;
+										elseif ($show_images == false || $shownameifnoimage == false)
+											break;
 
 									case 2: 	//------------------ Name Output --------------------   
-
-										if ($showname == true)
+										if (($showname == true) || ($show_images == true && $linkitem['link_image'] == '' && $arrayelements == 1))
 										{
 											$output .= stripslashes($beforelink);
 											
@@ -5223,7 +5233,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -5256,7 +5266,7 @@ class link_library_plugin {
 									  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
-									  $options['afterlargedescription'], $options['featuredfirst']);	
+									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage']);	
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -5274,7 +5284,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst);
+									$afterlargedescription, $featuredfirst, $shownameifnoimage);
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -5813,7 +5823,7 @@ class link_library_plugin {
 									  $options['telephonelabel'], $options['beforeemail'], $options['afteremail'], $options['emaillabel'], $options['beforelinkhits'],
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
-									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst']); 
+									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage']); 
 			
 		return $linklibraryoutput;
 	}
