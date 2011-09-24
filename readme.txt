@@ -59,6 +59,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.2.9 =
+* Updated Italian translation
+* Updated French translation
+* Added missing translation
+
 = 5.2.8 =
 * Updated translation file to add text for new option introduced in 5.2.7
 

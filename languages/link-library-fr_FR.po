@@ -771,6 +771,11 @@ msgstr "Générer un fichier CSV contenant la configuration de la librairie cour
 msgid "Go"
 msgstr "Allez-y"
 
+#. Text in function
+#: link-library.php:3365
+msgid "Go!"
+msgstr "Allez-y!"
+
 #. Text in echo
 #: link-library.php:2183
 msgid "Heading Tag"

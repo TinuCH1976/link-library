@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.8
+Version: 5.2.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3838,7 +3838,7 @@ class link_library_plugin {
 				elseif ($flatlist == 'dropdown' && $catnames)
 				{
 					$output .= "</select>\n";
-					$output .= "<button type='button' onclick='showcategory()'>Go!</button>";
+					$output .= "<button type='button' onclick='showcategory()'>" . __('Go!', 'link-library') . "</button>";
 					$output .= "</form>";
 				}
 					
