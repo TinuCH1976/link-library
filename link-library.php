@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.2.9
+Version: 5.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -5444,7 +5444,7 @@ class link_library_plugin {
 		), $atts));
 		
 		global $wpdb;
-		
+                
 		if ($settings == '')
 			$options = get_option('LinkLibraryPP1');
 		else
@@ -5457,6 +5457,7 @@ class link_library_plugin {
 		
 		$valid = false;
 		$validmessage = "";
+                $outputmessage = "";
 		
 		if ($_POST['link_name'])
 		{		
@@ -5518,8 +5519,7 @@ class link_library_plugin {
 			
 			if ($valid == false && ($options['showcaptcha'] == true || $options['showcustomcaptcha'] == true))
 			{
-				$message = "<div class='llmessage'>" . $validmessage . "</div>";
-				echo $message;
+				$outputmessage = "<div class='llmessage'>" . $validmessage . "</div>";
 
 				$captureddata['link_category'] = $_POST['link_category'];
 				$captureddata['link_user_category'] = $_POST['link_user_category'];
@@ -5547,7 +5547,7 @@ class link_library_plugin {
 				
 				$existinglink = $wpdb->get_var($existinglinkquery);
 				
-				if ($existinglink == null)
+				if ($existinglink == null && (($options['addlinknoaddress'] == false && $_POST['link_url'] != "" ) || $options['addlinknoaddress'] == true))
 				{
 					if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 					{
@@ -5573,38 +5573,30 @@ class link_library_plugin {
 							$newlinkcat = array($existingcat);
 						}
 						
-						$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+						$outputmessage = "<div class='llmessage'>" . $options['newlinkmsg'];
 						if ($options['showuserlinks'] == false)
-							$message .= " " . $options['moderatemsg'];
+							$outputmessage .= " " . $options['moderatemsg'];
 							
-						$message .= "</div>";	
+						$outputmessage .= "</div>";	
 						
-						if ($code == 'link-library-addlink')
-							echo $message;
-
 						$validcat = true;
 					}
 					elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
 					{
-						$message = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
-						echo $message;		
-						
+						$outputmessage = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
 						$validcat = false;
 					}
 					else
 					{
 						$newlinkcat = array($_POST['link_category']);
 						
-						$message = "<div class='llmessage'>" . $options['newlinkmsg'];
+						$outputmessage = "<div class='llmessage'>" . $options['newlinkmsg'];
 						if ($options['showuserlinks'] == false)
-							$message .= ", " . $options['moderatemsg'];
+							$outputmessage .= ", " . $options['moderatemsg'];
 						else
-							$message .= ".";
+							$outputmessage .= ".";
 							
-						$message .= "</div>";
-						
-						if ($code == 'link-library-addlink')
-							echo $message;
+						$outputmessage .= "</div>";
 						
 						$validcat = true;
 					}
@@ -5648,29 +5640,29 @@ class link_library_plugin {
 							$headers = "MIME-Version: 1.0\r\n";
 							$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
 							
-							$message = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
-							$message .= __('Link Name', 'link-library') . ": " . esc_html(stripslashes($_POST['link_name'])) . "<br />";
-							$message .= __('Link Address', 'link-library') . ": " . esc_html(stripslashes($_POST['link_url'])) . "<br />";
-							$message .= __('Link RSS', 'link-library') . ": " . esc_html(stripslashes($_POST['link_rss'])) . "<br />";
-							$message .= __('Link Description', 'link-library') . ": " . esc_html(stripslashes($_POST['link_description'])) . "<br />";
-							$message .= __('Link Large Description', 'link-library') . ": " . esc_html(stripslashes($_POST['link_textfield'])) . "<br />";
-							$message .= __('Link Notes', 'link-library') . ": " . esc_html(stripslashes($_POST['link_notes'])) . "<br />";
-							$message .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
-							$message .= __('Reciprocal Link', 'link-library') . ": " . $_POST['ll_reciprocal'] . "<br /><br />";
-							$message .= __('Link Secondary Address', 'link-library') . ": " . $_POST['ll_secondwebaddr'] . "<br /><br />";
-							$message .= __('Link Telephone', 'link-library') . ": " . $_POST['ll_telephone'] . "<br /><br />";
-							$message .= __('Link E-mail', 'link-library') . ": " . $_POST['ll_email'] . "<br /><br />";
-							$message .= __('Link Submitter', 'link-library') . ": " . $username . "<br /><br />";
-							$message .= __('Link Submitter Name', 'link-library') . ": " . $_POST['ll_submittername'] . "<br /><br />";
-							$message .= __('Link Submitter E-mail', 'link-library') . ": " . $_POST['ll_submitteremail'] . "<br /><br />";
-							$message .= __('Link Comment', 'link-library') . ": " . $_POST['ll_submittercomment'] . "<br /><br />";
+							$emailmessage = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
+							$emailmessage .= __('Link Name', 'link-library') . ": " . esc_html(stripslashes($_POST['link_name'])) . "<br />";
+							$emailmessage .= __('Link Address', 'link-library') . ": " . esc_html(stripslashes($_POST['link_url'])) . "<br />";
+							$emailmessage .= __('Link RSS', 'link-library') . ": " . esc_html(stripslashes($_POST['link_rss'])) . "<br />";
+							$emailmessage .= __('Link Description', 'link-library') . ": " . esc_html(stripslashes($_POST['link_description'])) . "<br />";
+							$emailmessage .= __('Link Large Description', 'link-library') . ": " . esc_html(stripslashes($_POST['link_textfield'])) . "<br />";
+							$emailmessage .= __('Link Notes', 'link-library') . ": " . esc_html(stripslashes($_POST['link_notes'])) . "<br />";
+							$emailmessage .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
+							$emailmessage .= __('Reciprocal Link', 'link-library') . ": " . $_POST['ll_reciprocal'] . "<br /><br />";
+							$emailmessage .= __('Link Secondary Address', 'link-library') . ": " . $_POST['ll_secondwebaddr'] . "<br /><br />";
+							$emailmessage .= __('Link Telephone', 'link-library') . ": " . $_POST['ll_telephone'] . "<br /><br />";
+							$emailmessage .= __('Link E-mail', 'link-library') . ": " . $_POST['ll_email'] . "<br /><br />";
+							$emailmessage .= __('Link Submitter', 'link-library') . ": " . $username . "<br /><br />";
+							$emailmessage .= __('Link Submitter Name', 'link-library') . ": " . $_POST['ll_submittername'] . "<br /><br />";
+							$emailmessage .= __('Link Submitter E-mail', 'link-library') . ": " . $_POST['ll_submitteremail'] . "<br /><br />";
+							$emailmessage .= __('Link Comment', 'link-library') . ": " . $_POST['ll_submittercomment'] . "<br /><br />";
 
 							if ($options['showuserlinks'] == false)
-								$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
+								$emailmessage .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
 							elseif ($options['showuserlinks'] == true)
-								$message .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
+								$emailmessage .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
 								
-							$message .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
+							$emailmessage .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
 							
 							if ($emailtitle == '')
 							{
@@ -5682,17 +5674,21 @@ class link_library_plugin {
 								$emailtitle = htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - " . __('New link added', 'link-library') . ": " . htmlspecialchars($_POST['link_name']);
 							}
 							
-							wp_mail($adminmail, $emailtitle, $message, $headers);
+							wp_mail($adminmail, $emailtitle, $emailmessage, $headers);
 						}
 					}	
 				}
+                                elseif ($existinglink == null && ($options['addlinknoaddress'] == false && $_POST['link_url'] == "" ))
+                                {
+                                    $outputmessage = "<div class='llmessage'>";
+                                    $outputmessage .= __('Error: Link does not have an address.', 'link-library');
+                                    $outputmessage .= "</div>";
+                                }
 				else
 				{
-					$message = "<div class='llmessage'>";
-					$message = __('Error: Link already exists.', 'link-library');
-					$message .= "</div>";
-					
-					echo $message;
+					$outputmessage = "<div class='llmessage'>";
+					$outputmessage .= __('Error: Link already exists.', 'link-library');
+					$outputmessage .= "</div>";
 				}
 			}
 		}
@@ -5710,7 +5706,7 @@ class link_library_plugin {
 			$excludedcategorylist = $options['excludecategorylist'];
 			
 		if ($code == 'link-library-addlink')
-			return $this->PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
+			return $outputmessage . $this->PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
 											 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
 											 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
 											 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],

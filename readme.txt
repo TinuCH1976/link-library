@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.3 =
+* Fixed way that messages were displayed when using user submission form
+* Added error message when submitting a link without an address
+
 = 5.2.9 =
 * Updated Italian translation
 * Updated French translation
