@@ -59,6 +59,12 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.3.1 =
+* Added option to specify address for search box results. This allow you to place search box on one page and results on another page.
+* Updated French translation
+* Updated Italian translation
+* Added Turkish translation
+
 = 5.3 =
 * Fixed way that messages were displayed when using user submission form
 * Added error message when submitting a link without an address

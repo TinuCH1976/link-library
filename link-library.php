@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.3
+Version: 5.3.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -507,6 +507,7 @@ class link_library_plugin {
 		$options['usetextareaforusersubmitnotes'] = false;
 		$options['showcatonsearchresults'] = false;
 		$options['shownameifnoimage'] = false;
+                $options['searchresultsaddress'] = '';
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1374,7 +1375,7 @@ class link_library_plugin {
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-							'rssfeedaddress', 'linklargedesclabel', 'flatlist') as $option_name) {
+							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -2874,7 +2875,11 @@ class link_library_plugin {
 			<tr>
 				<td style='width:200px'><?php _e('Search Label', 'link-library'); ?></td>
 				<?php if ($options['searchlabel'] == "") $options['searchlabel'] =  __('Search', 'link-library'); ?>
-				<td><input type="text" id="searchlabel" name="searchlabel" size="30" value="<?php echo $options['searchlabel']; ?>"/></td>
+				<td style='padding-right:20px'><input type="text" id="searchlabel" name="searchlabel" size="30" value="<?php echo $options['searchlabel']; ?>"/></td>
+                                <td class="lltooltip" title='<?php _e('Leave empty when links are to be displayed on same page as search box', 'link-library'); ?>'>Results Page Address</td>
+                                <td class="lltooltip" title='<?php _e('Leave empty when links are to be displayed on same page as search box', 'link-library'); ?>'>
+                                   <input type="text" id="searchresultsaddress" name="searchresultsaddress" size="80" value="<?php echo strval(esc_html(stripslashes($options['searchresultsaddress']))); ?>"/> 
+                                </td>
 			</tr>
 		</table>
 		</div>
@@ -4836,10 +4841,13 @@ class link_library_plugin {
 		return $output;
 	}
 
-	function PrivateLinkLibrarySearchForm($searchlabel = 'Search') {
+	function PrivateLinkLibrarySearchForm($searchlabel = 'Search', $searchresultsaddress = '') {
 
 		if ($searchlabel == "") $searchlabel = __('Search', 'link-library');
-		$output = "<form method='get' id='llsearch'>\n";
+		$output = "<form method='get' id='llsearch'";
+                if ($searchresultsaddress != '')
+                    $output .= " action='" . $searchresultsaddress . "'";
+                $output .= ">\n";
 		$output .= "<div>\n";
 		$output .= "<input type='text' onfocus=\"this.value=''\" value='" . $searchlabel . "...' name='searchll' id='searchll' />\n";
 		$output .= "<input type='hidden' value='" .  get_the_ID() . "' name='page_id' id='page_id' />\n";
@@ -5341,7 +5349,7 @@ class link_library_plugin {
 			$options = get_option($settingsname);
 		}
 		
-		return $this->PrivateLinkLibrarySearchForm($options['searchlabel']);
+		return $this->PrivateLinkLibrarySearchForm($options['searchlabel'], $options['searchresultsaddress']);
 	}
 	
 	/********************************************** Function to Process [link-library-add-link] shortcode *********************************************/
