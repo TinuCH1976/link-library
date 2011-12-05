@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.3.1
+Version: 5.3.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -50,7 +50,6 @@ if ( !defined('WP_ADMIN_URL') )
 
 require_once(ABSPATH . '/wp-admin/includes/bookmark.php');
 require_once(ABSPATH . '/wp-admin/includes/taxonomy.php');
-require_once(ABSPATH . '/wp-admin/includes/template.php');
 
 $rss_settings = "";
 $llpluginpath = "";
@@ -80,21 +79,10 @@ class link_library_plugin {
 		
 		add_action( 'wpmu_new_blog', array($this, 'new_network_site'), 10, 6);
 
-		//add filter for WordPress 2.8 changed backend box system !
-		add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
-		//register callback for admin menu  setup
-		add_action('admin_menu', array($this, 'on_admin_menu'));
-		//add_action('admin_init', array($this, 'action_admin_init' ));
+		add_action('admin_init', array($this, 'action_admin_init' ));
 		
 		// wp_ajax_... is only run for logged usrs
 		//add_action( 'wp_ajax_scn_check_url_action', array( &$this, 'ajax_action_check_url' ) );
-		
-		//register the callback been used if options of page been submitted and needs to be processed
-		add_action('admin_post_save_link_library_general', array($this, 'on_save_changes_general'));
-		add_action('admin_post_save_link_library_settingssets', array($this, 'on_save_changes_settingssets'));
-		add_action('admin_post_save_link_library_moderate', array($this, 'on_save_changes_moderate'));
-		add_action('admin_post_save_link_library_stylesheet', array($this, 'on_save_changes_stylesheet'));
-		add_action('admin_post_save_link_library_reciprocal', array($this, 'on_save_changes_reciprocal'));
 
 		// Add short codes
 		add_shortcode('link-library-cats', array($this, 'link_library_cats_func'));
@@ -105,14 +93,16 @@ class link_library_plugin {
 
 		// Function to print information in page header when plugin present
 		add_action('wp_head', array($this, 'll_rss_link'));
+                
+                //add filter for WordPress 2.8 changed backend box system !
+                add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
+                //register callback for admin menu  setup
+                add_action('admin_menu', array($this, 'on_admin_menu'));
 
 		// Function to determine if Link Library is used on a page before printing headers
 		add_filter('the_posts', array($this, 'conditionally_add_scripts_and_styles')); // the_posts gets triggered before wp_head
 
 		add_filter('wp_title', array($this, 'll_title_creator'));
-
-		// Add addition section to Link Edition page
-		add_meta_box ('linklibrary_meta_box', __('Link Library - Additional Link Parameters', 'link-library'), array($this, 'll_link_edit_extra'), 'link', 'normal', 'high');
 
 		// Capture and process user submissions for custom fields in Link Edition page
 		add_action('add_link', array($this, 'add_link_field'));
@@ -122,10 +112,6 @@ class link_library_plugin {
 		// Re-write rules filters to allow for custom permalinks
 		add_filter('rewrite_rules_array', array($this, 'll_insertMyRewriteRules'));
 		add_filter('query_vars', array($this, 'll_insertMyRewriteQueryVars'));
-
-		// Under development, trying to display extra columns in link list page
-		add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
-		add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
 
 		global $llpluginpath;
 		$llpluginpath = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__)).'/';
@@ -680,17 +666,19 @@ class link_library_plugin {
 	}
 	
 	function action_admin_init() {
-		
-		if ( current_user_can( 'edit_posts' ) 
-		  && current_user_can( 'edit_pages' ) 
-		  && get_user_option('rich_editing') == 'true' )  {
-		  	
-			add_filter( 'mce_buttons',          array( $this, 'filter_mce_buttons'          ) );
-			add_filter( 'mce_external_plugins', array( $this, 'filter_mce_external_plugins' ) );
-						
-			wp_register_style('scnStyles', $this->plugin_url() . 'css/styles.css');
-			wp_enqueue_style('scnStyles');
-		}
+            // Add addition section to Link Edition page
+            add_meta_box ('linklibrary_meta_box', __('Link Library - Additional Link Parameters', 'link-library'), array($this, 'll_link_edit_extra'), 'link', 'normal', 'high');
+            
+            //register the callback been used if options of page been submitted and needs to be processed
+            add_action('admin_post_save_link_library_general', array($this, 'on_save_changes_general'));
+            add_action('admin_post_save_link_library_settingssets', array($this, 'on_save_changes_settingssets'));
+            add_action('admin_post_save_link_library_moderate', array($this, 'on_save_changes_moderate'));
+            add_action('admin_post_save_link_library_stylesheet', array($this, 'on_save_changes_stylesheet'));
+            add_action('admin_post_save_link_library_reciprocal', array($this, 'on_save_changes_reciprocal'));
+            
+            // Under development, trying to display extra columns in link list page
+            add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
+            add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
 	}
 	
 	function filter_mce_buttons( $buttons ) {

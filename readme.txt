@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.3.2 =
+* Updated meta box creation code to be compatible with WordPress 3.3
+
 = 5.3.1 =
 * Added option to specify address for search box results. This allow you to place search box on one page and results on another page.
 * Updated French translation
