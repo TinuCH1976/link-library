@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.3.2
+Version: 5.3.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -494,6 +494,7 @@ class link_library_plugin {
 		$options['showcatonsearchresults'] = false;
 		$options['shownameifnoimage'] = false;
                 $options['searchresultsaddress'] = '';
+                $options['addlinkduplicateerror'] = true;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -789,6 +790,8 @@ class link_library_plugin {
 	function on_show_page() {
 		//we need the global screen column value to beable to have a sidebar in WordPress 2.8
 		global $screen_layout_columns, $llpluginpath;
+                
+                $settings = ( isset( $_GET['settings'] ) ? $_GET['settings'] : 1 );
 
 		// Retrieve general options
 		$genoptions = get_option('LinkLibraryGeneral');
@@ -803,13 +806,8 @@ class link_library_plugin {
 			$this->ll_install();
 			$genoptions = get_option('LinkLibraryGeneral');
 
-			if ($settings == FALSE)
-				$options = get_option('LinkLibraryPP1');
-			else
-			{
-				$settingsname = 'LinkLibraryPP' . $settings;
-				$options = get_option($settingsname);
-			}
+        		$settingsname = 'LinkLibraryPP' . $settings;
+			$options = get_option($settingsname);
 		}
 
 		if ( isset($_GET['genthumbs']) || isset($_GET['genfavicons']) || isset($_GET['genthumbsingle']) || isset($_GET['genfaviconsingle'])) {
@@ -1374,7 +1372,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage', 'addlinkduplicateerror')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -2910,6 +2908,13 @@ class link_library_plugin {
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="storelinksubmitter" name="storelinksubmitter" <?php if ($options['storelinksubmitter']) echo ' checked="checked" '; ?>/></td>
 				<td style='width: 20px'></td>				
 			</tr>
+                        <tr>
+				<td class='lltooltip' title='<?php _e('This option is useful when you have plugins in place that cause shortcodes to be evaluated multiple times, this trying to store new links in the database multiple times.', 'link-library'); ?>.'style='width:200px'><?php _e('Show error message on duplicate links submission', 'link-library'); ?></td>
+				<td style='width:75px;padding-right:20px'><input type="checkbox" id="addlinkduplicateerror" name="addlinkduplicateerror" <?php if ($options['addlinkduplicateerror'] == true || $options['addlinkduplicateerror'] === "") echo ' checked="checked" '; ?>/></td>
+<td style='width: 20px'></td>
+				<td style='width: 20px'></td>
+				<td style='width: 20px'></td>				
+			</tr>                        
 			<tr>
 				<td style='width:200px'><?php _e('Add new link label', 'link-library'); ?></td>
 				<?php if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = __('Add new link', 'link-library'); ?>
@@ -5539,11 +5544,11 @@ class link_library_plugin {
 				$existinglinkquery = "SELECT * from " . $this->db_prefix() . "links l where l.link_name = '" . $_POST['link_name'] . "' ";
 				
 				if ( ( $options['addlinknoaddress'] == false ) || ( $options['addlinknoaddress'] == true && $_POST['link_url'] != "" ) )
-					$existinglinkquery = "l.link_url = '" . $_POST['link_url'] . "'";
+					$existinglinkquery .= " and l.link_url = 'http://" . $_POST['link_url'] . "'";
 				
 				$existinglink = $wpdb->get_var($existinglinkquery);
-				
-				if ($existinglink == null && (($options['addlinknoaddress'] == false && $_POST['link_url'] != "" ) || $options['addlinknoaddress'] == true))
+                                
+				if ($existinglink == "" && (($options['addlinknoaddress'] == false && $_POST['link_url'] != "" ) || $options['addlinknoaddress'] == true))
 				{
 					if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
 					{
@@ -5674,7 +5679,7 @@ class link_library_plugin {
 						}
 					}	
 				}
-                                elseif ($existinglink == null && ($options['addlinknoaddress'] == false && $_POST['link_url'] == "" ))
+                                elseif ($existinglink == "" && ($options['addlinknoaddress'] == false && $_POST['link_url'] == "" ))
                                 {
                                     $outputmessage = "<div class='llmessage'>";
                                     $outputmessage .= __('Error: Link does not have an address.', 'link-library');
@@ -5682,9 +5687,19 @@ class link_library_plugin {
                                 }
 				else
 				{
+                                    if ($options['addlinkduplicateerror'] == true || $options['addlinkduplicateerror'] === "")
+                                    {
 					$outputmessage = "<div class='llmessage'>";
 					$outputmessage .= __('Error: Link already exists.', 'link-library');
 					$outputmessage .= "</div>";
+                                    }
+                                    elseif ($options['addlinkduplicateerror'] === false)
+                                    {
+                                        $outputmessage = "<div class='llmessage'>" . $options['newlinkmsg'];
+					if ($options['showuserlinks'] == false)
+                                            $outputmessage .= " " . $options['moderatemsg'];
+					$outputmessage .= "</div>";	
+                                    }
 				}
 			}
 		}
