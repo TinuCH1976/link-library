@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4 =
+* Redesigned user submission processing code to send post data to external php file and redirect back after data storage and validation
+
 = 5.3.3 = 
 * Fixed duplicate check on user-submitted links
 * Fixed problem with other plugins causing shortcode to be evaluated multiple times, resulting in multiple links submission

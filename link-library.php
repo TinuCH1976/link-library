@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.3.3
+Version: 5.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -494,7 +494,6 @@ class link_library_plugin {
 		$options['showcatonsearchresults'] = false;
 		$options['shownameifnoimage'] = false;
                 $options['searchresultsaddress'] = '';
-                $options['addlinkduplicateerror'] = true;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1372,7 +1371,7 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage', 'addlinkduplicateerror')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage')
 							as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = true;
@@ -2908,13 +2907,6 @@ class link_library_plugin {
 				<td style='width:75px;padding-right:20px'><input type="checkbox" id="storelinksubmitter" name="storelinksubmitter" <?php if ($options['storelinksubmitter']) echo ' checked="checked" '; ?>/></td>
 				<td style='width: 20px'></td>				
 			</tr>
-                        <tr>
-				<td class='lltooltip' title='<?php _e('This option is useful when you have plugins in place that cause shortcodes to be evaluated multiple times, this trying to store new links in the database multiple times.', 'link-library'); ?>.'style='width:200px'><?php _e('Show error message on duplicate links submission', 'link-library'); ?></td>
-				<td style='width:75px;padding-right:20px'><input type="checkbox" id="addlinkduplicateerror" name="addlinkduplicateerror" <?php if ($options['addlinkduplicateerror'] == true || $options['addlinkduplicateerror'] === "") echo ' checked="checked" '; ?>/></td>
-<td style='width: 20px'></td>
-				<td style='width: 20px'></td>
-				<td style='width: 20px'></td>				
-			</tr>                        
 			<tr>
 				<td style='width:200px'><?php _e('Add new link label', 'link-library'); ?></td>
 				<?php if ($options['addnewlinkmsg'] == "") $options['addnewlinkmsg'] = __('Add new link', 'link-library'); ?>
@@ -4861,18 +4853,54 @@ class link_library_plugin {
 											$showcaptcha = false, $captureddata = '', $linksubmitternamelabel = '', $showlinksubmittername = false,
 											$linksubmitteremaillabel = '', $showaddlinksubmitteremail = false, $linksubmittercommentlabel = '',
 											$showlinksubmittercomment = false, $linksubmissionthankyouurl = '', $addlinkcatlistoverride = '',
-											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false, $usetextareaforusersubmitnotes = false) {
+											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false, $usetextareaforusersubmitnotes = false, $settings = 1, $code = 'link-library-addlink') {
 											
 		global $wpdb, $llpluginpath;
+                $output = "";
+                
+                $settingsname = 'LinkLibraryPP' . $settings;
+                $options = get_option($settingsname);
+                
+                if ($code == 'link-library-addlink' || $code == 'link-library-addlinkcustommsg')
+                {
+                    if (isset($_GET['addlinkmessage']))
+                        {
+                            if ($_GET['addlinkmessage'] == 1)
+                                $output = "<div class='llmessage'>" . __('Confirm code not given', 'link-library') . ".</div>";
+                            elseif ($_GET['addlinkmessage'] == 2)
+                                $output = "<div class='llmessage'>" . __('Captcha code is wrong', 'link-library') . ".</div>";
+                            elseif ($_GET['addlinkmessage'] == 3)
+                                $output = "<div class='llmessage'>" . __('Captcha code is only valid for 5 minutes', 'link-library') . ".</div>";
+                            elseif ($_GET['addlinkmessage'] == 4)
+                                $output = "<div class='llmessage'>" . __('No captcha cookie given. Make sure cookies are enabled', 'link-library') . ".</div>";
+                            elseif ($_GET['addlinkmessage'] == 5)
+                                $output = "<div class='llmessage'>" . __('Captcha answer was not provided.', 'link-library') . "</div>";
+                            elseif ($_GET['addlinkmessage'] == 6)
+                                $output = "<div class='llmessage'>" . __('Captcha answer is incorrect', 'link-library') . ".</div>";
+                            elseif ($_GET['addlinkmessage'] == 7)
+                                $output = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";
+                            elseif ($_GET['addlinkmessage'] == 8)
+                            {
+                                $output .= "<div class='llmessage'>" . $options['newlinkmsg'];
+                                if ($options['showuserlinks'] == false)
+                                        $output .= " " . $options['moderatemsg'];
+                                $output .= "</div>";	
+                            }
+                            elseif ($_GET['addlinkmessage'] == 9)
+                                $output = "<div class='llmessage'>" . __('Error: Link does not have an address.', 'link-library') . "</div>";
+                            elseif ($_GET['addlinkmessage'] == 10)
+                                $output = "<div class='llmessage'>" . __('Error: Link already exists.', 'link-library') . "</div>";                            
+                        }
+                }
 		
-		if (($addlinkreqlogin && current_user_can("read")) || !$addlinkreqlogin)
+		if ($code == 'link-library-addlink' && (($addlinkreqlogin && current_user_can("read")) || !$addlinkreqlogin))
 		{
-			$output = "<form method='post' id='lladdlink' ";
-			
-			if ($linksubmissionthankyouurl)
-				$output .= "action='" . $linksubmissionthankyouurl. "'";
-			
-			$output .= ">\n";
+			$output .= "<form method='post' id='lladdlink' action='" . plugins_url('usersubmission.php', __FILE__). "'>\n";
+                        
+                        $output .= wp_nonce_field('LL_ADDLINK_FORM', '_wpnonce', true, false);
+                        $output .= "<input type='hidden' name='thankyouurl' value='" . $linksubmissionthankyouurl . "' />";
+                        $output .= "<input type='hidden' name='settingsid' value='" . $settings . "' />";
+                        
 			$output .= "<div class='lladdlink'>\n";
 			
 			if ($addnewlinkmsg == "") $addnewlinkmsg = __('Add new link', 'link-library');
@@ -4881,15 +4909,15 @@ class link_library_plugin {
 			$output .= "<table>\n";
 
 			if ($linknamelabel == "") $linknamelabel = __('Link name', 'link-library');
-			$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . esc_html(stripslashes($captureddata['link_name']), '1') . "' /></td></tr>\n";
+			$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . esc_html(stripslashes($_GET['addlinkname']), '1') . "' /></td></tr>\n";
 
 			if ($linkaddrlabel == "") $linkaddrlabel = __('Link address', 'link-library');
-			$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . esc_html(stripslashes($captureddata['link_url']), '1') . "' /></td></tr>\n";
+			$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . esc_html(stripslashes($_GET['addlinkurl']), '1') . "' /></td></tr>\n";
 
 			if ($showaddlinkrss)
 			{
 				if ($linkrsslabel == "") $linkrsslabel = __('Link RSS', 'link-library');
-				$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . esc_html(stripslashes($captureddata['link_rss']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . esc_html(stripslashes($_GET['addlinkrss']), '1') . "' /></td></tr>\n";
 			}
 
 			$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
@@ -4932,7 +4960,7 @@ class link_library_plugin {
 					foreach ($linkcats as $linkcat)
 					{
 						$output .= "<OPTION VALUE='" . $linkcat->term_id . "' ";
-						if ($captureddata['link_category'] == $linkcat->term_id)
+						if ($_GET['addlinkcat'] == $linkcat->term_id)
 							$output .= "selected";
 						$output .= ">" . $linkcat->name;
 					}
@@ -4948,19 +4976,19 @@ class link_library_plugin {
 				}
 				
 				if ($addlinkcustomcat)
-					$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . esc_html(stripslashes($captureddata['link_user_category']), '1') . "' /></td></tr>\n";			
+					$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . esc_html(stripslashes($_GET['addlinkusercat']), '1') . "' /></td></tr>\n";			
 			}		
 			
 			if ($showaddlinkdesc)
 			{
 				if ($linkdesclabel == "") $linkdesclabel = __('Link description', 'link-library');
-				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . esc_html(stripslashes($captureddata['link_description']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . esc_html(stripslashes($_GET['addlinkdesc']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showuserlargedescription)
 			{
 				if ($linklargedesclabel == "") $linklargedesclabel = __('Large description', 'link-library');
-				$output .= "<tr><th style='vertical-align: top'>" . $linklargedesclabel . "</th><td><textarea name='link_textfield' id='link_textfield' cols='66'>" . esc_html(stripslashes($captureddata['link_textfield']), '1') . "</textarea></td></tr>\n";
+				$output .= "<tr><th style='vertical-align: top'>" . $linklargedesclabel . "</th><td><textarea name='link_textfield' id='link_textfield' cols='66'>" . esc_html(stripslashes($_GET['addlinktextfield']), '1') . "</textarea></td></tr>\n";
 			}
 			
 			if ($showaddlinknotes)
@@ -4973,7 +5001,7 @@ class link_library_plugin {
 				elseif ($usetextareaforusersubmitnotes == true)
 					$output .= "<textarea name='link_notes' id='link_notes'>";
 				
-				$output .= esc_html(stripslashes($captureddata['link_notes']), '1');
+				$output .= esc_html(stripslashes($_GET['addlinknotes']), '1');
 				
 				if ($usetextareaforusersubmitnotes == false || $usetextareaforusersubmitnotes == '')
 					$output .= "' />";
@@ -4986,43 +5014,43 @@ class link_library_plugin {
 			if ($showaddlinkreciprocal)
 			{
 				if ($linkreciprocallabel == "") $linkreciprocallabel = __('Reciprocal Link', 'link-library');
-				$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . esc_html(stripslashes($captureddata['link_reciprocal']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . esc_html(stripslashes($_GET['addlinkreciprocal']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinksecondurl)
 			{
 				if ($linksecondurllabel == "") $linksecondurllabel = __('Secondary Address', 'link-library');
-				$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . esc_html(stripslashes($captureddata['ll_secondwebaddr']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . esc_html(stripslashes($_GET['addlinksecondurl']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinktelephone)
 			{
 				if ($linktelephonelabel == "") $linktelephonelabel = __('Telephone', 'link-library');
-				$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . esc_html(stripslashes($captureddata['ll_telephone']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . esc_html(stripslashes($_GET['addlinktelephone']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinkemail)
 			{
 				if ($linkemaillabel == "") $linkemaillabel = __('E-mail', 'link-library');
-				$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . esc_html(stripslashes($captureddata['ll_email']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . esc_html(stripslashes($_GET['addlinkemail']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showlinksubmittername)
 			{
 				if ($linksubmitternamelabel == "") $linksubmitternamelabel = __('Submitter Name', 'link-library');
-				$output .= "<tr><th>" . $linksubmitternamelabel . "</th><td><input type='text' name='ll_submittername' id='ll_submittername' value='" . esc_html(stripslashes($captureddata['ll_submittername']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linksubmitternamelabel . "</th><td><input type='text' name='ll_submittername' id='ll_submittername' value='" . esc_html(stripslashes($_GET['addlinksubmitname']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinksubmitteremail)
 			{
 				if ($linksubmitteremaillabel == "") $linksubmitteremaillabel = __('Submitter E-mail', 'link-library');
-				$output .= "<tr><th>" . $linksubmitteremaillabel . "</th><td><input type='text' name='ll_submitteremail' id='ll_submitteremail' value='" . esc_html(stripslashes($captureddata['ll_submitteremail']), '1') . "' /></td></tr>\n";
+				$output .= "<tr><th>" . $linksubmitteremaillabel . "</th><td><input type='text' name='ll_submitteremail' id='ll_submitteremail' value='" . esc_html(stripslashes($_GET['addlinksubmitemail']), '1') . "' /></td></tr>\n";
 			}
 			
 			if ($showlinksubmittercomment)
 			{
 				if ($linksubmittercommentlabel == "") $linksubmittercommentlabel = __('Submitter Comment', 'link-library');
-				$output .= "<tr><th style='vertical-align: top;'>" . $linksubmittercommentlabel . "</th><td><textarea name='ll_submittercomment' id='ll_submittercomment' cols='38''>" . esc_html(stripslashes($captureddata['ll_submittercomment']), '1') . "</textarea></td></tr>\n";
+				$output .= "<tr><th style='vertical-align: top;'>" . $linksubmittercommentlabel . "</th><td><textarea name='ll_submittercomment' id='ll_submittercomment' cols='38''>" . esc_html(stripslashes($_GET['addlinksubmitcomment']), '1') . "</textarea></td></tr>\n";
 			}
 			
 			if ($showcaptcha)
@@ -5034,7 +5062,7 @@ class link_library_plugin {
 			if ($showcustomcaptcha)
 			{
 				if ($customcaptchaquestion == "") $customcaptchaquestion = __('Is boiling water hot or cold?', 'link-library');
-				$output .= "<tr><th style='vertical-align: top;'>" . $customcaptchaquestion . "</th><td><input type='text' name='ll_customcaptchaanswer' id='ll_customcaptchaanswer' value='" . $captureddata['ll_customcaptchaanswer'] . "' /></td></tr>\n";			
+				$output .= "<tr><th style='vertical-align: top;'>" . $customcaptchaquestion . "</th><td><input type='text' name='ll_customcaptchaanswer' id='ll_customcaptchaanswer' value='" . $_GET['ll_customcaptchaanswer'] . "' /></td></tr>\n";			
 			}
 						
 			$output .= "</table>\n";
@@ -5443,267 +5471,15 @@ class link_library_plugin {
 			'categorylistoverride' => '',
 			'excludecategoryoverride' => ''
 		), $atts));
-		
-		global $wpdb;
                 
 		if ($settings == '')
-			$options = get_option('LinkLibraryPP1');
-		else
-		{
-			$settingsname = 'LinkLibraryPP' . $settings;
-			$options = get_option($settingsname);
-		}
-		
-		$genoptions = get_option('LinkLibraryGeneral');
-		
-		$valid = false;
-		$validmessage = "";
-                $outputmessage = "";
-		
-		if ($_POST['link_name'])
-		{		
-			if ($options['showcaptcha'])
-			{
-				if (empty($_REQUEST['confirm_code']))
-				{
-					$valid = false;
-					$validmessage = __('Confirm code not given', 'link-library') . ".";
-				}
-				else
-				{
-					if ( isset($_COOKIE['Captcha']) )
-					{
-						list($Hash, $Time) = explode('.', $_COOKIE['Captcha']);
-						if ( md5("ORHFUKELFPTUEODKFJ".$_REQUEST['confirm_code'].$_SERVER['REMOTE_ADDR'].$Time) != $Hash )
-						{
-							$valid = false;
-							$validmessage = __('Captcha code is wrong', 'link-library') . ".";
-						}
-						elseif( (time() - 5*60) > $Time)
-						{
-							$valid = false;
-							$validmessage = __('Captcha code is only valid for 5 minutes', 'link-library') . ".";
-						}
-						else
-						{
-							$valid = true;					
-						}
-					}
-					else
-					{
-						$valid = false;
-						$validmessage = __('No captcha cookie given. Make sure cookies are enabled', 'link-library') . ".";
-					}
-				}
-			}
-			
-			if ($options['showcustomcaptcha'])
-			{
-				if ($_POST['ll_customcaptchaanswer'] == "")
-				{
-					$valid = false;
-					$validmessage = __("Captcha answer was not provided.", 'link-library');
-				}
-				else
-				{
-					if (strtolower($_POST['ll_customcaptchaanswer']) == strtolower($options['customcaptchaanswer']))
-						$valid = true;
-					else
-					{
-						$valid = false;
-						$validmessage = __("Captcha answer is incorrect", 'link-library');
-					}
-				}
-			}
-			
-			$captureddata = array();
-			
-			if ($valid == false && ($options['showcaptcha'] == true || $options['showcustomcaptcha'] == true))
-			{
-				$outputmessage = "<div class='llmessage'>" . $validmessage . "</div>";
+                    $settings = 1;
 
-				$captureddata['link_category'] = $_POST['link_category'];
-				$captureddata['link_user_category'] = $_POST['link_user_category'];
-				$captureddata['link_description'] = $_POST['link_description'];
-				$captureddata['link_textfield'] = $_POST['link_textfield'];
-				$captureddata['link_name'] = $_POST['link_name'];
-				$captureddata['link_url'] = $_POST['link_url'];
-				$captureddata['link_rss'] = $_POST['link_rss'];
-				$captureddata['link_notes'] = $_POST['link_notes'];
-				$captureddata['ll_secondwebaddr'] = $_POST['ll_secondwebaddr'];
-				$captureddata['ll_telephone'] = $_POST['ll_telephone'];
-				$captureddata['ll_email'] = $_POST['ll_email'];
-				$captureddata['ll_reciprocal'] = $_POST['ll_reciprocal'];
-				$captureddata['ll_submittername'] = $_POST['ll_submittername'];
-				$captureddata['ll_submitteremail'] = $_POST['ll_submitteremail'];
-				$captureddata['ll_submittercomment'] = $_POST['ll_submittercomment'];
-				$captureddata['ll_customcaptchaanswer'] = $_POST['ll_customcaptchaanswer'];
-			}
-			elseif ($valid || ($options['showcaptcha'] == false && $options['showcustomcaptcha'] == false))
-			{			
-				$existinglinkquery = "SELECT * from " . $this->db_prefix() . "links l where l.link_name = '" . $_POST['link_name'] . "' ";
+                $settingsname = 'LinkLibraryPP' . $settings;
+                $options = get_option($settingsname);
+                
+                $genoptions = get_option('LinkLibraryGeneral');
 				
-				if ( ( $options['addlinknoaddress'] == false ) || ( $options['addlinknoaddress'] == true && $_POST['link_url'] != "" ) )
-					$existinglinkquery .= " and l.link_url = 'http://" . $_POST['link_url'] . "'";
-				
-				$existinglink = $wpdb->get_var($existinglinkquery);
-                                
-				if ($existinglink == "" && (($options['addlinknoaddress'] == false && $_POST['link_url'] != "" ) || $options['addlinknoaddress'] == true))
-				{
-					if ($_POST['link_category'] == 'new' && $_POST['link_user_category'] != '')
-					{
-						$existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
-						$existingcatquery .= "WHERE t.name = '" . $_POST['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-						$existingcat = $wpdb->get_var($existingcatquery);
-						
-						if (!$existingcat)
-						{
-							$newlinkcatdata = array("cat_name" => $_POST['link_user_category'], "category_description" => "", "category_nicename" => $wpdb->escape($_POST['link_user_category']));
-							$newlinkcat = wp_insert_category($newlinkcatdata);
-							
-							$newcatarray = array("term_id" => $newlinkcat);
-
-							$newcattype = array("taxonomy" => 'link_category');
-							
-							$wpdb->update( $this->db_prefix().'term_taxonomy', $newcattype, $newcatarray);
-							
-							$newlinkcat = array($newlinkcat);
-						}
-						else
-						{
-							$newlinkcat = array($existingcat);
-						}
-						
-						$outputmessage = "<div class='llmessage'>" . $options['newlinkmsg'];
-						if ($options['showuserlinks'] == false)
-							$outputmessage .= " " . $options['moderatemsg'];
-							
-						$outputmessage .= "</div>";	
-						
-						$validcat = true;
-					}
-					elseif ($_POST['link_category'] == 'new' && $_POST['link_user_category'] == '')
-					{
-						$outputmessage = "<div class='llmessage'>" . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . "</div>";	
-						$validcat = false;
-					}
-					else
-					{
-						$newlinkcat = array($_POST['link_category']);
-						
-						$outputmessage = "<div class='llmessage'>" . $options['newlinkmsg'];
-						if ($options['showuserlinks'] == false)
-							$outputmessage .= ", " . $options['moderatemsg'];
-						else
-							$outputmessage .= ".";
-							
-						$outputmessage .= "</div>";
-						
-						$validcat = true;
-					}
-					
-					if ($validcat == true)
-					{
-						if ($options['showuserlinks'] == false)
-						{
-							$newlinkdesc = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $_POST['link_description'];
-							$newlinkvisibility = 'N';
-						}
-						else
-						{
-							$newlinkdesc = $_POST['link_description'];
-							$newlinkvisibility = 'Y';
-						}
-						
-						if ($options['storelinksubmitter'] == true)
-						{
-							global $current_user;
-							
-							get_currentuserinfo();
-							
-							if ($current_user)
-								$username = $current_user->user_login;
-						}
-							
-						$newlink = array("link_name" => esc_html(stripslashes($_POST['link_name'])), "link_url" => esc_html(stripslashes($_POST['link_url'])), "link_rss" => esc_html(stripslashes($_POST['link_rss'])),
-							"link_description" => esc_html(stripslashes($newlinkdesc)), "link_notes" => esc_html(stripslashes($_POST['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
-						$newlinkid = $this->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
-						
-						$extradatatable = $this->db_prefix() . "links_extrainfo";
-						$wpdb->update( $extradatatable, array( 'link_second_url' => $_POST['ll_secondwebaddr'], 'link_telephone' => $_POST['ll_telephone'], 'link_email' => $_POST['ll_email'], 'link_reciprocal' => $_POST['ll_reciprocal'], 'link_submitter' => $username, 'link_submitter_name' => $_POST['ll_submittername'], 'link_submitter_email' => $_POST['ll_submitteremail'], 'link_textfield' => $_POST['link_textfield']), array( 'link_id' => $newlinkid ));		
-						
-						if ($options['emailnewlink'])
-						{
-							if ($genoptions['moderatoremail'] != '')
-								$adminmail = $genoptions['moderatoremail'];
-							else
-								$adminmail = $get_option['admin_email'];
-							$headers = "MIME-Version: 1.0\r\n";
-							$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
-							
-							$emailmessage = __('A user submitted a new link to your Wordpress Link database.', 'link-library') . "<br /><br />";
-							$emailmessage .= __('Link Name', 'link-library') . ": " . esc_html(stripslashes($_POST['link_name'])) . "<br />";
-							$emailmessage .= __('Link Address', 'link-library') . ": " . esc_html(stripslashes($_POST['link_url'])) . "<br />";
-							$emailmessage .= __('Link RSS', 'link-library') . ": " . esc_html(stripslashes($_POST['link_rss'])) . "<br />";
-							$emailmessage .= __('Link Description', 'link-library') . ": " . esc_html(stripslashes($_POST['link_description'])) . "<br />";
-							$emailmessage .= __('Link Large Description', 'link-library') . ": " . esc_html(stripslashes($_POST['link_textfield'])) . "<br />";
-							$emailmessage .= __('Link Notes', 'link-library') . ": " . esc_html(stripslashes($_POST['link_notes'])) . "<br />";
-							$emailmessage .= __('Link Category', 'link-library') . ": " . $_POST['link_category'] . "<br /><br />";
-							$emailmessage .= __('Reciprocal Link', 'link-library') . ": " . $_POST['ll_reciprocal'] . "<br /><br />";
-							$emailmessage .= __('Link Secondary Address', 'link-library') . ": " . $_POST['ll_secondwebaddr'] . "<br /><br />";
-							$emailmessage .= __('Link Telephone', 'link-library') . ": " . $_POST['ll_telephone'] . "<br /><br />";
-							$emailmessage .= __('Link E-mail', 'link-library') . ": " . $_POST['ll_email'] . "<br /><br />";
-							$emailmessage .= __('Link Submitter', 'link-library') . ": " . $username . "<br /><br />";
-							$emailmessage .= __('Link Submitter Name', 'link-library') . ": " . $_POST['ll_submittername'] . "<br /><br />";
-							$emailmessage .= __('Link Submitter E-mail', 'link-library') . ": " . $_POST['ll_submitteremail'] . "<br /><br />";
-							$emailmessage .= __('Link Comment', 'link-library') . ": " . $_POST['ll_submittercomment'] . "<br /><br />";
-
-							if ($options['showuserlinks'] == false)
-								$emailmessage .= "<a href='" . WP_ADMIN_URL . "/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove'>Moderate new links</a>";
-							elseif ($options['showuserlinks'] == true)
-								$emailmessage .= "<a href='" . WP_ADMIN_URL . "/link-manager.php'>View links</a>";
-								
-							$emailmessage .= "<br /><br />" . __('Message generated by', 'link-library') . " <a href='http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/'>Link Library</a> for Wordpress";
-							
-							if ($emailtitle == '')
-							{
-								$emailtitle = stripslashes($genoptions['moderationnotificationtitle']);
-								$emailtitle = str_replace('%linkname%', esc_html(stripslashes($_POST['link_name'])), $emailtitle);
-							}
-							else
-							{
-								$emailtitle = htmlspecialchars_decode(get_option('blogname'), ENT_QUOTES) . " - " . __('New link added', 'link-library') . ": " . htmlspecialchars($_POST['link_name']);
-							}
-							
-							wp_mail($adminmail, $emailtitle, $emailmessage, $headers);
-						}
-					}	
-				}
-                                elseif ($existinglink == "" && ($options['addlinknoaddress'] == false && $_POST['link_url'] == "" ))
-                                {
-                                    $outputmessage = "<div class='llmessage'>";
-                                    $outputmessage .= __('Error: Link does not have an address.', 'link-library');
-                                    $outputmessage .= "</div>";
-                                }
-				else
-				{
-                                    if ($options['addlinkduplicateerror'] == true || $options['addlinkduplicateerror'] === "")
-                                    {
-					$outputmessage = "<div class='llmessage'>";
-					$outputmessage .= __('Error: Link already exists.', 'link-library');
-					$outputmessage .= "</div>";
-                                    }
-                                    elseif ($options['addlinkduplicateerror'] === false)
-                                    {
-                                        $outputmessage = "<div class='llmessage'>" . $options['newlinkmsg'];
-					if ($options['showuserlinks'] == false)
-                                            $outputmessage .= " " . $options['moderatemsg'];
-					$outputmessage .= "</div>";	
-                                    }
-				}
-			}
-		}
-		
 		if ($categorylistoverride != '')
 			$selectedcategorylist = $categorylistoverride;
 		elseif ($options['addlinkcatlistoverride'] != '')
@@ -5716,18 +5492,17 @@ class link_library_plugin {
 		else
 			$excludedcategorylist = $options['excludecategorylist'];
 			
-		if ($code == 'link-library-addlink')
-			return $outputmessage . $this->PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
-											 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
-											 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
-											 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],
-											 $options['addlinkcustomcat'], $options['linkcustomcatlabel'], $options['linkcustomcatlistentry'], 
-											 $options['showaddlinkreciprocal'], $options['linkreciprocallabel'], $options['showaddlinksecondurl'], $options['linksecondurllabel'],
-											 $options['showaddlinktelephone'], $options['linktelephonelabel'], $options['showaddlinkemail'], $options['linkemaillabel'],
-											 $options['showcaptcha'], $captureddata, $options['linksubmitternamelabel'], $options['showlinksubmittername'],
-											 $options['linksubmitteremaillabel'], $options['showaddlinksubmitteremail'], $options['linksubmittercommentlabel'],
-											 $options['showlinksubmittercomment'], $genoptions['linksubmissionthankyouurl'], $options['addlinkcatlistoverride'],
-											 $options['showcustomcaptcha'], $options['customcaptchaquestion'], $options['linklargedesclabel'], $options['showuserlargedescription'], $options['usetextareaforusersubmitnotes']);	
+                return $outputmessage . $this->PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
+                                                                                 $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
+                                                                                 $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
+                                                                                 $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],
+                                                                                 $options['addlinkcustomcat'], $options['linkcustomcatlabel'], $options['linkcustomcatlistentry'], 
+                                                                                 $options['showaddlinkreciprocal'], $options['linkreciprocallabel'], $options['showaddlinksecondurl'], $options['linksecondurllabel'],
+                                                                                 $options['showaddlinktelephone'], $options['linktelephonelabel'], $options['showaddlinkemail'], $options['linkemaillabel'],
+                                                                                 $options['showcaptcha'], $captureddata, $options['linksubmitternamelabel'], $options['showlinksubmittername'],
+                                                                                 $options['linksubmitteremaillabel'], $options['showaddlinksubmitteremail'], $options['linksubmittercommentlabel'],
+                                                                                 $options['showlinksubmittercomment'], $genoptions['linksubmissionthankyouurl'], $options['addlinkcatlistoverride'],
+                                                                                 $options['showcustomcaptcha'], $options['customcaptchaquestion'], $options['linklargedesclabel'], $options['showuserlargedescription'], $options['usetextareaforusersubmitnotes'], $settings, $code);
 		
 		
 	}
