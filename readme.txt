@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.1 =
+* Fixed path to plugin icon file
+
 = 5.4 =
 * Redesigned user submission processing code to send post data to external php file and redirect back after data storage and validation
 

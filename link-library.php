@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4
+Version: 5.4.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -726,7 +726,7 @@ class link_library_plugin {
 
 		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
 		
-		$pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . '/icons/folder-beige-internet-icon.png');
+		$pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . 'icons/folder-beige-internet-icon.png');
 		
 		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Settings', 'link-library') , __('Library Settings', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
@@ -1050,7 +1050,7 @@ class link_library_plugin {
 		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets, $pagehookreciprocal;
 		?>
 		<div id="link-library-general" class="wrap">
-		<div class='icon32'><img src="<?php echo $llpluginpath . '/icons/folder-beige-internet-icon32.png'; ?>" /></div>
+		<div class='icon32'><img src="<?php echo $llpluginpath . 'icons/folder-beige-internet-icon32.png'; ?>" /></div>
 		<div ><h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span></h2></div>
 		<div><form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
