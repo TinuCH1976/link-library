@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.2 =
+* Fixed problem with library switching logic
+
 = 5.4.1 =
 * Fixed path to plugin icon file
 
