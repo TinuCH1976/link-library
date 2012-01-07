@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4.2
+Version: 5.4.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -833,15 +833,9 @@ class link_library_plugin {
 					mkdir($uploads['basedir'] . '/' . $filepath);
 					
 				if (isset($_GET['genthumbs']) || isset($_GET['genthumbsingle']))
-				{
-					$settings = $_GET['genthumbs'];
 					$genmode = 'thumb';
-				}
 				elseif (isset($_GET['genfavicons']) || isset($_GET['genfaviconsingle']))
-				{
-					$settings = $_GET['genfavicons'];
 					$genmode = 'favicon';
-				}
 
 				$settingsname = 'LinkLibraryPP' . $settings;
 				$options = get_option($settingsname);
@@ -888,7 +882,7 @@ class link_library_plugin {
 		// Check for current page to set some page=specific variables
 		if ($_GET['page'] == 'link-library')
 		{
-			if ($_GET['message'] == '1')
+			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('General Settings Saved', 'link-library') . ".</strong></p></div>";
 			$formvalue = 'save_link_library_general';
 			$pagetitle = 'Link Library ' . __('General Settings', 'link-library');
@@ -897,15 +891,11 @@ class link_library_plugin {
 		{
 			$formvalue = 'save_link_library_settingssets';
 
-			if ( isset($_GET['reset'])) {
-				$settings = $_GET['reset'];
+			if ( isset($_GET['reset']))
 				$this->ll_reset_options($settings, 'list');
-			}
 
-			if ( isset($_GET['resettable']) ) {
-				$settings = $_GET['resettable'];
+			if ( isset($_GET['resettable']) )
 				$this->ll_reset_options($settings, 'table');
-			}
 
 			if ( isset($_GET['copy']))
 			{
@@ -928,16 +918,8 @@ class link_library_plugin {
 				$settings = 1;
 			}
                         
-			if ($settings == '')
-			{
-				$options = get_option('LinkLibraryPP1');
-				$settings = 1;
-			}
-			else
-			{
-				$settingsname = 'LinkLibraryPP' . $settings;
-				$options = get_option($settingsname);
-			}
+                        $settingsname = 'LinkLibraryPP' . $settings;
+                        $options = get_option($settingsname);
 			
 			if ($options == "")
 			{
@@ -1001,9 +983,9 @@ class link_library_plugin {
 			$formvalue = 'save_link_library_moderate';
 			$pagetitle = 'Link Library - ' . __('Link Moderation', 'link-library');
 
-			if ($_GET['message'] == '1')
+			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Link(s) Approved', 'link-library') . "</strong></p></div>";
-			elseif ($_GET['message'] == '2')
+			elseif (isset( $_GET['message'] ) && $_GET['message'] == '2')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Link(s) Deleted', 'link-library') . "</strong></p></div>";
 
 			?>
@@ -1015,9 +997,9 @@ class link_library_plugin {
 			$formvalue = 'save_link_library_stylesheet';
 			$pagetitle = 'Link Library ' . __('Stylesheet Editor', 'link-library');
 
-			if ($_GET['message'] == '1')
+			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet updated', 'link-library') . ".</strong></p></div>";
-			elseif ($_GET['message'] == '2')
+			elseif (isset( $_GET['message'] ) && $_GET['message'] == '2')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet reset to original state', 'link-library') . ".</strong></p></div>";			
 		}
 		elseif ($_GET['page'] == 'link-library-reciprocal')
@@ -1025,9 +1007,9 @@ class link_library_plugin {
 			$formvalue = 'save_link_library_reciprocal';
 			$pagetitle = 'Link Library ' . __('Reciprocal Link Checker', 'link-library');
 			
-			if ($_GET['message'] == '1')
+			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Settings updated', 'link-library') . ".</strong></p></div>";
-			elseif ($_GET['message'] == '2')
+			elseif (isset( $_GET['message'] ) && $_GET['message'] == '2')
 			{
 				echo "<div id='message' class='updated fade'><p>";
 				echo $this->ReciprocalLinkChecker($genoptions['recipcheckaddress'], $genoptions['recipcheckdelete403']);
@@ -1402,7 +1384,7 @@ class link_library_plugin {
 					$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 					$linkcatquery .= "FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix(). "term_taxonomy tt ";
 
-					if ($hide_if_empty)
+					if (isset($_POST['hide_if_empty']))
 						$linkcatquery .= ", " . $this->db_prefix() . "term_relationships tr, " . $this->db_prefix() . "links l ";
 
 					$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
@@ -1427,7 +1409,7 @@ class link_library_plugin {
 					$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 					$linkcatquery .= "FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix(). "term_taxonomy tt ";
 
-					if ($hide_if_empty)
+					if (isset($_POST['hide_if_empty']))
 						$linkcatquery .= ", " . $this->db_prefix() . "term_relationships tr, " . $this->db_prefix() . "links l ";
 
 					$linkcatquery .= "WHERE t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
@@ -1481,7 +1463,7 @@ class link_library_plugin {
 		
 		$genoptions = get_option('LinkLibraryGeneral');
 
-		if (isset($_POST['approvelinks']))
+		if (isset($_POST['approvelinks']) && (isset($_POST['links']) && count($_POST['links']) > 0))
 		{
 			global $wpdb;
 
@@ -1541,7 +1523,7 @@ class link_library_plugin {
 
 			$message = '1';
 		}
-		elseif (isset($_POST['deletelinks']))
+		elseif (isset($_POST['deletelinks']) && (isset($_POST['links']) && count($_POST['links']) > 0))
 		{
 			global $wpdb;
 
@@ -1638,8 +1620,8 @@ class link_library_plugin {
 		
 		$genoptions = get_option('LinkLibraryGeneral');
 
-		$genoptions['recipcheckaddress'] = $_POST['recipcheckaddress'];
-		$genoptions['recipcheckdelete403'] = $_POST['recipcheckdelete403'];
+		$genoptions['recipcheckaddress'] = ( ( isset( $_POST['recipcheckaddress'] ) && $_POST['recipcheckaddress'] !== '' ) ? $_POST['recipcheckaddress'] : "" );
+		$genoptions['recipcheckdelete403'] = ( ( isset( $_POST['recipcheckdelete403'] ) && $_POST['recipcheckdelete403'] !== '' ) ? $_POST['recipcheckdelete403'] : "" );
 
 		update_option('LinkLibraryGeneral', $genoptions);
 		
@@ -2648,7 +2630,7 @@ class link_library_plugin {
 						<input type="text" id="beforelargedescription" name="beforelargedescription" size="22" value="<?php echo stripslashes($options['beforelargedescription']); ?>"/>
 					</td>
 					<td  style='background: #FFF' class="lltooltip" title='<?php _e('Code/Text to be displayed after Link Large Description', 'link-library'); ?>'>
-						<input type="text" id="afterlinklargedescription" name="afterlinklargedescription" size="22" value="<?php echo stripslashes($options['afterlinklargedescription']); ?>"/>
+						<input type="text" id="afterlargedescription" name="afterlargedescription" size="22" value="<?php echo stripslashes($options['afterlargedescription']); ?>"/>
 					</td>
 					<td style='background: #FFF'></td>
 					<td style='background: #FFF'></td>
@@ -3465,30 +3447,34 @@ class link_library_plugin {
 	function ll_title_creator($title) {
 		global $wp_query;
 		global $wpdb;
-		
-		$genoptions = get_option('LinkLibraryGeneral');
-		
-		$categoryname = $wp_query->query_vars['cat_name'];
-		$catid = intval($_GET['cat_id']);
-		
-		$linkcatquery = "SELECT t.name ";
-		$linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-		$linkcatquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
-		$linkcatquery .= "WHERE tt.taxonomy = 'link_category' AND ";
-		
-		if ($categoryname != '')
-		{
-			$linkcatquery .= "t.slug = '" . $categoryname . "'";
-			$nicecatname = $wpdb->get_var($linkcatquery);
-			return $title . $genoptions['pagetitleprefix'] . $nicecatname . $genoptions['pagetitlesuffix'];
-		}
-		elseif ($catid != '')
-		{
-			$linkcatquery .= "t.term_id = '" . $catid . "'";
-			//echo $linkcatquery;
-			$nicecatname = $wpdb->get_var($linkcatquery);
-			return $title . $genoptions['pagetitleprefix'] . $nicecatname . $genoptions['pagetitlesuffix'];
-		}
+                global $llstylesheet;
+                
+                if ($llstylesheet)
+                {
+                    $genoptions = get_option('LinkLibraryGeneral');
+
+                    $categoryname = ( isset( $wp_query->query_vars['cat_name'] ) ? $wp_query->query_vars['cat_name'] : '' );
+                    $catid = ( isset( $_GET['cat_id'] ) ? intval($_GET['cat_id']) : '' );
+
+                    $linkcatquery = "SELECT t.name ";
+                    $linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+                    $linkcatquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+                    $linkcatquery .= "WHERE tt.taxonomy = 'link_category' AND ";
+
+                    if ($categoryname != '')
+                    {
+                            $linkcatquery .= "t.slug = '" . $categoryname . "'";
+                            $nicecatname = $wpdb->get_var($linkcatquery);
+                            return $title . $genoptions['pagetitleprefix'] . $nicecatname . $genoptions['pagetitlesuffix'];
+                    }
+                    elseif ($catid != '')
+                    {
+                            $linkcatquery .= "t.term_id = '" . $catid . "'";
+                            //echo $linkcatquery;
+                            $nicecatname = $wpdb->get_var($linkcatquery);
+                            return $title . $genoptions['pagetitleprefix'] . $nicecatname . $genoptions['pagetitlesuffix'];
+                    }
+                }
 
 		return $title;
 	}
@@ -3559,6 +3545,8 @@ class link_library_plugin {
 		global $wpdb;
 
 		$output = '';
+                
+                $categoryid = '';
 		
 		if (isset($_GET['cat_id']))
 			$categoryid = intval($_GET['cat_id']);
@@ -3906,6 +3894,7 @@ class link_library_plugin {
 		$output = "\n<!-- Beginning of Link Library Output -->\n\n";
 
 		$currentcategory = 1;
+                $categoryname = "";
 
 		if ($showonecatonly && $showonecatmode == 'AJAX' && $AJAXcatid != '' && $_GET['searchll'] == "")
 		{
@@ -4013,7 +4002,7 @@ class link_library_plugin {
 		if ($showinvisible == false)
 			$linkquery .= " AND l.link_visible != 'N'";	
 
-		if ($_GET['searchll'] != "")
+		if (isset($_GET['searchll']) && $_GET['searchll'] != "")
 		{
 			$searchterms = explode(" ", $_GET['searchll']);
 
@@ -4929,7 +4918,7 @@ class link_library_plugin {
 				$linkcatquery .= " AND t.term_id not in (" . $excludedcategorylist . ")";
 			}
 
-			$linkcatquery .= " ORDER by t.name " . $direction;
+			$linkcatquery .= " ORDER by t.name ASC";
 
 			$linkcats = $wpdb->get_results($linkcatquery);
 
@@ -5266,7 +5255,7 @@ class link_library_plugin {
 
 			return $this->PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $options['showdescription'], $options['shownotes'],
 									  $options['showrating'], $options['showupdated'], $options['categorylist'], $options['show_images'],
-									  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
+									  false, $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 									  $options['nofollow'], $options['excludecategorylist'], $options['afternote'], $options['beforeitem'],
 									  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $options['displayastable'],
 									  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
@@ -5291,7 +5280,7 @@ class link_library_plugin {
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
-									$showupdated, $categorylist, $show_images, $show_image_and_name, $use_html_tags, 
+									$showupdated, $categorylist, $show_images, false, $use_html_tags, 
 									$show_rss, $beforenote, $nofollow, $excludecategorylist, $afternote, $beforeitem, $afteritem,
 									$beforedesc, $afterdesc, $displayastable, $beforelink, $afterlink, $showcolumnheaders, 
 									$linkheader, $descheader, $notesheader, $catlistwrappers, $beforecatlist1, 
@@ -5576,7 +5565,7 @@ class link_library_plugin {
 			
 		$linklibraryoutput .= $this->PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 									  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
-									  $options['show_image_and_name'], $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
+									  false, $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 									  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
 									  $options['afteritem'], $options['beforedesc'], $options['afterdesc'], $overridedisplayastable,
 									  $options['beforelink'], $options['afterlink'], $options['showcolumnheaders'], $options['linkheader'],
