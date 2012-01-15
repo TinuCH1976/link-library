@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.4 =
+* Updated danish translation
+
 = 5.4.3 =
 * Cleanup to avoid PHP debug warnings
 
