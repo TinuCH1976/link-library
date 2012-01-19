@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.5 =
+* Fixed problem with Link ID missing on some installations from links in moderation page
+
 = 5.4.4 =
 * Updated danish translation
 
