@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.6 =
+* Clearly identified affiliate link in user interface
+* Made affiliate image local to plugin
+
 = 5.4.5 =
 * Fixed problem with Link ID missing on some installations from links in moderation page
 
