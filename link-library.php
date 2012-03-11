@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4.6
+Version: 5.4.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -170,7 +170,7 @@ class link_library_plugin {
 
 		$wpdb->links_extrainfo = $this->db_prefix().'links_extrainfo';
 
-		$creationquery = "CREATE TABLE " . $wpdb->links_extrainfo . " (
+		$creationquery = "CREATE TABLE " . $wpdb->links_extrainfo . " IF NOT EXISTS (
 				link_id bigint(20) NOT NULL DEFAULT '0',
 				link_second_url varchar(255) CHARACTER SET utf8 DEFAULT NULL,
 				link_telephone varchar(128) CHARACTER SET utf8 DEFAULT NULL,
@@ -3877,7 +3877,7 @@ class link_library_plugin {
 									$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 									$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false,
 									$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
-									$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
+									$direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
 									$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 									$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 									$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '',
@@ -4831,7 +4831,7 @@ class link_library_plugin {
 											$linkcustomcatlistentry = 'User-submitted category (define below)', $showaddlinkreciprocal = false,
 											$linkreciprocallabel = '', $showaddlinksecondurl = false, $linksecondurllabel = '',
 											$showaddlinktelephone = false, $linktelephonelabel = '', $showaddlinkemail = false, $linkemaillabel = '',
-											$showcaptcha = false, $captureddata = '', $linksubmitternamelabel = '', $showlinksubmittername = false,
+											$showcaptcha = false, $linksubmitternamelabel = '', $showlinksubmittername = false,
 											$linksubmitteremaillabel = '', $showaddlinksubmitteremail = false, $linksubmittercommentlabel = '',
 											$showlinksubmittercomment = false, $linksubmissionthankyouurl = '', $addlinkcatlistoverride = '',
 											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false, $usetextareaforusersubmitnotes = false, $settings = 1, $code = 'link-library-addlink') {
@@ -4890,15 +4890,19 @@ class link_library_plugin {
 			$output .= "<table>\n";
 
 			if ($linknamelabel == "") $linknamelabel = __('Link name', 'link-library');
-			$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . esc_html(stripslashes($_GET['addlinkname']), '1') . "' /></td></tr>\n";
+                        $addlinkname = (isset($_GET['addlinkname']) ? esc_html(stripslashes($_GET['addlinkname']), '1') : "");
+                        
+			$output .= "<tr><th>" . $linknamelabel . "</th><td><input type='text' name='link_name' id='link_name' value='" . $addlinkname . "' /></td></tr>\n";
 
 			if ($linkaddrlabel == "") $linkaddrlabel = __('Link address', 'link-library');
-			$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . esc_html(stripslashes($_GET['addlinkurl']), '1') . "' /></td></tr>\n";
+                        $addlinkurl = (isset($_GET['addlinkurl']) ? esc_html(stripslashes($_GET['addlinkurl']), '1') : "");
+			$output .= "<tr><th>" . $linkaddrlabel . "</th><td><input type='text' name='link_url' id='link_url' value='" . $addlinkurl . "' /></td></tr>\n";
 
 			if ($showaddlinkrss)
 			{
 				if ($linkrsslabel == "") $linkrsslabel = __('Link RSS', 'link-library');
-				$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . esc_html(stripslashes($_GET['addlinkrss']), '1') . "' /></td></tr>\n";
+                                $addlinkrss = (isset($_GET['addlinkrss']) ? esc_html(stripslashes($_GET['addlinkrss']), '1') : "");
+				$output .= "<tr><th>" . $linkrsslabel . "</th><td><input type='text' name='link_rss' id='link_rss' value='" . $addlinkrss . "' /></td></tr>\n";
 			}
 
 			$linkcatquery = "SELECT distinct t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
@@ -4941,7 +4945,8 @@ class link_library_plugin {
 					foreach ($linkcats as $linkcat)
 					{
 						$output .= "<OPTION VALUE='" . $linkcat->term_id . "' ";
-						if ($_GET['addlinkcat'] == $linkcat->term_id)
+                                                $addlinkcat = (isset($_GET['addlinkcat']) ? esc_html(stripslashes($_GET['addlinkcat']), '1') : "");
+						if ($addlinkcat == $linkcat->term_id)
 							$output .= "selected";
 						$output .= ">" . $linkcat->name;
 					}
@@ -4957,19 +4962,24 @@ class link_library_plugin {
 				}
 				
 				if ($addlinkcustomcat)
-					$output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . esc_html(stripslashes($_GET['addlinkusercat']), '1') . "' /></td></tr>\n";			
+                                {
+                                    $addlinkusercat = (isset($_GET['addlinkusercat']) ? esc_html(stripslashes($_GET['addlinkusercat']), '1') : "");
+				    $output .= "<tr><th>" .  $linkcustomcatlabel . "</th><td><input type='text' name='link_user_category' id='link_user_category' value='" . $addlinkusercat . "' /></td></tr>\n";			
+                                }
 			}		
 			
 			if ($showaddlinkdesc)
 			{
 				if ($linkdesclabel == "") $linkdesclabel = __('Link description', 'link-library');
-				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . esc_html(stripslashes($_GET['addlinkdesc']), '1') . "' /></td></tr>\n";
+                                $addlinkdesc = (isset($_GET['addlinkdesc']) ? esc_html(stripslashes($_GET['addlinkdesc']), '1') : "");
+				$output .= "<tr><th>" . $linkdesclabel . "</th><td><input type='text' name='link_description' id='link_description' value='" . $addlinkdesc . "' /></td></tr>\n";
 			}
 			
 			if ($showuserlargedescription)
 			{
 				if ($linklargedesclabel == "") $linklargedesclabel = __('Large description', 'link-library');
-				$output .= "<tr><th style='vertical-align: top'>" . $linklargedesclabel . "</th><td><textarea name='link_textfield' id='link_textfield' cols='66'>" . esc_html(stripslashes($_GET['addlinktextfield']), '1') . "</textarea></td></tr>\n";
+                                $addlinktextfield = (isset($_GET['addlinktextfield']) ? esc_html(stripslashes($_GET['addlinktextfield']), '1') : "");
+				$output .= "<tr><th style='vertical-align: top'>" . $linklargedesclabel . "</th><td><textarea name='link_textfield' id='link_textfield' cols='66'>" . $addlinktextfield . "</textarea></td></tr>\n";
 			}
 			
 			if ($showaddlinknotes)
@@ -4982,7 +4992,8 @@ class link_library_plugin {
 				elseif ($usetextareaforusersubmitnotes == true)
 					$output .= "<textarea name='link_notes' id='link_notes'>";
 				
-				$output .= esc_html(stripslashes($_GET['addlinknotes']), '1');
+                                $addlinknotes = (isset($_GET['addlinknotes']) ? esc_html(stripslashes($_GET['addlinknotes']), '1') : "");
+				$output .= $addlinknotes;
 				
 				if ($usetextareaforusersubmitnotes == false || $usetextareaforusersubmitnotes == '')
 					$output .= "' />";
@@ -4995,43 +5006,50 @@ class link_library_plugin {
 			if ($showaddlinkreciprocal)
 			{
 				if ($linkreciprocallabel == "") $linkreciprocallabel = __('Reciprocal Link', 'link-library');
-				$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . esc_html(stripslashes($_GET['addlinkreciprocal']), '1') . "' /></td></tr>\n";
+                                $addlinkreciprocal = (isset($_GET['addlinkreciprocal']) ? esc_html(stripslashes($_GET['addlinkreciprocal']), '1') : "");
+				$output .= "<tr><th>" . $linkreciprocallabel . "</th><td><input type='text' name='ll_reciprocal' id='ll_reciprocal' value='" . $addlinkreciprocal . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinksecondurl)
 			{
 				if ($linksecondurllabel == "") $linksecondurllabel = __('Secondary Address', 'link-library');
-				$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . esc_html(stripslashes($_GET['addlinksecondurl']), '1') . "' /></td></tr>\n";
+                                $addlinksecondurl = (isset($_GET['addlinksecondurl']) ? esc_html(stripslashes($_GET['addlinksecondurl']), '1') : "");
+				$output .= "<tr><th>" . $linksecondurllabel . "</th><td><input type='text' name='ll_secondwebaddr' id='ll_secondwebaddr' value='" . $addlinksecondurl . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinktelephone)
 			{
 				if ($linktelephonelabel == "") $linktelephonelabel = __('Telephone', 'link-library');
-				$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . esc_html(stripslashes($_GET['addlinktelephone']), '1') . "' /></td></tr>\n";
+                                $addlinktelephone = (isset($_GET['addlinktelephone']) ? esc_html(stripslashes($_GET['addlinktelephone']), '1') : "");
+				$output .= "<tr><th>" . $linktelephonelabel . "</th><td><input type='text' name='ll_telephone' id='ll_telephone' value='" . $addlinktelephone . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinkemail)
 			{
 				if ($linkemaillabel == "") $linkemaillabel = __('E-mail', 'link-library');
-				$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . esc_html(stripslashes($_GET['addlinkemail']), '1') . "' /></td></tr>\n";
+                                $addlinkemail = (isset($_GET['addlinkemail']) ? esc_html(stripslashes($_GET['addlinkemail']), '1') : "");
+				$output .= "<tr><th>" . $linkemaillabel . "</th><td><input type='text' name='ll_email' id='ll_email' value='" . $addlinkemail . "' /></td></tr>\n";
 			}
 			
 			if ($showlinksubmittername)
 			{
 				if ($linksubmitternamelabel == "") $linksubmitternamelabel = __('Submitter Name', 'link-library');
-				$output .= "<tr><th>" . $linksubmitternamelabel . "</th><td><input type='text' name='ll_submittername' id='ll_submittername' value='" . esc_html(stripslashes($_GET['addlinksubmitname']), '1') . "' /></td></tr>\n";
+                                $addlinksubmitname = (isset($_GET['addlinksubmitname']) ? esc_html(stripslashes($_GET['addlinksubmitname']), '1') : "");
+				$output .= "<tr><th>" . $linksubmitternamelabel . "</th><td><input type='text' name='ll_submittername' id='ll_submittername' value='" . $addlinksubmitname . "' /></td></tr>\n";
 			}
 			
 			if ($showaddlinksubmitteremail)
 			{
 				if ($linksubmitteremaillabel == "") $linksubmitteremaillabel = __('Submitter E-mail', 'link-library');
-				$output .= "<tr><th>" . $linksubmitteremaillabel . "</th><td><input type='text' name='ll_submitteremail' id='ll_submitteremail' value='" . esc_html(stripslashes($_GET['addlinksubmitemail']), '1') . "' /></td></tr>\n";
+                                $addlinksubmitemail = (isset($_GET['addlinksubmitemail']) ? esc_html(stripslashes($_GET['addlinksubmitemail']), '1') : "");
+				$output .= "<tr><th>" . $linksubmitteremaillabel . "</th><td><input type='text' name='ll_submitteremail' id='ll_submitteremail' value='" . $addlinksubmitemail . "' /></td></tr>\n";
 			}
 			
 			if ($showlinksubmittercomment)
 			{
 				if ($linksubmittercommentlabel == "") $linksubmittercommentlabel = __('Submitter Comment', 'link-library');
-				$output .= "<tr><th style='vertical-align: top;'>" . $linksubmittercommentlabel . "</th><td><textarea name='ll_submittercomment' id='ll_submittercomment' cols='38''>" . esc_html(stripslashes($_GET['addlinksubmitcomment']), '1') . "</textarea></td></tr>\n";
+                                $addlinksubmitcomment = (isset($_GET['addlinksubmitcomment']) ? esc_html(stripslashes($_GET['addlinksubmitcomment']), '1') : "");
+				$output .= "<tr><th style='vertical-align: top;'>" . $linksubmittercommentlabel . "</th><td><textarea name='ll_submittercomment' id='ll_submittercomment' cols='38''>" . $addlinksubmitcomment . "</textarea></td></tr>\n";
 			}
 			
 			if ($showcaptcha)
@@ -5177,7 +5195,6 @@ class link_library_plugin {
 	 *   rssfeedinlinecount (default 1) - Number of RSS feed items to show inline
 	 *   beforerss (default null) - String to output before RSS block
 	 *   afterrss (default null) - String to output after RSS block
-	 *   rsscachedir (default null) - Path for SimplePie library to store RSS cache information
 	 *   direction (default ASC) - Sort direction for Link Categories
 	 *   linkdirection (default ASC) - Sort direction for Links within each category
 	 *   linkorder (default 'name') - Sort order for Links within each category
@@ -5233,7 +5250,7 @@ class link_library_plugin {
 									$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 									$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 									$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
-									$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
+									$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $direction = 'ASC', 
 									$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 									$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 									$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename',
@@ -5265,7 +5282,7 @@ class link_library_plugin {
 									  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'], $options['showonecatonly'],
 									  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
 									  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
-									  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
+									  $options['direction'], $options['linkdirection'], $options['linkorder'],
 									  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 									  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
 									  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos'],
@@ -5287,7 +5304,7 @@ class link_library_plugin {
 									$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
 									$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 									$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
-									$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
+									$beforerss, $afterrss, $direction, $linkdirection, $linkorder,
 									$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
 									$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '', $debugmode,
 									$usethumbshotsforimages, $showonecatmode, $dragndroporder, $showname, $displayweblink, $sourceweblink, $showtelephone,
@@ -5473,14 +5490,14 @@ class link_library_plugin {
 		else
 			$excludedcategorylist = $options['excludecategorylist'];
 			
-                return $outputmessage . $this->PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
+                return $this->PrivateLinkLibraryAddLinkForm($selectedcategorylist, $excludedcategorylist, $options['addnewlinkmsg'], $options['linknamelabel'], $options['linkaddrlabel'],
                                                                                  $options['linkrsslabel'], $options['linkcatlabel'], $options['linkdesclabel'], $options['linknoteslabel'],
                                                                                  $options['addlinkbtnlabel'], $options['hide_if_empty'], $options['showaddlinkrss'], $options['showaddlinkdesc'],
                                                                                  $options['showaddlinkcat'], $options['showaddlinknotes'], $options['addlinkreqlogin'], $genoptions['debugmode'],
                                                                                  $options['addlinkcustomcat'], $options['linkcustomcatlabel'], $options['linkcustomcatlistentry'], 
                                                                                  $options['showaddlinkreciprocal'], $options['linkreciprocallabel'], $options['showaddlinksecondurl'], $options['linksecondurllabel'],
                                                                                  $options['showaddlinktelephone'], $options['linktelephonelabel'], $options['showaddlinkemail'], $options['linkemaillabel'],
-                                                                                 $options['showcaptcha'], $captureddata, $options['linksubmitternamelabel'], $options['showlinksubmittername'],
+                                                                                 $options['showcaptcha'], $options['linksubmitternamelabel'], $options['showlinksubmittername'],
                                                                                  $options['linksubmitteremaillabel'], $options['showaddlinksubmitteremail'], $options['linksubmittercommentlabel'],
                                                                                  $options['showlinksubmittercomment'], $genoptions['linksubmissionthankyouurl'], $options['addlinkcatlistoverride'],
                                                                                  $options['showcustomcaptcha'], $options['customcaptchaquestion'], $options['linklargedesclabel'], $options['showuserlargedescription'], $options['usetextareaforusersubmitnotes'], $settings, $code);
@@ -5575,7 +5592,7 @@ class link_library_plugin {
 									  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'],
 									  $options['showonecatonly'], '', $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], 
 									  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
-									  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
+									  $options['beforerss'], $options['afterrss'], $options['direction'],
 									  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 									  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
 									  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],

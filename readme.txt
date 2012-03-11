@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.7 =
+* Fixed undefined variable warnings, which showed up when WP_DEBUG was activated
+
 = 5.4.6 =
 * Clearly identified affiliate link in user interface
 * Made affiliate image local to plugin
