@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.8 =
+* Reverted all changes made in version 5.4.7 to remove undefined variable warnings
+
 = 5.4.7 =
 * Fixed undefined variable warnings, which showed up when WP_DEBUG was activated
 
