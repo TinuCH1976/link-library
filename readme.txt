@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.9 =
+* Removed previous affiliate link and added information on my upcoming book.
+
 = 5.4.8 =
 * Reverted all changes made in version 5.4.7 to remove undefined variable warnings
 

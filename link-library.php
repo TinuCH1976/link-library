@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4.8
+Version: 5.4.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1683,7 +1683,7 @@ class link_library_plugin {
 				</table>
 			</td>
 			<td style='padding: 8px; border: 1px solid #cccccc;'>
-			<div><h3>Affiliate Link - ThemeFuse Original WP Themes</h3><br />If you are looking to buy an original WP theme, take a look at <a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle">ThemeFuse</a><br />They have a nice 1-click installer, great support and good-looking themes.</div><div style='text-align: center; padding-top: 10px'><a href="https://www.e-junkie.com/ecom/gb.php?cl=136641&c=ib&aff=153522" target="ejejcsingle"><img src='<?php echo plugins_url('icons/themefuse.jpg', __FILE__); ?>' /></a></div>
+			<div style="width: 400px"><h3>Support the author</h3><br /><table><tr><td><a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book"><img src='<?php echo plugins_url('icons/7683os_cover_small.jpg', __FILE__); ?>'></td><td></a>Learn how to create your own plugins with my upcoming book, coming out August 2012.<br /><br />Pre-order now!<br /><br /><a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book">Packt Publishing</a><br /><a href="http://www.amazon.com/dp/1849517681/?tag=packtpubli-20">Amazon.com</a><br /><a href="http://www.amazon.ca/WordPress-Development-Cookbook-Yannick-Lefebvre/dp/1849517681/ref=sr_1_1?ie=UTF8&qid=1336252569&sr=8-1">Amazon.ca</a></td></tr></table></div>
 			</td>
 			</table>
 		<?php }
