@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.9.2 =
+* Correction to bad site admin path in e-mail notification
+
 = 5.4.9.1 =
 * Changes method used to build paths to images and other plugin files
 * Fixed reciprocal link checker
