@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4.9
+Version: 5.4.9.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -36,23 +36,10 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 
 define('LINK_LIBRARY_ADMIN_PAGE_NAME', 'link-library');
 
-if (is_file(trailingslashit(ABSPATH.PLUGINDIR).'link-library.php')) {
-	define('LL_FILE', trailingslashit(ABSPATH.PLUGINDIR).'link-library.php');
-}
-else if (is_file(trailingslashit(ABSPATH.PLUGINDIR).'link-library/link-library.php')) {
-	define('LL_FILE', trailingslashit(ABSPATH.PLUGINDIR).'link-library/link-library.php');
-}
-
-define('LLDIR', dirname(__FILE__) . '/');
-
-if ( !defined('WP_ADMIN_URL') )
-	define( 'WP_ADMIN_URL', get_option('siteurl') . '/wp-admin');
-
 require_once(ABSPATH . '/wp-admin/includes/bookmark.php');
 require_once(ABSPATH . '/wp-admin/includes/taxonomy.php');
 
 $rss_settings = "";
-$llpluginpath = "";
 $pagehooktop = "";
 $pagehookmoderate = "";
 $pagehooksettingssets = "";
@@ -74,8 +61,8 @@ class link_library_plugin {
 		}
 
 		// Functions to be called when plugin is activated and deactivated
-		register_activation_hook(LL_FILE, array($this, 'll_install'));
-		register_deactivation_hook(LL_FILE, array($this, 'll_uninstall'));
+		register_activation_hook( __FILE__, array($this, 'll_install' ) );
+		register_deactivation_hook( __FILE__, array($this, 'll_uninstall' ) );
 		
 		add_action( 'wpmu_new_blog', array($this, 'new_network_site'), 10, 6);
 
@@ -94,13 +81,14 @@ class link_library_plugin {
 		// Function to print information in page header when plugin present
 		add_action('wp_head', array($this, 'll_rss_link'));
                 
-                //add filter for WordPress 2.8 changed backend box system !
-                add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
-                //register callback for admin menu  setup
-                add_action('admin_menu', array($this, 'on_admin_menu'));
+        //add filter for WordPress 2.8 changed backend box system !
+        add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
+        //register callback for admin menu  setup
+        add_action('admin_menu', array($this, 'on_admin_menu'));
 
 		// Function to determine if Link Library is used on a page before printing headers
-		add_filter('the_posts', array($this, 'conditionally_add_scripts_and_styles')); // the_posts gets triggered before wp_head
+		add_filter('the_posts', array($this, 'conditionally_add_scripts_and_styles')); 
+        // the_posts gets triggered before wp_head
 
 		add_filter('wp_title', array($this, 'll_title_creator'));
 
@@ -113,11 +101,8 @@ class link_library_plugin {
 		add_filter('rewrite_rules_array', array($this, 'll_insertMyRewriteRules'));
 		add_filter('query_vars', array($this, 'll_insertMyRewriteQueryVars'));
 
-		global $llpluginpath;
-		$llpluginpath = WP_PLUGIN_URL . "/" . plugin_basename(dirname(__FILE__)).'/';
-
 		// Load text domain for translation of admin pages and text strings
-		load_plugin_textdomain( 'link-library', $llpluginpath . '/languages', 'link-library/languages');
+		load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
 	
 	function db_prefix() {
@@ -283,9 +268,9 @@ class link_library_plugin {
 		{
 			if ($genoptions['stylesheet'] != '' && $genoptions['fullstylesheet'] == '')
 			{
-				$stylesheetlocation = LLDIR . $genoptions['stylesheet'];
-				if (file_exists($stylesheetlocation))
-					$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
+				$stylesheetlocation = plugins_url( $genoptions['stylesheet'], __FILE__ );
+				if ( file_exists( $stylesheetlocation ) )
+					$genoptions['fullstylesheet'] = file_get_contents( $stylesheetlocation );
 
 				update_option('LinkLibraryGeneral', $genoptions);
 			}
@@ -569,7 +554,7 @@ class link_library_plugin {
 			{
 				foreach($links as $link)
 				{
-					$sitecontent = @file_get_contents($link->link_reciprocal);
+					$sitecontent = file_get_contents($link->link_reciprocal);
 
 					$output .= "<a href='" . $link->link_url . "'>" . $link->link_name . "</a>: ";
 					
@@ -715,7 +700,7 @@ class link_library_plugin {
 	//extend the admin menu
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
-		global $wpdb, $llpluginpath, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal;
+		global $wpdb, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal;
 		
 		$linkmoderatecount = 0;
 		
@@ -726,7 +711,7 @@ class link_library_plugin {
 
 		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
 		
-		$pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), $llpluginpath . 'icons/folder-beige-internet-icon.png');
+		$pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), plugins_url('icons/folder-beige-internet-icon.png', __FILE__ ) );
 		
 		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Settings', 'link-library') , __('Library Settings', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
@@ -788,7 +773,7 @@ class link_library_plugin {
 	//executed to show the plugins complete admin page
 	function on_show_page() {
 		//we need the global screen column value to beable to have a sidebar in WordPress 2.8
-		global $screen_layout_columns, $llpluginpath;
+		global $screen_layout_columns;
                 
                 $settings = ( isset( $_GET['settings'] ) ? $_GET['settings'] : 1 );
 
@@ -954,7 +939,7 @@ class link_library_plugin {
 							break;
 
 						case '5':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . $llpluginpath . "SettingSet" . $settings . "Export.csv'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . plugins_url( 'SettingSet' . $settings . 'Export.csv', __FILE__ ) . "'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
 							break;
 
 						case '6':
@@ -1024,8 +1009,8 @@ class link_library_plugin {
 		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets, $pagehookreciprocal;
 		?>
 		<div id="link-library-general" class="wrap">
-		<div class='icon32'><img src="<?php echo $llpluginpath . 'icons/folder-beige-internet-icon32.png'; ?>" /></div>
-		<div ><h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo $llpluginpath; ?>/icons/btn_donate_LG.gif" /></a></span></h2></div>
+		<div class='icon32'><img src="<?php echo plugins_url( 'icons/folder-beige-internet-icon32.png', __FILE__ ); ?>" /></div>
+		<div ><h2><?php echo $pagetitle; ?><span style='padding-left: 50px'><a href="http://yannickcorner.nayanna.biz/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo plugins_url( '/icons/btn_donate_LG.gif', __FILE__ ); ?>" /></a></span></h2></div>
 		<div><form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
 			<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
 
@@ -1596,7 +1581,7 @@ class link_library_plugin {
 		{
 			$genoptions = get_option('LinkLibraryGeneral');
 
-			$stylesheetlocation = LLDIR . '/stylesheettemplate.css';
+			$stylesheetlocation = plugins_url( 'stylesheettemplate.css', __FILE__ );
 			if (file_exists($stylesheetlocation))
 				$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
 
@@ -1653,7 +1638,7 @@ class link_library_plugin {
 				<table>
 				<tr>
 				<td class='lltooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>' style='width:200px'><?php _e('Stylesheet','link-library'); ?></td>
-				<td class='lltooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo WP_ADMIN_URL ?>/admin.php?page=link-library-stylesheet&section=stylesheet"><?php _e('Editor', 'link-library'); ?></a></td>
+				<td class='lltooltip' title='<?php _e('The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library'); ?>'><a href="<?php echo add_query_arg( array( 'page' => 'link-library-stylesheet', 'section' => 'stylesheet'), admin_url('admin.php') ); ?>"><?php _e('Editor', 'link-library'); ?></a></td>
 				</tr>
 				<tr>
 				<td><?php _e('Number of Libraries','link-library'); ?></td>
@@ -1798,7 +1783,7 @@ class link_library_plugin {
 			?>
 					<tr style='background: #FFF'>
 						<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->true_link_id; ?>" /></td>
-						<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . WP_ADMIN_URL . "/link.php?action=edit&link_id=" . $linkitem->true_link_id. "'>" . $linkitem->link_name . "</a>"; ?></td>
+						<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . add_query_arg( array( 'action' => 'edit', 'link_id' => $linkitem->true_link_id ), admin_url( 'link.php' ) ) . "'>" . $linkitem->link_name . "</a>"; ?></td>
 						<td><?php echo $linkitem->name; ?></td>
 						<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
 						<td><?php echo $newlinkdesc; ?></td>
@@ -2852,7 +2837,7 @@ class link_library_plugin {
 		<div>
 		<table>
 			<tr>
-				<td colspan=5 class="lltooltip" title='<?php _e('Following this link shows a list of all links awaiting moderation', 'link-library'); ?>.'><a href="<?php echo WP_ADMIN_URL ?>/link-manager.php?s=LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove"><?php _e('View list of links awaiting moderation', 'link-library'); ?></a></td>
+				<td colspan=5 class="lltooltip" title='<?php _e('Following this link shows a list of all links awaiting moderation', 'link-library'); ?>.'><a href="<?php echo add_query_arg( 's', 'LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove' , admin_url( 'link-manager.php' ) ); ?>"><?php _e('View list of links awaiting moderation', 'link-library'); ?></a></td>
 			</tr>
 			<tr>
 				<td style='width:200px'><?php _e('Show user links immediately', 'link-library'); ?></td>
@@ -3090,12 +3075,11 @@ class link_library_plugin {
 	function settingssets_importexport_meta_box($data) {
 		$options = $data['options'];
 		$settings = $data['settings'];
-		global $llpluginpath;
 	?>
 
 		<table>
 			<tr>
-				<td class='lltooltip' title='<?php _e('Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.', 'link-library'); ?>' style='width: 330px'><?php _e('CSV file to upload to import links', 'link-library'); ?> (<a href="<?php echo $llpluginpath . 'importtemplate.csv'; ?>"><?php _e('file template', 'link-library'); ?></a>)</td>
+				<td class='lltooltip' title='<?php _e('Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.', 'link-library'); ?>' style='width: 330px'><?php _e('CSV file to upload to import links', 'link-library'); ?> (<a href="<?php echo plugins_url( 'importtemplate.csv', __FILE__ ); ?>"><?php _e('file template', 'link-library'); ?></a>)</td>
 				<td><input size="80" name="linksfile" type="file" /></td>
 				<td><input type="submit" name="importlinks" value="<?php _e('Import Links', 'link-library'); ?>" /></td>
 			</tr>
@@ -3421,7 +3405,7 @@ class link_library_plugin {
 	/******************************************** Print style data to header *********************************************/
 
 	function ll_rss_link() {
-		global $llstylesheet, $rss_settings, $llpluginpath;
+		global $llstylesheet, $rss_settings;
 		
 		if ($rss_settings != "")
 		{
@@ -3430,7 +3414,7 @@ class link_library_plugin {
 
 			$feedtitle = ($options['rssfeedtitle'] == "" ? __('Link Library Generated Feed', 'link-library') : $options['rssfeedtitle']);
 
-			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html(stripslashes($feedtitle)) . '" href="' . $llpluginpath . 'rssfeed.php?settingset=' . $rss_settings . '" />';
+			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html(stripslashes($feedtitle)) . '" href="' . plugins_url('rssfeed.php?settingset=' . $rss_settings, __FILE__) . '" />';
 		}
 
 		if ($llstylesheet == true)
@@ -4382,9 +4366,7 @@ class link_library_plugin {
 						if ('' != $target)
 							$target = ' target="' . $target . '"';
 					}
-					
-					global $llpluginpath;
-					
+									
 					if ($dragndroporder == '') $dragndroporder = '1,2,3,4,5,6,7,8,9,10';
 						$dragndroparray = explode(',', $dragndroporder);
 						if ($dragndroparray)
@@ -4456,7 +4438,7 @@ class link_library_plugin {
 												$output .= '</a>';
 
 											if (($showadmineditlinks) && current_user_can("manage_links")) {
-												$output .= $between . '<a href="' . WP_ADMIN_URL . '/link.php?action=edit&link_id=' . $linkitem['proper_link_id'] .'">(' . __('Edit', 'link-library') . ')</a>';
+												$output .= $between . '<a href="' . add_query_arg( array( 'action' => 'edit', 'link_id' => $linkitem['proper_link_id'] ), admin_url( 'link.php' ) ) . '">(' . __('Edit', 'link-library') . ')</a>';
 											}
 
 											if ($showupdated && $linkitem['recently_updated']) {
@@ -4501,11 +4483,11 @@ class link_library_plugin {
 											$output .= $between . '<a class="rss" href="' . $linkitem['link_rss'] . '">RSS</a>';
 										}
 										if ($show_rss_icon && ($linkitem['link_rss'] != '')) {
-											$output .= $between . '<a class="rssicon" href="' . $linkitem['link_rss'] . '"><img src="' . $llpluginpath . 'icons/feed-icon-14x14.png" /></a>';
+											$output .= $between . '<a class="rssicon" href="' . $linkitem['link_rss'] . '"><img src="' . plugins_url( 'icons/feed-icon-14x14.png', __FILE__ ) . '" /></a>';
 										}
 										if ($rsspreview && $linkitem['link_rss'] != '')
 										{
-											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . $llpluginpath . 'icons/preview-16x16.png" /></a>';
+											$output .= $between . '<a href="' . WP_PLUGIN_URL . '/link-library/rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . plugins_url( 'icons/preview-16x16.png', __FILE__ ) . '" /></a>';
 										}
 										
 										if ($show_rss || $show_rss_icon || $rsspreview)
@@ -4836,7 +4818,7 @@ class link_library_plugin {
 											$showlinksubmittercomment = false, $linksubmissionthankyouurl = '', $addlinkcatlistoverride = '',
 											$showcustomcaptcha = false, $customcaptchaquestion = '', $linklargedesclabel = 'Large Description', $showuserlargedescription = false, $usetextareaforusersubmitnotes = false, $settings = 1, $code = 'link-library-addlink') {
 											
-		global $wpdb, $llpluginpath;
+		global $wpdb;
                 $output = "";
                 
                 $settingsname = 'LinkLibraryPP' . $settings;
@@ -5036,7 +5018,7 @@ class link_library_plugin {
 			
 			if ($showcaptcha)
 			{
-				$output .= "<tr><td></td><td><span id='captchaimage'><img src='" . $llpluginpath . "captcha/easycaptcha.php' /></span></td></tr>\n";
+				$output .= "<tr><td></td><td><span id='captchaimage'><img src='" . plugins_url( 'captcha/easycaptcha.php', __FILE__ ) . "' /></span></td></tr>\n";
 				$output .= "<tr><th>" . __('Enter code from above image', 'link-library') . "</th><td><input type='text' name='confirm_code' /></td></tr>\n";
 			}
 			
