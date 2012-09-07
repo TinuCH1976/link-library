@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.9.3 =
+* Fixed problem with e-mail notification when user-submitted links were received
+
 = 5.4.9.2 =
 * Correction to bad site admin path in e-mail notification
 

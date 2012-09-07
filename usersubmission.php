@@ -9,7 +9,7 @@ load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE_
 
 global $wpdb;
 
-$settings = ( isset( $_POST['settings'] ) ? $_POST['settings'] : 1 );
+$settings = ( isset( $_POST['settingsid'] ) ? $_POST['settingsid'] : 1 );
 $settingsname = 'LinkLibraryPP' . $settings;
 $options = get_option($settingsname);
 
@@ -198,7 +198,7 @@ if ($captureddata['link_name'] != '')
                         $emailmessage .= __('Link Comment', 'link-library') . ": " . $captureddata['ll_submittercomment'] . "<br /><br />";
 
                         if ($options['showuserlinks'] == false)
-                                $emailmessage .= '<a href="' . add_query_var( 's', 'LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove', admin_url( 'link-manager.php' ) ) . '">Moderate new links</a>';
+                                $emailmessage .= '<a href="' . add_query_arg( 's', 'LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove', admin_url( 'link-manager.php' ) ) . '">Moderate new links</a>';
                         elseif ($options['showuserlinks'] == true)
                                 $emailmessage .= '<a href="' . admin_url( 'link-manager.php' ) . '">View links</a>';
 
