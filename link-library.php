@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4.9.3
+Version: 5.4.9.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1332,7 +1332,7 @@ class link_library_plugin {
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage')
 							as $option_name) {
-				if (isset($_POST[$option_name])) {
+				if ( isset( $_POST[$option_name] ) ) {
 					$options[$option_name] = true;
 				} else {
 					$options[$option_name] = false;
@@ -2670,7 +2670,7 @@ class link_library_plugin {
 				<?php _e('Add nofollow tag to outgoing links', 'link-library'); ?>
 			</td>
 			<td style='width:75px;padding:0px 20px 0px 20px'>
-				<input type="checkbox" id="nofollow" name="nofollow" <?php if ($options['nofollow']) echo ' checked="checked" '; ?>/>
+				<input type="checkbox" id="nofollow" name="nofollow" <?php checked( $options['nofollow'] ); ?>/>
 			</td>
 			<td></td>
 			<td>
@@ -3158,11 +3158,11 @@ class link_library_plugin {
 		<table>
 			<tr>
 				<td style='width: 200px'><?php _e('Featured Link', 'link-library'); ?></td>
-				<td><input type="checkbox" id="link_featured" name="link_featured" <?php if ($extradata['link_featured']) echo ' checked="checked" '; ?>/></td>
+				<td><input type="checkbox" id="link_featured" name="link_featured" <?php checked( $extradata['link_featured'] ); ?>/></td>
 			</tr>
 			<tr>
 				<td style='width: 200px'><?php _e('No Follow', 'link-library'); ?></td>
-				<td><input type="checkbox" id="link_no_follow" name="link_no_follow" <?php if ($extradata['link_no_follow']) echo ' checked="checked" '; ?>/></td>
+				<td><input type="checkbox" id="link_no_follow" name="link_no_follow" <?php checked ( $extradata['link_no_follow'] ); ?>/></td>
 			</tr>
 			<tr>
 				<td style='width: 200px'><?php _e('Updated Date', 'link-library'); ?></td>
@@ -3378,11 +3378,15 @@ class link_library_plugin {
 		if (isset($_POST['link_textfield']))
 			$updatearray['link_textfield'] = esc_html($_POST['link_textfield']);
 			
-		if (isset($_POST['link_no_follow']))
-			$updatearray['link_no_follow'] = $_POST['link_no_follow'];
+		if ( isset($_POST['link_no_follow']) && $_POST['link_no_follow'] == 'on' )
+            $updatearray['link_no_follow'] = true;
+        else
+            $updatearray['link_no_follow'] = false;
 			
-		if (isset($_POST['link_featured']))
-			$updatearray['link_featured'] = $_POST['link_featured'];
+		if ( isset($_POST['link_featured']) && $_POST['link_featured'] == 'on' )
+			$updatearray['link_featured'] = true;
+        else
+            $updatearray['link_featured'] = false;
 
 		if ($extradata)
 			$wpdb->update( $extradatatable, $updatearray, array( 'link_id' => $link_id ));

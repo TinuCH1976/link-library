@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.9.4 =
+* Fixed problem with nofollow and featured item check boxed not unchecking properly
+
 = 5.4.9.3 =
 * Fixed problem with e-mail notification when user-submitted links were received
 
