@@ -3715,26 +3715,23 @@ class link_library_plugin {
 							if ($linksperpage == 0 && $linksperpage == '')
 								$linksperpage = 5;
 
-							$pageposition = $linkcount / $linksperpage;
-							$pageposition = ceil($pageposition);
-							if ($pageposition == 0 && !isset($_GET['linkresultpage']))
-							{
+							$pageposition = ( $linkcount + 1 ) / $linksperpage;
+							$ceilpageposition = ceil($pageposition);
+							if ( $ceilpageposition == 0 && !isset( $_GET['linkresultpage'] ) ) {
 								if ($flatlist != 'dropdown')
 									$cattext = '<a href="';
 								
 								$cattext .= get_permalink() . '#' . $catname->category_nicename;
 								
-								if ($flatlist != 'dropdown')
+								if ( $flatlist != 'dropdown' )
 									$cattext .= '">';
-							}
-							else
-							{
-								if ($flatlist != 'dropdown')
+							} else {
+								if ( $flatlist != 'dropdown' )
 									$cattext = '<a href="';
 									
-								$cattext .= '?linkresultpage=' . ($pageposition == 0 ? 1 : $pageposition) . '#' . $catname->category_nicename;
+								$cattext .= '?linkresultpage=' . ($ceilpageposition == 0 ? 1 : $ceilpageposition) . '#' . $catname->category_nicename;
 									
-								if ($flatlist != 'dropdown')
+								if ( $flatlist != 'dropdown' )
 									$cattext .= '">';
 							}
 
@@ -3744,19 +3741,16 @@ class link_library_plugin {
 					else
 						$cattext = '';
 					
-					if ($flatlist == 'dropdown')
+					if ( $flatlist == 'dropdown' )
 						$cattext .= '">';
 
-					$catitem = '';
-					if ($catlistdescpos == 'right' || $catlistdescpos == '')
-					{
+					if ( $catlistdescpos == 'right' || $catlistdescpos == '' ) {
 						$catitem .= $catname->name;
 						if ($showcatlinkcount)
 							$catitem .= " (" . $catname->linkcount . ")";
 					}
 
-					if ($showcategorydescheaders)
-					{
+					if ( $showcategorydescheaders ) {
 						$catname->category_description = esc_html($catname->category_description);
 						$catname->category_description = str_replace("[", "<", $catname->category_description);
 						$catname->category_description = str_replace("]", ">", $catname->category_description);

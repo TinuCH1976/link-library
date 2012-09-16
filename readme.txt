@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.4.9.5 =
+* Fixed problem with category links not going to the correct results page when pagination is turned on
+
 = 5.4.9.4 =
 * Fixed problem with nofollow and featured item check boxed not unchecking properly
 
