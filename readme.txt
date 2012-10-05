@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5 =
+* Added new option to display a popup with user-defined content when links are clicked, then present user with link to click through
+* Updated danish translation
+
 = 5.4.9.5 =
 * Fixed problem with category links not going to the correct results page when pagination is turned on
 

@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.4.9.4
+Version: 5.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -478,7 +478,9 @@ class link_library_plugin {
 		$options['usetextareaforusersubmitnotes'] = false;
 		$options['showcatonsearchresults'] = false;
 		$options['shownameifnoimage'] = false;
-                $options['searchresultsaddress'] = '';
+        $options['searchresultsaddress'] = '';
+        $options['enable_link_popup'] = false;
+        $options['link_popup_text'] = __( '%link_image%<br />Click through to visit %link_name%.', 'link-library');
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -759,6 +761,7 @@ class link_library_plugin {
  		add_meta_box('linklibrary_settingssets_categories_meta_box', __('Link Categories Settings', 'link-library'), array($this, 'settingssets_categories_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_linkelement_meta_box', __('Link Element Settings', 'link-library'), array($this, 'settingssets_linkelement_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_subfieldtable_meta_box', __('Link Sub-Field Configuration Table', 'link-library'), array($this, 'settingssets_subfieldtable_meta_box'), $pagehooksettingssets, 'normal', 'high');
+        add_meta_box('linklibrary_settingssets_linkpopup_meta_box', __('Link Pop-Up', 'link-library'), array($this, 'settingssets_linkpopup_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_rssconfig_meta_box', __('RSS Field Configuration', 'link-library'), array($this, 'settingssets_rssconfig_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_thumbnails_meta_box', __('Thumbnail Generation and Use', 'link-library'), array($this, 'settingssets_thumbnails_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_settingssets_rssgen_meta_box', __('RSS Generation', 'link-library'), array($this, 'settingssets_rssgen_meta_box'), $pagehooksettingssets, 'normal', 'high');
@@ -1319,7 +1322,7 @@ class link_library_plugin {
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress') as $option_name) {
+							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -1330,7 +1333,8 @@ class link_library_plugin {
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
-							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage')
+							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
+                            'enable_link_popup')
 							as $option_name) {
 				if ( isset( $_POST[$option_name] ) ) {
 					$options[$option_name] = true;
@@ -2691,6 +2695,24 @@ class link_library_plugin {
 		</table>
 
 	<?php }
+    
+    function settingssets_linkpopup_meta_box($data) { 
+		$options = $data['options'];
+		$settings = $data['settings'];
+	?>
+        <table>
+            <tr>
+                <td style='width:175px;'><?php _e( 'Enable link Pop-Ups', 'link-library' ); ?></td>
+                <td style='width:75px;padding-right:20px'>
+                    <input type="checkbox" id="enable_link_popup" name="enable_link_popup" <?php checked( $options['enable_link_popup'] ); ?>/>
+                </td>
+            </tr>
+            <tr>
+                <td><?php _e( 'Dialog contents', 'link-library' ); ?></td>
+                <td><textarea id="link_popup_text" name="link_popup_text" cols="80" /><?php echo $options['link_popup_text']; ?></textarea></td>
+            </tr>
+        </table>
+    <?php }
 
 	function settingssets_rssconfig_meta_box($data) { 
 		$options = $data['options'];
@@ -3869,7 +3891,8 @@ class link_library_plugin {
 									$beforeweblink = '', $afterweblink = '', $weblinklabel = '', $beforetelephone = '', $aftertelephone = '', $telephonelabel = '',
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
-									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false) {
+									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
+                                    $enablelinkpopup = false ) {
 
 		global $wpdb;
 		
@@ -4342,7 +4365,7 @@ class link_library_plugin {
 					else
 						$name = $cleanname;
 
-					$title = esc_html($linkitem['link_description'], ENT_QUOTES);
+					$title = $cleanname;
 
 					if ($showupdated) {
 					   if (substr($linkitem['link_updated'],0,2) != '00') {
@@ -4350,8 +4373,8 @@ class link_library_plugin {
 						}
 					}
 
-					if ('' != $title)
-						$title = ' title="' . $title . '"';
+					if (!empty( $title ) )
+						$title = ' title="' . $cleanname . '"';
 
 					$alt = ' alt="' . $cleanname . '"';
 						
@@ -4422,12 +4445,16 @@ class link_library_plugin {
 											{
 												$output .= '<a href="';
 
-												if ($sourcename == 'primary' || $sourcename == '')
-													$output .= $the_link;
-												elseif ($sourcename == 'secondary')
-													$output .= $the_second_link;
+												if ( !$enablelinkpopup ) {
+                                                    if ( $sourcename == 'primary' || $sourcename == '' )
+                                                        $output .= $the_link;
+                                                    elseif ( $sourcename == 'secondary' )
+    													$output .= $the_second_link;
+                                                } else {
+                                                    $output .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings, __FILE__ );
+                                                }
 
-												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
+												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
 											}
 											
 											$output .= $name;
@@ -4758,7 +4785,7 @@ class link_library_plugin {
 				}
 			}
 
-			$output .= "<script type='text/javascript'>\n";
+			/* $output .= "<script type='text/javascript'>\n";
 			$output .= "jQuery(document).ready(function()\n";
 			$output .= "{\n";
 			$output .= "jQuery('a.track_this_link').click(function() {\n";
@@ -4768,7 +4795,7 @@ class link_library_plugin {
 			$output .= "return true;\n";
 			$output .= "});\n";
 			$output .= "});\n";
-			$output .= "</script>";
+			$output .= "</script>"; */
 
 			$currentcategory = $currentcategory + 1;
 
@@ -5223,7 +5250,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -5256,7 +5283,7 @@ class link_library_plugin {
 									  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
-									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage']);	
+									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'] );	
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -5274,7 +5301,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage);
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -5543,7 +5570,7 @@ class link_library_plugin {
 		if ($genoptions['debugmode'] == true)
 			$linklibraryoutput .= "\n<!-- Library Settings Info:" . print_r($options, TRUE) . "-->\n";
 			
-		$linklibraryoutput .= $this->PrivateLinkLibrary($options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
+		$linklibraryoutput .= $this->PrivateLinkLibrary( $options['order'], $options['hide_if_empty'], $options['catanchor'], $selectedshowdescription, $selectedshownotes,
 									  $options['showrating'], $options['showupdated'], $selectedcategorylist, $options['show_images'],
 									  false, $options['use_html_tags'], $options['show_rss'], $options['beforenote'],
 									  $options['nofollow'], $excludedcategorylist, $options['afternote'], $options['beforeitem'],
@@ -5566,7 +5593,8 @@ class link_library_plugin {
 									  $options['telephonelabel'], $options['beforeemail'], $options['afteremail'], $options['emaillabel'], $options['beforelinkhits'],
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
-									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage']); 
+									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
+                                      $options['enable_link_popup'] ); 
 			
 		return $linklibraryoutput;
 	}
@@ -5641,18 +5669,15 @@ class link_library_plugin {
 					$settingsname = 'LinkLibraryPP' . $settingsetid;
 					$options = get_option($settingsname);			
 					
-					if ($options['showonecatonly'])
-					{
+					if ( $options['showonecatonly'] ) {
 						$load_jquery = true;
 					}
 			
-					if ($options['rsspreview'])
-					{
+					if ( $options['rsspreview'] || $options['enable_link_popup'] ) {
 						$load_thickbox = true;
 					}
 
-					if ($options['publishrssfeed'] == true)			
-					{
+					if ($options['publishrssfeed'] == true) {
 						global $rss_settings;
 						$rss_settings = $settingsetid;
 					}	
@@ -5673,33 +5698,24 @@ class link_library_plugin {
 			}
 		}
 		
-		if ($load_style)
-		{		
-			global $llstylesheet;
+        global $llstylesheet;
+		if ( $load_style ) {			
 			$llstylesheet = true;
-		}
-		else
-		{
-			global $llstylesheet;
+		} else {
 			$llstylesheet = false;
 		}
 	 
-		if ($load_jquery)
-		{
-			wp_enqueue_script('jquery');
+		if ( $load_jquery ) {
+			wp_enqueue_script( 'jquery' );
 		}
 			
-		if ($load_thickbox)
-		{
-			wp_enqueue_script('thickbox');
-			wp_enqueue_style ('thickbox');
+		if ( $load_thickbox ) {
+			wp_enqueue_script( 'thickbox' );
+			wp_enqueue_style ( 'thickbox' );
 		}
 	 
 		return $posts;
 	}
-	
-
-
 }
 
 $my_link_library_plugin = new link_library_plugin();
