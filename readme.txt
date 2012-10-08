@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5.1 =
+* Added support to convert [ and ] to < and > in large description fields
+
 = 5.5 =
 * Added new option to display a popup with user-defined content when links are clicked, then present user with link to click through
 * Updated danish translation

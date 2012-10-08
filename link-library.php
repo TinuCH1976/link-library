@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.5
+Version: 5.5.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4344,13 +4344,20 @@ class link_library_plugin {
 						$desc = $linkitem['link_description'];
 						$desc = str_replace("[", "<", $desc);
 						$desc = str_replace("]", ">", $desc);
-					}
-					else {
+					} else {
 						$desc = esc_html($linkitem['link_description'], ENT_QUOTES);
 					}
 
 					$cleanname = esc_html($linkitem['link_name'], ENT_QUOTES);
-					$textfield = stripslashes($linkitem['link_textfield']);
+                    
+                    if ( $use_html_tags ) {
+                        $textfield = stripslashes( $linkitem['link_textfield'] );
+                        $textfield = str_replace( '[', '<', $textfield );
+						$textfield = str_replace( ']', '>', $textfield );
+                    } else {
+                        $textfield = stripslashes( $linkitem['link_textfield'] );
+                    }
+					
 
 					if ($mode == "search")
 					{
