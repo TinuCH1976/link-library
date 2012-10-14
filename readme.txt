@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5.2 =
+* Updated link popup mechanism to use link target information
+
 = 5.5.1 =
 * Added support to convert [ and ] to < and > in large description fields
 

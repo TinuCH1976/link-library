@@ -53,6 +53,15 @@
     
     $options = get_option( 'LinkLibraryPP' . $settings_id );
     
+    $target = $linkitem['link_target'];
+    if ( !empty( $target ) ) {
+        $target = ' target="' . $target . '"';
+    } else {
+        $target = $options['linktarget'];
+        if ( !empty( $target ) )
+            $target = ' target="' . $target . '"';
+    }
+    
     $popup_text = ( !empty( $options['link_popup_text'] ) ? $options['link_popup_text'] : __( '%link_image%<br />Click through to visit %link_name%.', 'link-library') );
     
     if ( ( strpos( $popup_text, '%link_image%' ) !== false ) && !empty( $linkitem['link_image'] ) ) {
