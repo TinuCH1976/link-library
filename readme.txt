@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5.4 =
+* Attached popup to image and link name instead of only link name, when configured
+
 = 5.5.3 =
 * Added code in pop-up content to display link description, link large description, telephone number and e-mail
 * Added pop-up configuration options to specify width and height

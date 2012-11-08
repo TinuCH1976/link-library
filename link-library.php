@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.5.3
+Version: 5.5.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4412,12 +4412,16 @@ class link_library_plugin {
 										if ( (($linkitem['link_image'] != '' || $usethumbshotsforimages)) && ($show_images)) {
 											$imageoutput = stripslashes($beforeimage) . '<a href="';
 
-											if ($sourceimage == 'primary' || $sourceimage == '')
-												$imageoutput .= $the_link;
-											elseif ($sourceimage == 'secondary')
-												$imageoutput .= $the_second_link;
+                                            if ( !$enablelinkpopup ) {
+                                                if ($sourceimage == 'primary' || $sourceimage == '')
+                                                    $imageoutput .= $the_link;
+                                                elseif ($sourceimage == 'secondary')
+                                                    $imageoutput .= $the_second_link;
+                                            } else {
+                                                    $imageoutput .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ), __FILE__ );
+                                                }
 
-											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="track_this_link ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
+											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . '' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
 											if ($usethumbshotsforimages)
 											{
@@ -4464,10 +4468,10 @@ class link_library_plugin {
                                                     elseif ( $sourcename == 'secondary' )
     													$output .= $the_second_link;
                                                 } else {
-                                                    $output .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings, __FILE__ );
+                                                    $output .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ), __FILE__ );
                                                 }
 
-												$output .= '?height=' . ( empty( $popupwidth ) ? 300 : $popupwidth ) . '&amp;width=' . ( empty( $popupheight ) ? 400 : $popupheight ) . '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
+												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
 											}
 											
 											$output .= $name;
