@@ -174,6 +174,30 @@
         $popup_text = str_replace( '%link_email%', '', $popup_text );
     }
     
+    if ( ( strpos ( $popup_text, '%link_alt_web%' ) !== false ) && !empty( $linkitem['link_second_url'] ) ) {
+        $linkalturl = stripslashes( esc_html( $linkitem['link_second_url'] ) );
+        
+        $popup_text = str_replace( '%link_alt_web%', $linkalturl, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_alt_web%' ) !== false ) && empty( $linkitem['link_second_url'] ) ) {
+        $popup_text = str_replace( '%link_alt_web%', '', $popup_text );
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_num_views%' ) !== false ) && !empty( $linkitem['link_visits'] ) ) {
+        $linkvisits = stripslashes( $linkitem['link_visits'] );
+        
+        $popup_text = str_replace( '%link_num_views%', $linkvisits, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_num_views%' ) !== false ) && empty( $linkitem['link_visits'] ) ) {
+        $popup_text = str_replace( '%link_num_views%', '', $popup_text );
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_submitter_name%' ) !== false ) && !empty( $linkitem['link_submitter_name'] ) ) {
+        $linksubmitter = stripslashes( $linkitem['link_submitter_name'] );
+        
+        $popup_text = str_replace( '%link_submitter_name%', $linksubmitter, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_submitter_name%' ) !== false ) && empty( $linkitem['link_submitter_name'] ) ) {
+        $popup_text = str_replace( '%link_submitter_name%', '', $popup_text );
+    }
+    
     echo '<div class="linkpopup">' . $popup_text . '</div>';
     
     ?>
