@@ -62,10 +62,10 @@
             $target = ' target="' . $target . '"';
     }
     
-    $popup_text = ( !empty( $options['link_popup_text'] ) ? $options['link_popup_text'] : __( '%link_image%<br />Click through to visit %link_name%.', 'link-library') );
+    $popup_text = ( !empty( $options['link_popup_text'] ) ? stripslashes($options['link_popup_text']) : __( '%link_image%<br />Click through to visit %link_name%.', 'link-library') );
     
     if ( ( strpos( $popup_text, '%link_image%' ) !== false ) && !empty( $linkitem['link_image'] ) ) {
-        $imageoutput = stripslashes( $options['beforeimage'] ) . '<a href="';
+        $imageoutput = '<a href="';
 
         if ($options['sourceimage'] == 'primary' || $options['sourceimage'] == '')
             $imageoutput .= $the_link;
@@ -94,7 +94,7 @@
 
         $imageoutput .= "/>";
 
-        $imageoutput .= '</a>' . stripslashes($options['afterimage']);
+        $imageoutput .= '</a>';
         
         $popup_text = str_replace( '%link_image%', $imageoutput, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_image%' ) !== false )  && empty( $linkitem['link_image'] ) ) {
@@ -136,7 +136,43 @@
         $popup_text = str_replace( '%link_cat_desc%', $cleandesc, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_cat_desc%' ) !== false ) && empty( $linkitem['description'] ) ) {
         $popup_text = str_replace( '%link_cat_desc%', '', $popup_text );
-    }    
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_desc%' ) !== false ) && !empty( $linkitem['link_description'] ) ) {
+        $linkdesc = $linkitem['link_description'];
+        $linkdesc = str_replace('[', '<', $linkdesc);
+        $linkdesc = str_replace(']', '>', $linkdesc);
+        
+        $popup_text = str_replace( '%link_desc%', $linkdesc, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_desc%' ) !== false ) && empty( $linkitem['link_description'] ) ) {
+        $popup_text = str_replace( '%link_desc%', '', $popup_text );
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_large_desc%' ) !== false ) && !empty( $linkitem['link_textfield'] ) ) {
+        $linklargedesc = stripslashes( $linkitem['link_textfield'] );
+        $linklargedesc = str_replace('[', '<', $linklargedesc);
+        $linklargedesc = str_replace(']', '>', $linklargedesc);
+        
+        $popup_text = str_replace( '%link_large_desc%', $linklargedesc, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_large_desc%' ) !== false ) && empty( $linkitem['link_textfield'] ) ) {
+        $popup_text = str_replace( '%link_large_desc%', '', $popup_text );
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_telephone%' ) !== false ) && !empty( $linkitem['link_telephone'] ) ) {
+        $linktelephone = stripslashes( $linkitem['link_telephone'] );
+        
+        $popup_text = str_replace( '%link_telephone%', $linktelephone, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_telephone%' ) !== false ) && empty( $linkitem['link_telephone'] ) ) {
+        $popup_text = str_replace( '%link_telephone%', '', $popup_text );
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_email%' ) !== false ) && !empty( $linkitem['link_email'] ) ) {
+        $linkemail = stripslashes( $linkitem['link_email'] );
+        
+        $popup_text = str_replace( '%link_email%', $linkemail, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_email%' ) !== false ) && empty( $linkitem['link_email'] ) ) {
+        $popup_text = str_replace( '%link_email%', '', $popup_text );
+    }
     
     echo '<div class="linkpopup">' . $popup_text . '</div>';
     

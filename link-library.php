@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.5.2
+Version: 5.5.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -481,6 +481,8 @@ class link_library_plugin {
         $options['searchresultsaddress'] = '';
         $options['enable_link_popup'] = false;
         $options['link_popup_text'] = __( '%link_image%<br />Click through to visit %link_name%.', 'link-library');
+        $options['popup_width'] = 300;
+        $options['popup_height'] = 400;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1304,10 +1306,10 @@ class link_library_plugin {
 						   'beforecatlist1', 'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 
 						   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount', 'linksperpage', 'catdescpos',
 						   'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight', 'numberofrssitems',
-						   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'sourceimage', 'sourcename') 
+						   'displayweblink', 'sourceweblink', 'showtelephone', 'sourcetelephone', 'showemail', 'sourceimage', 'sourcename', 'popup_width', 'popup_height' ) 
 						   as $option_name) {
 				if (isset($_POST[$option_name])) {
-					$options[$option_name] = str_replace("\"", "'", strtolower($_POST[$option_name]));
+					$options[$option_name] = str_replace("\"", "'", strtolower( $_POST[$option_name] ) );
 				}
 			}
 
@@ -2706,10 +2708,14 @@ class link_library_plugin {
                 <td style='width:75px;padding-right:20px'>
                     <input type="checkbox" id="enable_link_popup" name="enable_link_popup" <?php checked( $options['enable_link_popup'] ); ?>/>
                 </td>
+                <td><?php _e('Pop-Up Width', 'link-library' ); ?></td>
+                <td><input type="text" id="popup_width" name="popup_width" size="4" value="<?php if ($options['popup_width'] == '') echo '300'; else echo strval($options['popup_width']); ?>"/></td>
+                <td><?php _e('Pop-Up Height', 'link-library' ); ?></td>
+                <td><input type="text" id="popup_height" name="popup_height" size="4" value="<?php if ($options['popup_height'] == '') echo '400'; else echo strval($options['popup_height']); ?>"/></td>
             </tr>
             <tr>
                 <td><?php _e( 'Dialog contents', 'link-library' ); ?></td>
-                <td><textarea id="link_popup_text" name="link_popup_text" cols="80" /><?php echo $options['link_popup_text']; ?></textarea></td>
+                <td colspan="5"><textarea id="link_popup_text" name="link_popup_text" cols="80" /><?php echo stripslashes($options['link_popup_text']); ?></textarea></td>
             </tr>
         </table>
     <?php }
@@ -3892,7 +3898,7 @@ class link_library_plugin {
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
 									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
-                                    $enablelinkpopup = false ) {
+                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400 ) {
 
 		global $wpdb;
 		
@@ -4461,7 +4467,7 @@ class link_library_plugin {
                                                     $output .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings, __FILE__ );
                                                 }
 
-												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
+												$output .= '?height=' . ( empty( $popupwidth ) ? 300 : $popupwidth ) . '&amp;width=' . ( empty( $popupheight ) ? 400 : $popupheight ) . '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
 											}
 											
 											$output .= $name;
@@ -5257,7 +5263,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false ) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400 ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -5290,7 +5296,8 @@ class link_library_plugin {
 									  $options['emaillabel'], $options['beforelinkhits'], $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'],
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
-									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'] );	
+									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'],
+                                      $options['popup_width'], $options['popup_height'] );	
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -5308,7 +5315,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup );
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -5601,7 +5608,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      $options['enable_link_popup'] ); 
+                                      $options['enable_link_popup'], $options['popup_width'], $options['popup_height'] ); 
 			
 		return $linklibraryoutput;
 	}
