@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5.6 =
+* Fixed link visit tracking code
+
 = 5.5.5 =
 * Added code in pop-up content to display link submitter, link alternate URL and number of visits
 

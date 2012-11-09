@@ -197,8 +197,22 @@
     } elseif ( ( strpos( $popup_text, '%link_submitter_name%' ) !== false ) && empty( $linkitem['link_submitter_name'] ) ) {
         $popup_text = str_replace( '%link_submitter_name%', '', $popup_text );
     }
-    
+     
     echo '<div class="linkpopup">' . $popup_text . '</div>';
+    
+    $track_code = "<script type='text/javascript'>\n";
+    $track_code .= "jQuery(document).ready(function()\n";
+    $track_code .= "{\n";
+    $track_code .= "jQuery('a.track_this_link').click(function() {\n";
+    $track_code .= "linkid = this.id;\n";
+    $track_code .= "linkid = linkid.substring(5);";
+    $track_code .= "jQuery.post('" . WP_PLUGIN_URL . "/link-library/tracker.php', {id:linkid});\n";
+    $track_code .= "return true;\n";
+    $track_code .= "});\n";
+    $track_code .= "});\n";
+    $track_code .= "</script>";
+    
+    echo $track_code;
     
     ?>
 
