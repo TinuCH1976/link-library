@@ -197,6 +197,22 @@
     } elseif ( ( strpos( $popup_text, '%link_submitter_name%' ) !== false ) && empty( $linkitem['link_submitter_name'] ) ) {
         $popup_text = str_replace( '%link_submitter_name%', '', $popup_text );
     }
+    
+    if ( ( strpos ( $popup_text, '%link_rating%' ) !== false ) && !empty( $linkitem['link_rating'] ) ) {
+        $linksubmitter = stripslashes( $linkitem['link_rating'] );
+        
+        $popup_text = str_replace( '%link_rating%', $linksubmitter, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_rating%' ) !== false ) && empty( $linkitem['link_rating'] ) ) {
+        $popup_text = str_replace( '%link_rating%', '', $popup_text );
+    }
+    
+    if ( ( strpos ( $popup_text, '%link_rss%' ) !== false ) && !empty( $linkitem['link_rss'] ) ) {
+        $linksubmitter = stripslashes( $linkitem['link_rss'] );
+        
+        $popup_text = str_replace( '%link_rss%', $linksubmitter, $popup_text );
+    } elseif ( ( strpos( $popup_text, '%link_rss%' ) !== false ) && empty( $linkitem['link_rss'] ) ) {
+        $popup_text = str_replace( '%link_rss%', '', $popup_text );
+    }
      
     echo '<div class="linkpopup">' . $popup_text . '</div>';
     
