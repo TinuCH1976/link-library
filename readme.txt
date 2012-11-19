@@ -3,7 +3,7 @@ Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch
 Requires at least: 2.7
-Tested up to: 3.4.1
+Tested up to: 3.5
 Stable tag: trunk
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
@@ -58,6 +58,9 @@ In addition to specifying a library, categories to be displayed can be specified
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 5.5.8 =
+* Added check for presence of Link Manager to support version 3.5 where the link manager will be inactive by default
 
 = 5.5.7 =
 * Added codes in pop-up content to display link rating and rss link
