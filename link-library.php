@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.5.8
+Version: 5.5.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -655,7 +655,8 @@ class link_library_plugin {
 	}
     
     function link_manager_missing_msg() {
-        echo "<div id='link-library-warning' class='updated fade'><p><strong>" . __('WordPress Link Manager is inactive. To take full advantage of Link Library in WordPress 3.5 or higher, please install and activate the Link Manager Plugin.', 'link-library') ."</strong></p></div>";        
+        echo "<div id='link-library-warning' class='updated fade'><p><strong>" . __('WordPress Link Manager is inactive. To take full advantage of Link Library in WordPress 3.5 or higher, please install and activate the Link Manager Plugin.', 'link-library') ."</strong></p></div>";
+        
     }
 	
 	function action_admin_init() {
@@ -673,8 +674,9 @@ class link_library_plugin {
             add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
             add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
             
-            if ( !get_option( 'link_manager_enabled' ) )
-                add_action( 'admin_notices', array( $this, 'link_manager_missing_msg' ) ); 
+            if ( floatval( substr( get_bloginfo( 'version' ), 0, 3) ) >= 3.5 )
+                if ( !get_option( 'link_manager_enabled' ) )
+                    add_action( 'admin_notices', array( $this, 'link_manager_missing_msg' ) ); 
 	}
 	
 	function filter_mce_buttons( $buttons ) {

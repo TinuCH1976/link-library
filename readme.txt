@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5.9 =
+* Removed check for presence of Link Manager in versions older than 3.5
+
 = 5.5.8 =
 * Added check for presence of Link Manager to support version 3.5 where the link manager will be inactive by default
 
