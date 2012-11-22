@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.5.9.1 =
+* Changed WP 3.5 support code to force presence of Link Manager if Link Library is installed and activated
+
 = 5.5.9 =
 * Removed check for presence of Link Manager in versions older than 3.5
 
