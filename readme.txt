@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.6 =
+* Added count of links to moderate in top-level Link Library menu item
+* Added dashboard widget to display count of links to moderate
+
 = 5.5.9.1 =
 * Changed WP 3.5 support code to force presence of Link Manager if Link Library is installed and activated
 

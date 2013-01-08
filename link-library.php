@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.5.9.1
+Version: 5.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -103,6 +103,8 @@ class link_library_plugin {
 		// Re-write rules filters to allow for custom permalinks
 		add_filter('rewrite_rules_array', array($this, 'll_insertMyRewriteRules'));
 		add_filter('query_vars', array($this, 'll_insertMyRewriteQueryVars'));
+        
+        add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget') );
 
 		// Load text domain for translation of admin pages and text strings
 		load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
@@ -703,6 +705,28 @@ class link_library_plugin {
 
 		die();
 	}
+    
+    function dashboard_widget() {
+        wp_add_dashboard_widget( 'link_library_dashboard_widget',
+                                 'Link Library',
+                                 array( $this, 'render_dashboard_widget' ) );
+    }
+    
+    function render_dashboard_widget() {
+        global $wpdb;
+		
+		$linkmoderatecount = 0;
+		
+		$linkmoderatequery = "SELECT count(*) ";
+		$linkmoderatequery .= "FROM " . $this->db_prefix() . "links l ";
+		$linkmoderatequery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+		$linkmoderatequery .= " ORDER by link_name ASC";
+
+		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
+        
+        echo '<strong>' . $linkmoderatecount . '</strong> ';
+        _e('Links to moderate', 'link-library');
+    }
 
 
 	//extend the admin menu
@@ -719,7 +743,13 @@ class link_library_plugin {
 
 		$linkmoderatecount = $wpdb->get_var($linkmoderatequery);
 		
-		$pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), "Link Library", 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), plugins_url('icons/folder-beige-internet-icon.png', __FILE__ ) );
+        if ($linkmoderatecount == 0) {
+            $pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), 'Link Library', 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), plugins_url('icons/folder-beige-internet-icon.png', __FILE__ ) );
+        } else {
+            $pagehooktop = add_menu_page('Link Library - ' . __('General Options', 'link-library'), 'Link Library ' . '<span class="update-plugins count-' . $linkmoderatecount . '"><span class="plugin-count">' . number_format_i18n($linkmoderatecount) . '</span></span>', 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this, 'on_show_page'), plugins_url('icons/folder-beige-internet-icon.png', __FILE__ ) );
+        }
+        
+        $pagehookgeneraloptions = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('General Options', 'link-library'), __('General Options', 'link-library'), 'manage_options', LINK_LIBRARY_ADMIN_PAGE_NAME, array($this,'on_show_page') );
 		
 		$pagehooksettingssets = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Settings', 'link-library') , __('Library Settings', 'link-library'), 'manage_options', 'link-library-settingssets', array($this,'on_show_page'));
 		
