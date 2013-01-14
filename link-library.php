@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.6.1
+Version: 5.6.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -823,25 +823,15 @@ class link_library_plugin {
 		if ($genoptions == FALSE)
 		{
 			$this->ll_reset_gen_settings();
-            $options = '';
 		}
 		elseif ($genoptions['schemaversion'] == '' || floatval($genoptions['schemaversion']) < "4.6") // If they exist, make sure they are up to date
 		{
 			$this->ll_install();
 			$genoptions = get_option('LinkLibraryGeneral');
 
-        	$settingsname = 'LinkLibraryPP' . $settings;
+        		$settingsname = 'LinkLibraryPP' . $settings;
 			$options = get_option($settingsname);
 		}
-        
-        $settingsname = 'LinkLibraryPP' . $settings;
-        $options = get_option($settingsname);
-
-        if ( empty($options) )
-        {
-            $this->ll_reset_options($settings, 'list');
-            $options = get_option($settingsname);
-        }
 
 		if ( isset($_GET['genthumbs']) || isset($_GET['genfavicons']) || isset($_GET['genthumbsingle']) || isset($_GET['genfaviconsingle'])) {
 			global $wpdb;
@@ -870,6 +860,11 @@ class link_library_plugin {
 					$genmode = 'thumb';
 				elseif (isset($_GET['genfavicons']) || isset($_GET['genfaviconsingle']))
 					$genmode = 'favicon';
+
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = get_option($settingsname);
+
+				$genoptions = get_option('LinkLibraryGeneral');
 
 				$linkquery = "SELECT distinct * ";
 				$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
@@ -942,9 +937,18 @@ class link_library_plugin {
 
 			if ( isset($_GET['deletesettings']) ) {
 				$settings = $_GET['deletesettings'];
-				$deletesettingsname = 'LinkLibraryPP' . $settings;
-				$options = delete_option($deletesettingsname);
+				$settingsname = 'LinkLibraryPP' . $settings;
+				$options = delete_option($settingsname);
 				$settings = 1;
+			}
+                        
+                        $settingsname = 'LinkLibraryPP' . $settings;
+                        $options = get_option($settingsname);
+			
+			if ($options == "")
+			{
+				$this->ll_reset_options($settings, 'list');
+				$options = get_option($settingsname);
 			}
 			
 			$pagetitle = 'Link Library - ' . __('Library', 'link-library') . ' #' . $settings . " - " . $options['settingssetname'];
@@ -3917,7 +3921,7 @@ class link_library_plugin {
 									$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 									$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false,
 									$rssfeedinlinecontent = false, $rssfeedinlinecount = 1, $beforerss = '', $afterrss = '',
-									'', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
+									$rsscachedir = '', $direction = 'ASC', $linkdirection = 'ASC', $linkorder = 'name',
 									$pagination = false, $linksperpage = 5, $hidecategorynames = false, $settings = '',
 									$showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 									$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '',
@@ -5231,7 +5235,7 @@ class link_library_plugin {
 	 *   rssfeedinlinecount (default 1) - Number of RSS feed items to show inline
 	 *   beforerss (default null) - String to output before RSS block
 	 *   afterrss (default null) - String to output after RSS block
-	 *   rsscachedir (default null) - Path for SimplePie library to store RSS cache information - Obsolete
+	 *   rsscachedir (default null) - Path for SimplePie library to store RSS cache information
 	 *   direction (default ASC) - Sort direction for Link Categories
 	 *   linkdirection (default ASC) - Sort direction for Links within each category
 	 *   linkorder (default 'name') - Sort order for Links within each category
@@ -5287,7 +5291,7 @@ class link_library_plugin {
 									$show_rss_icon = false, $linkaddfrequency = 0, $addbeforelink = '', $addafterlink = '', $linktarget = '',
 									$showcategorydesclinks = false, $showadmineditlinks = true, $showonecatonly = false, $AJAXcatid = '',
 									$defaultsinglecat = '', $rsspreview = false, $rsspreviewcount = 3, $rssfeedinline = false, $rssfeedinlinecontent = false,
-									$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', NULL, $direction = 'ASC', 
+									$rssfeedinlinecount = 1, $beforerss = '', $afterrss = '', $rsscachedir = '', $direction = 'ASC', 
 									$linkdirection = 'ASC', $linkorder = 'name', $pagination = false, $linksperpage = 5, $hidecategorynames = false,
 									$settings = '', $showinvisible = false, $showdate = false, $beforedate = '', $afterdate = '', $catdescpos = 'right',
 									$showuserlinks = false, $rsspreviewwidth = 900, $rsspreviewheight = 700, $beforeimage = '', $afterimage = '', $imagepos = 'beforename',
@@ -5319,7 +5323,7 @@ class link_library_plugin {
 									  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'], $options['showonecatonly'],
 									  $AJAXcatid, $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], $options['rssfeedinline'],
 									  $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'], $options['beforerss'], $options['afterrss'],
-									  NULL, $options['direction'], $options['linkdirection'], $options['linkorder'],
+									  $options['rsscachedir'], $options['direction'], $options['linkdirection'], $options['linkorder'],
 									  $options['pagination'], $options['linksperpage'], $options['hidecategorynames'], $settingsetid, $options['showinvisible'],
 									  $options['showdate'], $options['beforedate'], $options['afterdate'], $options['catdescpos'], $options['showuserlinks'],
 									  $options['rsspreviewwidth'], $options['rsspreviewheight'], $options['beforeimage'], $options['afterimage'], $options['imagepos'],
@@ -5342,7 +5346,7 @@ class link_library_plugin {
 									$beforecatlist2, $beforecatlist3, $divorheader, $catnameoutput, $show_rss_icon,
 									$linkaddfrequency, $addbeforelink, $addafterlink, $linktarget, $showcategorydesclinks, $showadmineditlinks,
 									$showonecatonly, '', $defaultsinglecat, $rsspreview, $rsspreviewcount, $rssfeedinline, $rssfeedinlinecontent, $rssfeedinlinecount,
-									$beforerss, $afterrss, NULL, $direction, $linkdirection, $linkorder,
+									$beforerss, $afterrss, $rsscachedir, $direction, $linkdirection, $linkorder,
 									$pagination, $linksperpage, $hidecategorynames, $settings, $showinvisible, $showdate, $beforedate, $afterdate, $catdescpos,
 									$showuserlinks, $rsspreviewwidth, $rsspreviewheight, $beforeimage, $afterimage, $imagepos, $imageclass, '', $debugmode,
 									$usethumbshotsforimages, $showonecatmode, $dragndroporder, $showname, $displayweblink, $sourceweblink, $showtelephone,
@@ -5630,7 +5634,7 @@ class link_library_plugin {
 									  $options['linktarget'], $options['showcategorydesclinks'], $options['showadmineditlinks'],
 									  $options['showonecatonly'], '', $options['defaultsinglecat'], $options['rsspreview'], $options['rsspreviewcount'], 
 									  $options['rssfeedinline'], $options['rssfeedinlinecontent'], $options['rssfeedinlinecount'],
-									  $options['beforerss'], $options['afterrss'], NULL, $options['direction'],
+									  $options['beforerss'], $options['afterrss'], $options['rsscachedir'], $options['direction'],
 									  $options['linkdirection'], $options['linkorder'], $options['pagination'], $options['linksperpage'],
 									  $options['hidecategorynames'], $settings, $options['showinvisible'], $options['showdate'], $options['beforedate'],
 									  $options['afterdate'], $options['catdescpos'], $options['showuserlinks'], $options['rsspreviewwidth'], $options['rsspreviewheight'],

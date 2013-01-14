@@ -59,8 +59,8 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
-= 5.6.1 =
-* Corrected problem with two undefined variables
+= 5.6.2 =
+* Rolling back changes that caused errors
 
 = 5.6 =
 * Added count of links to moderate in top-level Link Library menu item
