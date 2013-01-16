@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.6.3
+Version: 5.6.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -488,6 +488,7 @@ class link_library_plugin {
         $options['link_popup_text'] = __( '%link_image%<br />Click through to visit %link_name%.', 'link-library');
         $options['popup_width'] = 300;
         $options['popup_height'] = 400;
+        $options['nocatonstartup'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);	
@@ -1363,7 +1364,7 @@ class link_library_plugin {
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
-                            'enable_link_popup')
+                            'enable_link_popup', 'nocatonstartup')
 							as $option_name) {
 				if ( isset( $_POST[$option_name] ) ) {
 					$options[$option_name] = true;
@@ -2002,6 +2003,8 @@ class link_library_plugin {
 			<td>
 				<input type="text" id="defaultsinglecat" name="defaultsinglecat" size="4" value="<?php echo $options['defaultsinglecat']; ?>"/>
 			</td>
+            <td><?php _e('Hide category on start in single cat AJAX mode', 'link-library'); ?></td>
+            <td><input type="checkbox" id="nocatonstartup" name="nocatonstartup" <?php if ($options['nocatonstartup']) echo ' checked="checked" '; ?>/></td>
 		</tr>
 		<tr>
 			<td class="lltooltip" title="<?php _e('File path is relative to Link Library plugin directory', 'link-library'); ?>">
@@ -3925,14 +3928,20 @@ class link_library_plugin {
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
 									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
-                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400 ) {
+                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false ) {
 
 		global $wpdb;
 		
 		$output = "\n<!-- Beginning of Link Library Output -->\n\n";
 
 		$currentcategory = 1;
-                $categoryname = "";
+        $categoryname = "";
+        
+        if ( $showonecatonly && $showonecatmode == 'AJAX' && $AJAXcatid == '' ) {
+            $AJAXnocatset = true;
+        } else {
+            $AJAXnocatset = false;
+        }
 
 		if ($showonecatonly && $showonecatmode == 'AJAX' && $AJAXcatid != '' && $_GET['searchll'] == "")
 		{
@@ -4153,20 +4162,22 @@ class link_library_plugin {
 			shuffle($linkitems);
 		}
 		
-		if ($maxlinks != '')
-		{
-			if (is_numeric($maxlinks))
-			{
-				array_splice($linkitems, $maxlinks);
+		if ( $maxlinks != '' ) {
+			if ( is_numeric( $maxlinks ) ) {
+				array_splice( $linkitems, $maxlinks );
 			}
 		}
+        
+        echo "<!-- showonecatmode: " . $showonecatonly . ", AJAXnocatset: " . $AJAXnocatset . ", nocatonstartup: " . $nocatonstartup . "-->";
 
 		// Display links
-		if ($linkitems) {
+        if ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup ) {
+                $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
+                $output .= '</div>';
+        } elseif ( $linkitems ) {
 			$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
 
-			if ($mode == "search")
-			{
+			if ( $mode == 'search' ) {
 				$output .= "<div class='resulttitle'>" . __('Search Results for', 'link-library') . " '" . $_GET['searchll'] . "'</div>";
 			}
 
@@ -5294,7 +5305,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400 ) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -5328,7 +5339,7 @@ class link_library_plugin {
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
 									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'],
-                                      $options['popup_width'], $options['popup_height'] );	
+                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'] );	
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -5346,7 +5357,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight );
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -5639,7 +5650,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      $options['enable_link_popup'], $options['popup_width'], $options['popup_height'] ); 
+                                      $options['enable_link_popup'], $options['popup_width'], $options['popup_height'], $options['nocatonstartup'] ); 
 			
 		return $linklibraryoutput;
 	}
