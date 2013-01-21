@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.6.4
+Version: 5.6.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -3803,7 +3803,7 @@ class link_library_plugin {
 						$cattext .= '">';
 
 					if ( $catlistdescpos == 'right' || $catlistdescpos == '' ) {
-						$catitem .= $catname->name;
+						$catitem .= '<div class="linkcatname">' . $catname->name . '</div>';
 						if ($showcatlinkcount)
 							$catitem .= " (" . $catname->linkcount . ")";
 					}
@@ -3818,7 +3818,7 @@ class link_library_plugin {
 
 					if ($catlistdescpos == 'left')
 					{
-						$catitem .= $catname->name;
+						$catitem .= '<div class="linkcatname">' . $catname->name . '</div>';
 						if ($showcatlinkcount)
 							$catitem .= " (" . $catname->linkcount . ")";
 					}

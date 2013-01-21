@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.6.5 =
+* Adds a div class to category names for styling
+
 = 5.6.4 =
 * Added new option so that no category is shown in AJAX mode until the visitor selects a category
 
