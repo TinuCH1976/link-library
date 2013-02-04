@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.6.7 =
+* Added option to load styling on category pages with keyword 'category'
+
 = 5.6.6 =
 * Added option to load styling on front page with keyword 'front'
 
