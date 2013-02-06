@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.6.8
+Version: 5.6.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -5743,21 +5743,17 @@ class link_library_plugin {
 			if ($genoptions['includescriptcss'] != '')
 			{
 				$pagelist = explode (',', $genoptions['includescriptcss']);
+                $loadscripts = false;
 				foreach($pagelist as $pageid) {
-                    if ( $pageid == 'front' && is_front_page() ) {
+                    if ( ( $pageid == 'front' && is_front_page() ) ||
+                         ( $pageid == 'category' && is_category() ) ||
+                         ( $pageid == 'all') ||
+                         ( is_page( $pageid ) ) ) {
                         $load_jquery = true;
 						$load_thickbox = true;
 						$load_style = true;                        
-                    } elseif ( $pageid == 'category' && is_category() ) {
-                        $load_jquery = true;
-						$load_thickbox = true;
-						$load_style = true;                        
-                    } elseif ( is_page( $pageid ) ) {
-						$load_jquery = true;
-						$load_thickbox = true;
-						$load_style = true;
 					}
-				}
+				}   
 			}
 		}
 		

@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.6.9 =
+* Added option to load styling on all pages with keyword 'all'
+
 = 5.6.8 =
 * Corrected error from version 5.6.7
 
