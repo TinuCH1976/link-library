@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7
+Version: 5.7.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -4492,7 +4492,7 @@ class link_library_plugin {
 											if ($usethumbshotsforimages)
 											{
 												if ( !empty( $thumbshotscid ) )
-													$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . $thumbshotscid . 
+													$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . rawurlencode( $thumbshotscid ) . 
 														'&v=1&w=120&url=' . $the_link . '"';											
 											}
 											elseif ( strpos($linkitem['link_image'], 'http') !== false )

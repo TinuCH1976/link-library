@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.1 =
+* Fixed issue with Thumbshots CID having non-url compliant characters
+
 = 5.7 =
 * Re-worked Thumbshots integration to comply with new terms of use
 * Updated french translation
