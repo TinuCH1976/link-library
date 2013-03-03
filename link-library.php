@@ -3,16 +3,17 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.6.9
+Version: 5.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
 A plugin for the blogging MySQL/PHP-based WordPress.
-Copyright 2011 Yannick Lefebvre
+Copyright 2013 Yannick Lefebvre
 
 Translations:
-Danish Translation Courtesy of GeorgWP (http://wordpress.blogos.dk)
-Italian Translation Courtesy of Gianni Diurno
+French Translation courtesy of Luc Capronnier
+Danish Translation courtesy of GeorgWP (http://wordpress.blogos.dk)
+Italian Translation courtesy of Gianni Diurno
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNUs General Public License
@@ -602,10 +603,8 @@ class link_library_plugin {
 		{
 			if ($mode == 'thumb' || $mode == 'thumbonly')
 			{
-				if ($cid == '')
-					$genthumburl = "http://open.thumbshots.org/image.aspx?url=" . esc_html($url);
-				elseif ($cid != '')
-					$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . $cid . "&v1=w=120&h=90&url=" . esc_html($url);
+				if ( !empty ($cid) )
+					$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . raw_urlencode($cid) . "&v1=w=120&url=" . esc_html($url);
 			}
 			elseif ($mode == 'favicon' || $mode == 'favicononly')
 			{
@@ -674,8 +673,36 @@ class link_library_plugin {
             // Under development, trying to display extra columns in link list page
             add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
             add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
+
+            $genoptions = get_option('LinkLibraryGeneral');
             
+            if ( !empty( $genoptions ) ) {            
+                if ( empty( $genoptions['numberstylesets'] ) ) {
+                    $numberofsets = 1; 
+                } else { 
+                    $numberofsets = $genoptions['numberstylesets'];
+                }
+            
+                $thumbshotsactive = false;
+            
+				for ($counter = 1; $counter <= $numberofsets; $counter++) {
+                    $tempoptionname = "LinkLibraryPP" . $counter;
+					$tempoptions = get_option($tempoptionname);
+                    if ( $tempoptions['usethumbshotsforimages'] ) {
+                        $thumbshotsactive = true;
+                    }                    
+                }
+            
+                if ( $thumbshotsactive && empty($genoptions['thumbshotscid']) ) {
+                    add_action('admin_notices', array( $this, 'll_thumbshots_warning') ); 
+                }
+            }            
 	}
+    
+    function ll_thumbshots_warning() {
+        echo "
+        <div id='ll-warning' class='updated fade'><p><strong>". __('Link Library: Missing Thumbshots CID', 'link-library') ."</strong></p> <p>". __('One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com CID. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library'). " <a href='" . add_query_arg( array( 'page' => 'link-library'), admin_url('admin.php') ) . "'>". __('Jump to Link Library admin', 'link-library') . "</a></p></div>";
+    }
 	
 	function filter_mce_buttons( $buttons ) {
 		
@@ -1695,8 +1722,8 @@ class link_library_plugin {
 				<td class="lltooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitlesuffix" name="pagetitlesuffix" size="10" value="<?php echo $genoptions['pagetitlesuffix']; ?>"/></td>
 				</tr>
 				<tr>
-					<td class='lltooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-					<td colspan='4' class='lltooltip' title='<?php _e('CID provided with paid Thumbshots.org accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
+					<td class='lltooltip' title='<?php _e('CID for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
+					<td colspan='4' class='lltooltip' title='<?php _e('CID for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
 				
 				</table>
@@ -2819,6 +2846,7 @@ class link_library_plugin {
 
 	function settingssets_thumbnails_meta_box($data) {
 		$options = $data['options'];
+        $genoptions = $data['genoptions'];
 		$settings = $data['settings'];
 	?>
 
@@ -2833,7 +2861,7 @@ class link_library_plugin {
 		</tr>
 		<tr>
 			<td><?php _e('Generate Images / Favorite Icons', 'link-library'); ?></td>
-			<td><INPUT type="button" name="genthumbs" value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
+			<td class="lltooltip" title="<?php if (empty($genoptions['thumbshotscid'])) _e('This button is only available when a valid CID is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" name="genthumbs" <?php if ( empty( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
 			<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width:75px;padding-right:20px'></td>
 		</tr>
 		</table>
@@ -3277,7 +3305,7 @@ class link_library_plugin {
 			<?php if ($link->link_id != ''): ?>
 			<tr>
 				<td><?php _e('Automatic Image Generation', 'link-library'); ?></td>
-				<td><INPUT type="button" id="genthumbs" name="genthumbs" value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
+				<td title="<?php if ( empty( $genoptions['thumbshotscid'] ) ) _e('This button is only available when a valid CID is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" id="genthumbs" name="genthumbs" <?php if ( empty ( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
 					<INPUT type="button" id="genfavicons" name="genfavicons" value="<?php _e('Generate Favorite Icon and Store locally', 'link-library'); ?>"></td>
 			</tr>
 			<?php else: ?>
@@ -4463,28 +4491,29 @@ class link_library_plugin {
 
 											if ($usethumbshotsforimages)
 											{
-												if ($thumbshotscid == '')
-													$imageoutput .= '<img src="http://open.thumbshots.org/image.aspx?url=' . $the_link . '"';
-												elseif ($thumbshotscid != '')
+												if ( !empty( $thumbshotscid ) )
 													$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . $thumbshotscid . 
-														'&v=1&w=120&h=90&url=' . $the_link . '"';											
+														'&v=1&w=120&url=' . $the_link . '"';											
 											}
 											elseif ( strpos($linkitem['link_image'], 'http') !== false )
 												$imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
 											else // If it's a relative path
 												$imageoutput .= '<img src="' . get_option('siteurl') . $linkitem['link_image'] . '"';
+                                            
+                                            if ( !$usethumbshotsforimages || ($usethumbshotsforimages && !empty( $thumbshotscid ) ) ) {
 
-											$imageoutput .= $alt . $title;
+                                                $imageoutput .= $alt . $title;
 
-											if ($imageclass != '')
-												$imageoutput .= ' class="' . $imageclass . '" ';
+                                                if ($imageclass != '')
+                                                    $imageoutput .= ' class="' . $imageclass . '" ';
 
-											$imageoutput .= "/>";
+                                                $imageoutput .= "/>";
 
-											$imageoutput .= '</a>' . stripslashes($afterimage);
-										}
+                                                $imageoutput .= '</a>' . stripslashes($afterimage);
+                                            }
+                                        }                                                
 
-										if ( ($linkitem['link_image'] != '' || $usethumbshotsforimages) && ($show_images) ) {
+										if ( ($linkitem['link_image'] != '' || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) )  && ($show_images) ) {
 											$output .= $imageoutput;
 											break;
 										}
@@ -4749,7 +4778,10 @@ class link_library_plugin {
 
 			if ($catlistwrappers != '')
 				$output .= "</div>";
-				
+            
+            if ( $usethumbshotsforimages )
+                $output .= '<a href="http://www.thumbshots.com" target="_blank" title="Thumbnails Screenshots by Thumbshots">Thumbnail Screenshots by Thumbshots</a>';
+            
 			$output .= "</div>";
 
 			if ($pagination && $mode != "search")

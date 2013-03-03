@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7 =
+* Re-worked Thumbshots integration to comply with new terms of use
+* Updated french translation
+
 = 5.6.9 =
 * Added option to load styling on all pages with keyword 'all'
 
