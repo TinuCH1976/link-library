@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.2 =
+* Added div around Thumbshots notice to allow paying users to hide notice (free users need to keep notice displayed to avoid being banned by service)
+
 = 5.7.1 =
 * Fixed issue with Thumbshots CID having non-url compliant characters
 

@@ -4780,7 +4780,7 @@ class link_library_plugin {
 				$output .= "</div>";
             
             if ( $usethumbshotsforimages )
-                $output .= '<a href="http://www.thumbshots.com" target="_blank" title="Thumbnails Screenshots by Thumbshots">Thumbnail Screenshots by Thumbshots</a>';
+                $output .= '<div class="llthumbshotsnotice"><a href="http://www.thumbshots.com" target="_blank" title="Thumbnails Screenshots by Thumbshots">Thumbnail Screenshots by Thumbshots</a></div>';
             
 			$output .= "</div>";
 
