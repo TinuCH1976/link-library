@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.3
+Version: 5.7.4
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -631,9 +631,9 @@ class link_library_plugin {
 			$img = $uploads['basedir'] . "/" . $filepath. "/" . $linkid . ".jpg";
 			$status = file_put_contents($img, file_get_contents($genthumburl));
 
-			if ($status !== false)
-			{
-				$newimagedata = array("link_id" => $linkid, "link_image" => $uploads['baseurl'] . "/" . $filepath . "/" . $linkid . ".jpg");
+			if ( $status !== false ) {
+                $parsedaddress = parse_url( $uploads['baseurl'] );
+				$newimagedata = array("link_id" => $linkid, "link_image" => $parsedaddress['path'] . "/" . $filepath . "/" . $linkid . ".jpg");
 
 				if ($mode == 'thumb' || $mode == 'favicon')
 					wp_update_link($newimagedata);
@@ -3410,7 +3410,10 @@ class link_library_plugin {
 			if (!file_exists($uploads['basedir'] . '/link-library-images'))
 				mkdir($uploads['basedir'] . '/link-library-images');
 			$target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
-			$file_path = $uploads['baseurl'] . "/link-library-images/" . $link_id . ".jpg";
+            
+            
+            $parseaddress = parse_url( $uploads['baseurl'] );
+			$file_path = $parseaddress['path'] . "/link-library-images/" . $link_id . ".jpg";
 			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
 				$withimage = true;
 			else

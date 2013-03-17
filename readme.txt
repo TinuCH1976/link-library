@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.4 =
+* Changed stored URL for uploaded images to use relative paths
+
 = 5.7.3 =
 * Fixed bug in on-demand thumbnail generation
 
