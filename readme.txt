@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.5 =
+* Fixed issue around category name div tags in list
+
 = 5.7.4 =
 * Changed stored URL for uploaded images to use relative paths
 

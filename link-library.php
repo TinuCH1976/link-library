@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.4
+Version: 5.7.5
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -701,7 +701,7 @@ class link_library_plugin {
     
     function ll_thumbshots_warning() {
         echo "
-        <div id='ll-warning' class='updated fade'><p><strong>". __('Link Library: Missing Thumbshots CID', 'link-library') ."</strong></p> <p>". __('One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com CID. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library'). " <a href='" . add_query_arg( array( 'page' => 'link-library'), admin_url('admin.php') ) . "'>". __('Jump to Link Library admin', 'link-library') . "</a></p></div>";
+        <div id='ll-warning' class='updated fade'><p><strong>". __('Link Library: Missing Thumbshots API Key', 'link-library') ."</strong></p> <p>". __('One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com API Key. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library'). " <a href='" . add_query_arg( array( 'page' => 'link-library'), admin_url('admin.php') ) . "'>". __('Jump to Link Library admin', 'link-library') . "</a></p></div>";
     }
 	
 	function filter_mce_buttons( $buttons ) {
@@ -1722,8 +1722,8 @@ class link_library_plugin {
 				<td class="lltooltip" title="<?php _e('This function is only possible when showing one category at a time and while the default category is not shown.', 'link-library'); ?>"><input type="text" id="pagetitlesuffix" name="pagetitlesuffix" size="10" value="<?php echo $genoptions['pagetitlesuffix']; ?>"/></td>
 				</tr>
 				<tr>
-					<td class='lltooltip' title='<?php _e('CID for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><?php _e('Thumbshots CID', 'link-library'); ?></td>
-					<td colspan='4' class='lltooltip' title='<?php _e('CID for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
+					<td class='lltooltip' title='<?php _e('API Key for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><?php _e('Thumbshots API Key', 'link-library'); ?></td>
+					<td colspan='4' class='lltooltip' title='<?php _e('API Key for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
 				
 				</table>
@@ -2861,7 +2861,7 @@ class link_library_plugin {
 		</tr>
 		<tr>
 			<td><?php _e('Generate Images / Favorite Icons', 'link-library'); ?></td>
-			<td class="lltooltip" title="<?php if (empty($genoptions['thumbshotscid'])) _e('This button is only available when a valid CID is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" name="genthumbs" <?php if ( empty( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
+			<td class="lltooltip" title="<?php if (empty($genoptions['thumbshotscid'])) _e('This button is only available when a valid API key is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" name="genthumbs" <?php if ( empty( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
 			<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width:75px;padding-right:20px'></td>
 		</tr>
 		</table>
@@ -3305,7 +3305,7 @@ class link_library_plugin {
 			<?php if ($link->link_id != ''): ?>
 			<tr>
 				<td><?php _e('Automatic Image Generation', 'link-library'); ?></td>
-				<td title="<?php if ( empty( $genoptions['thumbshotscid'] ) ) _e('This button is only available when a valid CID is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" id="genthumbs" name="genthumbs" <?php if ( empty ( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
+				<td title="<?php if ( empty( $genoptions['thumbshotscid'] ) ) _e('This button is only available when a valid API key is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" id="genthumbs" name="genthumbs" <?php if ( empty ( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
 					<INPUT type="button" id="genfavicons" name="genfavicons" value="<?php _e('Generate Favorite Icon and Store locally', 'link-library'); ?>"></td>
 			</tr>
 			<?php else: ?>
@@ -4320,7 +4320,7 @@ class link_library_plugin {
 								$linkitem['name'] = $this->ll_highlight_phrase($linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>');
 							}
 
-							$catlink = '<'. $catnameoutput . '>';
+							$catlink = '<div class="'. $catnameoutput . '">';
 
 							if ($catdescpos == "right" || $catdescpos == '')
 								$catlink .= $linkitem['name'];
@@ -4337,7 +4337,7 @@ class link_library_plugin {
 							if ($catdescpos == "left")
 								$catlink .= $linkitem['name'];
 
-							$catlink .= '</' . $catnameoutput . '>';
+							$catlink .= '</div>';
 						}
 
 						if ($catanchor)
