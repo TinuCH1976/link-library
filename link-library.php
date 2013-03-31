@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.5
+Version: 5.7.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -517,6 +517,7 @@ class link_library_plugin {
 		$genoptions['usefirstpartsubmittername'] = '';
 		$genoptions['recipcheckaddress'] = get_bloginfo('wpurl');
 		$genoptions['recipcheckdelete403'] = false;
+        $genoptions['imagefilepath'] = 'absolute';
 		
 		$stylesheetlocation = get_bloginfo('wpurl') . '/wp-content/plugins/link-library/stylesheettemplate.css';
 		$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
@@ -597,7 +598,7 @@ class link_library_plugin {
 		}
 	}
 
-	function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath)
+	function ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath, $filepathtype )
 	{
 		if ($url != "" && $name != "")
 		{
@@ -632,8 +633,12 @@ class link_library_plugin {
 			$status = file_put_contents($img, file_get_contents($genthumburl));
 
 			if ( $status !== false ) {
-                $parsedaddress = parse_url( $uploads['baseurl'] );
-				$newimagedata = array("link_id" => $linkid, "link_image" => $parsedaddress['path'] . "/" . $filepath . "/" . $linkid . ".jpg");
+                if ( $filepathtype == 'absolute' || empty( $filepathtype ) ) {
+                       $newimagedata = array("link_id" => $linkid, "link_image" => $uploads['baseurl'] . "/" . $filepath . "/" . $linkid . ".jpg");               
+                } elseif ( $filepathtype == 'relative' ) {
+                    $parsedaddress = parse_url( $uploads['baseurl'] );
+                    $newimagedata = array("link_id" => $linkid, "link_image" => $parsedaddress['path'] . "/" . $filepath . "/" . $linkid . ".jpg");
+                }
 
 				if ($mode == 'thumb' || $mode == 'favicon')
 					wp_update_link($newimagedata);
@@ -917,7 +922,7 @@ class link_library_plugin {
 					$totallinks = count($linkitems);
 					foreach($linkitems as $linkitem)
 					{
-						$this->ll_get_link_image($linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $genoptions['thumbshotscid'], $filepath);
+						$this->ll_get_link_image($linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $genoptions['thumbshotscid'], $filepath, $genoptions['imagefilepath']);
 						$linkname = $linkitem->link_name;
 					}
 
@@ -1161,7 +1166,7 @@ class link_library_plugin {
 
 		foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 						'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
-						'linksubmissionthankyouurl', 'recipcheckaddress') as $option_name) {
+						'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath') as $option_name) {
 			if (isset($_POST[$option_name])) {
 				$genoptions[$option_name] = $_POST[$option_name];
 			}
@@ -1725,6 +1730,14 @@ class link_library_plugin {
 					<td class='lltooltip' title='<?php _e('API Key for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><?php _e('Thumbshots API Key', 'link-library'); ?></td>
 					<td colspan='4' class='lltooltip' title='<?php _e('API Key for Thumbshots.com thumbnail generation accounts', 'link-library'); ?>'><input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>"/></td>
 				</tr>
+                <tr>
+					<td class='lltooltip' title='<?php _e('Path for images files that are uploaded manually or generated through Thumbshots service', 'link-library'); ?>'><?php _e('Link Image File Path', 'link-library'); ?></td>
+                    <td colspan='4' class='lltooltip' title='<?php _e('Path for images files that are uploaded manually or generated through Thumbshots service', 'link-library'); ?>'><select id="imagefilepath" name="imagefilepath">
+                            <option value="absolute" <?php selected($genoptions['imagefilepath'], 'absolute'); ?>>Absolute
+                            <option value="relative" <?php selected($genoptions['imagefilepath'], 'relative'); ?>>Relative
+                        </select></td>
+				</tr>
+                
 				
 				</table>
 			</td>
@@ -3404,6 +3417,8 @@ class link_library_plugin {
 		global $wpdb;
 		
 		$uploads = wp_upload_dir();
+        
+        $genoptions = get_option('LinkLibraryGeneral');
 		
 		if(array_key_exists('linkimageupload', $_FILES))
 		{
@@ -3411,9 +3426,13 @@ class link_library_plugin {
 				mkdir($uploads['basedir'] . '/link-library-images');
 			$target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
             
+            if ( $genoptions['imagefilepath'] == 'absolute' || empty( $genoptions['imagefilepath'] ) ) {
+                $file_path = $uploads['baseurl'] . "/link-library-images/" . $link_id . ".jpg";
+            } elseif ( $genoptions['imagefilepath'] == 'relative' ) {
+                $parseaddress = parse_url( $uploads['baseurl'] );
+                $file_path = $parseaddress['path'] . "/link-library-images/" . $link_id . ".jpg";
+            }
             
-            $parseaddress = parse_url( $uploads['baseurl'] );
-			$file_path = $parseaddress['path'] . "/link-library-images/" . $link_id . ".jpg";
 			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
 				$withimage = true;
 			else

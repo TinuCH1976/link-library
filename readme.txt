@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.6 =
+* Added option in general settings to select if images that are uploaded or generated should be stored using their full path (functionality in 5.7.3 or older) or relative paths
+
 = 5.7.5 =
 * Fixed issue around category name div tags in list
 
