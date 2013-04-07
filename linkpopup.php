@@ -1,5 +1,11 @@
 <?php
-	require_once( '../../../wp-load.php' );
+if( file_exists( '../../../wp-load.php' ) ) {
+	require_once( '../../../wp-load.php');
+}
+// Oh dear, the plugin directory is not in the usual spot...
+else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-load.php' ) ) {
+	require_once( $_REQUEST['xpath'] .'wp-load.php');
+}
 	require_once( 'link-library.php' );
 	  
     if ( isset( $_GET['linkid'] ) && isset( $_GET['settings']) ) {
@@ -39,10 +45,12 @@
     $alt = ' alt="' . $cleanname . '"';
     
     $title = esc_html($linkitem['link_description'], ENT_QUOTES);
-    
+
     if ('' != $title)
 		$title = ' title="' . $title . '"';
-    
+
+    $options = get_option( 'LinkLibraryPP' . $settings_id );
+
     $rel = $linkitem['link_rel'];
     if ('' != $rel and !$options['nofollow'] and !$linkitem['link_no_follow'])
         $rel = ' rel="' . $rel . '"';
@@ -50,9 +58,7 @@
         $rel = ' rel="' . $rel . ' nofollow"';
     else if ('' == $rel and ($options['nofollow'] or $linkitem['link_no_follow']))
         $rel = ' rel="nofollow"';
-    
-    $options = get_option( 'LinkLibraryPP' . $settings_id );
-    
+
     $target = $linkitem['link_target'];
     if ( !empty( $target ) ) {
         $target = ' target="' . $target . '"';
@@ -104,14 +110,14 @@
     
     if ( ( strpos( $popup_text, '%link_name%' ) !== false ) && !empty( $name ) ) {
         if ( ( $options['sourcename'] == 'primary' && $the_link != '#') || ($options['sourcename'] == 'secondary' && $the_second_link != '#')) {
-            $nameoutput .= '<a href="';
+            $nameoutput = '<a href="';
 
-            if ( $sourcename == 'primary' || $sourcename == '' )
+            if ( isset( $sourcename ) && ( $sourcename == 'primary' || $sourcename == '' ) )
                 $nameoutput .= $the_link;
-            elseif ( $sourcename == 'secondary' )
+            elseif ( isset( $sourcename ) && $sourcename == 'secondary' )
                 $nameoutput .= $the_second_link;
 
-            $nameoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
+            $nameoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( ( isset( $enablelinkpopup ) && $enablelinkpopup ) ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
         }
 
         $nameoutput .= $name;
@@ -216,13 +222,16 @@
      
     echo '<div class="linkpopup">' . $popup_text . '</div>';
     
+    $xpath = $my_link_library_plugin->relativePath( dirname( __FILE__ ), ABSPATH );
+
     $track_code = "<script type='text/javascript'>\n";
     $track_code .= "jQuery(document).ready(function()\n";
     $track_code .= "{\n";
     $track_code .= "jQuery('a.track_this_link').click(function() {\n";
     $track_code .= "linkid = this.id;\n";
     $track_code .= "linkid = linkid.substring(5);";
-    $track_code .= "jQuery.post('" . WP_PLUGIN_URL . "/link-library/tracker.php', {id:linkid});\n";
+    $track_code .= "path = '" . $xpath . "';";
+    $track_code .= "jQuery.post('" . WP_PLUGIN_URL . "/link-library/tracker.php', {id:linkid, xpath:path});\n";
     $track_code .= "return true;\n";
     $track_code .= "});\n";
     $track_code .= "});\n";

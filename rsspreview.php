@@ -1,12 +1,18 @@
 <?php
 
-	require_once('../../../wp-load.php');
+if( file_exists( '../../../wp-load.php' ) ) {
+	require_once( '../../../wp-load.php');
+}
+// Oh dear, the plugin directory is not in the usual spot...
+else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-load.php' ) ) {
+	require_once( $_REQUEST['xpath'] .'wp-load.php');
+}
 	
 	$linkid = intval($_GET['linkid']);
 	$itemcount = intval($_GET['previewcount']);
 	
 	$link = get_bookmark( $linkid );
-	
+
 	$genoptions = get_option('LinkLibraryGeneral');
 
 	include_once(ABSPATH . WPINC . '/feed.php');
@@ -32,7 +38,7 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8; ?>" />
 <meta http-equiv="imagetoolbar" content="false" />
 
-<?php if ($genoptions['stylesheet'] != ''): ?>
+<?php if ( isset( $genoptions['stylesheet'] ) && $genoptions['stylesheet'] != ''): ?>
 	<style id='LinkLibraryStyle' type='text/css'>
 	<?php echo stripslashes($genoptions['fullstylesheet']); ?>
 	</style>

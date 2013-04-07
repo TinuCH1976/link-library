@@ -1,5 +1,11 @@
 <?php
-	require_once('../../../wp-load.php');
+if( file_exists( '../../../wp-load.php' ) ) {
+	require_once( '../../../wp-load.php');
+}
+// Oh dear, the plugin directory is not in the usual spot...
+else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-load.php' ) ) {
+	require_once( $_REQUEST['xpath'] .'wp-load.php');
+}
 	require_once('link-library.php');
 	
 	$catID = intval($_GET['id']);

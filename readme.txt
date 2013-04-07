@@ -59,6 +59,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.7 =
+* Cleanup to avoid PHP warnings when some variables don't exist
+* Support for plugin being located in a non-standard location
+* Addition on uninstall scripts to delete extra table and settings on plugin deletion
+* Thanks to Juliette Reinders Folmer for identifying all these issues
+* Split code from admin in separate file to improve load times
+
 = 5.7.6 =
 * Added option in general settings to select if images that are uploaded or generated should be stored using their full path (functionality in 5.7.3 or older) or relative paths
 
