@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.9 =
+* Fix for error submitting links in 5.7.8
+
 = 5.7.8 =
 * Fixed error with unknown column when selecting List Featured Links ahead of Regular Links options
 

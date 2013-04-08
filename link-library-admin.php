@@ -3253,9 +3253,6 @@ class link_library_plugin_admin {
 				<td><?php _e('Automatic Image Generation', 'link-library'); ?></td>
 				<td title="<?php if ( empty( $genoptions['thumbshotscid'] ) ) _e('This button is only available when a valid API key is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" id="genthumbs" name="genthumbs" <?php if ( empty ( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnail and Store locally', 'link-library'); ?>">
 					<INPUT type="button" id="genfavicons" name="genfavicons" value="<?php _e('Generate Favorite Icon and Store locally', 'link-library'); ?>">
-					
-<?php		$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH ); ?>
-				   <input type='hidden' name='xpath' value='<?php echo esc_attr( $xpath ); ?>' />
 				</td>
 			</tr>
 			<?php else: ?>
@@ -3299,7 +3296,7 @@ class link_library_plugin_admin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-						var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } ?>, xpath: '<?php echo $xpath; ?>' };
+						var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } ?> };
 						jQuery.get('<?php echo plugins_url( 'link-library-image-generator.php', __FILE__ ); ?>', map, 
 							function(data){
 								if (data != '')
@@ -3325,7 +3322,7 @@ class link_library_plugin_admin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } ?>, xpath: '<?php echo $xpath; ?>' };
+						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } ?> };
 						jQuery.get('<?php echo plugins_url( 'link-library-image-generator.php', __FILE__ ); ?>', map, 
 							function(data){
 								if (data != '')
