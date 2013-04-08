@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.7
+Version: 5.7.8
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -595,6 +595,7 @@ class link_library_plugin {
 			$catquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
 			$catquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 			$catquery .= "LEFT JOIN " . $this->db_prefix() . "links l ON (tr.object_id = l.link_id) ";
+            $catquery .= "LEFT JOIN " . $this->db_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";	
 			$catquery .= "WHERE tt.taxonomy = 'link_category' ";
 
 			if ($hide_if_empty)
@@ -614,7 +615,7 @@ class link_library_plugin {
 			$catquery .= " ORDER by ";
 			
 			if ($featuredfirst == true)
-				$catquery .= "link_featured DESC, ";
+				$catquery .= "le.link_featured DESC, ";
 
 			if ($order == "name")
 				$catquery .= " name " . $direction;

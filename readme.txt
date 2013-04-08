@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.8 =
+* Fixed error with unknown column when selecting List Featured Links ahead of Regular Links options
+
 = 5.7.7 =
 * Cleanup to avoid PHP warnings when some variables don't exist
 * Support for plugin being located in a non-standard location
