@@ -3296,7 +3296,7 @@ class link_library_plugin_admin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-						var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } ?> };
+                        var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; } ?> };
 						jQuery.get('<?php echo plugins_url( 'link-library-image-generator.php', __FILE__ ); ?>', map, 
 							function(data){
 								if (data != '')
@@ -3322,7 +3322,7 @@ class link_library_plugin_admin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } ?> };
+						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; }?> };
 						jQuery.get('<?php echo plugins_url( 'link-library-image-generator.php', __FILE__ ); ?>', map, 
 							function(data){
 								if (data != '')

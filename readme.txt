@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.9.1 =
+* Fixed javascript error on add new link page
+
 = 5.7.9 =
 * Fix for error submitting links in 5.7.8
 
