@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.9.1
+Version: 5.7.9.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -35,6 +35,8 @@ License at http://www.gnu.org/copyleft/gpl.html
 I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 */
 
+require_once(ABSPATH . '/wp-admin/includes/bookmark.php');
+
 global $my_link_library_plugin;
 global $my_link_library_plugin_admin;
 
@@ -52,6 +54,10 @@ class link_library_plugin {
 
 	//constructor of class, PHP4 compatible construction for backward compatibility
 	function link_library_plugin() {
+
+        // Functions to be called when plugin is activated and deactivated
+        register_activation_hook( __FILE__, array($this, 'll_install' ) );
+        register_deactivation_hook( __FILE__, array($this, 'll_uninstall' ) );
 	
 		$newoptions = get_option('LinkLibraryPP1', "");
 
@@ -88,6 +94,170 @@ class link_library_plugin {
 		// Load text domain for translation of admin pages and text strings
 		load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
+
+    /************************** Link Library Installation Function **************************/
+    function ll_install() {
+        global $wpdb;
+
+        if (function_exists('is_multisite') && is_multisite()) {
+            if (isset($_GET['networkwide']) && ($_GET['networkwide'] == 1))
+            {
+                $originalblog = $wpdb->blogid;
+
+                $bloglist = $wpdb->get_col($wpdb->prepare("SELECT blog_id FROM $wpdb->blogs"));
+                foreach ($bloglist as $blog) {
+                    switch_to_blog($blog);
+                    $this->create_table_and_settings();
+                }
+                switch_to_blog($originalblog);
+                return;
+            }
+        }
+        $this->create_table_and_settings();
+    }
+
+    function new_network_site($blog_id, $user_id, $domain, $path, $site_id, $meta )
+    {
+        global $wpdb;
+
+        if ( ! function_exists('is_plugin_active_for_network') )
+            require_once( ABSPATH . '/wp-admin/includes/plugin.php' );
+
+        if (is_plugin_active_for_network('link-library/link-library.php')) {
+            $originalblog = $wpdb->blogid;
+            switch_to_blog($blog_id);
+            $this->create_table_and_settings();
+            switch_to_blog($originalblog);
+        }
+    }
+
+    function create_table_and_settings()
+    {
+        global $wpdb;
+
+        $wpdb->links_extrainfo = $this->db_prefix().'links_extrainfo';
+
+        $creationquery = "CREATE TABLE " . $wpdb->links_extrainfo . " (
+				link_id bigint(20) NOT NULL DEFAULT '0',
+				link_second_url varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+				link_telephone varchar(128) CHARACTER SET utf8 DEFAULT NULL,
+				link_email varchar(128) CHARACTER SET utf8 DEFAULT NULL,
+				link_visits bigint(20) DEFAULT '0',
+				link_reciprocal varchar(255) DEFAULT NULL,
+				link_submitter varchar(255) DEFAULT NULL,
+				link_submitter_name VARCHAR( 128 ) NULL,
+				link_submitter_email VARCHAR( 128 ) NULL,
+				link_textfield TEXT NULL,
+				link_no_follow VARCHAR(1) NULL,
+				link_featured VARCHAR(1) NULL,
+				link_manual_updated VARCHAR(1) NULL,
+				UNIQUE KEY  link_id (link_id)
+				);";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($creationquery);
+
+        $genoptions = get_option('LinkLibraryGeneral');
+
+        if ($genoptions != '')
+        {
+            if ($genoptions['schemaversion'] == '' || floatval($genoptions['schemaversion']) < 3.5)
+            {
+                $genoptions['schemaversion'] = "3.5";
+                update_option('LinkLibraryGeneral', $genoptions);
+            }
+            elseif (floatval($genoptions['schemaversion']) < "4.6")
+            {
+                $genoptions['schemaversion'] = "4.6";
+                $wpdb->get_results("ALTER TABLE `" . $this->db_prefix() . "links_extrainfo` ADD `link_submitter_name` VARCHAR( 128 ) NULL, ADD `link_submitter_email` VARCHAR( 128 ) NULL , ADD `link_textfield` TEXT NULL ;");
+
+                update_option('LinkLibraryGeneral', $genoptions);
+            }
+            elseif (floatval($genoptions['schemaversion']) < "4.7")
+            {
+                $genoptions['schemaversion'] = "4.7";
+                $wpdb->get_results("ALTER TABLE `" . $this->db_prefix() . "links_extrainfo` ADD `link_no_follow` VARCHAR( 1 ) NULL;");
+
+                update_option('LinkLibraryGeneral', $genoptions);
+            }
+            elseif (floatval($genoptions['schemaversion']) < "4.9")
+            {
+                $genoptions['schemaversion'] = "4.9";
+                $wpdb->get_results("ALTER TABLE `" . $this->db_prefix() . "links_extrainfo` ADD `link_featured` VARCHAR( 1 ) NULL;");
+
+                update_option('LinkLibraryGeneral', $genoptions);
+            }
+
+            for ($i = 1; $i <= $genoptions['numberstylesets']; $i++) {
+                $settingsname = 'LinkLibraryPP' . $i;
+                $options = get_option($settingsname);
+
+                if ($options != '')
+                {
+                    if ($options['showname'] == '')
+                        $options['showname'] = true;
+
+                    if ( isset($options['show_image_and_name'] ) && $options['show_image_and_name'] == true)
+                    {
+                        $options['showname'] = true;
+                        $options['show_images'] = true;
+                    }
+
+                    if ($options['sourcename'] == '')
+                        $options['sourcename'] = 'primary';
+
+                    if ($options['sourceimage'] == '')
+                        $options['sourceimage'] = 'primary';
+
+                    if ($options['dragndroporder'] == '')
+                    {
+                        if ($options['imagepos'] == 'beforename')
+                            $options['dragndroporder'] = '1,2,3,4,5,6,7,8,9,10,11,12';
+                        elseif ($options['imagepos'] == 'aftername')
+                            $options['dragndroporder'] = '2,1,3,4,5,6,7,8,9,10,11,12';
+                        elseif ($options['imagepos'] == 'afterrssicons')
+                            $options['dragndroporder'] = '2,3,4,5,6,1,7,8,9,10,11,12';
+                    }
+                    else if ($options['dragndroporder'] != '')
+                    {
+                        $elementarray = explode(',', $options['dragndroporder']);
+
+                        $allelements = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12');
+                        foreach ($allelements as $element)
+                        {
+                            if (!in_array($element, $elementarray))
+                            {
+                                $elementarray[] = $element;
+                                $options['dragndroporder'] = implode(",", $elementarray);
+                            }
+                        }
+                    }
+
+                    if ($options['flatlist'] === true) $options['flatlist'] = 'unordered';
+                    elseif ($options['flatlist'] === false) $options['flatlist'] = 'table';
+                }
+
+                update_option($settingsname, $options);
+            }
+        }
+    }
+
+    /************************** Link Library Uninstall Function **************************/
+    function ll_uninstall() {
+        $genoptions = get_option('LinkLibraryGeneral');
+
+        if ($genoptions != '')
+        {
+            if ( isset( $genoptions['stylesheet'] ) && isset( $genoptions['fullstylesheet'] ) && $genoptions['stylesheet'] != '' && $genoptions['fullstylesheet'] == '')
+            {
+                $stylesheetlocation = plugins_url( $genoptions['stylesheet'], __FILE__ );
+                if ( file_exists( $stylesheetlocation ) )
+                    $genoptions['fullstylesheet'] = file_get_contents( $stylesheetlocation );
+
+                update_option('LinkLibraryGeneral', $genoptions);
+            }
+        }
+    }
     
     function db_prefix() {
 		global $wpdb;
