@@ -10,9 +10,6 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
 
 
 require_once('link-library.php');
-require_once('link-library-admin.php');
-
-global $my_link_library_plugin_admin;
 
 check_admin_referer('LL_ADDLINK_FORM');
 
@@ -104,8 +101,8 @@ if ($captureddata['link_name'] != '')
     }
 
     if ($valid || ($options['showcaptcha'] == false && $options['showcustomcaptcha'] == false))
-    {			
-        $existinglinkquery = "SELECT * from " . $my_link_library_plugin_admin->db_prefix() . "links l where l.link_name = '" . $captureddata['link_name'] . "' ";
+    {
+        $existinglinkquery = "SELECT * from " . $my_link_library_plugin->db_prefix() . "links l where l.link_name = '" . $captureddata['link_name'] . "' ";
 
         if ( ( $options['addlinknoaddress'] == false ) || ( $options['addlinknoaddress'] == true && $captureddata['link_url'] != "" ) )
             $existinglinkquery .= " and l.link_url = 'http://" . $captureddata['link_url'] . "'";
@@ -116,7 +113,7 @@ if ($captureddata['link_name'] != '')
         {
             if ($captureddata['link_category'] == 'new' && $captureddata['link_user_category'] != '')
             {
-                $existingcatquery = "SELECT t.term_id FROM " . $my_link_library_plugin_admin->db_prefix() . "terms t, " . $my_link_library_plugin_admin->db_prefix() . "term_taxonomy tt ";
+                $existingcatquery = "SELECT t.term_id FROM " . $my_link_library_plugin->db_prefix() . "terms t, " . $my_link_library_plugin->db_prefix() . "term_taxonomy tt ";
                 $existingcatquery .= "WHERE t.name = '" . $captureddata['link_user_category'] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
                 $existingcat = $wpdb->get_var($existingcatquery);
 
@@ -126,7 +123,7 @@ if ($captureddata['link_name'] != '')
                     $newlinkcat = wp_insert_category($newlinkcatdata);
                     $newcatarray = array("term_id" => $newlinkcat);
                     $newcattype = array("taxonomy" => 'link_category');
-                    $wpdb->update( $my_link_library_plugin_admin->db_prefix().'term_taxonomy', $newcattype, $newcatarray);
+                    $wpdb->update( $my_link_library_plugin->db_prefix().'term_taxonomy', $newcattype, $newcatarray);
                     $newlinkcat = array($newlinkcat);
                 }
                 else
@@ -177,9 +174,9 @@ if ($captureddata['link_name'] != '')
 
                 $newlink = array("link_name" => esc_html(stripslashes($captureddata['link_name'])), "link_url" => esc_html(stripslashes($captureddata['link_url'])), "link_rss" => esc_html(stripslashes($captureddata['link_rss'])),
                         "link_description" => esc_html(stripslashes($newlinkdesc)), "link_notes" => esc_html(stripslashes($captureddata['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
-                $newlinkid = $my_link_library_plugin_admin->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
+                $newlinkid = $my_link_library_plugin->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
 
-                $extradatatable = $my_link_library_plugin_admin->db_prefix() . "links_extrainfo";
+                $extradatatable = $my_link_library_plugin->db_prefix() . "links_extrainfo";
                 $wpdb->update( $extradatatable, array( 'link_second_url' => $captureddata['ll_secondwebaddr'], 'link_telephone' => $captureddata['ll_telephone'], 'link_email' => $captureddata['ll_email'], 'link_reciprocal' => $captureddata['ll_reciprocal'], 'link_submitter' => ( isset( $username ) ? $username : null ), 'link_submitter_name' => $captureddata['ll_submittername'], 'link_submitter_email' => $captureddata['ll_submitteremail'], 'link_textfield' => $captureddata['link_textfield']), array( 'link_id' => $newlinkid ));
 
                 if ($options['emailnewlink'])
@@ -249,9 +246,9 @@ else
 {
     if (isset($_POST['_wp_http_referer']) && $_POST['_wp_http_referer'] != '')
     {
-        $redirectaddress = $my_link_library_plugin_admin->remove_querystring_var($_POST['_wp_http_referer'], 'addlinkmessage');
-        $redirectaddress = $my_link_library_plugin_admin->remove_querystring_var($redirectaddress, 'addlinkname');
-        $redirectaddress = $my_link_library_plugin_admin->remove_querystring_var($redirectaddress, 'addlinkurl');
+        $redirectaddress = $my_link_library_plugin->remove_querystring_var($_POST['_wp_http_referer'], 'addlinkmessage');
+        $redirectaddress = $my_link_library_plugin->remove_querystring_var($redirectaddress, 'addlinkname');
+        $redirectaddress = $my_link_library_plugin->remove_querystring_var($redirectaddress, 'addlinkurl');
     }
 }
 

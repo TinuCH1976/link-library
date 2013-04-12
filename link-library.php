@@ -242,6 +242,23 @@ class link_library_plugin {
         }
     }
 
+    function remove_querystring_var($url, $key) {
+
+        $keypos = strpos($url, $key);
+        if ($keypos)
+        {
+            $ampersandpos = strpos($url, '&', $keypos);
+            $newurl = substr($url, 0, $keypos - 1);
+
+            if ($ampersandpos)
+                $newurl .= substr($url, $ampersandpos);
+        }
+        else
+            $newurl = $url;
+
+        return $newurl;
+    }
+
     /************************** Link Library Uninstall Function **************************/
     function ll_uninstall() {
         $genoptions = get_option('LinkLibraryGeneral');
