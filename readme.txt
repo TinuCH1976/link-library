@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.9.3 =
+* Corrected undefined method errors when users submitted new links
+
 = 5.7.9.2 =
 * Fixed wp_set_link_cat error when user submission option is active
 * Fixed problem with links extra info table not getting created in new installations
