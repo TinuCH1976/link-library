@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.9.4 =
+* Fixed bug with large description field not getting saved when users submit links
+
 = 5.7.9.3 =
 * Corrected undefined method errors when users submitted new links
 
