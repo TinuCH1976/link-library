@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.9.5 =
+* Allow images to be associated to links when they are first created instead of only when you edit them later
+
 = 5.7.9.4 =
 * Fixed bug with large description field not getting saved when users submit links
 

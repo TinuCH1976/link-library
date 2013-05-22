@@ -444,6 +444,9 @@ class link_library_plugin_admin {
             add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
             add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
 
+            //add_filter( 'attachment_fields_to_edit', array( $this, 'add_custom_media_fields' ), null, 2 );
+            //add_filter( 'attachment_fields_to_save', array( $this, 'save_custom_media_fields' ), null, 2 );
+
             $genoptions = get_option('LinkLibraryGeneral');
             
             if ( !empty( $genoptions ) ) {            
@@ -468,7 +471,29 @@ class link_library_plugin_admin {
                 }
             }            
 	}
-    
+
+    function add_custom_media_fields( $form_fields, $post ) {
+
+        $form_fields[ 'link_library_add_link' ] = array(
+            'label' => 'Create Link for New Media',
+            'input' => 'html',
+            'html' => "<input type='checkbox' name='createlink' id='createlink' />" );
+
+        return $form_fields;
+    }
+
+    function save_custom_media_fields( $post, $attachment ) {
+
+        if ( $_POST['createlink'] == true) {
+            print_r($post);
+            print_r($attachment);
+            die();
+        }
+
+        return $post;
+    }
+
+
     function ll_thumbshots_warning() {
         echo "
         <div id='ll-warning' class='updated fade'><p><strong>". __('Link Library: Missing Thumbshots API Key', 'link-library') ."</strong></p> <p>". __('One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com API Key. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library'). " <a href='" . add_query_arg( array( 'page' => 'link-library'), admin_url('admin.php') ) . "'>". __('Jump to Link Library admin', 'link-library') . "</a></p></div>";
@@ -3120,6 +3145,10 @@ class link_library_plugin_admin {
 					.attr( "enctype", "multipart/form-data" )
 					.attr( "encoding", "multipart/form-data" )
 					;
+                jQuery( "form#addlink" )
+                    .attr( "enctype", "multipart/form-data" )
+                    .attr( "encoding", "multipart/form-data" )
+                ;
 				jQuery('#genthumbs').click(function()
 				{
 					var linkname = jQuery('#link_name').val();
@@ -3185,7 +3214,7 @@ class link_library_plugin_admin {
 		$uploads = wp_upload_dir();
         
         $genoptions = get_option('LinkLibraryGeneral');
-		
+
 		if(array_key_exists('linkimageupload', $_FILES))
 		{
 			if (!file_exists($uploads['basedir'] . '/link-library-images'))
