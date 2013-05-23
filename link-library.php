@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.9.5
+Version: 5.7.9.6
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -614,7 +614,7 @@ class link_library_plugin {
 						$cattext .= '">';
 
 					if ( $catlistdescpos == 'right' || $catlistdescpos == '' ) {
-						$catitem .= '<div class="linkcatname">' . __($catname->name) . '</div>';
+						$catitem .= '<div class="linkcatname">' . $catname->name . '</div>';
 						if ($showcatlinkcount)
 							$catitem .= " (" . $catname->linkcount . ")";
 					}
@@ -629,7 +629,7 @@ class link_library_plugin {
 
 					if ($catlistdescpos == 'left')
 					{
-						$catitem .= '<div class="linkcatname">' . __($catname->name) .  '</div>';
+						$catitem .= '<div class="linkcatname">' . $catname->name . '</div>';
 						if ($showcatlinkcount)
 							$catitem .= " (" . $catname->linkcount . ")";
 					}
@@ -1082,8 +1082,7 @@ class link_library_plugin {
 							$catlink = '<div class="' . $catnameoutput . '">';
 
 							if ($catdescpos == "right" || $catdescpos == '')
-								//$catlink .= qtrans_useCurrentLanguageIfNotFoundUseDefaultLanguage($linkitem['name']);
-                                $catlink .= get_the_category_by_ID($linkitem['term_id']);
+								$catlink .= $linkitem['name'];
 
 							if ($showcategorydesclinks)
 							{
@@ -1095,7 +1094,7 @@ class link_library_plugin {
 							}
 
 							if ($catdescpos == "left")
-								$catlink .= __($linkitem['name']);
+								$catlink .= $linkitem['name'];
 
 							$catlink .= "</div>";
 						}
@@ -1110,7 +1109,7 @@ class link_library_plugin {
 							$catlink = '<div class="'. $catnameoutput . '">';
 
 							if ($catdescpos == "right" || $catdescpos == '')
-								$catlink .= __($linkitem['name']);
+								$catlink .= $linkitem['name'];
 
 							if ($showcategorydesclinks)
 							{
@@ -1122,7 +1121,7 @@ class link_library_plugin {
 							}
 
 							if ($catdescpos == "left")
-								$catlink .= __($linkitem['name']);
+								$catlink .= $linkitem['name'];
 
 							$catlink .= '</div>';
 						}

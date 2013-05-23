@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.7.9.6 =
+* Fixed issue with disappearing category names
+
 = 5.7.9.5 =
 * Allow images to be associated to links when they are first created instead of only when you edit them later
 
