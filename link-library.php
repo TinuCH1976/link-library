@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.7.9.6
+Version: 5.7.9.7
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -872,7 +872,9 @@ class link_library_plugin {
 
 				foreach($searchterms as $searchterm)
 				{
-					if (ctype_alpha($searchterm) == true)
+                    $searchterm = str_replace( '--', '', $searchterm );
+                    $searchterm = str_replace( ';', '', $searchterm );
+					if ( $searchterm  == true )
 					{
 						if ($termnb == 1)
 						{
