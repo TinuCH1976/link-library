@@ -731,8 +731,14 @@ class link_library_plugin_admin {
 		// Check for current page to set some page=specific variables
 		if ($_GET['page'] == 'link-library')
 		{
-			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
+			if (isset( $_GET['message'] ) && $_GET['message'] == '1') {
 				echo "<div id='message' class='updated fade'><p><strong>" . __('General Settings Saved', 'link-library') . ".</strong></p></div>";
+            } else if (isset( $_GET['message'] ) && $_GET['message'] == '2') {
+                echo "<div id='message' class='updated fade'><p><strong><a href='" . plugins_url( 'LinksExport.csv', __FILE__ ) . "'>" . __('Download exported links', 'link-library') . "</a></strong></p></div>";
+            } else if (isset( $_GET['message'] ) && $_GET['message'] == '3') {
+                echo "<div id='message' class='updated fade'><p><strong>" . __('Link Library plugin directory needs to be writable to perform this action', 'link-library') . "</strong></p></div>";
+            }
+
 			$formvalue = 'save_link_library_general';
 			$pagetitle = 'Link Library ' . __('General Settings', 'link-library');
 		}
@@ -952,7 +958,7 @@ class link_library_plugin_admin {
 		//cross check the given referer
 		check_admin_referer('link-library');
 
-		$genoptions = get_option('LinkLibraryGeneral');
+        $genoptions = get_option('LinkLibraryGeneral');
 
 		foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 						'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
@@ -972,8 +978,63 @@ class link_library_plugin_admin {
 
 		update_option('LinkLibraryGeneral', $genoptions);
 
-		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
-		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . "&message=1");
+        $message = "1";
+
+        if (isset($_POST['exportalllinks']))
+        {
+            if (is_writable(ABSPATH.PLUGINDIR . '/link-library'))
+            {
+                $myFile = ABSPATH.PLUGINDIR . "/link-library/LinksExport.csv";
+                $fh = fopen($myFile, 'w') or die("can't open file");
+
+                global $wpdb;
+
+                $linkquery = "SELECT distinct l.link_name, l.link_url, l.link_rss, l.link_description, l.link_notes, ";
+                $linkquery .= "t.name, l.link_visible, le.link_second_url, le.link_telephone, le.link_email, le.link_reciprocal, ";
+                $linkquery .= "l.link_image, le.link_textfield, le.link_no_follow ";
+                $linkquery .= "FROM " . $this->db_prefix() . "terms t ";
+                $linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
+                $linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+                $linkquery .= "LEFT JOIN " . $this->db_prefix() . "links l ON (tr.object_id = l.link_id) ";
+                $linkquery .= "LEFT JOIN " . $this->db_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";
+                $linkquery .= "WHERE tt.taxonomy = 'link_category' ";
+
+                $linkitems = $wpdb->get_results($linkquery, ARRAY_A);
+
+                if ( $linkitems ) {
+                    $headerrow = array();
+
+                    foreach ($linkitems[0] as $key => $option)
+                    {
+                        $headerrow[] = '"' . $key . '"';
+                    }
+
+                    $headerdata .= join(',', $headerrow)."\n";
+                    fwrite($fh, $headerdata);
+
+                    foreach ( $linkitems as $linkitem ) {
+                        $datarow = array();
+                        foreach ( $linkitem as $key => $value ) {
+                            $datarow[] = '"' . $value . '"';
+                        }
+                        $data = join(',', $datarow)."\n";
+                        fwrite($fh, $data);
+                    }
+
+                    fclose($fh);
+
+                    $message = "2";
+                }
+            }
+            else
+            {
+                $message = "3";
+            }
+        }
+
+
+        //lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
+		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . "&message=" . $message);
 	}
 
 		//executed if the post arrives initiated by pressing the submit button of form
@@ -1486,6 +1547,7 @@ class link_library_plugin_admin {
 
 	function general_meta_box($data) {
 		$genoptions = $data['genoptions'];
+
 		?>
 			<table>
 			<tr>
@@ -1527,6 +1589,9 @@ class link_library_plugin_admin {
                             <option value="relative" <?php selected($genoptions['imagefilepath'], 'relative'); ?>>Relative
                         </select></td>
 				</tr>
+                <tr>
+                    <td><input type="submit" name="exportalllinks" value="<?php _e('Export All Links', 'link-library'); ?>" /></td>
+                </tr>
                 
 				
 				</table>

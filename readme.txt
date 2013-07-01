@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8 =
+* Added new Export All Links button to download all links and their associated data in a CSV format
+
 = 5.7.9.7 =
 * Fixed issue for search to now be able to accept non-alphabetic characters
 
