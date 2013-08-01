@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8
+Version: 5.8.0.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1767,6 +1767,9 @@ class link_library_plugin {
                         
                         $output .= wp_nonce_field('LL_ADDLINK_FORM', '_wpnonce', true, false);
                         $output .= "<input type='hidden' name='thankyouurl' value='" . $linksubmissionthankyouurl . "' />";
+                        global $wp_query;
+                        $thePostID = $wp_query->post->ID;
+                        $output .= "<input type='hidden' name='pageid' value='" . $thePostID . "' />";
                         $output .= "<input type='hidden' name='settingsid' value='" . $settings . "' />";
                         
                         $xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );

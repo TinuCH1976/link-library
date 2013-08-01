@@ -238,76 +238,84 @@ if ($captureddata['link_name'] != '')
     }
 }
 
-$redirectaddress = "";
+$redirectaddress = '';
 
-if (isset($_POST['thankyouurl']) && $_POST['thankyouurl'] != '')
+if ( isset($_POST['thankyouurl']) && $_POST['thankyouurl'] != '' ) {
     $redirectaddress = $_POST['thankyouurl'];
-else
-{
-    if (isset($_POST['_wp_http_referer']) && $_POST['_wp_http_referer'] != '')
-    {
-        $redirectaddress = $my_link_library_plugin->remove_querystring_var($_POST['_wp_http_referer'], 'addlinkmessage');
-        $redirectaddress = $my_link_library_plugin->remove_querystring_var($redirectaddress, 'addlinkname');
-        $redirectaddress = $my_link_library_plugin->remove_querystring_var($redirectaddress, 'addlinkurl');
+} else {
+    if ( isset ( $_POST['pageid'] ) && is_numeric( $_POST['pageid'] ) ) {
+        $redirectaddress = get_permalink( $_POST['pageid'] );
     }
 }
 
-if (strpos($redirectaddress, '?') == false)
-    $redirectaddress .= '?addlinkmessage=' . $message;
-else
-    $redirectaddress .= '&addlinkmessage=' . $message;
+$redirectaddress = add_query_arg( 'addlinkmessage', $message, $redirectaddress );
 
-if ($valid == false && ($options['showcaptcha'] == true || $options['showcustomcaptcha'] == true))
-{
-    if ( isset($_POST['link_name']) && $_POST['link_name'] != '')
-        $redirectaddress .= "&addlinkname=" . rawurlencode($captureddata['link_name']);
+if ( $valid == false && ( $options['showcaptcha'] == true || $options['showcustomcaptcha'] == true ) ) {
+    if ( isset( $_POST['link_name'] ) && $_POST['link_name'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkname', rawurlencode( $captureddata['link_name'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_url']) && $_POST['link_url'] != '')
-        $redirectaddress .= "&addlinkurl=" . rawurlencode($captureddata['link_url']);
+    if ( isset($_POST['link_url'] ) && $_POST['link_url'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkurl', rawurlencode( $captureddata['link_url'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_category']) && $_POST['link_category'] != '')
-        $redirectaddress .= "&addlinkcat=" . rawurlencode($captureddata['link_category']);
+    if ( isset( $_POST['link_category'] ) && $_POST['link_category'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkcat', rawurlencode( $captureddata['link_category'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_user_category']) && $_POST['link_user_category'] != '')
-        $redirectaddress .= "&addlinkusercat=" . rawurlencode($captureddata['link_user_category']);
+    if ( isset( $_POST['link_user_category'] ) && $_POST['link_user_category'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkusercat', rawurlencode( $captureddata['link_user_category'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_description']) && $_POST['link_description'] != '')
-        $redirectaddress .= "&addlinkdesc=" . rawurlencode($captureddata['link_description']);
+    if ( isset( $_POST['link_description'] ) && $_POST['link_description'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkdesc', rawurlencode( $captureddata['link_description'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_textfield']) && $_POST['link_textfield'] != '')
-        $redirectaddress .= "&addlinktextfield=" . rawurlencode($captureddata['link_textfield']);
+    if ( isset( $_POST['link_textfield'] ) && $_POST['link_textfield'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinktextfield', rawurlencode( $captureddata['link_textfield'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_rss']) && $_POST['link_rss'] != '')
-        $redirectaddress .= "&addlinkrss=" . rawurlencode($captureddata['link_rss']);
+    if ( isset( $_POST['link_rss'] ) && $_POST['link_rss'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkrss', rawurlencode( $captureddata['link_rss'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['link_notes']) && $_POST['link_notes'] != '')
-        $redirectaddress .= "&addlinknotes=" . rawurlencode($captureddata['link_notes']);
+    if ( isset( $_POST['link_notes'] ) && $_POST['link_notes'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinknotes', rawurlencode( $captureddata['link_notes'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['ll_secondwebaddr']) && $_POST['ll_secondwebaddr'] != '')
-        $redirectaddress .= "&addlinksecondurl=" . rawurlencode($captureddata['ll_secondwebaddr']);
+    if ( isset( $_POST['ll_secondwebaddr'] ) && $_POST['ll_secondwebaddr'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinksecondurl', rawurlencode( $captureddata['ll_secondwebaddr'] ), $redirectaddress );
+    }
     
-    if ( isset($_POST['ll_telephone']) && $_POST['ll_telephone'] != '')
-        $redirectaddress .= "&addlinktelephone=" . rawurlencode($captureddata['ll_telephone']);
+    if ( isset( $_POST['ll_telephone'] ) && $_POST['ll_telephone'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinktelephone', rawurlencode($captureddata['ll_telephone'] ), $redirectaddress );
+    }
     
-     if ( isset($_POST['ll_email']) && $_POST['ll_email'] != '')
-        $redirectaddress .= "&addlinkemail=" . rawurlencode($captureddata['ll_email']);
+    if ( isset( $_POST['ll_email'] ) && $_POST['ll_email'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkemail', rawurlencode( $captureddata['ll_email'] ), $redirectaddress );
+    }
      
-     if ( isset($_POST['ll_reciprocal']) && $_POST['ll_reciprocal'] != '')
-        $redirectaddress .= "&addlinkreciprocal=" . rawurlencode($captureddata['ll_reciprocal']);
+    if ( isset( $_POST['ll_reciprocal'] ) && $_POST['ll_reciprocal'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkreciprocal', rawurlencode( $captureddata['ll_reciprocal'] ), $redirectaddress );
+    }
      
-     if ( isset($_POST['ll_submittername']) && $_POST['ll_submittername'] != '')
-        $redirectaddress .= "&addlinksubmitname=" . rawurlencode($captureddata['ll_submittername']);
+    if ( isset( $_POST['ll_submittername'] ) && $_POST['ll_submittername'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinksubmitname', rawurlencode( $captureddata['ll_submittername'] ), $redirectaddress );
+    }
      
-     if ( isset($_POST['ll_submitteremail']) && $_POST['ll_submitteremail'] != '')
-        $redirectaddress .= "&addlinksubmitemail=" . rawurlencode($captureddata['ll_submitteremail']);
+    if ( isset( $_POST['ll_submitteremail'] ) && $_POST['ll_submitteremail'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinksubmitemail', rawurlencode( $captureddata['ll_submitteremail'] ), $redirectaddress );
+    }
      
-      if ( isset($_POST['ll_submittercomment']) && $_POST['ll_submittercomment'] != '')
-        $redirectaddress .= "&addlinksubmitcomment=" . rawurlencode($captureddata['ll_submittercomment']);
+    if ( isset( $_POST['ll_submittercomment'] ) && $_POST['ll_submittercomment'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinksubmitcomment', rawurlencode( $captureddata['ll_submittercomment'] ), $redirectaddress );
+    }
       
-      if ( isset($_POST['ll_customcaptchaanswer']) && $_POST['ll_customcaptchaanswer'] != '')
-        $redirectaddress .= "&addlinkcustomcaptcha=" . rawurlencode($captureddata['ll_customcaptchaanswer']);
+    if ( isset( $_POST['ll_customcaptchaanswer'] ) && $_POST['ll_customcaptchaanswer'] != '' ) {
+        $redirectaddress = add_query_arg( 'addlinkcustomcaptcha', rawurlencode( $captureddata['ll_customcaptchaanswer'] ), $redirectaddress );
+    }
 }
 
-wp_redirect($redirectaddress);
+wp_redirect( $redirectaddress );
 
 ?>

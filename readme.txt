@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.0.1 =
+* Corrected redirection bug when user submitted link with bad field, then corrected and re-submitted
+
 = 5.8 =
 * Added new Export All Links button to download all links and their associated data in a CSV format
 
