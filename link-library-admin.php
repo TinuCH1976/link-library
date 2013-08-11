@@ -1677,7 +1677,7 @@ class link_library_plugin_admin {
 
 	function moderate_meta_box() {
 	?>
-			<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
+			<table class='widefat' style='clear:none;width:100%;background-color:#F1F1F1;background-image: linear-gradient(to top, #ECECEC, #F9F9F9);background-position:initial initial;background-repeat: initial initial'>
 				<tr>
 					<th style='width: 30px'></th>
 					<th style='width: 200px'><?php _e('Link Name', 'link-library'); ?></th>
@@ -1798,7 +1798,7 @@ class link_library_plugin_admin {
 						<?php endif; ?>
 				<br />
 				<br />
-				<table class='widefat' style='clear:none;width:100%;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
+				<table class='widefat' style='clear:none;width:100%;background-color:#F1F1F1;background-image: linear-gradient(to top, #ECECEC, #F9F9F9);background-position:initial initial;background-repeat: initial initial'>
 					<thead>
 					<tr>
 						<th style='width:40px' class="lltooltip" title='<?php _e('Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library'); ?>'>
@@ -2277,7 +2277,7 @@ class link_library_plugin_admin {
 			</ul>
 			<input type="hidden" id="dragndroporder" name="dragndroporder" size="60" value="<?php echo $options['dragndroporder']; ?>"/>
 			<br />
-			<table class='widefat' style='width: 1000px;margin:15px 5px 10px 0px;clear:none;background: #DFDFDF url(/wp-admin/images/gray-grad.png) repeat-x scroll left top;'>
+			<table class='widefat' style='width: 1000px;margin:15px 5px 10px 0px;clear:none;background-color:#F1F1F1;background-image: linear-gradient(to top, #ECECEC, #F9F9F9);background-position:initial initial;background-repeat: initial initial'>
 				<thead>
 					<th style='width: 100px'></th>
 					<th style='width: 40px'><?php _e('Display', 'link-library'); ?></th>

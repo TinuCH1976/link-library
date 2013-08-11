@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.0.2 =
+* Small styling change in admin interface to adjust to removal of background image in WP 3.6
+
 = 5.8.0.1 =
 * Corrected redirection bug when user submitted link with bad field, then corrected and re-submitted
 
