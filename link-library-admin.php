@@ -1676,6 +1676,7 @@ class link_library_plugin_admin {
 	}
 
 	function moderate_meta_box() {
+        $genoptions = get_option('LinkLibraryGeneral');
 	?>
 			<table class='widefat' style='clear:none;width:100%;background-color:#F1F1F1;background-image: linear-gradient(to top, #ECECEC, #F9F9F9);background-position:initial initial;background-repeat: initial initial'>
 				<tr>
@@ -1696,8 +1697,18 @@ class link_library_plugin_admin {
 				$linkquery .= "WHERE tt.taxonomy = 'link_category'";				
 				$linkquery .= "AND l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 				$linkquery .= " ORDER by link_name ASC";
+
+                if ( $genoptions['debugmode'] ) {
+                    echo '<!-- ' . $linkquery . ' -->' . "\n";
+                }
 				
 				$linkitems = $wpdb->get_results($linkquery);
+
+                if ( $genoptions['debugmode'] ) {
+                    echo '<!-- ';
+                    print_r( $linkitems );
+                    echo ' -->';
+                }
                                 
 				if ($linkitems) {
 					foreach($linkitems as $linkitem) {

@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.0.3 =
+* Added debug code in moderation section to help troubleshoot issues
+
 = 5.8.0.2 =
 * Small styling change in admin interface to adjust to removal of background image in WP 3.6
 
