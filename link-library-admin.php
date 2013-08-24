@@ -1235,7 +1235,7 @@ class link_library_plugin_admin {
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text') as $option_name) {
+							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent') as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -2003,6 +2003,24 @@ class link_library_plugin_admin {
 			<td style='width:200px'><?php _e('Display categories with search results', 'link-library'); ?>	</td>
 			<td><input type="checkbox" id="showcatonsearchresults" name="showcatonsearchresults" <?php if ($options['showcatonsearchresults']) echo ' checked="checked" '; ?>/></td>
 		</tr>
+        <tr>
+            <td><?php _e('Link Title Content', 'link-library'); ?></td>
+            <td>
+                <select name="linktitlecontent">
+
+                    <?php $modes = array('linkname' => 'Link Name', 'linkdesc' => 'Link Description');
+
+                    // Generate all items of drop-down list
+                    foreach ( $modes as $mode => $modename) {
+                    ?>
+                    <option value="<?php echo $mode; ?>"
+                        <?php selected( $options['linktitlecontent'], $mode ); ?>>
+                        <?php echo $modename; ?>
+                        <?php } ?>
+                </select>
+            </td>
+            <td style='width:100px'></td><td></td><td></td>
+        </tr>
 		<tr>
 			<td class="lltooltip" title="<?php _e('This setting does not apply when selecting My Link Order for the order', 'link-library'); ?>">
 				<?php _e('Direction', 'link-library'); ?>

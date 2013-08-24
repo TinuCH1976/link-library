@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.0.4 =
+* Added option to display link name or description in link title tag
+
 = 5.8.0.3 =
 * Added debug code in moderation section to help troubleshoot issues
 
