@@ -1689,13 +1689,12 @@ class link_library_plugin_admin {
 			<?php global $wpdb;
 
 				$linkquery = "SELECT distinct *, l.link_id as true_link_id ";
-				$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
-				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
-				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
-				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "links l ON (tr.object_id = l.link_id) ";
-				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";	
-				$linkquery .= "WHERE tt.taxonomy = 'link_category'";				
-				$linkquery .= "AND l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
+				$linkquery .= "FROM " . $this->db_prefix() . "links_extrainfo le ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "links l ON (le.link_id = l.link_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (l.link_id = tr.object_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "terms t ON (t.term_id = tt.term_id) ";
+				$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 				$linkquery .= " ORDER by link_name ASC";
 
                 if ( $genoptions['debugmode'] ) {

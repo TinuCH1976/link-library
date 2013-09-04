@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.0.5 =
+* Fixed link moderation page to show links submitted by bots with no category
+
 = 5.8.0.4 =
 * Added option to display link name or description in link title tag
 
