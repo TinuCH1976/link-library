@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.0.6 =
+* Updated french translation
+* Added support for media upload to attach new images to links
+
 = 5.8.0.5 =
 * Fixed link moderation page to show links submitted by bots with no category
 

@@ -33,6 +33,14 @@ class link_library_plugin_admin {
 		
 		add_action( 'wpmu_new_blog', array($this, 'new_network_site'), 10, 6);
 
+        add_action( 'admin_head', array( $this, 'admin_header') );
+    }
+
+    function admin_header() {
+        global $pagenow;
+        if ( ( $pagenow == 'link.php' && $_GET['action'] == 'edit' ) || ( $pagenow == 'link-add.php' ) ) {
+            wp_enqueue_media();
+        }
     }
     
     function set_plugin_row_meta($links_array, $plugin_file) {
@@ -1692,7 +1700,7 @@ class link_library_plugin_admin {
 				$linkquery .= "FROM " . $this->db_prefix() . "links_extrainfo le ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "links l ON (le.link_id = l.link_id) ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (l.link_id = tr.object_id) ";
-				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (tt.term_taxonomy_id = tr.term_taxonomy_id AND tt.taxonomy = 'link_category') ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "terms t ON (t.term_id = tt.term_id) ";
 				$linkquery .= "WHERE l.link_description like '%LinkLibrary:AwaitingModeration:RemoveTextToApprove%' ";
 				$linkquery .= " ORDER by link_name ASC";
@@ -3191,7 +3199,7 @@ class link_library_plugin_admin {
 				<td>
 					<div id='current_link_image'>
 					<?php if ( isset($originaldata['link_image']) && $originaldata['link_image'] != ''): ?>
-						<img src="<?php echo $originaldata['link_image'] ?>" />
+						<img id="actual_link_image" src="<?php echo $originaldata['link_image'] ?>" />
 					<?php else: ?>
 						<?php _e('None Assigned', 'link-library'); ?>
 					<?php endif; ?>
@@ -3213,7 +3221,7 @@ class link_library_plugin_admin {
 			<?php endif; ?>
 			<tr>
 				<td><?php _e('Manual Image Upload', 'link-library'); ?></td>
-				<td><input size="80" name="linkimageupload" type="file" /></td>
+				<td><input type="button" class="upload_image_button" value="<?php _e( 'Launch Media Uploader', 'link-library' ); ?>"></td>
 			</tr>
 			<tr>
 				<td colspan='2'><p><?php _e('Manual upload requires a wp-content\uploads directory to be present with write permissions', 'link-library'); ?>.</p></td>
@@ -3225,6 +3233,44 @@ class link_library_plugin_admin {
 		<script type="text/javascript">
 			jQuery(document).ready(function()
 			{
+                // Uploading files
+                var file_frame;
+
+                jQuery('.upload_image_button').live('click', function( event ){
+
+                    event.preventDefault();
+
+                    // If the media frame already exists, reopen it.
+                    if ( file_frame ) {
+                        file_frame.open();
+                        return;
+                    }
+
+                    // Create the media frame.
+                    file_frame = wp.media.frames.file_frame = wp.media({
+                        title: jQuery( this ).data( 'uploader_title' ),
+                        button: {
+                            text: jQuery( this ).data( 'uploader_button_text' ),
+                        },
+                        multiple: false  // Set to true to allow multiple files to be selected
+                    });
+
+                    // When an image is selected, run a callback.
+                    file_frame.on( 'select', function() {
+                        // We set multiple to false so only get one image from the uploader
+                        attachment = file_frame.state().get('selection').first().toJSON();
+
+                        // Do something with attachment.id and/or attachment.url here
+                        jQuery('#link_image').val(attachment.url);
+
+                        jQuery('#actual_link_image').attr( "src", attachment.url);
+                    });
+
+                    // Finally, open the modal
+                    file_frame.open();
+                });
+
+
 				jQuery("#ll_updated_manual").click(function() {
 					 if (jQuery('#ll_updated_manual').is(':checked')) {
 					   jQuery('#ll_link_updated').attr('disabled', false);
