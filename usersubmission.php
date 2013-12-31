@@ -173,11 +173,11 @@ if ($captureddata['link_name'] != '')
                 }
 
                 $newlink = array("link_name" => esc_html(stripslashes($captureddata['link_name'])), "link_url" => esc_html(stripslashes($captureddata['link_url'])), "link_rss" => esc_html(stripslashes($captureddata['link_rss'])),
-                        "link_description" => esc_html(stripslashes($newlinkdesc)), "link_notes" => esc_html(stripslashes($captureddata['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility);
+                        "link_description" => esc_html(stripslashes($newlinkdesc)), "link_notes" => esc_html(stripslashes($captureddata['link_notes'])), "link_category" => $newlinkcat, "link_visible" => $newlinkvisibility, 'link_target' => $options['linktarget']);
                 $newlinkid = $my_link_library_plugin->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
 
                 $extradatatable = $my_link_library_plugin->db_prefix() . "links_extrainfo";
-                $wpdb->insert( $extradatatable, array( 'link_id' => $newlinkid, 'link_second_url' => $captureddata['ll_secondwebaddr'], 'link_telephone' => $captureddata['ll_telephone'], 'link_email' => $captureddata['ll_email'], 'link_reciprocal' => $captureddata['ll_reciprocal'], 'link_submitter' => ( isset( $username ) ? $username : null ), 'link_submitter_name' => $captureddata['ll_submittername'], 'link_submitter_email' => $captureddata['ll_submitteremail'], 'link_textfield' => $captureddata['link_textfield'], 'link_no_follow' => 'N', 'link_featured' => 'N', 'link_manual_updated' => 'N', 'link_target' => $options['linktarget'] ) );
+                $wpdb->insert( $extradatatable, array( 'link_id' => $newlinkid, 'link_second_url' => $captureddata['ll_secondwebaddr'], 'link_telephone' => $captureddata['ll_telephone'], 'link_email' => $captureddata['ll_email'], 'link_reciprocal' => $captureddata['ll_reciprocal'], 'link_submitter' => ( isset( $username ) ? $username : null ), 'link_submitter_name' => $captureddata['ll_submittername'], 'link_submitter_email' => $captureddata['ll_submitteremail'], 'link_textfield' => $captureddata['link_textfield'], 'link_no_follow' => 'N', 'link_featured' => 'N', 'link_manual_updated' => 'N' ) );
 
                 if ($options['emailnewlink'])
                 {

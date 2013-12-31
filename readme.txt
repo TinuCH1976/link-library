@@ -60,7 +60,7 @@ Further configuration is available under the Link Library Settings panel.
 == Changelog ==
 
 = 5.8.0.7 =
-* User submitted links now use Link Target specified under Link Element Settings
+* Corrected problem with user link submissions introduced by previous update
 
 = 5.8.0.6 =
 * Updated french translation
