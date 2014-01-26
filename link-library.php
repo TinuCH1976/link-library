@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.0.8
+Version: 5.8.0.9
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -715,6 +715,94 @@ class link_library_plugin {
 		return $str;
 	}
 
+    function link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID ) {
+
+        $dotbelow = false;
+        $dotabove = false;
+
+        if ($numberofpages > 1)
+        {
+            $paginationoutput = "<div class='pageselector'>";
+
+            if ($pagenumber != 1)
+            {
+                $paginationoutput .= "<span class='previousnextactive'>";
+
+                if (!$showonecatonly)
+                    $paginationoutput .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $previouspagenumber . "'>" . __('Previous', 'link-library') . "</a>";
+                elseif ($showonecatonly)
+                {
+                    if ($showonecatmode == 'AJAX' || $showonecatmode == '')
+                        $paginationoutput .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . "</a>";
+                    elseif ($showonecatmode == 'HTMLGET')
+                        $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $previouspagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Previous', 'link-library') . "</a>";
+                }
+
+                $paginationoutput .= "</span>";
+            }
+            else
+                $paginationoutput .= "<span class='previousnextinactive'>" . __('Previous', 'link-library') . "</span>";
+
+            for ($counter = 1; $counter <= $numberofpages; $counter++)
+            {
+                if ($counter <= 2 || $counter >= $numberofpages - 1 || ($counter <= $pagenumber + 2 && $counter >= $pagenumber - 2))
+                {
+                    if ($counter != $pagenumber)
+                        $paginationoutput .= "<span class='unselectedpage'>";
+                    else
+                        $paginationoutput .= "<span class='selectedpage'>";
+
+                    if (!$showonecatonly)
+                        $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $counter . "'>" . $counter . "</a>";
+                    elseif ($showonecatonly)
+                    {
+                        if ($showonecatmode == 'AJAX' || $showonecatmode == '')
+                            $paginationoutput .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
+                        elseif ($showonecatmode == 'HTMLGET')
+                            $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $counter . "&cat_id=" . $AJAXcatid . "' >" . $counter . "</a>";
+                    }
+
+                    $paginationoutput .= "</a></span>";
+                }
+
+                if ($counter >= 2 && $counter < $pagenumber - 2 && $dotbelow == false)
+                {
+                    $paginationoutput .= "...";
+                    $dotbelow = true;
+                }
+
+                if ($counter > $pagenumber + 2 && $counter < $numberofpages - 1 && $dotabove == false)
+                {
+                    $paginationoutput .= "...";
+                    $dotabove = true;
+                }
+            }
+
+            if ($pagenumber != $numberofpages)
+            {
+                $paginationoutput .= "<span class='previousnextactive'>";
+
+                if (!$showonecatonly)
+                    $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $nextpagenumber . "'>" . __('Next', 'link-library') . "</a>";
+                elseif ($showonecatonly)
+                {
+                    if ($showonecatmode == 'AJAX' || $showonecatmode == '')
+                        $paginationoutput .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . "</a>";
+                    elseif ($showonecatmode == 'HTMLGET')
+                        $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $nextpagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Next', 'link-library') . "</a>";
+                }
+
+                $paginationoutput .= "</span>";
+            }
+            else
+                $paginationoutput .= "<span class='previousnextinactive'>" . __('Next', 'link-library') . "</span>";
+
+            $paginationoutput .= "</div>";
+        }
+
+        return $paginationoutput;
+    }
+
 	function PrivateLinkLibrary($order = 'name', $hide_if_empty = true, $catanchor = true,
 									$showdescription = false, $shownotes = false, $showrating = false,
 									$showupdated = false, $categorylist = '', $show_images = false, 
@@ -739,13 +827,13 @@ class link_library_plugin {
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
 									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
-                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname' ) {
+                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER' ) {
 
 		global $wpdb;
 		
 		$output = "\n<!-- Beginning of Link Library Output -->\n\n";
 
-		$currentcategory = 1;
+        $currentcategory = 1;
         $categoryname = "";
         
         if ( $showonecatonly && $showonecatmode == 'AJAX' && $AJAXcatid == '' ) {
@@ -984,7 +1072,16 @@ class link_library_plugin {
 				array_splice( $linkitems, $maxlinks );
 			}
 		}
-        
+
+        if ($pagination && $mode != "search" && $paginationposition == 'BEFORE' )
+        {
+            $previouspagenumber = $pagenumber - 1;
+            $nextpagenumber = $pagenumber + 1;
+            $pageID = get_the_ID();
+
+            $output .= $this->link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
+        }
+
         echo "<!-- showonecatmode: " . $showonecatonly . ", AJAXnocatset: " . $AJAXnocatset . ", nocatonstartup: " . $nocatonstartup . "-->";
 
 		// Display links
@@ -1579,93 +1676,14 @@ class link_library_plugin {
             
 			$output .= "</div>";
 
-			if ($pagination && $mode != "search")
-			{
-				$previouspagenumber = $pagenumber - 1;
-				$nextpagenumber = $pagenumber + 1;
-				$dotbelow = false;
-				$dotabove = false;
+			if ( $pagination && $mode != "search" && ( $paginationposition == 'AFTER' || empty( $pagination ) ) ) {
+                $previouspagenumber = $pagenumber - 1;
+                $nextpagenumber = $pagenumber + 1;
+                $pageID = get_the_ID();
 
-				if ($numberofpages > 1)
-				{
-					$output .= "<div class='pageselector'>";	
-
-					if ($pagenumber != 1)
-					{
-						$output .= "<span class='previousnextactive'>";
-
-						if (!$showonecatonly)
-							$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $previouspagenumber . "'>" . __('Previous', 'link-library') . "</a>";
-						elseif ($showonecatonly)
-						{
-							if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-								$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . "</a>";
-							elseif ($showonecatmode == 'HTMLGET')
-								$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $previouspagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Previous', 'link-library') . "</a>";
-						}
-
-						$output .= "</span>";
-					}
-					else
-						$output .= "<span class='previousnextinactive'>" . __('Previous', 'link-library') . "</span>";
-
-					for ($counter = 1; $counter <= $numberofpages; $counter++)
-					{
-						if ($counter <= 2 || $counter >= $numberofpages - 1 || ($counter <= $pagenumber + 2 && $counter >= $pagenumber - 2))
-						{
-							if ($counter != $pagenumber)
-								$output .= "<span class='unselectedpage'>";
-							else
-								$output .= "<span class='selectedpage'>";
-
-							if (!$showonecatonly)
-								$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $counter . "'>" . $counter . "</a>";
-							elseif ($showonecatonly)
-							{
-								if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-									$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
-								elseif ($showonecatmode == 'HTMLGET')
-									$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $counter . "&cat_id=" . $AJAXcatid . "' >" . $counter . "</a>";
-							}
-
-							$output .= "</a></span>";
-						}
-
-						if ($counter >= 2 && $counter < $pagenumber - 2 && $dotbelow == false)
-						{
-							$output .= "...";
-							$dotbelow = true;
-						}
-
-						if ($counter > $pagenumber + 2 && $counter < $numberofpages - 1 && $dotabove == false)
-						{
-							$output .= "...";
-							$dotabove = true;
-						}
-					}
-
-					if ($pagenumber != $numberofpages)
-					{
-						$output .= "<span class='previousnextactive'>";
-
-						if (!$showonecatonly)
-							$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $nextpagenumber . "'>" . __('Next', 'link-library') . "</a>";
-						elseif ($showonecatonly)
-						{
-							if ($showonecatmode == 'AJAX' || $showonecatmode == '')
-								$output .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . "</a>";
-							elseif ($showonecatmode == 'HTMLGET')
-								$output .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $nextpagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Next', 'link-library') . "</a>";
-						}
-
-						$output .= "</span>";
-					}
-					else
-						$output .= "<span class='previousnextinactive'>" . __('Next', 'link-library') . "</span>";
-
-					$output .= "</div>";
-				}
+                $output .= $this->link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
 			}
+
 			$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
 
 			$output .= "<script type='text/javascript'>\n";
@@ -2158,7 +2176,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname' ) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER' ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -2192,7 +2210,7 @@ class link_library_plugin {
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
 									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'],
-                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'] );
+                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'] );
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2210,7 +2228,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent );
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -2503,7 +2521,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'] );
+                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'] );
 			
 		return $linklibraryoutput;
 	}

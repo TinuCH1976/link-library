@@ -204,6 +204,7 @@ class link_library_plugin_admin {
 		$options['rssfeedtitle'] = __('Link Library-Generated RSS Feed', 'link-library');
 		$options['rssfeeddescription'] = __('Description of Link Library-Generated Feed', 'link-library');
 		$options['showonecatmode'] = 'AJAX';
+        $options['paginationposition'] = 'AFTER';
 		$options['addlinkcustomcat'] = false;
 		$options['linkcustomcatlabel'] = __('User-submitted category', 'link-library');
 		$options['linkcustomcatlistentry'] = __('User-submitted category (define below)', 'link-library');
@@ -1243,7 +1244,7 @@ class link_library_plugin_admin {
 							'beforelink','afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 							'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 							'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent') as $option_name) {
+							'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent', 'paginationposition' ) as $option_name) {
 				if (isset($_POST[$option_name])) {
 					$options[$option_name] = str_replace("\"", "'", $_POST[$option_name]);
 				}
@@ -1941,7 +1942,16 @@ class link_library_plugin_admin {
 				<input type="text" id="linksperpage" name="linksperpage" size="3" value="<?php echo $options['linksperpage']; ?>"/>
 			</td>
 		</tr>
-		<tr>
+        <tr>
+            <td>
+                <?php _e('Pagination Position', 'link-library'); ?>
+            </td>
+            <td>
+                <select name="paginationposition" id="paginationposition" style="width:200px;">
+                    <option value="AFTER"<?php if ($options['paginationposition'] == 'AFTER' || $options['paginationposition'] == '') { echo ' selected="selected"';} ?>>After Links</option>
+                    <option value="BEFORE"<?php if ($options['paginationposition'] == 'BEFORE') { echo ' selected="selected"';} ?>>Before Links</option>
+                </select>
+            </td>
 			<td>
 				<?php _e('Hide Results if Empty', 'link-library'); ?>
 			</td>
