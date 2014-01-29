@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.1 =
+* Addressed security concerns raised by Wordpress.org plugin maintenance team
+
 = 5.8.0.9 =
 * Added option to display pagination selector before or after links
 

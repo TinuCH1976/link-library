@@ -1,20 +1,19 @@
 <?php
-if( file_exists( '../../../wp-load.php' ) ) {
-	require_once( '../../../wp-load.php');
-}
-// Oh dear, the plugin directory is not in the usual spot...
-else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-load.php' ) ) {
-	require_once( $_REQUEST['xpath'] .'wp-load.php');
+
+function link_library_ajax_image_generator ( $my_link_library_plugin_admin ) {
+
+    check_ajax_referer( 'link_library_generate_image' );
+
+    $name = $_POST['name'];
+    $url = $_POST['url'];
+    $mode = $_POST['mode'];
+    $cid = $_POST['cid'];
+    $filepath = $_POST['filepath'];
+    $filepathtype = $_POST['filepathtype'];
+    $linkid = intval($_POST['linkid']);
+
+    echo $my_link_library_plugin_admin->ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath, $filepathtype );
+    exit;
 }
 
-	require_once('link-library.php');
-
-	$name = $_GET['name'];
-	$url = $_GET['url'];
-	$mode = $_GET['mode'];
-	$cid = $_GET['cid'];
-	$filepath = $_GET['filepath'];
-	$linkid = intval($_GET['linkid']);
-	
-	echo $my_link_library_plugin->ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath);
 ?>

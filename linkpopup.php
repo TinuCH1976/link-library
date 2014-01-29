@@ -1,35 +1,28 @@
 <?php
-if( file_exists( '../../../wp-load.php' ) ) {
-	require_once( '../../../wp-load.php');
-}
-// Oh dear, the plugin directory is not in the usual spot...
-else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-load.php' ) ) {
-	require_once( $_REQUEST['xpath'] .'wp-load.php');
-}
-	require_once( 'link-library.php' );
-	  
+
+function link_library_popup_content( $my_link_library_plugin ) {
     if ( isset( $_GET['linkid'] ) && isset( $_GET['settings']) ) {
         $link_id = intval( $_GET['linkid'] );
         $settings_id = intval( $_GET['settings'] );
     } else {
         wp_die();
-    }    
-    
+    }
+
     $linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
     $linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
     $linkquery .= "FROM " . $my_link_library_plugin->db_prefix() . "terms t ";
     $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
     $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
     $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "links l ON (tr.object_id = l.link_id) ";
-    $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";	
+    $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "links_extrainfo le ON (l.link_id = le.link_id) ";
     $linkquery .= "WHERE tt.taxonomy = 'link_category' ";
 
-	$linkquery .= "AND l.link_id = " . $link_id;
-    
+    $linkquery .= "AND l.link_id = " . $link_id;
+
     global $wpdb;
-    
+
     $linkitem = $wpdb->get_row($linkquery, ARRAY_A);
-    
+
     $the_link = '#';
     if (!empty($linkitem['link_url']) )
         $the_link = esc_html($linkitem['link_url']);
@@ -37,17 +30,17 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
     $the_second_link = '#';
     if (!empty($linkitem['link_second_url']) )
         $the_second_link = esc_html($linkitem['link_second_url']);
-    
+
     $cleanname = esc_html($linkitem['link_name'], ENT_QUOTES);
-    
+
     $name = $cleanname;
-    
+
     $alt = ' alt="' . $cleanname . '"';
-    
+
     $title = esc_html($linkitem['link_description'], ENT_QUOTES);
 
     if ('' != $title)
-		$title = ' title="' . $title . '"';
+        $title = ' title="' . $title . '"';
 
     $options = get_option( 'LinkLibraryPP' . $settings_id );
 
@@ -67,9 +60,9 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
         if ( !empty( $target ) )
             $target = ' target="' . $target . '"';
     }
-    
+
     $popup_text = ( !empty( $options['link_popup_text'] ) ? stripslashes($options['link_popup_text']) : __( '%link_image%<br />Click through to visit %link_name%.', 'link-library') );
-    
+
     if ( ( strpos( $popup_text, '%link_image%' ) !== false ) && !empty( $linkitem['link_image'] ) ) {
         $imageoutput = '<a href="';
 
@@ -85,8 +78,8 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
             if ($options['thumbshotscid'] == '')
                 $imageoutput .= '<img src="http://open.thumbshots.org/image.aspx?url=' . $the_link . '"';
             elseif ($options['thumbshotscid'] != '')
-                $imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . $options['thumbshotscid'] . 
-                    '&v=1&w=120&h=90&url=' . $the_link . '"';											
+                $imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . $options['thumbshotscid'] .
+                    '&v=1&w=120&h=90&url=' . $the_link . '"';
         }
         elseif ( strpos($linkitem['link_image'], 'http') !== false )
             $imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
@@ -101,13 +94,13 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
         $imageoutput .= "/>";
 
         $imageoutput .= '</a>';
-        
+
         $popup_text = str_replace( '%link_image%', $imageoutput, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_image%' ) !== false )  && empty( $linkitem['link_image'] ) ) {
         $popup_text = str_replace( '%link_image%', '', $popup_text );
     }
-    
-    
+
+
     if ( ( strpos( $popup_text, '%link_name%' ) !== false ) && !empty( $name ) ) {
         if ( ( $options['sourcename'] == 'primary' && $the_link != '#') || ($options['sourcename'] == 'secondary' && $the_second_link != '#')) {
             $nameoutput = '<a href="';
@@ -129,99 +122,99 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
     } elseif ( ( strpos( $popup_text, '%link_name%' ) !== false ) && empty( $name ) ) {
         $popup_text = str_replace( '%link_name%', '', $popup_text );
     }
-    
+
     if ( ( strpos( $popup_text, '%link_cat_name%' ) !== false ) && !empty( $linkitem['name'] ) ) {            $popup_text = str_replace( '%link_cat_name%', $linkitem['name'], $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_cat_name%' ) !== false ) && empty( $linkitem['name'] ) ) {
         $popup_text = str_replace( '%link_cat_name%', '', $popup_text );
     }
-    
-    if ( ( strpos( $popup_text, '%link_cat_desc%' ) !== false ) && !empty( $linkitem['description'] ) ) { 
+
+    if ( ( strpos( $popup_text, '%link_cat_desc%' ) !== false ) && !empty( $linkitem['description'] ) ) {
         $cleandesc = str_replace('[', '<', $linkitem['description']);
         $cleandesc = str_replace(']', '>', $cleandesc);
-            
+
         $popup_text = str_replace( '%link_cat_desc%', $cleandesc, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_cat_desc%' ) !== false ) && empty( $linkitem['description'] ) ) {
         $popup_text = str_replace( '%link_cat_desc%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_desc%' ) !== false ) && !empty( $linkitem['link_description'] ) ) {
         $linkdesc = $linkitem['link_description'];
         $linkdesc = str_replace('[', '<', $linkdesc);
         $linkdesc = str_replace(']', '>', $linkdesc);
-        
+
         $popup_text = str_replace( '%link_desc%', $linkdesc, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_desc%' ) !== false ) && empty( $linkitem['link_description'] ) ) {
         $popup_text = str_replace( '%link_desc%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_large_desc%' ) !== false ) && !empty( $linkitem['link_textfield'] ) ) {
         $linklargedesc = stripslashes( $linkitem['link_textfield'] );
         $linklargedesc = str_replace('[', '<', $linklargedesc);
         $linklargedesc = str_replace(']', '>', $linklargedesc);
-        
+
         $popup_text = str_replace( '%link_large_desc%', $linklargedesc, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_large_desc%' ) !== false ) && empty( $linkitem['link_textfield'] ) ) {
         $popup_text = str_replace( '%link_large_desc%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_telephone%' ) !== false ) && !empty( $linkitem['link_telephone'] ) ) {
         $linktelephone = stripslashes( $linkitem['link_telephone'] );
-        
+
         $popup_text = str_replace( '%link_telephone%', $linktelephone, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_telephone%' ) !== false ) && empty( $linkitem['link_telephone'] ) ) {
         $popup_text = str_replace( '%link_telephone%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_email%' ) !== false ) && !empty( $linkitem['link_email'] ) ) {
         $linkemail = stripslashes( $linkitem['link_email'] );
-        
+
         $popup_text = str_replace( '%link_email%', $linkemail, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_email%' ) !== false ) && empty( $linkitem['link_email'] ) ) {
         $popup_text = str_replace( '%link_email%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_alt_web%' ) !== false ) && !empty( $linkitem['link_second_url'] ) ) {
         $linkalturl = stripslashes( esc_html( $linkitem['link_second_url'] ) );
-        
+
         $popup_text = str_replace( '%link_alt_web%', $linkalturl, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_alt_web%' ) !== false ) && empty( $linkitem['link_second_url'] ) ) {
         $popup_text = str_replace( '%link_alt_web%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_num_views%' ) !== false ) && !empty( $linkitem['link_visits'] ) ) {
         $linkvisits = stripslashes( $linkitem['link_visits'] );
-        
+
         $popup_text = str_replace( '%link_num_views%', $linkvisits, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_num_views%' ) !== false ) && empty( $linkitem['link_visits'] ) ) {
         $popup_text = str_replace( '%link_num_views%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_submitter_name%' ) !== false ) && !empty( $linkitem['link_submitter_name'] ) ) {
         $linksubmitter = stripslashes( $linkitem['link_submitter_name'] );
-        
+
         $popup_text = str_replace( '%link_submitter_name%', $linksubmitter, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_submitter_name%' ) !== false ) && empty( $linkitem['link_submitter_name'] ) ) {
         $popup_text = str_replace( '%link_submitter_name%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_rating%' ) !== false ) && !empty( $linkitem['link_rating'] ) ) {
         $linksubmitter = stripslashes( $linkitem['link_rating'] );
-        
+
         $popup_text = str_replace( '%link_rating%', $linksubmitter, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_rating%' ) !== false ) && empty( $linkitem['link_rating'] ) ) {
         $popup_text = str_replace( '%link_rating%', '', $popup_text );
     }
-    
+
     if ( ( strpos ( $popup_text, '%link_rss%' ) !== false ) && !empty( $linkitem['link_rss'] ) ) {
         $linksubmitter = stripslashes( $linkitem['link_rss'] );
-        
+
         $popup_text = str_replace( '%link_rss%', $linksubmitter, $popup_text );
     } elseif ( ( strpos( $popup_text, '%link_rss%' ) !== false ) && empty( $linkitem['link_rss'] ) ) {
         $popup_text = str_replace( '%link_rss%', '', $popup_text );
     }
-     
+
     echo '<div class="linkpopup">' . $popup_text . '</div>';
-    
+
     $xpath = $my_link_library_plugin->relativePath( dirname( __FILE__ ), ABSPATH );
 
     $track_code = "<script type='text/javascript'>\n";
@@ -236,8 +229,11 @@ else if ( isset( $_REQUEST['xpath'] ) && file_exists( $_REQUEST['xpath'] . 'wp-l
     $track_code .= "});\n";
     $track_code .= "});\n";
     $track_code .= "</script>";
-    
+
     echo $track_code;
+    exit;
+}
+
     
     ?>
 

@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.0.9
+Version: 5.8.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -90,7 +90,15 @@ class link_library_plugin {
 		// Re-write rules filters to allow for custom permalinks
 		add_filter('rewrite_rules_array', array($this, 'll_insertMyRewriteRules'));
 		add_filter('query_vars', array($this, 'll_insertMyRewriteQueryVars'));
-        
+
+        add_action( 'template_redirect', array( $this, 'll_template_redirect' ) );
+        add_action( 'wp_ajax_link_library_tracker', array( $this, 'link_library_ajax_tracker' ) );
+        add_action( 'wp_ajax_nopriv_link_library_tracker', array( $this, 'link_library_ajax_tracker' ) );
+        add_action( 'wp_ajax_link_library_ajax_update', array( $this, 'link_library_ajax_update') );
+        add_action( 'wp_ajax_nopriv_link_library_ajax_update', array( $this, 'link_library_ajax_update') );
+        add_action( 'wp_ajax_link_library_generate_image', array( $this, 'link_library_generate_image') );
+        add_action( 'wp_ajax_nopriv_link_library_generate_image', array( $this, 'link_library_generate_image') );
+
 		// Load text domain for translation of admin pages and text strings
 		load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 	}
@@ -297,7 +305,7 @@ class link_library_plugin {
 			$feedtitle = ($options['rssfeedtitle'] == "" ? __('Link Library Generated Feed', 'link-library') : $options['rssfeedtitle']);
 
 			$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
-			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html(stripslashes($feedtitle)) . '" href="' . plugins_url('rssfeed.php?settingset=' . $rss_settings/* . '&xpath=' . $xpath*/, __FILE__) . '" />';
+			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html(stripslashes($feedtitle)) . '" href="' . plugins_url('?link_library_rss_feed=1&settingset=' . $rss_settings/* . '&xpath=' . $xpath*/, __FILE__) . '" />';
 			unset( $xpath );
 		}
 
@@ -368,9 +376,9 @@ class link_library_plugin {
 					$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
 
 					if ($options['rssfeedaddress'] != '')
-						$newrules['(' . $options['rssfeedaddress'] . ')/(.+?)$'] = plugins_url( 'rssfeed.php?settingset=$matches[1]' . '&xpath=' . $xpath, __FILE__ );
+						$newrules['(' . $options['rssfeedaddress'] . ')/(.+?)$'] = home_url() . '?link_library_rss_feed=1&settingset=$matches[1]';
 					elseif ($options['rssfeedaddress'] == '')
-						$newrules['(linkrss)/(.+?)$'] = plugins_url( 'rssfeed.php?settingset=$matches[1]' . '&xpath=' . $xpath, __FILE__ );
+						$newrules['(linkrss)/(.+?)$'] = plugins_url( 'link_library_rss_feed=1?settingset=$matches[1]' . '&xpath=' . $xpath, __FILE__ );
 
 					unset( $xpath );
 				}
@@ -414,19 +422,29 @@ class link_library_plugin {
 
 			if ($showonecatonly == true && ($showonecatmode == 'AJAX' || $showonecatmode == ''))
 			{
-				$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
+                $nonce = wp_create_nonce( 'link_library_ajax_refresh' );
 
 				$output .= "<SCRIPT LANGUAGE=\"JavaScript\">\n";
 				$output .= "var ajaxobject;\n";
 				$output .= "function showLinkCat ( _incomingID, _settingsID, _pagenumber) {\n";
 				$output .= "if (typeof(ajaxobject) != \"undefined\") { ajaxobject.abort(); }\n";
-				$output .= "var map = {id : _incomingID, settings : _settingsID, linkresultpage: _pagenumber, xpath: '" . $xpath . "'}\n";
-				$output .= "\tjQuery('#contentLoading').toggle();jQuery.get('" . plugins_url( 'link-library-ajax.php', __FILE__ ) . "', map, function(data){jQuery('#linklist" . $settings. "').replaceWith(data);jQuery('#contentLoading').toggle();});\n";
+
+				$output .= "\tjQuery('#contentLoading').toggle();" .
+                           "jQuery.ajax( {" .
+                           "    type: 'POST', " .
+                           "    url: '" . admin_url( 'admin-ajax.php' ) . "', " .
+                           "    data: { action: 'link_library_ajax_update', " .
+                           "            _ajax_nonce: '" . $nonce . "', " .
+                           "            id : _incomingID, " .
+                           "            settings : _settingsID, " .
+                           "            linkresultpage: _pagenumber }, " .
+                           "    success: function( data ){ " .
+                           "            jQuery('#linklist" . $settings. "').html( data ); " .
+                           "            jQuery('#contentLoading').toggle();\n" .
+                           "            } } ); ";
 				$output .= "}\n";
 
 				$output .= "</SCRIPT>\n\n";
-				
-				unset( $xpath );
 			}
 
 			// Handle link category sorting
@@ -1376,7 +1394,7 @@ class link_library_plugin {
                                                 elseif ($sourceimage == 'secondary')
                                                     $imageoutput .= $the_second_link;
                                             } else {
-                                                    $imageoutput .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ), __FILE__ ) . '&xpath=' . $xpath;
+                                                    $imageoutput .= home_url() . '/?link_library_popup_content=1&linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ) . '&xpath=' . $xpath;
                                                 }
 
 											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . '' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
@@ -1427,7 +1445,7 @@ class link_library_plugin {
                                                     elseif ( $sourcename == 'secondary' )
     													$output .= $the_second_link;
                                                 } else {
-                                                    $output .= plugins_url( 'linkpopup.php?linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ), __FILE__ ) . '&xpath=' . $xpath;
+                                                    $output .= home_url() . '/?link_library_popup_content=1&linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ) . '&xpath=' . $xpath;
                                                 }
 
 												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
@@ -1488,7 +1506,7 @@ class link_library_plugin {
 										}
 										if ($rsspreview && $linkitem['link_rss'] != '')
 										{
-											$output .= $between . '<a href="' . plugins_url( 'rsspreview.php?keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '&xpath=' . urlencode( $xpath ), __FILE__ ) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . plugins_url( 'icons/preview-16x16.png', __FILE__ ) . '" /></a>';
+											$output .= $between . '<a href="' . home_url() . '/?link_library_rss_preview&keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . (($rsspreviewwidth == "") ?  900 : $rsspreviewwidth) . '&width=' . (($rsspreviewheight == "") ? 700 : $rsspreviewheight) . '&xpath=' . urlencode( $xpath ) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . plugins_url( 'icons/preview-16x16.png', __FILE__ ) . '" /></a>';
 										}
 										
 										if ($show_rss || $show_rss_icon || $rsspreview)
@@ -1685,6 +1703,7 @@ class link_library_plugin {
 			}
 
 			$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
+            $nonce = wp_create_nonce( 'll_tracker' );
 
 			$output .= "<script type='text/javascript'>\n";
 			$output .= "jQuery(document).ready(function()\n";
@@ -1693,7 +1712,13 @@ class link_library_plugin {
 			$output .= "linkid = this.id;\n";
 			$output .= "linkid = linkid.substring(5);";
 			$output .= "path = '" . $xpath . "';";
-			$output .= "jQuery.post('" . plugins_url( 'tracker.php', __FILE__ ) . "', {id:linkid, xpath:path});\n";
+			$output .= "jQuery.ajax( {" .
+                       "    type: 'POST'," .
+                       "    url: '" . admin_url( 'admin-ajax.php' ) . "', " .
+                       "    data: { action: 'link_library_tracker', " .
+                       "            _ajax_nonce: '" . $nonce . "', " .
+                       "            id:linkid, xpath:path } " .
+                       "    });\n";
 			$output .= "return true;\n";
 			$output .= "});\n";
 			$output .= "});\n";
@@ -1785,18 +1810,19 @@ class link_library_plugin {
 		
 		if ($code == 'link-library-addlink' && (($addlinkreqlogin && current_user_can("read")) || !$addlinkreqlogin))
 		{
-			$output .= "<form method='post' id='lladdlink' action='" . plugins_url('usersubmission.php', __FILE__). "'>\n";
+			$output .= "<form method='post' id='lladdlink' action=''>\n";
                         
-                        $output .= wp_nonce_field('LL_ADDLINK_FORM', '_wpnonce', true, false);
-                        $output .= "<input type='hidden' name='thankyouurl' value='" . $linksubmissionthankyouurl . "' />";
-                        global $wp_query;
-                        $thePostID = $wp_query->post->ID;
-                        $output .= "<input type='hidden' name='pageid' value='" . $thePostID . "' />";
-                        $output .= "<input type='hidden' name='settingsid' value='" . $settings . "' />";
-                        
-                        $xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
-                        $output .= "<input type='hidden' name='xpath' value='" . esc_attr( $xpath ) . "' />";
-                        unset( $xpath );
+            $output .= wp_nonce_field('LL_ADDLINK_FORM', '_wpnonce', true, false);
+            $output .= "<input type='hidden' name='thankyouurl' value='" . $linksubmissionthankyouurl . "' />";
+            $output .= '<input type="hidden" name="link_library_user_link_submission" value="1" />';
+            global $wp_query;
+            $thePostID = $wp_query->post->ID;
+            $output .= "<input type='hidden' name='pageid' value='" . $thePostID . "' />";
+            $output .= "<input type='hidden' name='settingsid' value='" . $settings . "' />";
+
+            $xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
+            $output .= "<input type='hidden' name='xpath' value='" . esc_attr( $xpath ) . "' />";
+            unset( $xpath );
 
 			$output .= "<div class='lladdlink'>\n";
 			
@@ -2646,8 +2672,47 @@ class link_library_plugin {
 	 
 		return $posts;
 	}
+
+    function ll_template_redirect( $template ) {
+        if ( !empty( $_POST['link_library_user_link_submission'] ) ) {
+            require_once plugin_dir_path( __FILE__ ) . 'usersubmission.php';
+            link_library_process_user_submission( $this );
+            return '';
+        } else if ( !empty( $_GET['link_library_rss_feed'] ) ) {
+            require_once plugin_dir_path( __FILE__ ) . 'rssfeed.php';
+            link_library_generate_rss_feed();
+            return '';
+        } else if ( !empty( $_GET['link_library_popup_content'] ) ) {
+            require_once plugin_dir_path( __FILE__ ) . 'linkpopup.php';
+            link_library_popup_content( $this );
+            return '';
+        } else if ( !empty( $_GET['link_library_rss_preview'] ) ) {
+            require_once plugin_dir_path( __FILE__ ) . 'rsspreview.php';
+            link_library_generate_rss_preview( $this );
+            return '';
+        } else {
+            return $template;
+        }
+    }
+
+    function link_library_ajax_tracker() {
+        require_once plugin_dir_path( __FILE__ ) . 'tracker.php';
+        link_library_process_ajax_tracker( $this );
+    }
+
+    function link_library_ajax_update() {
+        require_once plugin_dir_path( __FILE__ ) . 'link-library-ajax.php';
+        link_library_render_ajax( $this );
+    }
+
+    function link_library_generate_image() {
+        global $my_link_library_plugin_admin;
+        require plugin_dir_path( __FILE__ ) . 'link-library-image-generator.php';
+        link_library_ajax_image_generator( $my_link_library_plugin_admin );
+    }
 }
 
+global $my_link_library_plugin;
 $my_link_library_plugin = new link_library_plugin();
 
 ?>

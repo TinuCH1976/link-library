@@ -385,8 +385,7 @@ class link_library_plugin_admin {
 			}
 			elseif ($mode == 'favicon' || $mode == 'favicononly')
 			{
-				$strippedurl = str_replace("http://", "", esc_html($url));
-				$genthumburl = "http://www.getfavicon.org/?url=" . $strippedurl . "/favicon.png";
+				$genthumburl = "http://g.etfv.co/" . $url;
 			}
 			
 			$uploads = wp_upload_dir();
@@ -3306,17 +3305,31 @@ class link_library_plugin_admin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-                        var map = { name: linkname, url: linkurl, mode: 'thumbonly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-images', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; } ?> };
-						jQuery.get('<?php echo plugins_url( 'link-library-image-generator.php', __FILE__ ); ?>', map, 
-							function(data){
-								if (data != '')
-								{
-									jQuery('#current_link_image').replaceWith("<div id='current_link_image'><img src='" + data + "' /></div>");
-									jQuery('#current_link_image').fadeIn('fast');
-									jQuery('#link_image').val(data);
-									alert('<?php _e('Thumbnail successfully generated for', 'link-library'); ?> ' + linkname);
-								}
-							});
+
+						jQuery.ajax( {
+                                type: 'POST',
+                                url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
+                                data: {
+                                    action: 'link_library_generate_image',
+                                    _ajax_nonce: '<?php echo wp_create_nonce( 'link_library_generate_image' ); ?>',
+                                    name: linkname,
+                                    url: linkurl,
+                                    mode: 'thumbonly',
+                                    cid: '<?php echo $genoptions['thumbshotscid']; ?>',
+                                    filepath: 'link-library-images',
+                                    filepathtype: 'absolute',
+                                    linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; } ?>
+                                    },
+                                    success:
+							            function( data ){
+								            if (data != '')
+								            {
+									            jQuery('#current_link_image').replaceWith("<div id='current_link_image'><img src='" + data + "' /></div>");
+									            jQuery('#current_link_image').fadeIn('fast');
+									            jQuery('#link_image').val(data);
+									            alert('<?php _e('Thumbnail successfully generated for', 'link-library'); ?> ' + linkname);
+								            }
+							            } } );
 					}
 					else
 					{
@@ -3332,17 +3345,31 @@ class link_library_plugin_admin {
 					if (linkname != '' && linkurl != '')
 					{
 						jQuery('#current_link_image').fadeOut('fast');
-						var map = { name: linkname, url: linkurl, mode: 'favicononly', cid: '<?php echo $genoptions['thumbshotscid']; ?>', filepath: 'link-library-favicons', linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; }?> };
-						jQuery.get('<?php echo plugins_url( 'link-library-image-generator.php', __FILE__ ); ?>', map, 
-							function(data){
-								if (data != '')
-								{
+                        jQuery.ajax( {
+                            type: 'POST',
+                            url: '<?php echo admin_url( 'admin-ajax.php' ); ?>',
+                            data: {
+                                action: 'link_library_generate_image',
+                                _ajax_nonce: '<?php echo wp_create_nonce( 'link_library_generate_image' ); ?>',
+                                name: linkname,
+                                url: linkurl,
+                                mode: 'favicononly',
+                                cid: '<?php echo $genoptions['thumbshotscid']; ?>',
+                                filepath: 'link-library-favicons',
+                                filepathtype: 'absolute',
+                                linkid: <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; }?>
+
+
+                                },
+                            success:
+							    function(data){
+								    if (data != '') {
 									jQuery('#current_link_image').replaceWith("<div id='current_link_image'><img src='" + data + "' /></div>");
 									jQuery('#current_link_image').fadeIn('fast');
 									jQuery('#link_image').val(data);
 									alert('<?php _e('Favicon successfully generated for', 'link-library') ?> ' + linkname);
-								}
-							});
+								    }
+							    } } );
 					}
 					else
 					{
