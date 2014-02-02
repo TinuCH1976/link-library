@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.1.1 =
+* Fixed RSS Preview functionality that had been broken in 5.8.1 update
+
 = 5.8.1 =
 * Addressed security concerns raised by Wordpress.org plugin maintenance team
 
