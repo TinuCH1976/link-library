@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.1.3 =
+* Fix additional problems found with pagination mode
+
 = 5.8.1.2 =
 * Fixed problem with AJAX and Pagination mode both active at the same. Pages other then 1 in a category would not display
 

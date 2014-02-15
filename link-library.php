@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.1.2
+Version: 5.8.1.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1040,14 +1040,17 @@ class link_library_plugin {
 
 			$quantity = $linksperpage + 1;
 
-			if (isset($_POST['linkresultpage']))
-			{
-				$pagenumber = $_POST['linkresultpage'];
+            if ( isset( $_POST['linkresultpage'] ) || isset( $_GET['linkresultpage'] ) ) {
+
+                if ( isset( $_POST['linkresultpage'] ) ) {
+                    $pagenumber = $_POST['linkresultpage'];
+                } elseif ( isset( $_GET['linkresultpage'] ) ) {
+                    $pagenumber = $_GET['linkresultpage'];
+                }
+
 				$startingitem = ($pagenumber - 1) * $linksperpage;
 				$linkquery .= " LIMIT " . $startingitem . ", " . $quantity;
-			}
-			else
-			{
+			} else {
 				$pagenumber = 1;
 				$linkquery .= " LIMIT 0, " . $quantity;
 			}
