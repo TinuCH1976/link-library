@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2.1
+Version: 5.8.2.2
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -2553,7 +2553,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['popup_height'] ) ? $options['paginationposition'] : 'AFTER' ) );
+                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ) );
 			
 		return $linklibraryoutput;
 	}

@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.2 =
+* Fixed additional PHP warning
+
 = 5.8.2.1 =
 * Fixed PHP warnings
 
