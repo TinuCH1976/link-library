@@ -1947,8 +1947,8 @@ class link_library_plugin_admin {
             </td>
             <td>
                 <select name="paginationposition" id="paginationposition" style="width:200px;">
-                    <option value="AFTER"<?php if ($options['paginationposition'] == 'AFTER' || $options['paginationposition'] == '') { echo ' selected="selected"';} ?>>After Links</option>
-                    <option value="BEFORE"<?php if ($options['paginationposition'] == 'BEFORE') { echo ' selected="selected"';} ?>>Before Links</option>
+                    <option value="AFTER"<?php if ($options['paginationposition'] == 'AFTER' || $options['paginationposition'] == '') { echo ' selected="selected"';} ?>><?php _e( 'After Links', 'link-library' ); ?></option>
+                    <option value="BEFORE"<?php if ($options['paginationposition'] == 'BEFORE') { echo ' selected="selected"';} ?>><?php _e( 'Before Links', 'link-library' ); ?></option>
                 </select>
             </td>
 			<td>

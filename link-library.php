@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2
+Version: 5.8.2.1
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -864,7 +864,7 @@ class link_library_plugin {
 		{
 			$categorylist = $AJAXcatid;
 		}
-		elseif ($showonecatonly && $showonecatmode == 'HTMLGET' && isset($_GET['cat_id']) && $_GET['searchll'] == "")
+		elseif ($showonecatonly && $showonecatmode == 'HTMLGET' && isset($_GET['cat_id']) && ( !isset( $_GET['searchll'] ) || ( isset( $_GET['searchll'] ) && $_GET['searchll'] == "" ) ) )
 		{
 			$categorylist = intval($_GET['cat_id']);
 			$AJAXcatid = $categorylist;
@@ -876,7 +876,7 @@ class link_library_plugin {
 			$categoryname = $wp_query->query_vars['cat_name'];
 			$AJAXcatid = $categoryname;
 		}
-		elseif ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '' && $_GET['searchll'] == "")
+		elseif ($showonecatonly && $AJAXcatid == '' && $defaultsinglecat != '' && ( !isset( $_GET['searchll'] ) || ( isset( $_GET['searchll'] ) && $_GET['searchll'] == "" ) ) )
 		{
 			$categorylist = $defaultsinglecat;
 			$AJAXcatid = $categorylist;
@@ -1147,6 +1147,9 @@ class link_library_plugin {
 					$currentcategoryid = $linkitem['term_id'];
 					$output .= "<div class='LinkLibraryCat" . $currentcategoryid . "'>";
 					$linkcount = 0;
+                    $catlink = '';
+                    $cattext = '';
+                    $catenddiv = '';
 
 					if ($catlistwrappers == 1)
 						$output .= "<div class=\"" . $beforecatlist1 . "\">";
@@ -2550,7 +2553,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'] );
+                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['popup_height'] ) ? $options['paginationposition'] : 'AFTER' ) );
 			
 		return $linklibraryoutput;
 	}
