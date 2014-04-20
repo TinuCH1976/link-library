@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.3 =
+* Fixes bug with search results appearing in ajax mode when hiding links on first page display
+
 = 5.8.2.2 =
 * Fixed additional PHP warning
 

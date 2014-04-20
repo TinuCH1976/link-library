@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2.2
+Version: 5.8.2.3
 Author: Yannick Lefebvre
 Author URI: http://yannickcorner.nayanna.biz/
 
@@ -1106,7 +1106,7 @@ class link_library_plugin {
         echo "<!-- showonecatmode: " . $showonecatonly . ", AJAXnocatset: " . $AJAXnocatset . ", nocatonstartup: " . $nocatonstartup . "-->";
 
 		// Display links
-        if ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup ) {
+        if ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup && !isset( $_GET['searchll'] ) ) {
                 $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
                 $output .= '</div>';
         } elseif ( $linkitems ) {
