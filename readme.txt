@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.4 =
+* Added option to suppress Link Library footer in notification e-mails
+
 = 5.8.2.3 =
 * Fixes bug with search results appearing in ajax mode when hiding links on first page display
 
