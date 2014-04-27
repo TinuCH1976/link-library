@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.5 =
+* Fixed bug with Link popup option, which was not creating link with correct URL
+
 = 5.8.2.4 =
 * Added option to suppress Link Library footer in notification e-mails
 

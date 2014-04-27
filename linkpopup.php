@@ -9,7 +9,7 @@ function link_library_popup_content( $my_link_library_plugin ) {
     }
 
     $linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
-    $linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
+    $linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL 120 MINUTE) >= NOW(), 1,0) as recently_updated ";
     $linkquery .= "FROM " . $my_link_library_plugin->db_prefix() . "terms t ";
     $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
     $linkquery .= "LEFT JOIN " . $my_link_library_plugin->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
@@ -24,7 +24,7 @@ function link_library_popup_content( $my_link_library_plugin ) {
     $linkitem = $wpdb->get_row($linkquery, ARRAY_A);
 
     $the_link = '#';
-    if (!empty($linkitem['link_url']) )
+    if ( !empty( $linkitem['link_url'] ) )
         $the_link = esc_html($linkitem['link_url']);
 
     $the_second_link = '#';
@@ -105,9 +105,10 @@ function link_library_popup_content( $my_link_library_plugin ) {
         if ( ( $options['sourcename'] == 'primary' && $the_link != '#') || ($options['sourcename'] == 'secondary' && $the_second_link != '#')) {
             $nameoutput = '<a href="';
 
-            if ( isset( $sourcename ) && ( $sourcename == 'primary' || $sourcename == '' ) )
+            if ( isset( $options['sourcename'] ) && ( $options['sourcename'] == 'primary' || $options['sourcename'] == '' ) ) {
                 $nameoutput .= $the_link;
-            elseif ( isset( $sourcename ) && $sourcename == 'secondary' )
+            }
+            elseif ( isset( $options['sourcename'] ) && $options['sourcename'] == 'secondary' )
                 $nameoutput .= $the_second_link;
 
             $nameoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( ( isset( $enablelinkpopup ) && $enablelinkpopup ) ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
