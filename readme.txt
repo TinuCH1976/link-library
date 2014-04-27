@@ -2,7 +2,7 @@
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch
-Requires at least: 2.7
+Requires at least: 3.0
 Tested up to: 3.9
 Stable tag: trunk
 
