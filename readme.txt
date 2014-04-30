@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.6 =
+* Increased execution time when importing links to allow for larger imports
+* Enhanced media uploader selection to show image right away when no previous image was present
+
 = 5.8.2.5 =
 * Fixed bug with Link popup option, which was not creating link with correct URL
 

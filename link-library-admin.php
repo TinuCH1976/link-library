@@ -1060,6 +1060,9 @@ class link_library_plugin_admin {
 
 		if (isset($_POST['importlinks']))
 		{
+            wp_suspend_cache_addition(true);
+            set_time_limit ( 600 );
+
 			global $wpdb;
 
 			$handle = fopen($_FILES['linksfile']['tmp_name'], "r");
@@ -1067,7 +1070,7 @@ class link_library_plugin_admin {
 			if ($handle)
 			{
 				$skiprow = 1;
- 
+
 				while (($data = fgetcsv($handle, 5000, ",")) !== FALSE) {
 					$row += 1;
 					if ($skiprow == 1 && isset($_POST['firstrowheaders']) && $row >= 2)
@@ -1133,6 +1136,8 @@ class link_library_plugin_admin {
 				$row -= 1;
 			
 			$messages[] = '9';
+
+            wp_suspend_cache_addition(false);
 		}
 		elseif (isset($_POST['exportsettings']))
 		{
@@ -3218,7 +3223,7 @@ class link_library_plugin_admin {
 					<?php if ( isset($originaldata['link_image']) && $originaldata['link_image'] != ''): ?>
 						<img id="actual_link_image" src="<?php echo $originaldata['link_image'] ?>" />
 					<?php else: ?>
-						<?php _e('None Assigned', 'link-library'); ?>
+						<span id="noimage"><?php _e('None Assigned', 'link-library'); ?></span>
 					<?php endif; ?>
 					</div>
 				</td>
@@ -3280,7 +3285,8 @@ class link_library_plugin_admin {
                         // Do something with attachment.id and/or attachment.url here
                         jQuery('#link_image').val(attachment.url);
 
-                        jQuery('#actual_link_image').attr( "src", attachment.url);
+                        jQuery('#current_link_image').replaceWith("<div id='current_link_image'><img src='" + attachment.url + "' /></div>");
+                        jQuery('#current_link_image').fadeIn('fast');
                     });
 
                     // Finally, open the modal

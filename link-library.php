@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2.5
+Version: 5.8.2.6
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -1755,9 +1755,9 @@ class link_library_plugin {
                     $output .= " action='" . $searchresultsaddress . "'";
                 $output .= ">\n";
 		$output .= "<div>\n";
-		$output .= "<input type='text' onfocus=\"this.value=''\" value='" . $searchlabel . "...' name='searchll' id='searchll' />\n";
-		$output .= "<input type='hidden' value='" .  get_the_ID() . "' name='page_id' id='page_id' />\n";
-		$output .= "<input type='submit' value='" . $searchlabel . "' />\n";
+		$output .= "<input type='text' onfocus=\"this.value=''\" value='" . $searchlabel . "...' name='searchll' id='searchll' />";
+		$output .= "<input type='hidden' value='" .  get_the_ID() . "' name='page_id' id='page_id' />";
+		$output .= "<input type='submit' value='" . $searchlabel . "' />";
 		$output .= "</div>\n";
 		$output .= "</form>\n\n";
 		
