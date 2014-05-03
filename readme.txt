@@ -1,7 +1,7 @@
 ﻿=== Link Library ===
 Contributors: jackdewey
 Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
-Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch
+Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch, popup
 Requires at least: 3.0
 Tested up to: 3.9
 Stable tag: trunk
@@ -58,6 +58,11 @@ In addition to specifying a library, categories to be displayed can be specified
 Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
+
+= 5.8.2.7 =
+* Added option to hide donation links and Support the Author ad
+* Added ability for link updated date to be translated to site language
+* Updated french translation
 
 = 5.8.2.6 =
 * Increased execution time when importing links to allow for larger imports

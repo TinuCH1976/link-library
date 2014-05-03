@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2.6
+Version: 5.8.2.7
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -1363,8 +1363,8 @@ class link_library_plugin {
                     }
 
 					if ($showupdated) {
-					   if (substr($linkitem['link_updated'],0,2) != '00') {
-							$title .= ' ('.__('Last updated', 'link-library') . '  ' . date(get_option('links_updated_date_format'), $linkitem['link_updated'] + (get_option('gmt_offset') * 3600)) .')';
+					   if (substr($linkitem['wp.dev'],0,2) != '00') {
+							$title .= ' ('.__('Last updated', 'link-library') . '  ' . date_i18n(get_option('links_updated_date_format'), strtotime( $linkitem['link_updated'] ) ) .')';
 						}
 					}
 
