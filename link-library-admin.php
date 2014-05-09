@@ -753,7 +753,8 @@ class link_library_plugin_admin {
 			if (isset( $_GET['message'] ) && $_GET['message'] == '1') {
 				echo "<div id='message' class='updated fade'><p><strong>" . __('General Settings Saved', 'link-library') . ".</strong></p></div>";
             } else if (isset( $_GET['message'] ) && $_GET['message'] == '2') {
-                echo "<div id='message' class='updated fade'><p><strong><a href='" . plugins_url( 'LinksExport.csv', __FILE__ ) . "'>" . __('Download exported links', 'link-library') . "</a></strong></p></div>";
+                $linksexportdir = wp_upload_dir();
+                echo "<div id='message' class='updated fade'><p><strong><a href='" . $linksexportdir['path'] . '/LinksExport.csv' . "'>" . __('Download exported links', 'link-library') . "</a></strong></p></div>";
             } else if (isset( $_GET['message'] ) && $_GET['message'] == '3') {
                 echo "<div id='message' class='updated fade'><p><strong>" . __('Link Library plugin directory needs to be writable to perform this action', 'link-library') . "</strong></p></div>";
             }
@@ -819,7 +820,8 @@ class link_library_plugin_admin {
 							break;
 
 						case '5':
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . plugins_url( 'SettingSet' . $settings . 'Export.csv', __FILE__ ) . "'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
+                            $upload_dir = wp_upload_dir();
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . $upload_dir['path'] . '/SettingSet' . $settings . 'Export.csv' . "'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
 							break;
 
 						case '6':
@@ -1009,9 +1011,11 @@ class link_library_plugin_admin {
 
         if (isset($_POST['exportalllinks']))
         {
-            if (is_writable(ABSPATH.PLUGINDIR . '/link-library'))
+            $upload_dir = wp_upload_dir();
+
+            if (is_writable( $upload_dir['path'] ) )
             {
-                $myFile = ABSPATH.PLUGINDIR . "/link-library/LinksExport.csv";
+                $myFile = $upload_dir['path'] . "/LinksExport.csv";
                 $fh = fopen($myFile, 'w') or die("can't open file");
 
                 global $wpdb;
@@ -1159,9 +1163,10 @@ class link_library_plugin_admin {
 		}
 		elseif (isset($_POST['exportsettings']))
 		{
-			if (is_writable(ABSPATH.PLUGINDIR . '/link-library'))
+            $upload_dir = wp_upload_dir();
+			if (is_writable($upload_dir['path']))
 			{
-				$myFile = ABSPATH.PLUGINDIR . "/link-library/SettingSet" . $_POST['settingsetid'] . "Export.csv";
+				$myFile = $upload_dir['path'] . "/SettingSet" . $_POST['settingsetid'] . "Export.csv";
 				$fh = fopen($myFile, 'w') or die("can't open file");
 
 				$sourcesettingsname = 'LinkLibraryPP' . $_POST['settingsetid'];

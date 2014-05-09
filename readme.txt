@@ -59,6 +59,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.8 =
+* Fixed problem with AJAX mode when configured not to show library at first. Library was still showing if empty.
+* Link dates can now be formatted and translated to local site language
+* Changed links and settings export folder to site upload folder instead of plugin folder
+
 = 5.8.2.7 =
 * Added option to hide donation links and Support the Author ad
 * Added ability for link updated date to be translated to site language

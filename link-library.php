@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2.7
+Version: 5.8.2.8
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -1057,7 +1057,7 @@ class link_library_plugin {
 		}
 		
 		$linkitems = $wpdb->get_results($linkquery, ARRAY_A);
-		
+
 		if ($debugmode)
 		{
 			$output .= "\n<!-- Link Query: " . print_r($linkquery, TRUE) . "-->\n\n";
@@ -1106,7 +1106,7 @@ class link_library_plugin {
         echo "<!-- showonecatmode: " . $showonecatonly . ", AJAXnocatset: " . $AJAXnocatset . ", nocatonstartup: " . $nocatonstartup . "-->";
 
 		// Display links
-        if ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup && !isset( $_GET['searchll'] ) ) {
+        if ( ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup && !isset( $_GET['searchll'] ) ) || ( empty( $linkitems ) && $nocatonstartup ) ) {
                 $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
                 $output .= '</div>';
         } elseif ( $linkitems ) {
@@ -1477,7 +1477,7 @@ class link_library_plugin {
 
 									case 3: 	//------------------ Date Output --------------------   
 
-										$formatteddate = date("F d Y", $linkitem['link_date']);
+										$formatteddate = date_i18n(get_option('links_updated_date_format'), $linkitem['link_date']);
 
 										if ($showdate)
 											$output .= $between . stripslashes($beforedate) . $formatteddate . stripslashes($afterdate);
