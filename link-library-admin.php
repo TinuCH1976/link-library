@@ -754,7 +754,7 @@ class link_library_plugin_admin {
 				echo "<div id='message' class='updated fade'><p><strong>" . __('General Settings Saved', 'link-library') . ".</strong></p></div>";
             } else if (isset( $_GET['message'] ) && $_GET['message'] == '2') {
                 $linksexportdir = wp_upload_dir();
-                echo "<div id='message' class='updated fade'><p><strong><a href='" . $linksexportdir['path'] . '/LinksExport.csv' . "'>" . __('Download exported links', 'link-library') . "</a></strong></p></div>";
+                echo "<div id='message' class='updated fade'><p><strong><a href='" . $linksexportdir['url'] . '/LinksExport.csv' . "'>" . __('Download exported links', 'link-library') . "</a></strong></p></div>";
             } else if (isset( $_GET['message'] ) && $_GET['message'] == '3') {
                 echo "<div id='message' class='updated fade'><p><strong>" . __('Link Library plugin directory needs to be writable to perform this action', 'link-library') . "</strong></p></div>";
             }
@@ -821,7 +821,7 @@ class link_library_plugin_admin {
 
 						case '5':
                             $upload_dir = wp_upload_dir();
-							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . $upload_dir['path'] . '/SettingSet' . $settings . 'Export.csv' . "'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __('Library Settings Exported', 'link-library') . ". <a href='" . $upload_dir['url'] . '/SettingSet' . $settings . 'Export.csv' . "'>" . __('Download here', 'link-library') . "</a>.</strong></p></div>";
 							break;
 
 						case '6':

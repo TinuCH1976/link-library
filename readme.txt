@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.2.9 =
+* Fixed bug with links and settings export functionality
+
 = 5.8.2.8 =
 * Fixed problem with AJAX mode when configured not to show library at first. Library was still showing if empty.
 * Link dates can now be formatted and translated to local site language
