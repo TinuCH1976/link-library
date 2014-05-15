@@ -39,7 +39,9 @@ class link_library_plugin_admin {
     function admin_header() {
         global $pagenow;
         if ( ( $pagenow == 'link.php' && $_GET['action'] == 'edit' ) || ( $pagenow == 'link-add.php' ) ) {
-            wp_enqueue_media();
+            if ( function_exists( 'wp_enqueue_media' ) ) {
+                wp_enqueue_media();
+            }
         }
     }
     
@@ -199,6 +201,7 @@ class link_library_plugin_admin {
 		$options['showaddlinkcat'] = false;
 		$options['showaddlinknotes'] = false;
 		$options['usethumbshotsforimages'] = false;
+        $options['uselocalimagesoverthumbshots'] = false;
 		$options['addlinkreqlogin'] = false;
 		$options['showcatlinkcount'] = false;
 		$options['publishrssfeed'] = false;
@@ -1281,7 +1284,7 @@ class link_library_plugin_admin {
 			foreach (array('hide_if_empty', 'catanchor', 'showdescription', 'shownotes', 'showrating', 'showupdated', 'show_images', 
 							'use_html_tags', 'show_rss', 'nofollow','showcolumnheaders','show_rss_icon', 'showcategorydescheaders',
 							'showcategorydesclinks', 'showadmineditlinks', 'showonecatonly', 'rsspreview', 'rssfeedinline', 'rssfeedinlinecontent',
-							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages',
+							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages', 'uselocalimagesoverthumbshots',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
                             'enable_link_popup', 'nocatonstartup')
@@ -2822,14 +2825,20 @@ class link_library_plugin_admin {
 			<td style='width: 400px' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.'>
 				<?php _e('Use Thumbshots.org for dynamic link images', 'link-library'); ?>
 			</td>
-			<td colspan='2' class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.' style='width:75px;padding-right:20px'>
+			<td class='lltooltip' title='<?php _e('Checking this option will get images from the thumbshots web site every time', 'link-library'); ?>.' style='width:75px;padding-right:20px'>
 				<input type="checkbox" id="usethumbshotsforimages" name="usethumbshotsforimages" <?php if ($options['usethumbshotsforimages']) echo ' checked="checked" '; ?>/>
 			</td>
+        </tr>
+        <tr>
+            <td>
+                <?php _e('Give priority to images assigned to links if present'); ?>
+            </td>
+            <td><input type="checkbox" id="uselocalimagesoverthumbshots" name="uselocalimagesoverthumbshots" <?php if ($options['uselocalimagesoverthumbshots']) echo ' checked="checked" '; ?>/></td>
 		</tr>
 		<tr>
 			<td><?php _e('Generate Images / Favorite Icons', 'link-library'); ?></td>
 			<td class="lltooltip" title="<?php if (empty($genoptions['thumbshotscid'])) _e('This button is only available when a valid API key is entered under the Link Library General Settings.', 'link-library'); ?>"><INPUT type="button" name="genthumbs" <?php if ( empty( $genoptions['thumbshotscid'] ) ) echo 'disabled'; ?> value="<?php _e('Generate Thumbnails and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'"></td>
-			<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td><td style='width:75px;padding-right:20px'></td>
+			<td><INPUT type="button" name="genfavicons" value="<?php _e('Generate Favorite Icons and Store locally', 'link-library'); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'"></td>
 		</tr>
 		</table>
 	<?php }
@@ -3282,6 +3291,7 @@ class link_library_plugin_admin {
 				<td><?php _e('Only available once link is saved', 'link-library'); ?></td>
 			</tr>
 			<?php endif; ?>
+            <?php if ( function_exists( 'wp_enqueue_media' ) ) { ?>
 			<tr>
 				<td><?php _e('Manual Image Upload', 'link-library'); ?></td>
 				<td><input type="button" class="upload_image_button" value="<?php _e( 'Launch Media Uploader', 'link-library' ); ?>"></td>
@@ -3289,6 +3299,7 @@ class link_library_plugin_admin {
 			<tr>
 				<td colspan='2'><p><?php _e('Manual upload requires a wp-content\uploads directory to be present with write permissions', 'link-library'); ?>.</p></td>
 			</tr>
+            <?php } ?>
 		</table>
 
 	<?php $genoptions = get_option('LinkLibraryGeneral'); ?>

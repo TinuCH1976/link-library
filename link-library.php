@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.2.9
+Version: 5.8.3
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -845,7 +845,7 @@ class link_library_plugin {
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
 									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
-                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER' ) {
+                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false ) {
 
 		global $wpdb;
 		
@@ -969,7 +969,26 @@ class link_library_plugin {
 
 		if (isset($_GET['searchll']) && $_GET['searchll'] != "")
 		{
-			$searchterms = explode(" ", $_GET['searchll']);
+            $searchterms = array();
+            $searchstring = $_GET['searchll'];
+
+            $offset = 0;
+            while ( strpos( $searchstring, '"', $offset ) !== false ) {
+                if ( $offset == 0 ) {
+                    $offset = strpos( $searchstring, '"' );
+                } else {
+                    $endpos = strpos( $searchstring, '"', $offset + 1);
+                    $searchterms[] = substr( $searchstring, $offset + 1, $endpos - $offset - 2 );
+                    $strlength = ( $endpos + 1 ) - ( $offset + 1 );
+                    $searchstring = substr_replace( $searchstring, '', $offset - 1, $endpos + 2 - ( $offset)  );
+                    $offset = 0;
+                }
+            }
+
+            if ( !empty( $searchstring ) )
+            {
+                $searchterms = array_merge( $searchterms, explode(" ", $searchstring ) );
+            }
 
 			if ($searchterms)
 			{
@@ -978,29 +997,31 @@ class link_library_plugin {
 
 				foreach($searchterms as $searchterm)
 				{
-                    $searchterm = str_replace( '--', '', $searchterm );
-                    $searchterm = str_replace( ';', '', $searchterm );
-					if ( $searchterm  == true )
-					{
-						if ($termnb == 1)
-						{
-							$linkquery .= " AND (link_name like '%" . $searchterm . "%' ";
-							$termnb++;
-						}
-						else
-						{
-							$linkquery .= " OR link_name like '%" . $searchterm . "%' ";
-						}
+                    if ( !empty( $searchterm ) ) {
+                        $searchterm = str_replace( '--', '', $searchterm );
+                        $searchterm = str_replace( ';', '', $searchterm );
+                        if ( $searchterm  == true )
+                        {
+                            if ($termnb == 1)
+                            {
+                                $linkquery .= " AND (link_name like '%" . $searchterm . "%' ";
+                                $termnb++;
+                            }
+                            else
+                            {
+                                $linkquery .= " OR link_name like '%" . $searchterm . "%' ";
+                            }
 
-						if ($hidecategorynames == false)
-							$linkquery .= " OR name like '%" . $searchterm . "%' ";
-						if ($shownotes)
-							$linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
-						if ($showdescription)
-							$linkquery .= " OR link_description like '%" . $searchterm . "%' ";
-						if ($showlargedescription)
-							$linkquery .= " OR link_textfield like '%" . $searchterm . "%' ";
-					}
+                            if ($hidecategorynames == false)
+                                $linkquery .= " OR name like '%" . $searchterm . "%' ";
+                            if ($shownotes)
+                                $linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
+                            if ($showdescription)
+                                $linkquery .= " OR link_description like '%" . $searchterm . "%' ";
+                            if ($showlargedescription)
+                                $linkquery .= " OR link_textfield like '%" . $searchterm . "%' ";
+                        }
+                    }
 				}
 
 				$linkquery .= ")";
@@ -1113,7 +1134,7 @@ class link_library_plugin {
 			$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
 
 			if ( $mode == 'search' ) {
-				$output .= "<div class='resulttitle'>" . __('Search Results for', 'link-library') . " '" . $_GET['searchll'] . "'</div>";
+				$output .= "<div class='resulttitle'>" . __('Search Results for', 'link-library') . " '" . stripslashes( $_GET['searchll'] ) . "'</div>";
 			}
 
 			$currentcategoryid = -1;
@@ -1405,18 +1426,18 @@ class link_library_plugin {
 
 											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . '' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
-											if ($usethumbshotsforimages)
-											{
+											if ( $usethumbshotsforimages && ( !$uselocalimagesoverthumbshots || empty( $uselocalimagesoverthumbshots ) || ( $uselocalimagesoverthumbshots && empty( $linkitem['link_image'] ) ) ) ) {
 												if ( !empty( $thumbshotscid ) )
 													$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . rawurlencode( $thumbshotscid ) . 
 														'&v=1&w=120&url=' . $the_link . '"';											
-											}
-											elseif ( strpos($linkitem['link_image'], 'http') !== false )
-												$imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
-											else // If it's a relative path
-												$imageoutput .= '<img src="' . get_option('siteurl') . $linkitem['link_image'] . '"';
-                                            
-                                            if ( !$usethumbshotsforimages || ($usethumbshotsforimages && !empty( $thumbshotscid ) ) ) {
+											} else if ( !$usethumbshotsforimages || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
+                                                if ( strpos($linkitem['link_image'], 'http') !== false )
+                                                    $imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
+                                                else // If it's a relative path
+                                                    $imageoutput .= '<img src="' . get_option('siteurl') . $linkitem['link_image'] . '"';
+                                            }
+
+                                            if ( !$usethumbshotsforimages || ($usethumbshotsforimages && !empty( $thumbshotscid ) ) || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
 
                                                 $imageoutput .= $alt . $title;
 
@@ -1429,7 +1450,7 @@ class link_library_plugin {
                                             }
                                         }                                                
 
-										if ( ($linkitem['link_image'] != '' || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) )  && ($show_images) ) {
+										if ( ( !empty( $imageoutput ) || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) )  && ($show_images) ) {
 											$output .= $imageoutput;
 											break;
 										}
@@ -2208,7 +2229,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER' ) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -2242,7 +2263,7 @@ class link_library_plugin {
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
 									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'],
-                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'] );
+                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'], $options['uselocalimagesoverthumbshots'] );
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2260,7 +2281,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition );
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition, $uselocalimagesoverthumbshots );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -2553,7 +2574,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ) );
+                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ), $options['uselocalimagesoverthumbshots'] );
 			
 		return $linklibraryoutput;
 	}

@@ -2,6 +2,10 @@
 
 .linktable a {text-decoration:none}
 
+a.featured {
+    font-weight: bold;
+}
+
 table.linklisttable {
 	width:100%; 
 	border-width: 0px 0px 0px 0px;

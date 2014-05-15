@@ -59,6 +59,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.3 =
+* Added entry to stylesheet template to style featured links
+* Added new option to use local images attached to link if they are present when thumbshots automatic thumbnail generation is active
+* Restores support for versions before 3.5 that did not have the media uploader
+
 = 5.8.2.9 =
 * Fixed bug with links and settings export functionality
 
