@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.3
+Version: 5.8.3.1
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -1004,22 +1004,22 @@ class link_library_plugin {
                         {
                             if ($termnb == 1)
                             {
-                                $linkquery .= " AND (link_name like '%" . $searchterm . "%' ";
+                                $linkquery .= ' AND (link_name like "%' . $searchterm . '%" ';
                                 $termnb++;
                             }
                             else
                             {
-                                $linkquery .= " OR link_name like '%" . $searchterm . "%' ";
+                                $linkquery .= ' OR link_name like "%' . $searchterm . '%" ';
                             }
 
                             if ($hidecategorynames == false)
-                                $linkquery .= " OR name like '%" . $searchterm . "%' ";
+                                $linkquery .= ' OR name like "%' . $searchterm . '%" ';
                             if ($shownotes)
-                                $linkquery .= " OR link_notes like '%" . $searchterm . "%' ";
+                                $linkquery .= ' OR link_notes like "%' . $searchterm . '%" ';
                             if ($showdescription)
-                                $linkquery .= " OR link_description like '%" . $searchterm . "%' ";
+                                $linkquery .= ' OR link_description like "%' . $searchterm . '%" ';
                             if ($showlargedescription)
-                                $linkquery .= " OR link_textfield like '%" . $searchterm . "%' ";
+                                $linkquery .= ' OR link_textfield like "%' . $searchterm . '%" ';
                         }
                     }
 				}
@@ -1411,9 +1411,9 @@ class link_library_plugin {
 							foreach ($dragndroparray as $arrayelements) {
 								switch ($arrayelements) {
 									case 1: 	//------------------ Image Output --------------------
-										
+                                        $imageoutput = '';
 										if ( (($linkitem['link_image'] != '' || $usethumbshotsforimages)) && ($show_images)) {
-											$imageoutput = stripslashes($beforeimage) . '<a href="';
+											$imageoutput .= stripslashes($beforeimage) . '<a href="';
 
                                             if ( !$enablelinkpopup ) {
                                                 if ($sourceimage == 'primary' || $sourceimage == '')
