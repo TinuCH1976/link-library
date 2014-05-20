@@ -1,6 +1,6 @@
 ﻿=== Link Library ===
 Contributors: jackdewey
-Donate link: http://yannickcorner.nayanna.biz/wordpress-plugins/link-library
+Donate link: http://ylefebvre.ca/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch, popup
 Requires at least: 3.0
 Tested up to: 3.9.1
