@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.3.1
+Version: 5.8.3.2
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -457,11 +457,15 @@ class link_library_plugin {
 			if (!isset($direction)) $direction = '';
 			// Fetch the link category data as an array of hashesa
 			
-			$linkcatquery = "SELECT count(l.link_name) as linkcount, t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
+			$linkcatquery = "SELECT ";
+            if ( $showcatlinkcount ) {
+                $linkcatquery .= "(l.link_name) as linkcount, ";
+            }
+			$linkcatquery .= "t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 			$linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id)";
 			$linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
 
-			$linkcatquery .= " LEFT OUTER JOIN " . $this->db_prefix() . "links l on (tr.object_id = l.link_id";
+			$linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "links l on (tr.object_id = l.link_id";
 			
 			if ($showinvisible == false)
 				$linkcatquery .= " AND l.link_visible != 'N'";
@@ -1000,6 +1004,7 @@ class link_library_plugin {
                     if ( !empty( $searchterm ) ) {
                         $searchterm = str_replace( '--', '', $searchterm );
                         $searchterm = str_replace( ';', '', $searchterm );
+                        $searchterm = esc_html( stripslashes( $searchterm ) );
                         if ( $searchterm  == true )
                         {
                             if ($termnb == 1)

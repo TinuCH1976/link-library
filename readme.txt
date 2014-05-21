@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.3.2 =
+* Second fix to allow searches to work with apostrophes
+* Fix to allow categories containing no links to be displayed
+
 = 5.8.3.1 =
 * Allow link searches to work with apostrophes
 * Fix issue with duplicate images appearing
