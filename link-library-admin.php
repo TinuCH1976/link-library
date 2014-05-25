@@ -43,6 +43,10 @@ class link_library_plugin_admin {
                 wp_enqueue_media();
             }
         }
+		
+		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocal' ) {
+			wp_enqueue_style( 'LibraryLibraryAdminStyle', plugins_url( 'link-library-admin.css', __FILE__ ) );
+		}        
     }
     
     function set_plugin_row_meta($links_array, $plugin_file) {
@@ -763,7 +767,7 @@ class link_library_plugin_admin {
             }
 
 			$formvalue = 'save_link_library_general';
-			$pagetitle = 'Link Library ' . __('General Settings', 'link-library');
+			$pagetitle = '';
 		}
 		elseif ($_GET['page'] == 'link-library-settingssets')
 		{
@@ -796,7 +800,7 @@ class link_library_plugin_admin {
 				$settings = 1;
 			}
 			
-			$pagetitle = 'Link Library - ' . __('Library', 'link-library') . ' #' . $settings . " - " . $options['settingssetname'];
+			$pagetitle = __('Library', 'link-library') . ' #' . $settings . " - " . $options['settingssetname'];
 
 			if (isset($_GET['messages']))
 			{
@@ -851,7 +855,7 @@ class link_library_plugin_admin {
 		elseif ($_GET['page'] == 'link-library-moderate')
 		{
 			$formvalue = 'save_link_library_moderate';
-			$pagetitle = 'Link Library - ' . __('Link Moderation', 'link-library');
+			$pagetitle = '';
 
 			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Link(s) Approved', 'link-library') . "</strong></p></div>";
@@ -865,7 +869,7 @@ class link_library_plugin_admin {
 		elseif ($_GET['page'] == 'link-library-stylesheet')
 		{
 			$formvalue = 'save_link_library_stylesheet';
-			$pagetitle = 'Link Library ' . __('Stylesheet Editor', 'link-library');
+			$pagetitle = '';
 
 			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet updated', 'link-library') . ".</strong></p></div>";
@@ -875,7 +879,7 @@ class link_library_plugin_admin {
 		elseif ($_GET['page'] == 'link-library-reciprocal')
 		{
 			$formvalue = 'save_link_library_reciprocal';
-			$pagetitle = 'Link Library ' . __('Reciprocal Link Checker', 'link-library');
+			$pagetitle = '';
 			
 			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Settings updated', 'link-library') . ".</strong></p></div>";
@@ -893,13 +897,45 @@ class link_library_plugin_admin {
 		$data['genoptions'] = $genoptions;
 		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets, $pagehookreciprocal;
 		?>
+        <div class="ll-content">
+            <div class="ll-frame">
+                <div class="header">
+                    <nav role="navigation" class="header-nav drawer-nav nav-horizontal">
+
+                        <ul class="main-nav">
+                            <li class="link-library-logo"><img src="<?php echo plugins_url('icons/folder-beige-internet-icon32.png', __FILE__ ); ?>" /><span>Link Library</span></li>
+                            <li class="link-library-page">
+                                <a href="<?php echo add_query_arg( array( 'page' => 'link-library'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library' ) echo 'class="current"'; ?>><?php _e( 'General Options', 'link-library'); ?></a>
+                            </li>
+                            <li class="link-library-page">
+                                <a href="<?php echo add_query_arg( array( 'page' => 'link-library-settingssets'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-settingssets' ) echo 'class="current"'; ?>><?php _e( 'Library Settings', 'link-library' ); ?></a>
+                            </li>
+                            <li class="link-library-page">
+                                <a href="<?php echo add_query_arg( array( 'page' => 'link-library-moderate'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-moderate' ) echo 'class="current"'; ?>><?php _e( 'Moderate', 'link-library' ); ?></a>
+                            </li>
+                            <li class="link-library-page">
+                                <a href="<?php echo add_query_arg( array( 'page' => 'link-library-stylesheet'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-stylesheet' ) echo 'class="current"'; ?>><?php _e( 'Stylesheet', 'link-library' ); ?></a>
+                            </li>
+                            <li class="link-library-page">
+                                <a href="<?php echo add_query_arg( array( 'page' => 'link-library-reciprocal'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-reciprocal' ) echo 'class="current"'; ?>><?php _e( 'Reciprocal Check', 'link-library' ); ?></a>
+                            </li>
+							<?php if ( !$genoptions['hidedonation'] ) { ?>
+							<li class="link-library-page">
+                                <a href="http://ylefebvre.ca/wordpress-plugins/link-library/"><img src="<?php echo plugins_url( '/icons/btn_donate_LG.gif', __FILE__ ); ?>" /></a>
+                            </li>							
+							<?php } ?>
+							
+                        </ul>
+
+                    </nav>
+                </div><!-- .header -->
+            </div>
+        </div>
 		<div id="link-library-general" class="wrap">
 		<div class='icon32'><img src="<?php echo plugins_url( 'icons/folder-beige-internet-icon32.png', __FILE__ ); ?>" /></div>
-		<div ><h2><?php echo $pagetitle;
+		<div ><h2><?php if ( !empty( $pagetitle ) ) echo $pagetitle; ?>
 
-                if ( !$genoptions['hidedonation'] ) { ?>
-                    <span style='padding-left: 50px'><a href="http://ylefebvre.ca/wordpress-plugins/link-library/" target="linklibrary"><img src="<?php echo plugins_url( '/icons/btn_donate_LG.gif', __FILE__ ); ?>" /></a></span>
-                <?php } ?>
+                
 
 </h2></div>
 		<div><form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
