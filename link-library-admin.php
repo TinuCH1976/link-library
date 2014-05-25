@@ -44,7 +44,7 @@ class link_library_plugin_admin {
             }
         }
 		
-		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocal' ) {
+		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocate' ) {
 			wp_enqueue_style( 'LibraryLibraryAdminStyle', plugins_url( 'link-library-admin.css', __FILE__ ) );
 		}        
     }
@@ -462,6 +462,7 @@ class link_library_plugin_admin {
             // Under development, trying to display extra columns in link list page
             add_filter('manage_link-manager_columns', array($this, 'll_linkmanager_addcolumn'));
             add_action('manage_link_custom_column', array($this, 'll_linkmanager_populatecolumn'), 10, 2);
+            add_filter('get_bookmarks', array( $this, 'll_bookmarks_filter' ) );
 
             //add_filter( 'attachment_fields_to_edit', array( $this, 'add_custom_media_fields' ), null, 2 );
             //add_filter( 'attachment_fields_to_save', array( $this, 'save_custom_media_fields' ), null, 2 );
@@ -499,6 +500,14 @@ class link_library_plugin_admin {
             'html' => "<input type='checkbox' name='createlink' id='createlink' />" );
 
         return $form_fields;
+    }
+
+    function ll_bookmarks_filter( $bookmarks ) {
+        if ( isset( $_GET['linksperpage'] ) && isset( $_GET['linkspage'] ) ) {
+            return array_slice( $bookmarks, ( $_GET['linkspage'] - 1 ) *  $_GET['linksperpage'], $_GET['linksperpage'] );
+        } else {
+            return $bookmarks;
+        }
     }
 
     function save_custom_media_fields( $post, $attachment ) {
@@ -965,7 +974,7 @@ class link_library_plugin_admin {
 							elseif ($_GET['page'] == 'link-library-stylesheet')
 								do_meta_boxes($pagehookstylesheet, 'normal', $data);
 							elseif ($_GET['page'] == 'link-library-reciprocal')
-								do_meta_boxes($pagehookreciprocal, 'normal', $data); 
+								do_meta_boxes($pagehookreciprocal, 'normal', $data);
 						?>
 					</div>
 				</div>

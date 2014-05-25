@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.4.1 =
+* Added hack to allow people to page through links by adding parameters to the end of the link manager URL (?linksperpage=1&linkspage=2)
+
 = 5.8.4 =
 * Updated admin menu look
 
