@@ -3612,6 +3612,7 @@ class link_library_plugin_admin {
 				$hits = $extradata['link_visits'];
 				if ($hits == '') $hits = 0;
 				echo $hits;
+                break;
 		}
 	}
 

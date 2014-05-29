@@ -459,7 +459,7 @@ class link_library_plugin {
 			
 			$linkcatquery = "SELECT ";
             if ( $showcatlinkcount ) {
-                $linkcatquery .= "(l.link_name) as linkcount, ";
+                $linkcatquery .= "count(l.link_name) as linkcount, ";
             }
 			$linkcatquery .= "t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";
 			$linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id)";
