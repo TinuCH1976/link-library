@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.4.2
+Version: 5.8.4.3
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -458,7 +458,7 @@ class link_library_plugin {
 			// Fetch the link category data as an array of hashesa
 			
 			$linkcatquery = "SELECT ";
-            if ( $showcatlinkcount ) {
+            if ( $showcatlinkcount || $pagination ) {
                 $linkcatquery .= "count(l.link_name) as linkcount, ";
             }
 			$linkcatquery .= "t.name, t.term_id, t.slug as category_nicename, tt.description as category_description ";

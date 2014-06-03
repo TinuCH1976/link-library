@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.4.3 =
+* Fixed problem with category links when paginating results
+
 = 5.8.4.2 =
 * Fix problem with link counts when displaying category list
 
