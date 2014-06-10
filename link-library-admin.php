@@ -34,6 +34,49 @@ class link_library_plugin_admin {
 		add_action( 'wpmu_new_blog', array($this, 'new_network_site'), 10, 6);
 
         add_action( 'admin_head', array( $this, 'admin_header') );
+
+        add_action( 'link_category_edit_form_fields', array( $this, 'll_link_category_new_fields'), 10, 2 );
+        add_action( 'link_category_add_form_fields', array( $this, 'll_link_category_new_fields'), 10, 2 );
+
+        add_action( 'edited_link_category', array( $this, 'll_save_link_category_new_fields'), 10, 2) ;
+        add_action( 'created_link_category', array( $this, 'll_save_link_category_new_fields'), 10, 2 );
+    }
+
+    function ll_link_category_new_fields( $tag ) {
+        if ( is_object( $tag ) ) {
+            $mode = "edit";
+        } else {
+            $mode = 'new';
+        }
+
+        $caturl = '';
+        $caturl = get_metadata( 'linkcategory', $tag->term_id, 'linkcaturl', true );
+
+        ?>
+
+            <?php if ( $mode == 'edit' ) echo '<tr class="form-field">';
+            elseif ($mode == 'new') echo '<div class="form-field">'; ?>
+
+            <?php if ($mode == 'edit') echo '<th scope="row" valign="top">'; ?>
+            <label for="tag-category-url">
+                <?php _e( 'Category Link', 'link-library' ); ?></label>
+            <?php if ($mode == 'edit') echo '</th>'; ?>
+
+            <?php if ($mode == 'edit') echo '<td>'; ?>
+            <input type="text" id="ll_category_url" name="ll_category_url" size="60" value="<?php echo $caturl; ?>"/>
+            <p class="description">Link that will be associated with category when displayed by Link Library</p>
+            <?php if ($mode == 'edit') echo '</td>'; ?>
+            <?php if ($mode == 'edit' ) echo '</tr>';
+            elseif ($mode == 'new') echo '</div>';
+    }
+
+    function ll_save_link_category_new_fields( $term_id, $tt_id ) {
+
+        if (!$term_id) return;
+
+        if ( isset( $_POST['ll_category_url'] ) ) {
+            $returnvalue = update_metadata( 'linkcategory', $term_id, "linkcaturl", $_POST['ll_category_url'] );
+        }
     }
 
     function admin_header() {
@@ -44,7 +87,7 @@ class link_library_plugin_admin {
             }
         }
 		
-		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocate' ) {
+		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocate' ) ) {
 			wp_enqueue_style( 'LibraryLibraryAdminStyle', plugins_url( 'link-library-admin.css', __FILE__ ) );
 		}        
     }
@@ -264,6 +307,7 @@ class link_library_plugin_admin {
 		$options['rssfeedaddress'] = '';
 		$options['addlinknoaddress'] = false;
 		$options['featuredfirst'] = false;
+        $options['showlinksonclick'] = false;
 		$options['linklargedesclabel'] = __('Large Description', 'link-library');
 		$options['showuserlargedescription'] = false;
 		$options['usetextareaforusersubmitnotes'] = false;
@@ -304,6 +348,7 @@ class link_library_plugin_admin {
 		$genoptions['recipcheckaddress'] = get_bloginfo('wpurl');
 		$genoptions['recipcheckdelete403'] = false;
         $genoptions['imagefilepath'] = 'absolute';
+        $genoptions['catselectmethod'] = 'multiselectlist';
         $genoptions['hidedonation'] = false;
 
 		$stylesheetlocation = plugins_url( 'stylesheettemplate.css' , __FILE__ );
@@ -481,7 +526,7 @@ class link_library_plugin_admin {
 				for ($counter = 1; $counter <= $numberofsets; $counter++) {
                     $tempoptionname = "LinkLibraryPP" . $counter;
 					$tempoptions = get_option($tempoptionname);
-                    if ( $tempoptions['usethumbshotsforimages'] ) {
+                    if ( isset( $tempoptions['usethumbshotsforimages'] ) && $tempoptions['usethumbshotsforimages'] ) {
                         $thumbshotsactive = true;
                     }                    
                 }
@@ -638,6 +683,7 @@ class link_library_plugin_admin {
         $genoptions = get_option('LinkLibraryGeneral');
 
 		//add several metaboxes now, all metaboxes registered during load page can be switched off/on at "Screen Options" automatically, nothing special to do therefore
+        add_meta_box('linklibrary_general_save_meta_box_top', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_meta_box', __('General Settings', 'link-library'), array($this, 'general_meta_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_bookmarklet_meta_box', __('Bookmarklet', 'link-library'), array($this, 'general_meta_bookmarklet_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_moderation_meta_box', __('General Moderation Options', 'link-library'), array($this, 'general_moderation_meta_box'), $pagehooktop, 'normal', 'high');
@@ -1037,7 +1083,7 @@ class link_library_plugin_admin {
 
 		foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 						'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
-						'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath') as $option_name) {
+						'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath', 'catselectmethod') as $option_name) {
 			if (isset($_POST[$option_name])) {
 				$genoptions[$option_name] = $_POST[$option_name];
 			}
@@ -1047,7 +1093,8 @@ class link_library_plugin_admin {
 			if (isset($_POST[$option_name])) {
 				$genoptions[$option_name] = true;
 			} else {
-				$genoptions[$option_name] = false;
+                if ( $option_name != 'hidedonation')
+				    $genoptions[$option_name] = false;
 			}
 		}
 
@@ -1297,8 +1344,10 @@ class link_library_plugin_admin {
 			$settingsname = 'LinkLibraryPP' . $settingsetid;
 			
 			$options = get_option($settingsname);
+
+            $genoptions = get_option('LinkLibraryGeneral');
 			
-			foreach (array('order', 'table_width', 'num_columns', 'categorylist', 'excludecategorylist', 'position',
+			foreach (array('order', 'table_width', 'num_columns', 'position',
 						   'beforecatlist1', 'beforecatlist2', 'beforecatlist3','catnameoutput', 'linkaddfrequency', 
 						   'defaultsinglecat', 'rsspreviewcount', 'rssfeedinlinecount', 'linksperpage', 'catdescpos',
 						   'catlistdescpos', 'rsspreviewwidth', 'rsspreviewheight', 'numberofrssitems',
@@ -1308,6 +1357,18 @@ class link_library_plugin_admin {
 					$options[$option_name] = str_replace("\"", "'", strtolower( $_POST[$option_name] ) );
 				}
 			}
+
+            foreach ( array( 'categorylist', 'excludecategorylist' ) as $option_name ) {
+                if ( isset( $_POST[ $option_name ] ) ) {
+                    if ( $genoptions['catselectmethod'] == 'commalist' || empty( $genoptions['catselectmethod'] ) ) {
+                        $options[$option_name] = str_replace("\"", "'", strtolower( $_POST[$option_name] ) );
+                    } else if ( $genoptions['catselectmethod'] == 'multiselectlist' ) {
+                        $options[$option_name] = implode( ',', $_POST[$option_name] );
+                    }
+                } else {
+                    $options[$option_name] = '';
+                }
+            }
 
 			foreach (array('linkheader', 'descheader', 'notesheader','linktarget', 'settingssetname', 'loadingicon',
 							'direction', 'linkdirection', 'linkorder', 'addnewlinkmsg', 'linknamelabel', 'linkaddrlabel', 'linkrsslabel',
@@ -1332,7 +1393,7 @@ class link_library_plugin_admin {
 							'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages', 'uselocalimagesoverthumbshots',
 							'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 							'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
-                            'enable_link_popup', 'nocatonstartup')
+                            'enable_link_popup', 'nocatonstartup', 'showlinksonclick' )
 							as $option_name) {
 				if ( isset( $_POST[$option_name] ) ) {
 					$options[$option_name] = true;
@@ -1649,6 +1710,13 @@ class link_library_plugin_admin {
 				<td><?php _e('Number of Libraries','link-library'); ?></td>
 				<td><input type="text" id="numberstylesets" name="numberstylesets" size="5" value="<?php if ($genoptions['numberstylesets'] == '') echo '1'; echo $genoptions['numberstylesets']; ?>"/></td>
 				</tr>
+                <tr>
+                    <td><?php _e( 'Category selection method', 'link-library' ); ?></td>
+                    <td><select id="catselectmethod" name="catselectmethod">
+                            <option value="commalist" <?php selected($genoptions['catselectmethod'], 'commalist'); ?>>Comma-separated ID list
+                            <option value="multiselectlist" <?php selected($genoptions['catselectmethod'], 'multiselectlist'); ?>>Multi-select List
+                        </select></td>
+                </tr>
 				<tr>
 				<td class="lltooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><?php _e('Additional pages to load styles and scripts','link-library'); ?></td>
 				<td class="lltooltip" title="<?php _e('Enter comma-separate list of pages on which the Link Library stylesheet and scripts should be loaded. Primarily used if you display Link Library using the API','link-library'); ?>"><input type="text" id="includescriptcss" name="includescriptcss" size="40" value="<?php echo $genoptions['includescriptcss']; ?>"/></td>
@@ -1914,7 +1982,7 @@ class link_library_plugin_admin {
 								endfor;
 							?>
 						</SELECT>
-						<INPUT type="button" name="copy" value="<?php _e('Copy', 'link-library'); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val()">
+						<INPUT type="button" name="copy" value="<?php _e('Copy', 'link-library'); ?>!" onClick="if (confirm('Are you sure you want to copy the contents of the selected library over the current library settings?')) { window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val(); };">
 						<?php endif; ?>
 				<br />
 				<br />
@@ -1965,6 +2033,7 @@ class link_library_plugin_admin {
 	function settingssets_common_meta_box($data) { 
 		$options = $data['options'];
 		$settings = $data['settings'];
+        $genoptions = $data['genoptions'];
 	?>
 
 		<div style='padding-top: 15px'>
@@ -1981,19 +2050,68 @@ class link_library_plugin_admin {
 		</tr>
 		<tr>
 			<td class="lltooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('To find the IDs, go to the Link Categories admin page, place the mouse above a category name and look for its ID in the address shown in your browsers status bar. For example', 'link-library'); ?>: 2,4,56">
-				<?php _e('Categories to be displayed (Empty=All)', 'link-library'); ?>
+				<?php if ( $genoptions['catselectmethod'] == 'commalist' || empty( $genoptions['catselectmethod'] ) ) {
+                    _e('Categories to be displayed (Empty=All)', 'link-library');
+                } else if ( $genoptions['catselectmethod'] == 'multiselectlist' ) {
+                    _e('Categories to be displayed', 'link-library');
+                } ?>
 			</td>
-			<td class="lltooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 2,4,56">
-				<input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>"/>
-			</td>
+            <?php if ( $genoptions['catselectmethod'] == 'commalist' || empty( $genoptions['catselectmethod'] ) ) { ?>
+                <td class="lltooltip" title="<?php _e('Leave Empty to see all categories', 'link-library'); ?><br /><br /><?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 2,4,56">
+                    <input type="text" id="categorylist" name="categorylist" size="40" value="<?php echo $options['categorylist']; ?>"/>
+                </td>
+            <?php } else {
+                global $wpdb;
+                $linkcatquery = "SELECT distinct ";
+                $linkcatquery .= "t.name, t.term_id ";
+                $linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id)";
+                $linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+                $linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
+
+                $linkcatquery .= " ORDER by t.name " . $direction;
+
+                $catnames = $wpdb->get_results($linkcatquery);
+
+                $categorylistarray = explode( ',', $options['categorylist'] );
+                ?>
+                <td>
+                    Show all categories
+                    <input type="checkbox" id="nospecificcats" name="nospecificcats" <?php if ( empty( $options['categorylist'] ) ) echo ' checked="checked" '; ?>/>
+                    <?php if (!empty( $catnames ) ) { ?>
+                        <select id="categorylist" name="categorylist[]" multiple <?php disabled( empty( $options['categorylist'] ), true, true ); ?>>
+                        <?php foreach ( $catnames as $catname ) { ?>
+                            <option value="<?php echo $catname->term_id; ?>" <?php selected( in_array( $catname->term_id, $categorylistarray ), true, true ); ?> ><?php echo $catname->name; ?></option>
+
+                        <?php } ?>
+                        </select>
+                    <?php } ?>
+                </td>
+            <?php } ?>
 		</tr>
 		<tr>
 			<td class="lltooltip" title="<?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs that should not be shown', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 5,34,43">
 				<?php _e('Categories to be excluded', 'link-library'); ?>
 			</td>
+            <?php if ( $genoptions['catselectmethod'] == 'commalist' || empty( $genoptions['catselectmethod'] ) ) { ?>
 			<td class="lltooltip" title="<?php _e('Enter list of comma-separated', 'link-library'); ?><br /><?php _e('numeric category IDs that should not be shown', 'link-library'); ?><br /><br /><?php _e('For example', 'link-library'); ?>: 5,34,43">
 				<input type="text" id="excludecategorylist" name="excludecategorylist" size="40" value="<?php echo $options['excludecategorylist']; ?>"/>
 			</td>
+            <?php } else {
+                $excludecategorylistarray = explode( ',', $options['excludecategorylist'] );
+                ?>
+                <td>
+                    No Exclusions
+                    <input type="checkbox" id="noexclusions" name="noexclusions" <?php if ( empty( $options['excludecategorylist'] ) ) echo ' checked="checked" '; ?>/>
+                    <?php if (!empty( $catnames ) ) { ?>
+                        <select id="excludecategorylist" name="excludecategorylist[]" multiple <?php disabled( empty( $options['excludecategorylist'] ), true, true ); ?>>
+                            <?php foreach ( $catnames as $catname ) { ?>
+                                <option value="<?php echo $catname->term_id; ?>" <?php selected( in_array( $catname->term_id, $excludecategorylistarray ), true, true ); ?> ><?php echo $catname->name; ?></option>
+
+                            <?php } ?>
+                        </select>
+                    <?php } ?>
+                </td>
+            <?php } ?>
 		</tr>
 		<tr>
 			<td class="lltooltip" title="<?php _e('Only show one category of links at a time', 'link-library'); ?>">
@@ -2077,12 +2195,39 @@ class link_library_plugin_admin {
 		</table>
 		</div>
 
+        <script type="text/javascript">
+            jQuery( document ).ready(function() {
+                jQuery('#nospecificcats').click(function () {
+                    if (jQuery("#nospecificcats").is(":checked")) {
+                        jQuery('#categorylist').prop('disabled', 'disabled');
+                        jQuery("#categorylist").val([]);
+                    }
+                    else {
+                        jQuery('#categorylist').prop('disabled', false);
+                    }
+                });
+            });
+
+            jQuery( document ).ready(function() {
+                jQuery('#noexclusions').click(function () {
+                    if (jQuery("#noexclusions").is(":checked")) {
+                        jQuery('#excludecategorylist').prop('disabled', 'disabled');
+                        jQuery("#excludecategorylist").val([]);
+                    }
+                    else {
+                        jQuery('#excludecategorylist').prop('disabled', false);
+                    }
+                });
+            });
+        </script>
+
 	<?php }
 
 	function settingssets_categories_meta_box($data) 
 	{ 
 		$options = $data['options'];
 		$settings = $data['settings'];
+        $genoptions = $data['genoptions'];
 	?>
 		<div style='padding-top:15px'>
 		<table>
@@ -2094,7 +2239,9 @@ class link_library_plugin_admin {
 				<select name="order" id="order" style="width:200px;">
 					<option value="name"<?php if ($options['order'] == 'name') { echo ' selected="selected"';} ?>><?php _e('Order by Name', 'link-library'); ?></option>
 					<option value="id"<?php if ($options['order'] == 'id') { echo ' selected="selected"';} ?>><?php _e('Order by ID', 'link-library'); ?></option>
-					<option value="catlist"<?php if ($options['order'] == 'catlist') { echo ' selected="selected"';} ?>><?php _e('Order of categories based on included category list', 'link-library'); ?></option>
+                    <?php if ( $genoptions['catselectmethod'] == 'commalist' || empty( $genoptions['catselectmethod'] ) ) { ?>
+                        <option value="catlist"<?php if ($options['order'] == 'catlist') { echo ' selected="selected"';} ?>><?php _e('Order of categories based on included category list', 'link-library'); ?></option>
+                    <?php } ?>
 					<option value="order"<?php if ($options['order'] == 'order') { echo ' selected="selected"';} ?>><?php _e('Order by', 'link-library'); ?> 'My Link Order' <?php _e('Wordpress Plugin', 'link-library'); ?></option>
 				</select>
 			</td>
@@ -2275,6 +2422,9 @@ class link_library_plugin_admin {
 		<tr>
 			<td><?php _e('List Featured Links ahead of Regular Links', 'link-library'); ?></td>
 			<td><input type="checkbox" id="featuredfirst" name="featuredfirst" <?php if ($options['featuredfirst']) echo ' checked="checked" '; ?>/></td>
+            <td></td>
+            <td><?php _e( 'Show Expand Link button and hide links', 'link-library' ); ?></td>
+            <td><input type="checkbox" id="showlinksonclick" name="showlinksonclick" <?php if ($options['showlinksonclick']) echo ' checked="checked" '; ?>/></td>
 		</tr>
 		<tr>
 			<td class="lltooltip" title='<?php _e('Except for My Link Order mode', 'link-library'); ?>'>
