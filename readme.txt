@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.5.2 =
+* Fix problem with user-submitted categories on link submission
+
 = 5.8.5.1 =
 * Reverted all new functions from 5.8.5 until further testing can be done to resolve layout with new version
 

@@ -2,6 +2,8 @@
 
 function link_library_process_user_submission( $my_link_library_plugin ) {
     check_admin_referer('LL_ADDLINK_FORM');
+	
+	require_once(ABSPATH . '/wp-admin/includes/taxonomy.php');
 
     load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages');
 
