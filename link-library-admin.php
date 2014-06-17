@@ -3257,7 +3257,7 @@ class link_library_plugin_admin {
 		}
 		else
 		{
-			$link_updated = date("Y-m-d H:i");
+			$link_updated = date("Y-m-d H:i", current_time( 'timestamp' ) );
 			$extradata = array();
 			$originaldata = array();
 		}
@@ -3528,7 +3528,7 @@ class link_library_plugin_admin {
 		if (isset($_POST['ll_link_updated']))
 			$link_updated = $_POST['ll_link_updated'];
 		elseif (!isset($_POST['ll_link_updated']))
-			$link_updated = date("Y-m-d H:i");
+			$link_updated = date("Y-m-d H:i", current_time( 'timestamp' ) );
 		
 		if ($withimage == true)
 			$wpdb->update( $tablename, array( 'link_updated' => $link_updated, 'link_image' => $file_path ), array( 'link_id' => $link_id ));

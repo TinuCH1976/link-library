@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.5.3 =
+* Fix link updated date setting to use blog time instead of GMT time
+* Corrected issue with RSS feed URL generation
+
 = 5.8.5.2 =
 * Fix problem with user-submitted categories on link submission
 
