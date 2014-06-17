@@ -305,7 +305,7 @@ class link_library_plugin {
 			$feedtitle = ($options['rssfeedtitle'] == "" ? __('Link Library Generated Feed', 'link-library') : $options['rssfeedtitle']);
 
 			$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
-			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html(stripslashes($feedtitle)) . '" href="' . plugins_url('?link_library_rss_feed=1&settingset=' . $rss_settings/* . '&xpath=' . $xpath*/, __FILE__) . '" />';
+			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html(stripslashes($feedtitle)) . '" href="' . home_url('?link_library_rss_feed=1&settingset=' . $rss_settings/* . '&xpath=' . $xpath*/) . '" />';
 			unset( $xpath );
 		}
 
