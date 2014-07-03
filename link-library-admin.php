@@ -277,7 +277,9 @@ class link_library_plugin_admin {
         $options['nocatonstartup'] = false;
 
 		$settingsname = 'LinkLibraryPP' . $settings;
-		update_option($settingsname, $options);	
+		update_option($settingsname, $options);
+
+        return $options;
 	}
 
 	// Function used to set initial settings or reset them on user request
@@ -310,6 +312,7 @@ class link_library_plugin_admin {
 		$genoptions['fullstylesheet'] = @file_get_contents($stylesheetlocation);
 
 		update_option('LinkLibraryGeneral', $genoptions);
+        return $genoptions;
 	}
     
     /* the function */
@@ -680,8 +683,7 @@ class link_library_plugin_admin {
 		// If general options don't exist, create them
 		if ($genoptions == FALSE)
 		{
-			$this->ll_reset_gen_settings();
-            $genoptions = get_option('LinkLibraryGeneral');
+			$genoptions = $this->ll_reset_gen_settings();
 		}
 		elseif ($genoptions['schemaversion'] == '' || floatval($genoptions['schemaversion']) < "4.6") // If they exist, make sure they are up to date
 		{
@@ -694,8 +696,7 @@ class link_library_plugin_admin {
 
         if ( empty($options) )
         {
-            $this->ll_reset_options($settings, 'list');
-            $options = get_option($settingsname);
+            $options = $this->ll_reset_options($settings, 'list');
         }
 
 		if ( isset($_GET['genthumbs']) || isset($_GET['genfavicons']) || isset($_GET['genthumbsingle']) || isset($_GET['genfaviconsingle'])) {
@@ -783,10 +784,10 @@ class link_library_plugin_admin {
 			$formvalue = 'save_link_library_settingssets';
 
 			if ( isset($_GET['reset']))
-				$this->ll_reset_options($settings, 'list');
+				$options = $this->ll_reset_options($settings, 'list');
 
 			if ( isset($_GET['resettable']) )
-				$this->ll_reset_options($settings, 'table');
+				$options = $this->ll_reset_options($settings, 'table');
 
 			if ( isset($_GET['copy']))
 			{
@@ -1953,9 +1954,9 @@ class link_library_plugin_admin {
 				<table>
 				<tr>
 					<td style='text-align:right'>
-						<span><a href='admin.php?page=link-library-settingssets&amp;deletesettings=<?php echo $settings ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Library #'%s'\n  'Cancel' to stop, 'OK' to delete.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Delete Library', 'link-library'); ?> <?php echo $settings ?></a></span>
-						<span><a href='admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings ?>&reset=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Library '%s'\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Reset current Library', 'link-library'); ?></a></span>
-						<span><a href='admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings ?>&resettable=<?php echo $settings; ?>' <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Library '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) { return true;}return false;\""; ?>><?php _e('Reset current Library for table layout', 'link-library'); ?></a></span>
+						<span><button type="button" <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to Delete Library #'%s'\n  'Cancel' to stop, 'OK' to delete.", "link-library"), $settings ) ) . "') ) window.location.href='admin.php?page=link-library-settingssets&amp;deletesettings=" . $settings . "'\""; ?>><?php _e('Delete Library', 'link-library'); ?> <?php echo $settings ?></button></span>
+						<span><button type="button" <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Library '%s'\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) window.location.href='admin.php?page=link-library-settingssets&amp;settings=" . $settings . "&reset=" . $settings . "'\"";?>><?php _e('Reset current Library', 'link-library'); ?></button></span>
+						<span><button type="button" <?php echo "onclick=\"if ( confirm('" . esc_js(sprintf( __("You are about to reset Library '%s' for a table layout\n  'Cancel' to stop, 'OK' to reset.", "link-library"), $settings )) . "') ) window.location.href='admin.php?page=link-library-settingssets&amp;settings=" . $settings . "&resettable=" . $settings . "'\""; ?>><?php _e('Reset current Library for table layout', 'link-library'); ?> </button></span>
 					</td>
 				</tr>
 				</table>
