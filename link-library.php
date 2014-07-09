@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.5.4
+Version: 5.8.5.5
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -742,6 +742,11 @@ class link_library_plugin {
         $dotbelow = false;
         $dotabove = false;
 
+        $incomingget = $_GET;
+        unset ( $incomingget['page_id'] );
+        unset ( $incomingget['linkresultpage'] );
+        unset ( $incomingget['cat_id'] );
+
         if ($numberofpages > 1)
         {
             $paginationoutput = "<div class='pageselector'>";
@@ -750,14 +755,23 @@ class link_library_plugin {
             {
                 $paginationoutput .= "<span class='previousnextactive'>";
 
-                if (!$showonecatonly)
-                    $paginationoutput .= "<a href='?page_id=" . get_the_ID() . "&linkresultpage=" . $previouspagenumber . "'>" . __('Previous', 'link-library') . "</a>";
-                elseif ($showonecatonly)
-                {
+                if (!$showonecatonly) {
+                    $argumentarray = array ( 'page_id' => get_the_ID(), 'linkresultpage' => $previouspagenumber );
+                    $argumentarray = array_merge( $argumentarray, $incomingget );
+                    $targetaddress = add_query_arg( $argumentarray );
+
+                    $paginationoutput .= "<a href='" . $targetaddress . "'>" . __('Previous', 'link-library') . "</a>";
+                } elseif ($showonecatonly) {
                     if ($showonecatmode == 'AJAX' || $showonecatmode == '')
                         $paginationoutput .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . "</a>";
-                    elseif ($showonecatmode == 'HTMLGET')
-                        $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $previouspagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Previous', 'link-library') . "</a>";
+                    elseif ($showonecatmode == 'HTMLGET') {
+                        $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $previouspagenumber, 'cat_id' => $AJAXcatid );
+                        $argumentarray = array_merge( $argumentarray, $incomingget );
+                        $targetaddress = add_query_arg( $argumentarray );
+
+                        $paginationoutput .= "<a href='" . $targetaddress . "' >" . __('Previous', 'link-library') . "</a>";
+                    }
+
                 }
 
                 $paginationoutput .= "</span>";
@@ -774,14 +788,23 @@ class link_library_plugin {
                     else
                         $paginationoutput .= "<span class='selectedpage'>";
 
-                    if (!$showonecatonly)
-                        $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $counter . "'>" . $counter . "</a>";
-                    elseif ($showonecatonly)
-                    {
+                    if (!$showonecatonly) {
+                        $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter );
+                        $argumentarray = array_merge( $argumentarray, $incomingget );
+                        $targetaddress = add_query_arg( $argumentarray );
+
+                        $paginationoutput .= "<a href='" . $targetaddress . "'>" . $counter . "</a>";
+                    } elseif ($showonecatonly) {
                         if ($showonecatmode == 'AJAX' || $showonecatmode == '')
                             $paginationoutput .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . "</a>";
-                        elseif ($showonecatmode == 'HTMLGET')
-                            $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $counter . "&cat_id=" . $AJAXcatid . "' >" . $counter . "</a>";
+                        elseif ($showonecatmode == 'HTMLGET') {
+                            $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'cat_id' => $AJAXcatid );
+                            $argumentarray = array_merge( $argumentarray, $incomingget );
+                            $targetaddress = add_query_arg( $argumentarray );
+
+                            $paginationoutput .= "<a href='" . $targetaddress . "' >" . $counter . "</a>";
+                        }
+
                     }
 
                     $paginationoutput .= "</a></span>";
@@ -804,14 +827,26 @@ class link_library_plugin {
             {
                 $paginationoutput .= "<span class='previousnextactive'>";
 
-                if (!$showonecatonly)
-                    $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $nextpagenumber . "'>" . __('Next', 'link-library') . "</a>";
+                if (!$showonecatonly) {
+                    $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
+                    $argumentarray = array_merge( $argumentarray, $incomingget );
+                    $targetaddress = add_query_arg( $argumentarray );
+
+                    $paginationoutput .= "<a href='" . $targetaddress . "'>" . __('Next', 'link-library') . "</a>";
+                }
+
                 elseif ($showonecatonly)
                 {
                     if ($showonecatmode == 'AJAX' || $showonecatmode == '')
                         $paginationoutput .= "<a href='#' onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . "</a>";
-                    elseif ($showonecatmode == 'HTMLGET')
-                        $paginationoutput .= "<a href='?page_id=" . $pageID . "&linkresultpage=" . $nextpagenumber . "&cat_id=" . $AJAXcatid . "' >" . __('Next', 'link-library') . "</a>";
+                    elseif ($showonecatmode == 'HTMLGET') {
+                        $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
+                        $argumentarray = array_merge( $argumentarray, $incomingget );
+                        $targetaddress = add_query_arg( $argumentarray );
+
+                        $paginationoutput .= "<a href='" . $targetaddress . "' >" . __('Next', 'link-library') . "</a>";
+                    }
+
                 }
 
                 $paginationoutput .= "</span>";

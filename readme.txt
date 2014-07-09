@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.5.5 =
+* Updated pagination code to preserve URL parameters from other plugins
+* Updated FAQ section on plugin page
+
 = 5.8.5.4 =
 * Changed layout of delete and reset buttons to make them more obvious to use
 * Fixed late refresh after deleting or resetting options
