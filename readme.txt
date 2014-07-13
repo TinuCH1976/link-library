@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.5.6 =
+* Fixed problem with resetting stylesheet to default
+* Added FAQ section, include embedded new Link Library tutorial videos
+
 = 5.8.5.5 =
 * Updated pagination code to preserve URL parameters from other plugins
 * Updated FAQ section on plugin page

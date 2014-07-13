@@ -11,6 +11,7 @@ $pagehookmoderate = "";
 $pagehooksettingssets = "";
 $pagehookstylesheet = "";
 $pagehookreciprocal = "";
+$pagehookfaq = "";
 
 class link_library_plugin_admin {
     
@@ -44,7 +45,7 @@ class link_library_plugin_admin {
             }
         }
 		
-		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocate' ) {
+		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocate' || $_GET['page'] == 'link-library-faq' ) {
 			wp_enqueue_style( 'LibraryLibraryAdminStyle', plugins_url( 'link-library-admin.css', __FILE__ ) );
 		}        
     }
@@ -586,7 +587,7 @@ class link_library_plugin_admin {
 	//extend the admin menu
 	function on_admin_menu() {
 		//add our own option page, you can also add it to different sections or use your own one
-		global $wpdb, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal;
+		global $wpdb, $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal, $pagehookfaq;
 		
 		$linkmoderatecount = 0;
 		
@@ -614,20 +615,23 @@ class link_library_plugin_admin {
 		
 		$pagehookstylesheet = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Stylesheet', 'link-library') , __('Stylesheet', 'link-library'), 'manage_options', 'link-library-stylesheet', array($this,'on_show_page')); 
 		
-		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page')); 
-		
-		//register  callback gets call prior your own page gets rendered
+		$pagehookreciprocal = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('Reciprocal Checker', 'link-library') , __('Reciprocal Check', 'link-library'), 'manage_options', 'link-library-reciprocal', array($this,'on_show_page'));
+
+        $pagehookfaq = add_submenu_page( LINK_LIBRARY_ADMIN_PAGE_NAME, 'Link Library - ' . __('FAQ', 'link-library') , __('FAQ', 'link-library'), 'manage_options', 'link-library-faq', array($this,'on_show_page'));
+
+        //register  callback gets call prior your own page gets rendered
 		add_action('load-'.$pagehooktop, array($this, 'on_load_page'));
 		add_action('load-'.$pagehooksettingssets, array($this, 'on_load_page'));
 		add_action('load-'.$pagehookmoderate, array($this, 'on_load_page'));
 		add_action('load-'.$pagehookstylesheet, array($this, 'on_load_page'));
 		add_action('load-'.$pagehookreciprocal, array($this, 'on_load_page'));
+        add_action('load-'.$pagehookfaq, array($this, 'on_load_page'));
 	}
 
 	//will be executed if wordpress core detects this page has to be rendered
 	function on_load_page() {
 	
-		global $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal;
+		global $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal, $pagehookfaq;
 		
 		//ensure, that the needed javascripts been loaded to allow drag/drop, expand/collapse and hide/show of boxes
 		wp_enqueue_script('tiptip', plugins_url( '/tiptip/jquery.tipTip.minified.js' , __FILE__ ), "jQuery", "1.0rc3");
@@ -667,7 +671,8 @@ class link_library_plugin_admin {
 		add_meta_box('linklibrary_settingssets_importexport_meta_box', __('Import / Export', 'link-library'), array($this, 'settingssets_importexport_meta_box'), $pagehooksettingssets, 'normal', 'high');		
 		add_meta_box('linklibrary_settingssets_side_meta_box_2', __('Save', 'link-library'), array($this, 'settingssets_save_meta_box'), $pagehooksettingssets, 'normal', 'high');
 		add_meta_box('linklibrary_reciprocal_meta_box', __('Reciprocal Link Checker', 'link-library'), array($this, 'reciprocal_meta_box'), $pagehookreciprocal, 'normal', 'high');
-		add_meta_box('linklibrary_reciprocal_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehookreciprocal, 'normal', 'high');		
+		add_meta_box('linklibrary_reciprocal_save_meta_box', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehookreciprocal, 'normal', 'high');
+        add_meta_box('linklibrary_faq_meta_box', __('FAQ', 'link-library'), array($this, 'faq_meta_box'), $pagehookfaq, 'normal', 'high');
 	}
 
 	//executed to show the plugins complete admin page
@@ -905,7 +910,7 @@ class link_library_plugin_admin {
 		$data['settings'] = $settings;
 		$data['options'] = isset( $options ) ? $options : '';
 		$data['genoptions'] = $genoptions;
-		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets, $pagehookreciprocal;
+		global $pagehooktop, $pagehookmoderate, $pagehookstylesheet, $pagehooksettingssets, $pagehookreciprocal, $pagehookfaq;
 		?>
         <div class="ll-content">
             <div class="ll-frame">
@@ -928,6 +933,9 @@ class link_library_plugin_admin {
                             </li>
                             <li class="link-library-page">
                                 <a href="<?php echo add_query_arg( array( 'page' => 'link-library-reciprocal'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-reciprocal' ) echo 'class="current"'; ?>><?php _e( 'Reciprocal Check', 'link-library' ); ?></a>
+                            </li>
+                            <li class="link-library-page">
+                                <a href="<?php echo add_query_arg( array( 'page' => 'link-library-faq'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-faq' ) echo 'class="current"'; ?>><?php _e( 'FAQ', 'link-library' ); ?></a>
                             </li>
 							<?php if ( !$genoptions['hidedonation'] ) { ?>
 							<li class="link-library-page">
@@ -976,6 +984,8 @@ class link_library_plugin_admin {
 								do_meta_boxes($pagehookstylesheet, 'normal', $data);
 							elseif ($_GET['page'] == 'link-library-reciprocal')
 								do_meta_boxes($pagehookreciprocal, 'normal', $data);
+                            elseif ($_GET['page'] == 'link-library-faq')
+                                do_meta_boxes($pagehookfaq, 'normal', $data);
 						?>
 					</div>
 				</div>
@@ -1000,6 +1010,8 @@ class link_library_plugin_admin {
 					echo $pagehookstylesheet;
 				elseif ($_GET['page'] == 'link-library-reciprocal')
 					echo $pagehookreciprocal;
+                elseif ($_GET['page'] == 'link-library-faq')
+					echo $pagehookfaq;
 				?>');
 		});
 		//]]>
@@ -1586,9 +1598,12 @@ class link_library_plugin_admin {
 		{
 			$genoptions = get_option('LinkLibraryGeneral');
 
-			$stylesheetlocation = plugins_url( 'stylesheettemplate.css', __FILE__ );
-			if (file_exists($stylesheetlocation))
-				$genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
+			$stylesheetlocation = plugin_dir_path( __FILE__ ) . 'stylesheettemplate.css';
+
+			if ( file_exists($stylesheetlocation) ) {
+                $genoptions['fullstylesheet'] = file_get_contents($stylesheetlocation);
+                echo $genoptions['fullstylesheet'];
+            }
 
 			update_option('LinkLibraryGeneral', $genoptions);
 
@@ -1632,6 +1647,65 @@ class link_library_plugin_admin {
 		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
 		wp_redirect($this->remove_querystring_var($_POST['_wp_http_referer'], 'message') . $messageend);
 	}
+
+    function faq_meta_box() { ?>
+
+        <h2>Link Library Tutorial Videos</h2>
+        <iframe width="640" height="360" src="//www.youtube.com/embed/videoseries?list=PLMOnMuzFySmCXtNz2_8FMWgnbeYAyobUM" frameborder="0" allowfullscreen></iframe>
+
+        <h2>FAQ</h2>
+
+        <p><strong>Where do I find my category IDs to place in the "Categories to be Displayed" and "Categories to be Excluded" fields?</strong></p>
+
+        <p>The category IDs are numeric IDs. You can find them by going to the page to see and edit link categories, then placing your mouse over a category and seeing its numeric ID in the link that is associated with that name.</p>
+
+        <p><strong>How can I display different categories on different pages?</strong></p>
+
+        <p>If you want all of your link pages to have the same layout, create a single setting set, then specify the category to be displayed when you add the short code to each page. For example:<br /><br />[link-library categorylistoverride="28"]<br /><br />
+
+        If the different pages have different styles for different categories, then you should create distinct setting sets for each page and set the categories to be displayed in the "Categories to be Displayed" field in the admin panel.</p>
+
+        <p><strong>After assigning a Link Acknowledgement URL, why do links no longer get added to my database?</strong></p>
+
+        <p>When using this option, the short code [link-library-addlinkcustommsg] should be placed on the destination page.</p>
+
+        <p><strong>How can I override some of the options when using shortcodes in my pages</strong></p>
+
+        <p>To override the settings specified inside of the plugin settings page, the two commands can be called with options. Here is the syntax to call these options:<br />
+
+        <ul>
+            <li>[link-library-cats categorylistoverride="28"]</li>
+
+        <p>Overrides the list of categories to be displayed in the category list</p>
+
+        <li>[link-library-cats excludecategoryoverride="28"]</li>
+
+        <p>Overrides the list of categories to be excluded in the category list</p>
+
+        <li>[link-library categorylistoverride="28"]</li>
+
+        <p>Overrides the list of categories to be displayed in the link list</p>
+
+        <li>[link-library excludecategoryoverride="28"]</li>
+
+        <p>Overrides the list of categories to be excluded in the link list</p>
+
+        <li>[link-library notesoverride=0]</li>
+
+        <p>Set to 0 or 1 to display or not display link notes</p>
+
+        <li>[link-library descoverride=0]</li>
+
+        <p>Set to 0 or 1 to display or not display link descriptions</p>
+
+        <li>[link-library rssoverride=0]</li>
+
+        <p>Set to 0 or 1 to display or not display rss information</p>
+
+        <li>[link-library tableoverride=0]</li>
+
+        <p>Set to 0 or 1 to display links in an unordered list or a table.</p>
+    <?php }
 
 	function general_meta_box($data) {
 		$genoptions = $data['genoptions'];
