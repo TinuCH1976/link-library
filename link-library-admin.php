@@ -21,7 +21,7 @@ class link_library_plugin_admin {
         //add filter for WordPress 2.8 changed backend box system !
         add_filter('screen_layout_columns', array($this, 'on_screen_layout_columns'), 10, 2);
         //register callback for admin menu  setup
-        add_action('admin_menu', array($this, 'on_admin_menu'));
+        add_action('admin_menu', array($this, 'on_admin_menu'), 100);
         
         // Capture and process user submissions for custom fields in Link Edition page
 		add_action('add_link', array($this, 'add_link_field'));
@@ -45,7 +45,7 @@ class link_library_plugin_admin {
             }
         }
 		
-		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocate' || $_GET['page'] == 'link-library-faq' ) {
+		if ( isset( $_GET['page'] ) && ( $_GET['page'] == 'link-library' ) || $_GET['page'] == 'link-library-settingssets' || $_GET['page'] == 'link-library-moderate' || $_GET['page'] == 'link-library-stylesheet' || $_GET['page'] == 'link-library-reciprocal' || $_GET['page'] == 'link-library-faq' ) {
 			wp_enqueue_style( 'LibraryLibraryAdminStyle', plugins_url( 'link-library-admin.css', __FILE__ ) );
 		}        
     }
