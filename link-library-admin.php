@@ -1505,7 +1505,8 @@ class link_library_plugin_admin {
 					$emailtitle = str_replace('%linkname%', $linkdata['link_name'], $genoptions['approvalemailtitle']);
 					$emailbody = nl2br($genoptions['approvalemailbody']);
 					$emailbody = str_replace('%submittername%', stripslashes($linkextradata['link_submitter_name']), stripslashes($emailbody));
-					$emailbody = str_replace('%linkname%', $linkdata['link_name'], $emailbody);
+                    $emailbody = str_replace('%linkname%', $linkdata['link_name'], $emailbody);
+                    $emailbody = str_replace('%linkurl%', $linkdata['link_url'], $emailbody);
 					
 					$headers = "MIME-Version: 1.0\r\n";
 					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";

@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.5.8 =
+* Added variable %linkurl% for link submission response e-mail template
+* Fixed problem with link title having bad tags when using link description as title and search terms are found in that description
+
 = 5.8.5.7 =
 * Fixed tabs not appearing correctly in reciprocal link checker
 * Updated french translation
