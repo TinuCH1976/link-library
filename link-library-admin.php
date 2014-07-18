@@ -1471,7 +1471,7 @@ class link_library_plugin_admin {
 
 			foreach ($_POST['links'] as $approved_link)
 			{
-				$linkdescquery = "SELECT link_description, link_name ";
+				$linkdescquery = "SELECT link_description, link_name, link_url ";
 				$linkdescquery .= "FROM " . $this->db_prefix() . "links l ";
 				$linkdescquery .= "WHERE link_id = " . $approved_link;
 
