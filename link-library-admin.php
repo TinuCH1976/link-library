@@ -1534,7 +1534,7 @@ class link_library_plugin_admin {
 
 			foreach ($_POST['links'] as $approved_link)
 			{
-				$linkdescquery = "SELECT link_description, link_name ";
+				$linkdescquery = "SELECT link_description, link_name, link_url ";
 				$linkdescquery .= "FROM " . $this->db_prefix() . "links l ";
 				$linkdescquery .= "WHERE link_id = " . $approved_link;
 
@@ -1548,6 +1548,7 @@ class link_library_plugin_admin {
 					$emailbody = nl2br($genoptions['rejectedemailbody']);
 					$emailbody = str_replace('%submittername%', stripslashes($linkextradata['link_submitter_name']), stripslashes($emailbody));
 					$emailbody = str_replace('%linkname%', $linkdata['link_name'], $emailbody);
+                    $emailbody = str_replace('%linkurl%', $linkdata['link_url'], $emailbody);
 					
 					$headers = "MIME-Version: 1.0\r\n";
 					$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";
@@ -1818,7 +1819,7 @@ class link_library_plugin_admin {
 				<td><input type="text" id="approvalemailtitle" name="approvalemailtitle" size="60" value="<?php echo $genoptions['approvalemailtitle']; ?>"/></td>
 			</tr>
 			<tr>
-				<td class='lltooltip' title='<?php _e('Body of approval e-mail. Use %linkname% as a variable to be replaced by the actual link name and %submittername% for the submitter name', 'link-library'); ?>'><?php _e('Approval e-mail body', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Body of approval e-mail. Use %linkname% as a variable to be replaced by the actual link name, %submittername% for the submitter name and %linkurl% for the link address', 'link-library'); ?>'><?php _e('Approval e-mail body', 'link-library'); ?></td>
 				<td><textarea id="approvalemailbody" name="approvalemailbody" cols="60"><?php echo stripslashes($genoptions['approvalemailbody']); ?></textarea></td>
 			</tr>
 			<tr>
@@ -1826,7 +1827,7 @@ class link_library_plugin_admin {
 				<td><input type="text" id="rejectedemailtitle" name="rejectedemailtitle" size="60" value="<?php echo $genoptions['rejectedemailtitle']; ?>"/></td>
 			</tr>
 			<tr>
-				<td class='lltooltip' title='<?php _e('Body of rejection e-mail. Use %linkname% as a variable to be replaced by the actual link name and %submittername% for the submitter name', 'link-library'); ?>'><?php _e('Rejection e-mail body', 'link-library'); ?></td>
+				<td class='lltooltip' title='<?php _e('Body of rejection e-mail. Use %linkname% as a variable to be replaced by the actual link name, %submittername% for the submitter name and %linkurl% for the link address', 'link-library'); ?>'><?php _e('Rejection e-mail body', 'link-library'); ?></td>
 				<td><textarea id="rejectedemailbody" name="rejectedemailbody" cols="60"><?php echo stripslashes($genoptions['rejectedemailbody']); ?></textarea></td>
 			</tr>			
 		</table>

@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.5.9
+Version: 5.8.6
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -1796,9 +1796,11 @@ class link_library_plugin {
 
 			$output .= "</div>\n";
 
-		}
-		else
-		{
+		} else if ( isset( $_GET['searchll'] ) ) {
+            $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
+            $output .= __('No links found matching your search criteria', 'link-library') . ".\n";
+            $output .= "</div>";
+        } else {
 			$output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
 			$output .= __('No links found', 'link-library') . ".\n";
 			$output .= "</div>";

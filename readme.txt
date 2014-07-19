@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6 =
+* Final fixes for new link submission response e-mail variable %linkurl%
+* Added new message for finding no results in search
+
 = 5.8.5.9 =
 * Fixed problem with new variable %linkurl%
 
