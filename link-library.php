@@ -1167,7 +1167,7 @@ class link_library_plugin {
         echo "<!-- showonecatmode: " . $showonecatonly . ", AJAXnocatset: " . $AJAXnocatset . ", nocatonstartup: " . $nocatonstartup . "-->";
 
 		// Display links
-        if ( ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup && !isset( $_GET['searchll'] ) ) || ( empty( $linkitems ) && $nocatonstartup ) ) {
+        if ( ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup && !isset( $_GET['searchll'] ) ) || ( empty( $linkitems ) && $nocatonstartup && empty( $_GET['searchll'] ) ) ) {
                 $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
                 $output .= '</div>';
         } elseif ( $linkitems ) {

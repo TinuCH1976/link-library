@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.1 =
+* Fixed problem with No Links Found message not appearing if no search results found and no link category is set to display on startup
+* Fixed PHP warnings for hidedonation array element
+
 = 5.8.6 =
 * Final fixes for new link submission response e-mail variable %linkurl%
 * Added new message for finding no results in search

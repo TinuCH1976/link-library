@@ -53,7 +53,7 @@ class link_library_plugin_admin {
     function set_plugin_row_meta($links_array, $plugin_file) {
         $genoptions = get_option('LinkLibraryGeneral');
 
-        if ( substr( $plugin_file, 0, 25) == substr( plugin_basename( __FILE__ ), 0, 25 ) && !$genoptions['hidedonation'] ) {
+        if ( substr( $plugin_file, 0, 25) == substr( plugin_basename( __FILE__ ), 0, 25 ) && ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) ) {
         	$links_array = array_merge($links_array, array('<a target="_blank" href="http://ylefebvre.ca/wordpress-plugins/link-library">Donate</a>'));
         }
 	    return $links_array;
@@ -649,7 +649,7 @@ class link_library_plugin_admin {
 		add_meta_box('linklibrary_general_bookmarklet_meta_box', __('Bookmarklet', 'link-library'), array($this, 'general_meta_bookmarklet_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_moderation_meta_box', __('General Moderation Options', 'link-library'), array($this, 'general_moderation_meta_box'), $pagehooktop, 'normal', 'high');
 
-        if ( !$genoptions['hidedonation'] ) {
+        if ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) {
             add_meta_box('linklibrary_hide_donation_meta_box', __('Hide Donation and Support Links', 'link-library'), array($this, 'general_hide_donation_meta_box'), $pagehooktop, 'normal', 'high');
         }
 
@@ -937,7 +937,7 @@ class link_library_plugin_admin {
                             <li class="link-library-page">
                                 <a href="<?php echo add_query_arg( array( 'page' => 'link-library-faq'), admin_url('admin.php') ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-faq' ) echo 'class="current"'; ?>><?php _e( 'FAQ', 'link-library' ); ?></a>
                             </li>
-							<?php if ( !$genoptions['hidedonation'] ) { ?>
+							<?php if ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) { ?>
 							<li class="link-library-page">
                                 <a href="http://ylefebvre.ca/wordpress-plugins/link-library/"><img src="<?php echo plugins_url( '/icons/btn_donate_LG.gif', __FILE__ ); ?>" /></a>
                             </li>							
@@ -1764,7 +1764,7 @@ class link_library_plugin_admin {
 				
 				</table>
 			</td>
-            <?php if ( !$genoptions['hidedonation'] ) { ?>
+            <?php if ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) { ?>
                 <td style='padding: 8px; border: 1px solid #cccccc;'>
                     <div style="width: 400px"><h3>Support the author</h3><br /><table><tr><td><a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book"><img src='<?php echo plugins_url('icons/7683os_cover_small.jpg', __FILE__); ?>'></td><td></a>Learn how to create your own plugins with my upcoming book, coming out August 2012.<br /><br />Pre-order now!<br /><br /><a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book">Packt Publishing</a><br /><a href="http://www.amazon.com/dp/1849517681/?tag=packtpubli-20">Amazon.com</a><br /><a href="http://www.amazon.ca/WordPress-Development-Cookbook-Yannick-Lefebvre/dp/1849517681/ref=sr_1_1?ie=UTF8&qid=1336252569&sr=8-1">Amazon.ca</a></td></tr></table></div>
                 </td>
@@ -1839,7 +1839,7 @@ class link_library_plugin_admin {
         <table>
             <tr>
                 <td class='lltooltip'><?php _e('Hide Donation and Support Links', 'link-library'); ?></td>
-                <td><input type="checkbox" id="hidedonation" name="hidedonation" <?php if ( $genoptions['hidedonation']) echo ' checked="checked" '; ?>/></td>
+                <td><input type="checkbox" id="hidedonation" name="hidedonation" <?php if ( isset( $genoptions['hidedonation'] ) && $genoptions['hidedonation'] ) echo ' checked="checked" '; ?>/></td>
             </tr>
         </table>
     <?php
