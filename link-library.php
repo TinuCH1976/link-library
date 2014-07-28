@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.6
+Version: 5.8.6.2
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -101,6 +101,10 @@ class link_library_plugin {
 
 		// Load text domain for translation of admin pages and text strings
 		load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+        global $wpdb;
+
+        $wpdb->linkcategorymeta = $wpdb->get_blog_prefix() . "linkcategorymeta";
 	}
 
     /************************** Link Library Installation Function **************************/
@@ -164,6 +168,20 @@ class link_library_plugin {
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
         dbDelta($creationquery);
+
+        $wpdb->linkcategorymeta = $this->db_prefix().'linkcategorymeta';
+
+        $meta_creation_query =
+            'CREATE TABLE ' . $wpdb->linkcategorymeta . ' (
+        `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        `linkcategory_id` bigint(20) unsigned NOT NULL DEFAULT "0",
+        `meta_key` varchar(255) DEFAULT NULL,
+        `meta_value` longtext,
+        PRIMARY KEY (`meta_id`),
+        KEY `meta_key` (`meta_key`)
+        );';
+
+        dbDelta ( $meta_creation_query );
 
         $genoptions = get_option('LinkLibraryGeneral');
 
@@ -394,6 +412,13 @@ class link_library_plugin {
 		array_push($vars, 'cat_name');
 		return $vars;
 	}
+
+    function addhttp( $url ) {
+        if (!preg_match("~^(?:f|ht)tps?://~i", $url)) {
+            $url = "http://" . $url;
+        }
+        return $url;
+    }
 	
 	/*********************************************** Private Link Library Categories Function *************************************/
 
@@ -884,7 +909,7 @@ class link_library_plugin {
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
 									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
-                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false ) {
+                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false, $showlinksonclick = false ) {
 
 		global $wpdb;
 		
@@ -1200,13 +1225,17 @@ class link_library_plugin {
 						if ($catlistwrappers != '')
 							$output .= "</div>";
 							
+			            if ( $showlinksonclick ) {
+							$output .= "</div>";
+						}
+							
 						$output .= "</div>";
 
 						$currentcategory = $currentcategory + 1;
 					}
 
 					$currentcategoryid = $linkitem['term_id'];
-					$output .= "<div class='LinkLibraryCat" . $currentcategoryid . "'>";
+					$output .= "<div class='LinkLibraryCat LinkLibraryCat" . $currentcategoryid . "'>";
 					$linkcount = 0;
                     $catlink = '';
                     $cattext = '';
@@ -1250,6 +1279,8 @@ class link_library_plugin {
 					// Display the category name
 					if ($hidecategorynames == false || $hidecategorynames == "")
 					{
+                        $caturl = get_metadata( 'linkcategory', $linkitem['term_id'], 'linkcaturl', true );
+
 						if ($catanchor)
 							$cattext = '<div id="' . $linkitem['slug'] . '">';
 						else
@@ -1265,8 +1296,20 @@ class link_library_plugin {
 
 							$catlink = '<div class="' . $catnameoutput . '">';
 
-							if ($catdescpos == "right" || $catdescpos == '')
-								$catlink .= $linkitem['name'];
+							if ($catdescpos == "right" || $catdescpos == '') {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . $this->addhttp( $caturl ) . '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
 
 							if ($showcategorydesclinks)
 							{
@@ -1277,8 +1320,26 @@ class link_library_plugin {
 								$catlink .= '</span>';
 							}
 
-							if ($catdescpos == "left")
-								$catlink .= $linkitem['name'];
+							if ($catdescpos == "left") {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . $this->addhttp( $caturl ) . '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
+                            if ( $showlinksonclick ) {
+                                $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
+                                $catlink .= '<img src="' . plugins_url( 'icons/expand-32.png', __FILE__ ) . '" />';
+                                $catlink .= '</span>';
+                            }
 
 							$catlink .= "</div>";
 						}
@@ -1292,8 +1353,21 @@ class link_library_plugin {
 
 							$catlink = '<div class="'. $catnameoutput . '">';
 
-							if ($catdescpos == "right" || $catdescpos == '')
-								$catlink .= $linkitem['name'];
+							if ($catdescpos == "right" || $catdescpos == '') {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . $this->addhttp( $caturl ). '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
 
 							if ($showcategorydesclinks)
 							{
@@ -1304,8 +1378,26 @@ class link_library_plugin {
 								$catlink .= '</span>';
 							}
 
-							if ($catdescpos == "left")
-								$catlink .= $linkitem['name'];
+							if ($catdescpos == "left") {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . $this->addhttp( $caturl ) . '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
+                            if ( $showlinksonclick ) {
+                                $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
+                                $catlink .= '<img src="' . plugins_url( 'icons/expand-32.png', __FILE__ ) . '" />';
+                                $catlink .= '</span>';
+                            }
 
 							$catlink .= '</div>';
 						}
@@ -1315,6 +1407,12 @@ class link_library_plugin {
 						else
 							$catenddiv = '';
 					}
+
+                    $output .= $cattext . $catlink . $catenddiv;
+
+                    if ( $showlinksonclick ) {
+                        $output .= '<div class="LinksInCat' . $currentcategoryid . ' LinksInCat">';
+                    }
 
 					if ($displayastable == true)
 					{
@@ -1340,7 +1438,7 @@ class link_library_plugin {
 					else
 						$catstartlist = "\n\t<ul>\n";
 
-					$output .= $cattext . $catlink . $catenddiv . $catstartlist; 
+					$output .= $catstartlist;
 				}
 
 				$between = "\n";
@@ -1759,6 +1857,10 @@ class link_library_plugin {
             
             if ( $usethumbshotsforimages )
                 $output .= '<div class="llthumbshotsnotice"><a href="http://www.thumbshots.com" target="_blank" title="Thumbnails Screenshots by Thumbshots">Thumbnail Screenshots by Thumbshots</a></div>';
+
+            if ( $showlinksonclick ) {
+                $output .= "</div>";
+            }
             
 			$output .= "</div>";
 
@@ -1789,6 +1891,16 @@ class link_library_plugin {
                        "    });\n";
 			$output .= "return true;\n";
 			$output .= "});\n";
+            $output .= "jQuery('#linklist" . $settings . " .expandlinks').click(function() {\n";
+            $output .= "target = '.' + jQuery(this).attr('id');\n";
+            $output .= "if ( jQuery( target ).is(':visible') ) {\n";
+            $output .= "jQuery(target).slideUp();\n";
+            $output .= "jQuery(this).children('img').attr('src', '" . plugins_url( 'icons/expand-32.png', __FILE__ ) . "');\n";
+            $output .= "} else {\n";
+            $output .= "jQuery(target).slideDown();\n";
+            $output .= "jQuery(this).children('img').attr('src', '" . plugins_url( 'icons/collapse-32.png', __FILE__ ) . "');\n";
+            $output .= "}\n";
+            $output .= "});\n";
 			$output .= "});\n";
 			$output .= "</script>";
 			unset( $xpath );
@@ -2272,7 +2384,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false ) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false, $showlinksonclick = false ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -2306,7 +2418,7 @@ class link_library_plugin {
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
 									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'],
-                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'], $options['uselocalimagesoverthumbshots'] );
+                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'], $options['uselocalimagesoverthumbshots'], $options['showlinksonclick'] );
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2324,7 +2436,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition, $uselocalimagesoverthumbshots );
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition, $uselocalimagesoverthumbshots, $showlinksonclick );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -2617,7 +2729,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ), $options['uselocalimagesoverthumbshots'] );
+                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ), $options['uselocalimagesoverthumbshots'], $options['showlinksonclick'] );
 			
 		return $linklibraryoutput;
 	}

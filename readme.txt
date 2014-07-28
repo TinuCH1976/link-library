@@ -59,6 +59,12 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.2 =
+* Added new functionality to expand and collapse link categories on display
+* Add new option to select categories via selection lists instead of a comma-seperated list of IDs
+* Add warning before copying a library onto another
+* Corrects PHP warning in admin pages
+
 = 5.8.6.1 =
 * Fixed problem with No Links Found message not appearing if no search results found and no link category is set to display on startup
 * Fixed some PHP warnings
