@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.3 =
+* Fixed fatal error on ll_reset_options
+* Added space between track_this_link and featured classes in Link Library output
+
 = 5.8.6.2 =
 * Added new functionality to expand and collapse link categories on display
 * Add new option to select categories via selection lists instead of a comma-seperated list of IDs

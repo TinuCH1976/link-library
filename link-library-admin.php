@@ -906,6 +906,11 @@ class link_library_plugin_admin {
 
 						case '9':
 							echo "<div id='message' class='updated fade'><p><strong>" . $_GET['importrowscount'] . " " . __('row(s) found', 'link-library') . ". " . ( isset( $_GET['successimportcount'] ) ? $_GET['successimportcount'] : '0' ) . " " . __('link(s) imported successfully', 'link-library') . ".</strong></p></div>";
+                            break;
+
+                        case '10':
+                            echo "<div id='message' class='updated fade'><p><strong>" . __('Links are missing categories', 'link-library') . "</strong></p></div>";
+                            break;
 
 					}
 
@@ -1212,47 +1217,48 @@ class link_library_plugin_admin {
 					{
 						if (count($data) == 14)
 						{
-							$existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
-							$existingcatquery .= "WHERE t.name = '" . $data[5] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-							$existingcat = $wpdb->get_var($existingcatquery);
+                            if ( !empty( $data[5] ) ) {
+                                $existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
+                                $existingcatquery .= "WHERE t.name = '" . $data[5] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+                                $existingcat = $wpdb->get_var($existingcatquery);
 
-							if (!$existingcat)
-							{
-								$newlinkcatdata = array("cat_name" => $data[5], "category_description" => "", "category_nicename" => $wpdb->escape($data[5]));
-								$newlinkcat = wp_insert_category($newlinkcatdata);
+                                if ( !$existingcat ) {
+                                    $newlinkcatdata = array("cat_name" => $data[5], "category_description" => "", "category_nicename" => $wpdb->escape($data[5]));
+                                    $newlinkcat = wp_insert_category($newlinkcatdata);
 
-								$newcatarray = array("term_id" => $newlinkcat);
+                                    $newcatarray = array("term_id" => $newlinkcat);
 
-								$newcattype = array("taxonomy" => 'link_category');
+                                    $newcattype = array("taxonomy" => 'link_category');
 
-								$wpdb->update( $this->db_prefix().'term_taxonomy', $newcattype, $newcatarray);
+                                    $wpdb->update( $this->db_prefix().'term_taxonomy', $newcattype, $newcatarray);
 
-								$newlinkcat = array($newlinkcat);
-							}
-							else
-							{
-								$newlinkcat = array($existingcat);
-							}
+                                    $newlinkcat = array($newlinkcat);
+                                } else {
+                                    $newlinkcat = array($existingcat);
+                                }
 
-							$newlink = array("link_name" => esc_html(stripslashes($data[0])), 
-											"link_url" => esc_html(stripslashes($data[1])),
-											"link_rss" => esc_html(stripslashes($data[2])),
-											"link_description" => esc_html(stripslashes($data[3])),
-											"link_notes" => esc_html(stripslashes($data[4])),
-											"link_category" => $newlinkcat,
-											"link_visible" => $data[6],
-											"link_image" => $data[11]);
+                                $newlink = array("link_name" => esc_html(stripslashes($data[0])),
+                                    "link_url" => esc_html(stripslashes($data[1])),
+                                    "link_rss" => esc_html(stripslashes($data[2])),
+                                    "link_description" => esc_html(stripslashes($data[3])),
+                                    "link_notes" => esc_html(stripslashes($data[4])),
+                                    "link_category" => $newlinkcat,
+                                    "link_visible" => $data[6],
+                                    "link_image" => $data[11]);
 
-							$newlinkid = wp_insert_link($newlink);
+                                $newlinkid = wp_insert_link($newlink);
 
-							if ($newlinkid != 0)
-							{
-								$extradatatable = $this->db_prefix() . "links_extrainfo";
-								$nofollowvalue = ($data[13] == 'Y' ? true : false);
-								$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html($data[12]), 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ));
+                                if ($newlinkid != 0)
+                                {
+                                    $extradatatable = $this->db_prefix() . "links_extrainfo";
+                                    $nofollowvalue = ($data[13] == 'Y' ? true : false);
+                                    $wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html($data[12]), 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ));
 
-								$successfulimport += 1;
-							}
+                                    $successfulimport += 1;
+                                }
+                            } else {
+                                $messages[] = '10';
+                            }
 						}
 						else
 						{

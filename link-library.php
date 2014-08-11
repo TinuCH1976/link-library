@@ -61,9 +61,14 @@ class link_library_plugin {
 	
 		$newoptions = get_option('LinkLibraryPP1', "");
 
-		if ($newoptions == "")
-		{
+		if ( $newoptions == "" ) {
             global $my_link_library_plugin_admin;
+
+            if ( empty( $my_link_library_plugin_admin ) ) {
+                require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
+                $my_link_library_plugin_admin = new link_library_plugin_admin();
+            }
+
 			$my_link_library_plugin_admin->ll_reset_options(1, 'list');
 			$my_link_library_plugin_admin->ll_reset_gen_settings();
 		}
@@ -1563,7 +1568,7 @@ class link_library_plugin {
                                                     $imageoutput .= home_url() . '/?link_library_popup_content=1&linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ) . '&xpath=' . $xpath;
                                                 }
 
-											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . '' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
+											$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ' ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
 											if ( $usethumbshotsforimages && ( !$uselocalimagesoverthumbshots || empty( $uselocalimagesoverthumbshots ) || ( $uselocalimagesoverthumbshots && empty( $linkitem['link_image'] ) ) ) ) {
 												if ( !empty( $thumbshotscid ) )
@@ -1614,7 +1619,7 @@ class link_library_plugin {
                                                     $output .= home_url() . '/?link_library_popup_content=1&linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ) . '&xpath=' . $xpath;
                                                 }
 
-												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
+												$output .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enablelinkpopup ? 'thickbox' : 'track_this_link' ) . ' ' . ( $linkitem['link_featured'] ? ' featured' : '' ). '" ' . $rel . $title . $target. '>';
 											}
 											
 											$output .= $name;
@@ -2889,6 +2894,12 @@ class link_library_plugin {
 
     function link_library_generate_image() {
         global $my_link_library_plugin_admin;
+
+        if ( empty( $my_link_library_plugin_admin ) ) {
+            require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
+            $my_link_library_plugin_admin = new link_library_plugin_admin();
+        }
+
         require plugin_dir_path( __FILE__ ) . 'link-library-image-generator.php';
         link_library_ajax_image_generator( $my_link_library_plugin_admin );
     }
