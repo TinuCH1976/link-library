@@ -384,8 +384,7 @@ class link_library_plugin_admin {
 		
 		if ($RecipCheckAddress != '')
 		{		
-			$linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
-			$linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
+			$linkquery = "SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date ";
 			$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
 			$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
 			$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
@@ -1796,8 +1795,8 @@ class link_library_plugin_admin {
                 <tr>
                     <td><?php _e( 'Category selection method', 'link-library' ); ?></td>
                     <td><select id="catselectmethod" name="catselectmethod">
-                            <option value="commalist" <?php selected($genoptions['catselectmethod'], 'commalist'); ?>>Comma-separated ID list
-                            <option value="multiselectlist" <?php selected($genoptions['catselectmethod'], 'multiselectlist'); ?>>Multi-select List
+                            <option value="commalist" <?php selected($genoptions['catselectmethod'], 'commalist'); ?>><?php _e('Comma-separated ID list', 'link-library' ); ?>
+                            <option value="multiselectlist" <?php selected($genoptions['catselectmethod'], 'multiselectlist'); ?>><?php _e( 'Multi-select List', 'link-library' ); ?>
                         </select></td>
                 </tr>
 				<tr>
@@ -1823,8 +1822,8 @@ class link_library_plugin_admin {
                 <tr>
 					<td class='lltooltip' title='<?php _e('Path for images files that are uploaded manually or generated through Thumbshots service', 'link-library'); ?>'><?php _e('Link Image File Path', 'link-library'); ?></td>
                     <td colspan='4' class='lltooltip' title='<?php _e('Path for images files that are uploaded manually or generated through Thumbshots service', 'link-library'); ?>'><select id="imagefilepath" name="imagefilepath">
-                            <option value="absolute" <?php selected($genoptions['imagefilepath'], 'absolute'); ?>>Absolute
-                            <option value="relative" <?php selected($genoptions['imagefilepath'], 'relative'); ?>>Relative
+                            <option value="absolute" <?php selected($genoptions['imagefilepath'], 'absolute'); ?>><?php _e( 'Absolute', 'link-library' ); ?>
+                            <option value="relative" <?php selected($genoptions['imagefilepath'], 'relative'); ?>><?php _e( 'Relative', 'link-library' ); ?>
                         </select></td>
 				</tr>
                 <tr>

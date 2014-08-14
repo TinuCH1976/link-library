@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Link Library 5.8.5.5\n"
-"POT-Creation-Date: 2014-07-16 22:22+0100\n"
+"Project-Id-Version: Link Library 5.8.6.2\n"
+"POT-Creation-Date: 2014-08-11 21:17+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Luc Capronnier <lcapronnier@yahoo.com>\n"
 "Language-Team: Luc Capronnier <lcapronnier@yahoo.com>\n"
@@ -18,125 +18,129 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: link-library-admin.php:189 link-library-admin.php:3053
-#: link-library.php:1896
+#: link-library-admin.php:63
+msgid "Category Link"
+msgstr "Lien des catégories"
+
+#: link-library-admin.php:232 link-library-admin.php:3211
+#: link-library.php:2016
 msgid "Add new link"
 msgstr "Ajouter un nouveau lien"
 
-#: link-library-admin.php:190 link-library.php:1901
+#: link-library-admin.php:233 link-library.php:2021
 msgid "Link name"
 msgstr "Nom du lien"
 
-#: link-library-admin.php:191 link-library.php:1904
+#: link-library-admin.php:234 link-library.php:2024
 msgid "Link address"
 msgstr "Adresse du lien"
 
-#: link-library-admin.php:192 link-library-admin.php:3069
-#: link-library.php:1909 usersubmission.php:186
+#: link-library-admin.php:235 link-library-admin.php:3227
+#: link-library.php:2029 usersubmission.php:186
 msgid "Link RSS"
 msgstr "Flux RSS du lien"
 
-#: link-library-admin.php:193 link-library-admin.php:1870
-#: link-library-admin.php:3080 usersubmission.php:190
+#: link-library-admin.php:236 link-library-admin.php:1946
+#: link-library-admin.php:3238 usersubmission.php:190
 msgid "Link Category"
 msgstr "Catégorie de liens"
 
-#: link-library-admin.php:194 link-library-admin.php:1872
-#: link-library-admin.php:2204 link-library-admin.php:2601
-#: link-library-admin.php:3111 usersubmission.php:187
+#: link-library-admin.php:237 link-library-admin.php:1948
+#: link-library-admin.php:2359 link-library-admin.php:2759
+#: link-library-admin.php:3269 usersubmission.php:187
 msgid "Link Description"
 msgstr "Description du lien"
 
-#: link-library-admin.php:195 link-library-admin.php:2617
-#: link-library-admin.php:3121 usersubmission.php:189
+#: link-library-admin.php:238 link-library-admin.php:2775
+#: link-library-admin.php:3279 usersubmission.php:189
 msgid "Link Notes"
 msgstr "Notes du lien"
 
-#: link-library-admin.php:196 link-library-admin.php:3239
+#: link-library-admin.php:239 link-library-admin.php:3397
 msgid "Add Link"
 msgstr "Ajouter un lien"
 
-#: link-library-admin.php:197
+#: link-library-admin.php:240
 msgid "New link submitted."
 msgstr "Nouveau lien soumis."
 
-#: link-library-admin.php:198
+#: link-library-admin.php:241
 msgid "It will appear in the list once moderated. Thank you."
 msgstr "Il apparaîtra dans la liste une fois modéré. Merci."
 
-#: link-library-admin.php:214
+#: link-library-admin.php:257
 msgid "Link Library-Generated RSS Feed"
 msgstr "Link Library-Flux d'informations généré"
 
-#: link-library-admin.php:215
+#: link-library-admin.php:258
 msgid "Description of Link Library-Generated Feed"
 msgstr "Description du flux d'informations généré par 'Link Library'"
 
-#: link-library-admin.php:219 link-library-admin.php:3094
-#: link-library-admin.php:3095
+#: link-library-admin.php:262 link-library-admin.php:3252
+#: link-library-admin.php:3253
 msgid "User-submitted category"
 msgstr "Catégorie soumise par l'utilisateur"
 
-#: link-library-admin.php:220 link-library-admin.php:3105
-#: link-library.php:1948
+#: link-library-admin.php:263 link-library-admin.php:3263
+#: link-library.php:2068
 msgid "User-submitted category (define below)"
 msgstr "Catégorie définie par l'usager (définir ci-dessous)"
 
-#: link-library-admin.php:235 link-library-admin.php:3140
-#: link-library-admin.php:3366 link-library.php:2006 usersubmission.php:191
+#: link-library-admin.php:278 link-library-admin.php:3298
+#: link-library-admin.php:3524 link-library.php:2126 usersubmission.php:191
 msgid "Reciprocal Link"
 msgstr "Lien réciproque"
 
-#: link-library-admin.php:237 link-library-admin.php:3150
-#: link-library.php:2012
+#: link-library-admin.php:280 link-library-admin.php:3308
+#: link-library.php:2132
 msgid "Secondary Address"
 msgstr "Adresse secondaire"
 
-#: link-library-admin.php:239 link-library-admin.php:2676
-#: link-library-admin.php:3161 link-library-admin.php:3358
-#: link-library.php:2018
+#: link-library-admin.php:282 link-library-admin.php:2834
+#: link-library-admin.php:3319 link-library-admin.php:3516
+#: link-library.php:2138
 msgid "Telephone"
 msgstr "Téléphone"
 
-#: link-library-admin.php:241 link-library-admin.php:2484
-#: link-library-admin.php:2704 link-library-admin.php:3171
-#: link-library-admin.php:3362 link-library.php:2024
+#: link-library-admin.php:284 link-library-admin.php:2642
+#: link-library-admin.php:2862 link-library-admin.php:3329
+#: link-library-admin.php:3520 link-library.php:2144
 msgid "E-mail"
 msgstr "Adresse électronique"
 
-#: link-library-admin.php:252 link-library-admin.php:3182
-#: link-library.php:2030
+#: link-library-admin.php:295 link-library-admin.php:3340
+#: link-library.php:2150
 msgid "Submitter Name"
 msgstr "Nom de l'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:254 link-library-admin.php:3192
-#: link-library.php:2036
+#: link-library-admin.php:297 link-library-admin.php:3350
+#: link-library.php:2156
 msgid "Submitter E-mail"
 msgstr "Courriel de l'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:256 link-library-admin.php:3203
-#: link-library.php:2042
+#: link-library-admin.php:299 link-library-admin.php:3361
+#: link-library.php:2162
 msgid "Submitter Comment"
 msgstr "Commentaire de l'utilisateur soumettant le lien"
 
-#: link-library-admin.php:263 link-library-admin.php:3224
-#: link-library.php:2054
+#: link-library-admin.php:306 link-library-admin.php:3382
+#: link-library.php:2174
 msgid "Is boiling water hot or cold?"
 msgstr "Est-ce que l'eau bouillante est froide ou chaude?"
 
-#: link-library-admin.php:264 link-library-admin.php:3234
+#: link-library-admin.php:307 link-library-admin.php:3392
 msgid "hot"
 msgstr "chaude"
 
-#: link-library-admin.php:268 link-library-admin.php:3213
+#: link-library-admin.php:312 link-library-admin.php:3371
 msgid "Large Description"
 msgstr "Grande Description du lien"
 
-#: link-library-admin.php:275 linkpopup.php:64
+#: link-library-admin.php:319 linkpopup.php:64
 msgid "%link_image%<br />Click through to visit %link_name%."
 msgstr "%link_image%<br />Cliquer pour visiter %link_name%."
 
-#: link-library-admin.php:410 link-library-admin.php:719
+#: link-library-admin.php:455 link-library-admin.php:765
 msgid ""
 "Please create a folder called uploads under your Wordpress /wp-content/ "
 "directory with write permissions to use this functionality."
@@ -145,7 +149,7 @@ msgstr ""
 "votre installation WordPress avec les permissions d'écriture pour utiliser "
 "cette fonctionnalité."
 
-#: link-library-admin.php:414 link-library-admin.php:723
+#: link-library-admin.php:459 link-library-admin.php:769
 msgid ""
 "Please make sure that the /wp-content/uploads/ directory has write "
 "permissions to use this functionality."
@@ -153,15 +157,15 @@ msgstr ""
 "Veuillez vous assurer que le répertoire /wp-content/uploads à des "
 "permissions d'écriture pour utiliser cette fonctionnalité."
 
-#: link-library-admin.php:457
+#: link-library-admin.php:502
 msgid "Link Library - Additional Link Parameters"
 msgstr "Link Library - Paramètres Additionels"
 
-#: link-library-admin.php:531
+#: link-library-admin.php:576
 msgid "Link Library: Missing Thumbshots API Key"
 msgstr "Link Library: Il manque le Thumbshots CID"
 
-#: link-library-admin.php:531
+#: link-library-admin.php:576
 msgid ""
 "One of your link libraries is configured to use Thumbshots for link "
 "thumbails, but you have not entered your Thumbshots.com API Key. Please "
@@ -174,251 +178,255 @@ msgstr ""
 "le CID dans l'administration de Link Library."
 
 # Plugin name; please avoid translating if possible
-#: link-library-admin.php:531
+#: link-library-admin.php:576
 msgid "Jump to Link Library admin"
 msgstr "Aller à l'administration de Link Library"
 
-#: link-library-admin.php:583
+#: link-library-admin.php:628
 msgid "Links to moderate"
 msgstr "Liens à modérer"
 
-#: link-library-admin.php:602 link-library-admin.php:604
-#: link-library-admin.php:607 link-library-admin.php:923
+#: link-library-admin.php:647 link-library-admin.php:649
+#: link-library-admin.php:652 link-library-admin.php:974
 msgid "General Options"
 msgstr "Configuration générale"
 
-#: link-library-admin.php:609
+#: link-library-admin.php:654
 msgid "Settings"
 msgstr "Configuration"
 
 # Plugin name; please avoid translating if possible
-#: link-library-admin.php:609 link-library-admin.php:926
+#: link-library-admin.php:654 link-library-admin.php:977
 msgid "Library Settings"
 msgstr "Configuration de la librairie"
 
-#: link-library-admin.php:612 link-library-admin.php:614
-#: link-library-admin.php:929
+#: link-library-admin.php:657 link-library-admin.php:659
+#: link-library-admin.php:980
 msgid "Moderate"
 msgstr "Modération"
 
-#: link-library-admin.php:616 link-library-admin.php:932
-#: link-library-admin.php:1720
+#: link-library-admin.php:661 link-library-admin.php:983
+#: link-library-admin.php:1789
 msgid "Stylesheet"
 msgstr "Feuille de style"
 
-#: link-library-admin.php:618
+#: link-library-admin.php:663
 msgid "Reciprocal Checker"
 msgstr "Vérificateur de liens réciproques"
 
-#: link-library-admin.php:618 link-library-admin.php:935
+#: link-library-admin.php:663 link-library-admin.php:986
 msgid "Reciprocal Check"
 msgstr "Vérification de liens réciproques"
 
-#: link-library-admin.php:620 link-library-admin.php:675
-#: link-library-admin.php:938
+#: link-library-admin.php:665 link-library-admin.php:721
+#: link-library-admin.php:989
 msgid "FAQ"
 msgstr "FAQ"
 
-#: link-library-admin.php:648
-msgid "General Settings"
-msgstr "Configuration générale"
-
-#: link-library-admin.php:649
-msgid "Bookmarklet"
-msgstr "Bookmarklet"
-
-#: link-library-admin.php:650
-msgid "General Moderation Options"
-msgstr "Configuration générale de modération"
-
-#: link-library-admin.php:653 link-library-admin.php:1839
-msgid "Hide Donation and Support Links"
-msgstr "Cacher les liens pour les dons et le support"
-
-#: link-library-admin.php:656 link-library-admin.php:660
-#: link-library-admin.php:672 link-library-admin.php:674
-#: link-library-admin.php:1849
+#: link-library-admin.php:693 link-library-admin.php:702
+#: link-library-admin.php:706 link-library-admin.php:718
+#: link-library-admin.php:720 link-library-admin.php:1925
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: link-library-admin.php:657
+#: link-library-admin.php:694
+msgid "General Settings"
+msgstr "Configuration générale"
+
+#: link-library-admin.php:695
+msgid "Bookmarklet"
+msgstr "Bookmarklet"
+
+#: link-library-admin.php:696
+msgid "General Moderation Options"
+msgstr "Configuration générale de modération"
+
+#: link-library-admin.php:699 link-library-admin.php:1915
+msgid "Hide Donation and Support Links"
+msgstr "Cacher les liens pour les dons et le support"
+
+#: link-library-admin.php:703
 msgid "Links awaiting moderation"
 msgstr "Liens en attente de modérations"
 
-#: link-library-admin.php:658 link-library-admin.php:1721
+#: link-library-admin.php:704 link-library-admin.php:1790
 msgid "Editor"
 msgstr "Éditeur"
 
-#: link-library-admin.php:659
+#: link-library-admin.php:705
 msgid "Library Selection and Usage Instructions"
 msgstr "Sélection de librairie et instructions d'utilisation"
 
-#: link-library-admin.php:661
+#: link-library-admin.php:707
 msgid "Common Parameters"
 msgstr "Paramètres communs"
 
-#: link-library-admin.php:662
+#: link-library-admin.php:708
 msgid "Link Categories Settings"
 msgstr "Configurations des catégories de liens"
 
-#: link-library-admin.php:663
+#: link-library-admin.php:709
 msgid "Link Element Settings"
 msgstr "Configuration des éléments des liens"
 
-#: link-library-admin.php:664
+#: link-library-admin.php:710
 msgid "Link Sub-Field Configuration Table"
 msgstr "Table de configuration des éléments du lien"
 
-#: link-library-admin.php:665
+#: link-library-admin.php:711
 msgid "Link Pop-Up"
 msgstr "Lien en Pop-up"
 
-#: link-library-admin.php:666
+#: link-library-admin.php:712
 msgid "RSS Field Configuration"
 msgstr "Configuration du champ RSS"
 
-#: link-library-admin.php:667
+#: link-library-admin.php:713
 msgid "Thumbnail Generation and Use"
 msgstr "Génération de vignettes et utilisation"
 
-#: link-library-admin.php:668
+#: link-library-admin.php:714
 msgid "RSS Generation"
 msgstr "Génération de flux d'informations RSS"
 
-#: link-library-admin.php:669
+#: link-library-admin.php:715
 msgid "Search Form Configuration"
 msgstr "Configuration du formulaire de recherche"
 
-#: link-library-admin.php:670
+#: link-library-admin.php:716
 msgid "Link User Submission"
 msgstr "Liens soumis par les usagers"
 
-#: link-library-admin.php:671
+#: link-library-admin.php:717
 msgid "Import / Export"
 msgstr "Importer / Exporter"
 
-#: link-library-admin.php:673
+#: link-library-admin.php:719
 msgid "Reciprocal Link Checker"
 msgstr "Vérificateur de liens réciproques"
 
-#: link-library-admin.php:761
+#: link-library-admin.php:807
 msgid "Thumbnails successfully generated!"
 msgstr "Vignettes générées avec succès!"
 
-#: link-library-admin.php:763
+#: link-library-admin.php:809
 msgid "Favicons successfully generated!"
 msgstr "Icônes de favoris générées avec succès !"
 
-#: link-library-admin.php:765 link-library-admin.php:3516
+#: link-library-admin.php:811 link-library-admin.php:3674
 msgid "Thumbnail successfully generated for"
 msgstr "Vignette générée avec succès pour"
 
-#: link-library-admin.php:767 link-library-admin.php:3556
+#: link-library-admin.php:813 link-library-admin.php:3714
 msgid "Favicon successfully generated for"
 msgstr "Icône de favoris générée avec succès pour"
 
-#: link-library-admin.php:776
+#: link-library-admin.php:822
 msgid "General Settings Saved"
 msgstr "Configuration générale sauvegardée"
 
-#: link-library-admin.php:779
+#: link-library-admin.php:825
 msgid "Download exported links"
 msgstr "Télécharger les liens exportés"
 
-#: link-library-admin.php:781 link-library-admin.php:850
+#: link-library-admin.php:827 link-library-admin.php:896
 msgid ""
 "Link Library plugin directory needs to be writable to perform this action"
 msgstr ""
 "Le répertoire doit avoir des permissions d'écriture complètes pour exécuter "
 "cette action"
 
-#: link-library-admin.php:818 link-library-admin.php:1976
-#: link-library-admin.php:1987
+#: link-library-admin.php:864 link-library-admin.php:2052
+#: link-library-admin.php:2063
 msgid "Library"
 msgstr "Librairie"
 
-#: link-library-admin.php:829 link-library-admin.php:2000
+#: link-library-admin.php:875 link-library-admin.php:2076
 msgid "Library #"
 msgstr "Librairie /"
 
-#: link-library-admin.php:829
+#: link-library-admin.php:875
 msgid "Updated"
 msgstr "Mis à jour"
 
-#: link-library-admin.php:833
+#: link-library-admin.php:879
 msgid "Included Category ID"
 msgstr "Identifiants de catégories inclus"
 
-#: link-library-admin.php:833 link-library-admin.php:837
+#: link-library-admin.php:879 link-library-admin.php:883
 msgid "is invalid. Please check the ID in the Link Category editor."
 msgstr ""
 "est invalide. Veuillez vérifier l'identifiant dans l'éditeur de catégories "
 "de liens."
 
-#: link-library-admin.php:837
+#: link-library-admin.php:883
 msgid "Excluded Category ID"
 msgstr "Identifiant de catégorie exclue"
 
-#: link-library-admin.php:841
+#: link-library-admin.php:887
 msgid "Invalid column count for link on row"
 msgstr "Nombre de colonnes invalide pour le lien de la ligne"
 
-#: link-library-admin.php:846
+#: link-library-admin.php:892
 msgid "Library Settings Exported"
 msgstr "Configuration de librairie exportée"
 
-#: link-library-admin.php:846
+#: link-library-admin.php:892
 msgid "Download here"
 msgstr "Récupérer ici"
 
-#: link-library-admin.php:854
+#: link-library-admin.php:900
 msgid "Library Settings imported successfully"
 msgstr "Configuration de librairie exportée avec succès"
 
-#: link-library-admin.php:858
+#: link-library-admin.php:904
 msgid "Library Settings Upload Failed"
 msgstr "L'envoi de la configuration de librairie n'a pas fonctionné"
 
-#: link-library-admin.php:862
+#: link-library-admin.php:908
 msgid "row(s) found"
 msgstr "rangée(s) trouvée(s)"
 
-#: link-library-admin.php:862
+#: link-library-admin.php:908
 msgid "link(s) imported successfully"
 msgstr "lien(s) importé(s) avec succès"
 
-#: link-library-admin.php:876
+#: link-library-admin.php:912
+msgid "Links are missing categories"
+msgstr "Les liens n'ont pas de catégories"
+
+#: link-library-admin.php:927
 msgid "Link(s) Approved"
 msgstr "Lien(s) approuvé(s)"
 
-#: link-library-admin.php:878
+#: link-library-admin.php:929
 msgid "Link(s) Deleted"
 msgstr "Lien(s) supprimé(s)"
 
-#: link-library-admin.php:890
+#: link-library-admin.php:941
 msgid "Stylesheet updated"
 msgstr "Feuille de style mise à jour"
 
-#: link-library-admin.php:892
+#: link-library-admin.php:943
 msgid "Stylesheet reset to original state"
 msgstr "Feuille de style originale restaurée"
 
-#: link-library-admin.php:900
+#: link-library-admin.php:951
 msgid "Settings updated"
 msgstr "Configuration mise à jour"
 
-#: link-library-admin.php:1045 link-library-admin.php:1136
-#: link-library-admin.php:1458 link-library-admin.php:1584
-#: link-library-admin.php:1620
+#: link-library-admin.php:1096 link-library-admin.php:1188
+#: link-library-admin.php:1525 link-library-admin.php:1653
+#: link-library-admin.php:1689
 msgid "Not allowed"
 msgstr "Non permis"
 
-#: link-library-admin.php:1519 link-library-admin.php:1559
+#: link-library-admin.php:1587 link-library-admin.php:1628
 #: usersubmission.php:205
 msgid "Message generated by"
 msgstr "Message généré par"
 
-#: link-library-admin.php:1720 link-library-admin.php:1721
+#: link-library-admin.php:1789 link-library-admin.php:1790
 msgid ""
 "The stylesheet is now defined and stored using the Link Library admin "
 "interface. This avoids problems with updates from one version to the next."
@@ -427,11 +435,23 @@ msgstr ""
 "panneau d'administration de Link Library. Ceci évite des problèmes lors des "
 "mises à jour."
 
-#: link-library-admin.php:1724
+#: link-library-admin.php:1793
 msgid "Number of Libraries"
 msgstr "Nombre de librairies"
 
-#: link-library-admin.php:1728 link-library-admin.php:1729
+#: link-library-admin.php:1797
+msgid "Category selection method"
+msgstr "Méthode de sélection des catégories"
+
+#: link-library-admin.php:1799
+msgid "Comma-separated ID list"
+msgstr "Liste d'ID séparée par des virgules"
+
+#: link-library-admin.php:1800
+msgid "Multi-select List"
+msgstr "Liste à sélection multiple"
+
+#: link-library-admin.php:1804 link-library-admin.php:1805
 msgid ""
 "Enter comma-separate list of pages on which the Link Library stylesheet and "
 "scripts should be loaded. Primarily used if you display Link Library using "
@@ -442,16 +462,16 @@ msgstr ""
 "Cette option est principalement utilisée si vous affichez \"Link Library\" "
 "en utilisant son API."
 
-#: link-library-admin.php:1728
+#: link-library-admin.php:1804
 msgid "Additional pages to load styles and scripts"
 msgstr "Pages additionelles pour afficher les styles et scripts"
 
-#: link-library-admin.php:1732
+#: link-library-admin.php:1808
 msgid "Debug Mode"
 msgstr "Débogueur"
 
-#: link-library-admin.php:1736 link-library-admin.php:1737
-#: link-library-admin.php:1740 link-library-admin.php:1741
+#: link-library-admin.php:1812 link-library-admin.php:1813
+#: link-library-admin.php:1816 link-library-admin.php:1817
 msgid ""
 "This function is only possible when showing one category at a time and while "
 "the default category is not shown."
@@ -460,23 +480,23 @@ msgstr ""
 "qu'une catégorie à la fois\" est activée et que la catégorie par défaut "
 "n'est pas affichée."
 
-#: link-library-admin.php:1736
+#: link-library-admin.php:1812
 msgid "Page Title Prefix"
 msgstr "Préfixe pour le titre des pages"
 
-#: link-library-admin.php:1740
+#: link-library-admin.php:1816
 msgid "Page Title Suffix"
 msgstr "Suffixe pour le titre des pages"
 
-#: link-library-admin.php:1744 link-library-admin.php:1745
+#: link-library-admin.php:1820 link-library-admin.php:1821
 msgid "API Key for Thumbshots.com thumbnail generation accounts"
 msgstr "CID pour le service de vignette de Thumbshots.com "
 
-#: link-library-admin.php:1744
+#: link-library-admin.php:1820
 msgid "Thumbshots API Key"
 msgstr "CID de Thumbshots"
 
-#: link-library-admin.php:1748 link-library-admin.php:1749
+#: link-library-admin.php:1824 link-library-admin.php:1825
 msgid ""
 "Path for images files that are uploaded manually or generated through "
 "Thumbshots service"
@@ -484,27 +504,35 @@ msgstr ""
 "Répertoire pour les images qui sont chargées manuellement ou bien qui sont "
 "générées par le service Thumbshots"
 
-#: link-library-admin.php:1748
+#: link-library-admin.php:1824
 msgid "Link Image File Path"
 msgstr "Répertoire des fichier images liées"
 
-#: link-library-admin.php:1755
+#: link-library-admin.php:1826
+msgid "Absolute"
+msgstr "Absolu"
+
+#: link-library-admin.php:1827
+msgid "Relative"
+msgstr "Relatif"
+
+#: link-library-admin.php:1831
 msgid "Links Date Format"
 msgstr "Format des dates pour les liens"
 
-#: link-library-admin.php:1755
+#: link-library-admin.php:1831
 msgid "Help"
 msgstr "Aide"
 
-#: link-library-admin.php:1759
+#: link-library-admin.php:1835
 msgid "Export All Links"
 msgstr "Exporter tous les liens"
 
-#: link-library-admin.php:1776
+#: link-library-admin.php:1852
 msgid "Add new links to your site with this bookmarklet."
 msgstr "Ajoutez de nouveaux liens à votre site en utilisant ce bookmarklet."
 
-#: link-library-admin.php:1777
+#: link-library-admin.php:1853
 msgid ""
 "To use this feature, drag-and-drop the button below to your favorite / "
 "bookmark toolbar."
@@ -512,11 +540,11 @@ msgstr ""
 "Pour utiliser cette fonction, glissez le bouton ci-dessous vers la barre de "
 "favoris de votre navigateur."
 
-#: link-library-admin.php:1778
+#: link-library-admin.php:1854
 msgid "Add to Links"
 msgstr "Ajouter aux liens"
 
-#: link-library-admin.php:1786
+#: link-library-admin.php:1862
 msgid ""
 "Approval and rejection e-mail functionality will only work correctly if the "
 "submitter e-mail field is displayed on the user link submission form"
@@ -524,7 +552,7 @@ msgstr ""
 "L'approbation ou le rejet par courriel ne fonctionnera correctement que si "
 "le champ e-mail est affiché dans le fomulaire de proposition"
 
-#: link-library-admin.php:1788 link-library-admin.php:1789
+#: link-library-admin.php:1864 link-library-admin.php:1865
 msgid ""
 "URL that user will be redirected to after submitting new link. When used, "
 "the short code [link-library-addlinkcustommsg] should be placed on the "
@@ -534,11 +562,11 @@ msgstr ""
 "lien. Lorsqu'utilisé, le code [link-library-addlinkcustommsg] devrait faire "
 "partie de la page de destination."
 
-#: link-library-admin.php:1788
+#: link-library-admin.php:1864
 msgid "Link Acknowledgement URL"
 msgstr "Adresse de la page de confirmation"
 
-#: link-library-admin.php:1792
+#: link-library-admin.php:1868
 msgid ""
 "Title of e-mail sent to site admin when new links are submitted. Use "
 "%linkname% as a variable to be replaced by the actual link name"
@@ -547,11 +575,11 @@ msgstr ""
 "liens seront soumis. Utilisez %linkname% comme variable qui sera remplacée "
 "par le nom du lien"
 
-#: link-library-admin.php:1792
+#: link-library-admin.php:1868
 msgid "Moderation Notification Title"
 msgstr "Titre du courriel de modération"
 
-#: link-library-admin.php:1796
+#: link-library-admin.php:1872
 msgid ""
 "Will send a confirmation e-mail to link submitter if they provided their "
 "contact information"
@@ -559,41 +587,41 @@ msgstr ""
 "Enverra un courriel de conformation aux usagers ayant soumis des liens si "
 "ils ont fournis leur courriel"
 
-#: link-library-admin.php:1796
+#: link-library-admin.php:1872
 msgid "E-mail submitter on link approval or rejection"
 msgstr ""
 "Envoyer un courriel à l'utilisateur ayant soumis le lien lors de "
 "l'approbation ou de la réjection"
 
-#: link-library-admin.php:1800
+#: link-library-admin.php:1876
 msgid "Suppress Link Library message in e-mail footer"
 msgstr "Supprimer le message sur Link Library dans le bas du courriel"
 
-#: link-library-admin.php:1804
+#: link-library-admin.php:1880
 msgid "Only use first part of submitter name"
 msgstr ""
 "N'utiliser que la première partie du nom de l'utilisateur ayant soumis le "
 "lien"
 
-#: link-library-admin.php:1808
+#: link-library-admin.php:1884
 msgid ""
 "The name of the e-mail account that the approval e-mail will be sent from"
 msgstr "Le nom de l'utilisateur qui apparaîtra sur les messages d'approbation"
 
-#: link-library-admin.php:1808
+#: link-library-admin.php:1884
 msgid "Moderator Name"
 msgstr "Nom du modérateur"
 
-#: link-library-admin.php:1812
+#: link-library-admin.php:1888
 msgid "The e-mail address that the approval e-mail will be sent from"
 msgstr ""
 "L'adresse courriel de laquelle les messages d'approbation seront envoyés"
 
-#: link-library-admin.php:1812
+#: link-library-admin.php:1888
 msgid "Moderator E-mail"
 msgstr "Adresse courriel du modérateur"
 
-#: link-library-admin.php:1816
+#: link-library-admin.php:1892
 msgid ""
 "Title of approval e-mail. Use %linkname% as a variable to be replaced by the "
 "actual link name"
@@ -601,24 +629,25 @@ msgstr ""
 "Titre du courriel d'approbation. Utilisez %linkname% comme variable qui sera "
 "remplacé par le nom du lien"
 
-#: link-library-admin.php:1816
+#: link-library-admin.php:1892
 msgid "Approval e-mail title"
 msgstr "Titre du courriel d'approbation du lien"
 
-#: link-library-admin.php:1820
+#: link-library-admin.php:1896
 msgid ""
 "Body of approval e-mail. Use %linkname% as a variable to be replaced by the "
-"actual link name and %submittername% for the submitter name"
+"actual link name, %submittername% for the submitter name and %linkurl% for "
+"the link address"
 msgstr ""
 "Contenu du courriel d'approbation du lien. Utilisez %linkname% comme "
-"variable qui sera remplacée par le nom de lien et %submittername% pour le "
-"nom de la personne ayant soumise le lien."
+"variable qui sera remplacée par le nom de lien, %submittername% pour le nom "
+"de la personne ayant soumise le lien et %linkurl% pour l'adresse du lien."
 
-#: link-library-admin.php:1820
+#: link-library-admin.php:1896
 msgid "Approval e-mail body"
 msgstr "Contenu du courriel d'approbation du lien"
 
-#: link-library-admin.php:1824
+#: link-library-admin.php:1900
 msgid ""
 "Title of rejection e-mail. Use %linkname% as a variable to be replaced by "
 "the actual link name"
@@ -626,24 +655,25 @@ msgstr ""
 "Titre du courriel de rejet du lien. Utilisez %linkname% comme variable qui "
 "sera remplacée par le nom du lien"
 
-#: link-library-admin.php:1824
+#: link-library-admin.php:1900
 msgid "Rejection e-mail title"
 msgstr "Titre du courriel de rejet du lien"
 
-#: link-library-admin.php:1828
+#: link-library-admin.php:1904
 msgid ""
 "Body of rejection e-mail. Use %linkname% as a variable to be replaced by the "
-"actual link name and %submittername% for the submitter name"
+"actual link name, %submittername% for the submitter name and %linkurl% for "
+"the link address"
 msgstr ""
 "Contenu du courriel de rejet du lien. Utilisez %linkname% comme variable qui "
-"sera remplacée par le nom de lien et %submittername% pour le nom de la "
-"personne ayant soumise le lien."
+"sera remplacée par le nom de lien, %submittername% pour le nom de la "
+"personne ayant soumise le lien et %linkurl% pour l'adresse du lien."
 
-#: link-library-admin.php:1828
+#: link-library-admin.php:1904
 msgid "Rejection e-mail body"
 msgstr "Contenu du courriel de réjection du lien"
 
-#: link-library-admin.php:1836
+#: link-library-admin.php:1912
 msgid ""
 "The following option allows you to hide the Donate button and Support the "
 "Author section in the Link Library Admin pages. If you enjoy this plugin and "
@@ -656,41 +686,41 @@ msgstr ""
 "extension et que vous l'utilisez régulièrement, merci de penser à faire un "
 "don à l'autheur avant de masquer ces messages. "
 
-#: link-library-admin.php:1858
+#: link-library-admin.php:1934
 msgid "Update Settings"
 msgstr "Sauvegarder la configuration"
 
-#: link-library-admin.php:1869 link-library-admin.php:2204
-#: link-library-admin.php:2564 link-library-admin.php:3058
+#: link-library-admin.php:1945 link-library-admin.php:2359
+#: link-library-admin.php:2722 link-library-admin.php:3216
 #: usersubmission.php:184
 msgid "Link Name"
 msgstr "Nom du lien"
 
-#: link-library-admin.php:1871
+#: link-library-admin.php:1947
 msgid "Link URL"
 msgstr "Adresse du lien"
 
-#: link-library-admin.php:1920
+#: link-library-admin.php:1996
 msgid "No Links Found to Moderate"
 msgstr "Aucun lien trouvé nécessitant une modération"
 
-#: link-library-admin.php:1927
+#: link-library-admin.php:2003
 msgid "Check All"
 msgstr "Cocher tous les choix"
 
-#: link-library-admin.php:1928
+#: link-library-admin.php:2004
 msgid "Uncheck All"
 msgstr "Tout décocher"
 
-#: link-library-admin.php:1930
+#: link-library-admin.php:2006
 msgid "Approve Selected Items"
 msgstr "Approuver les liens sélectionnés"
 
-#: link-library-admin.php:1931
+#: link-library-admin.php:2007
 msgid "Delete Selected Items"
 msgstr "Supprimer les liens sélectionnés"
 
-#: link-library-admin.php:1955
+#: link-library-admin.php:2031
 msgid ""
 "If the stylesheet editor is empty after upgrading, reset to the default "
 "stylesheet using the button below or copy/paste your backup stylesheet into "
@@ -701,32 +731,32 @@ msgstr ""
 "style ou effectuez un copier/coller à partir de votre copie de sauvegarde de "
 "la feuille de style vers l'éditeur."
 
-#: link-library-admin.php:1960
+#: link-library-admin.php:2036
 msgid "Submit"
 msgstr "Soumettre"
 
-#: link-library-admin.php:1960
+#: link-library-admin.php:2036
 msgid "Reset to default"
 msgstr "Restauration du défaut"
 
-#: link-library-admin.php:1970
+#: link-library-admin.php:2046
 msgid "Select Current Library Settings"
 msgstr "Sélectionnez la configuration de librairie courante"
 
-#: link-library-admin.php:1979
+#: link-library-admin.php:2055
 msgid "Go"
 msgstr "Allez-y"
 
-#: link-library-admin.php:1981
+#: link-library-admin.php:2057
 msgid "Copy from:"
 msgstr "Copier de :"
 
-#: link-library-admin.php:1992
+#: link-library-admin.php:2068
 msgid "Copy"
 msgstr "Copier"
 
-#: link-library-admin.php:1999 link-library-admin.php:2002
-#: link-library-admin.php:2006
+#: link-library-admin.php:2075 link-library-admin.php:2078
+#: link-library-admin.php:2082
 msgid ""
 "Link Library Supports the Creation of an unlimited number of configurations "
 "to display link lists on your site"
@@ -734,35 +764,35 @@ msgstr ""
 "\"Link Library\" supporte la création d'un nombre illimité de configurations "
 "pour afficher les liens sur votre site"
 
-#: link-library-admin.php:2003
+#: link-library-admin.php:2079
 msgid "Library Name"
 msgstr "Nom de la librairie"
 
-#: link-library-admin.php:2005
+#: link-library-admin.php:2081
 msgid "Feature"
 msgstr "Fonctionnalité"
 
-#: link-library-admin.php:2007
+#: link-library-admin.php:2083
 msgid "Code to insert on a Wordpress page"
 msgstr "Code à insérer dans une page WordPress"
 
-#: link-library-admin.php:2012
+#: link-library-admin.php:2088
 msgid "Display basic link library"
 msgstr "Afficher la liste de liens"
 
-#: link-library-admin.php:2015
+#: link-library-admin.php:2091
 msgid "Display list of link categories"
 msgstr "Afficher la liste des catégories de liens"
 
-#: link-library-admin.php:2018
+#: link-library-admin.php:2094
 msgid "Display search box"
 msgstr "Afficher le champ de recherche"
 
-#: link-library-admin.php:2021
+#: link-library-admin.php:2097
 msgid "Display link submission form"
 msgstr "Afficher le formulaire de soumission de liens"
 
-#: link-library-admin.php:2031
+#: link-library-admin.php:2107
 #, php-format
 msgid ""
 "You are about to Delete Library #'%s'\n"
@@ -771,11 +801,11 @@ msgstr ""
 "Vous être sur le point de supprimer la configuration de la librairie "
 "'%s'\\n  'Cancel' pour interrompre, 'OK' pour supprimer."
 
-#: link-library-admin.php:2031
+#: link-library-admin.php:2107
 msgid "Delete Library"
 msgstr "Supprimer la librairie"
 
-#: link-library-admin.php:2032
+#: link-library-admin.php:2108
 #, php-format
 msgid ""
 "You are about to reset Library '%s'\n"
@@ -784,11 +814,11 @@ msgstr ""
 "Vous êtes sur le point de réinitialiser la configuration de la librairie "
 "'%s'\\n  'Cancel' pour interrompre, 'OK' pour continuer."
 
-#: link-library-admin.php:2032
+#: link-library-admin.php:2108
 msgid "Reset current Library"
 msgstr "Réinitialiser la configuration de librairie courante"
 
-#: link-library-admin.php:2033
+#: link-library-admin.php:2109
 #, php-format
 msgid ""
 "You are about to reset Library '%s' for a table layout\n"
@@ -798,30 +828,30 @@ msgstr ""
 "'%s' pour une mise en page utilisant des tables\\n  'Cancel' pour "
 "interrompre, 'OK' pour continuer."
 
-#: link-library-admin.php:2033
+#: link-library-admin.php:2109
 msgid "Reset current Library for table layout"
 msgstr ""
 "Réinitialiser la configuration de librairie courante pour une mise en page "
 "tabulaire"
 
-#: link-library-admin.php:2051
+#: link-library-admin.php:2128
 msgid "Current Library Name"
 msgstr "Nom de la librairie courante"
 
-#: link-library-admin.php:2058 link-library-admin.php:2061
+#: link-library-admin.php:2135 link-library-admin.php:2143
 msgid "Leave Empty to see all categories"
 msgstr "Laissez vide pour afficher toutes les catégories"
 
-#: link-library-admin.php:2058 link-library-admin.php:2061
-#: link-library-admin.php:2066 link-library-admin.php:2069
+#: link-library-admin.php:2135 link-library-admin.php:2143
+#: link-library-admin.php:2175 link-library-admin.php:2179
 msgid "Enter list of comma-separated"
 msgstr "Spécifier une liste de valeurs, séparées par des virgules"
 
-#: link-library-admin.php:2058 link-library-admin.php:2061
+#: link-library-admin.php:2135 link-library-admin.php:2143
 msgid "numeric category IDs"
 msgstr "identifiants de catégories numériques"
 
-#: link-library-admin.php:2058
+#: link-library-admin.php:2135
 msgid ""
 "To find the IDs, go to the Link Categories admin page, place the mouse above "
 "a category name and look for its ID in the address shown in your browsers "
@@ -832,32 +862,36 @@ msgstr ""
 "cherchez l'identifiant dans l'adresse qui est affichée dans la barre de "
 "status de votre navigateur. Par exemple"
 
-#: link-library-admin.php:2059
+#: link-library-admin.php:2137
 msgid "Categories to be displayed (Empty=All)"
 msgstr "Catégories à afficher (Vide=Toutes)"
 
-#: link-library-admin.php:2061 link-library-admin.php:2066
-#: link-library-admin.php:2069
+#: link-library-admin.php:2139
+msgid "Categories to be displayed"
+msgstr "Catégories à afficher"
+
+#: link-library-admin.php:2143 link-library-admin.php:2175
+#: link-library-admin.php:2179
 msgid "For example"
 msgstr "Par exemple"
 
-#: link-library-admin.php:2066 link-library-admin.php:2069
+#: link-library-admin.php:2175 link-library-admin.php:2179
 msgid "numeric category IDs that should not be shown"
 msgstr "identifiants de catégories numériques à ne pas afficher"
 
-#: link-library-admin.php:2067
+#: link-library-admin.php:2176
 msgid "Categories to be excluded"
 msgstr "Catégories à exclure"
 
-#: link-library-admin.php:2074 link-library-admin.php:2077
+#: link-library-admin.php:2200 link-library-admin.php:2203
 msgid "Only show one category of links at a time"
 msgstr "N'afficher qu'une catégorie de liens à la fois"
 
-#: link-library-admin.php:2075
+#: link-library-admin.php:2201
 msgid "Only show one category at a time"
 msgstr "N'afficher qu'une catégorie à la fois"
 
-#: link-library-admin.php:2080
+#: link-library-admin.php:2206
 msgid ""
 "Select if AJAX should be used to only reload the list of links without "
 "reloading the whole page or HTML GET to reload entire page with a new link. "
@@ -869,146 +903,146 @@ msgstr ""
 "page complète avec un nouveau lien. L'option des liens personnalisés doit "
 "être activée pour que l'option HTML GET + Permaliens fonctionne correctement."
 
-#: link-library-admin.php:2080
+#: link-library-admin.php:2206
 msgid "Switching Method"
 msgstr "Méthode pour les mises à jour de la page"
 
-#: link-library-admin.php:2091
+#: link-library-admin.php:2217
 msgid ""
 "Default category to be shown when only showing one at a time (numeric ID)"
 msgstr ""
 "Catégorie à afficher par défaut lorsqu'une seule catégorie est présente "
 "(identifiant numérique)"
 
-#: link-library-admin.php:2096
+#: link-library-admin.php:2222
 msgid "Hide category on start in single cat AJAX mode"
 msgstr ""
 "Cacher les catégories au démarrage dans le mode AJAX avec une seule catégorie"
 
-#: link-library-admin.php:2100 link-library-admin.php:2103
+#: link-library-admin.php:2226 link-library-admin.php:2229
 msgid "File path is relative to Link Library plugin directory"
 msgstr ""
 "Le chemin du fichier doit être relatif par rapport au répertoire du module "
 "\"Link Library\""
 
-#: link-library-admin.php:2101
+#: link-library-admin.php:2227
 msgid "Icon to display when performing AJAX queries"
 msgstr "Icône à afficher lorsque des requêtes AJAX sont effectuées"
 
-#: link-library-admin.php:2108 link-library-admin.php:2111
+#: link-library-admin.php:2234 link-library-admin.php:2237
 msgid "Only show a limited number of links and add page navigation links"
 msgstr ""
 "Afficher seulement un nombre limité de liens et afficher une section de "
 "navigation des liens"
 
-#: link-library-admin.php:2109
+#: link-library-admin.php:2235
 msgid "Paginate Results"
 msgstr "Paginer les résultats"
 
-#: link-library-admin.php:2114 link-library-admin.php:2117
+#: link-library-admin.php:2240 link-library-admin.php:2243
 msgid "Number of Links to be Displayed per Page in Pagination Mode"
 msgstr "Nombre de liens devant être affichés en \"Mode Pagination\""
 
-#: link-library-admin.php:2115
+#: link-library-admin.php:2241
 msgid "Links per Page"
 msgstr "Liens par page"
 
-#: link-library-admin.php:2123
+#: link-library-admin.php:2249
 msgid "Pagination Position"
 msgstr "Position de la pagination"
 
-#: link-library-admin.php:2127
+#: link-library-admin.php:2253
 msgid "After Links"
 msgstr "Après le lien"
 
-#: link-library-admin.php:2128
+#: link-library-admin.php:2254
 msgid "Before Links"
 msgstr "Avant le lien"
 
-#: link-library-admin.php:2132
+#: link-library-admin.php:2258
 msgid "Hide Results if Empty"
 msgstr "Masquer les résultats si vide"
 
-#: link-library-admin.php:2140
+#: link-library-admin.php:2266
 msgid "Enable Permalinks"
 msgstr "Activer les liens permanents"
 
-#: link-library-admin.php:2146
+#: link-library-admin.php:2272
 msgid "Permalinks Page"
 msgstr "Page des liens permanents"
 
-#: link-library-admin.php:2166
+#: link-library-admin.php:2319
 msgid "Results Order"
 msgstr "Ordre des résultats"
 
-#: link-library-admin.php:2170 link-library-admin.php:2330
+#: link-library-admin.php:2323 link-library-admin.php:2485
 msgid "Order by Name"
 msgstr "Trier par nom"
 
-#: link-library-admin.php:2171 link-library-admin.php:2331
+#: link-library-admin.php:2324 link-library-admin.php:2486
 msgid "Order by ID"
 msgstr "Trier par identifiant"
 
-#: link-library-admin.php:2172
+#: link-library-admin.php:2326
 msgid "Order of categories based on included category list"
 msgstr "Trier les catégories selon l'ordre des catégories incluses"
 
-#: link-library-admin.php:2173
+#: link-library-admin.php:2328
 msgid "Order by"
 msgstr "Trier par"
 
-#: link-library-admin.php:2173 link-library-admin.php:2332
+#: link-library-admin.php:2328 link-library-admin.php:2487
 msgid "Wordpress Plugin"
 msgstr "Extension (plugin) WordPress"
 
-#: link-library-admin.php:2178
+#: link-library-admin.php:2333
 msgid "Link Categories Display Format"
 msgstr "Format d'affichage des catégories de liens"
 
-#: link-library-admin.php:2182 link-library-admin.php:2385
+#: link-library-admin.php:2337 link-library-admin.php:2543
 msgid "Table"
 msgstr "Table"
 
-#: link-library-admin.php:2183 link-library-admin.php:2386
+#: link-library-admin.php:2338 link-library-admin.php:2544
 msgid "Unordered List"
 msgstr "Liste non-ordonée"
 
-#: link-library-admin.php:2184
+#: link-library-admin.php:2339
 msgid "Drop-Down List"
 msgstr "Liste déroulante"
 
-#: link-library-admin.php:2190
+#: link-library-admin.php:2345
 msgid "Display link counts"
 msgstr "Afficher la quantité de liens"
 
-#: link-library-admin.php:2196
+#: link-library-admin.php:2351
 msgid "Display categories with search results"
 msgstr "Afficher les catégories avec les résultats de recherche"
 
-#: link-library-admin.php:2200
+#: link-library-admin.php:2355
 msgid "Link Title Content"
 msgstr "Titre du lien sur le contenu"
 
-#: link-library-admin.php:2218 link-library-admin.php:2221
+#: link-library-admin.php:2373 link-library-admin.php:2376
 msgid "This setting does not apply when selecting My Link Order for the order"
 msgstr ""
 "Cette option ne s'applique que lorsque l'on choisit \"My Link Order\"  comme "
 "ordre de présentation"
 
-#: link-library-admin.php:2219 link-library-admin.php:2356
+#: link-library-admin.php:2374 link-library-admin.php:2514
 msgid "Direction"
 msgstr "Direction"
 
-#: link-library-admin.php:2223 link-library-admin.php:2360
+#: link-library-admin.php:2378 link-library-admin.php:2518
 msgid "Ascending"
 msgstr "Croissant"
 
-#: link-library-admin.php:2224 link-library-admin.php:2361
+#: link-library-admin.php:2379 link-library-admin.php:2519
 msgid "Descending"
 msgstr "Décroissant"
 
-#: link-library-admin.php:2228 link-library-admin.php:2231
-#: link-library-admin.php:2338 link-library-admin.php:2341
+#: link-library-admin.php:2383 link-library-admin.php:2386
+#: link-library-admin.php:2493 link-library-admin.php:2496
 msgid ""
 "Use [ and ] in the description to perform special actions using HTML such as "
 "inserting images instead of < and >"
@@ -1016,27 +1050,27 @@ msgstr ""
 "Utilisez [ et ] dans la description pour écrire du code HTML, tel que du "
 "code pour afficher une image, au lien d'utiliser < et >"
 
-#: link-library-admin.php:2229 link-library-admin.php:2339
+#: link-library-admin.php:2384 link-library-admin.php:2494
 msgid "Show Category Description"
 msgstr "Afficher la description des catégories"
 
-#: link-library-admin.php:2233 link-library-admin.php:2343
+#: link-library-admin.php:2388 link-library-admin.php:2498
 msgid "Position"
 msgstr "Position"
 
-#: link-library-admin.php:2235 link-library-admin.php:2345
+#: link-library-admin.php:2390 link-library-admin.php:2500
 msgid "Right"
 msgstr "Droite"
 
-#: link-library-admin.php:2236 link-library-admin.php:2346
+#: link-library-admin.php:2391 link-library-admin.php:2501
 msgid "Left"
 msgstr "Gauche"
 
-#: link-library-admin.php:2242
+#: link-library-admin.php:2397
 msgid "Width of Categories Table in Percents"
 msgstr "Largeur de la table des catégories en pourcentage"
 
-#: link-library-admin.php:2248 link-library-admin.php:2251
+#: link-library-admin.php:2403 link-library-admin.php:2406
 msgid ""
 "Determines the number of alternating div tags that will be placed before and "
 "after each link category"
@@ -1044,7 +1078,7 @@ msgstr ""
 "Indique le nombre de balises div qui seront placées en alternance avant et "
 "après chaque catégorie de liens"
 
-#: link-library-admin.php:2248 link-library-admin.php:2251
+#: link-library-admin.php:2403 link-library-admin.php:2406
 msgid ""
 "These div tags can be used to style of position link categories on the link "
 "page"
@@ -1052,50 +1086,50 @@ msgstr ""
 "Ces balises div peuvent être utilisées pour positionner les catégories de "
 "lien sur la page"
 
-#: link-library-admin.php:2249
+#: link-library-admin.php:2404
 msgid "Number of alternating div classes"
 msgstr "Nombre de classes div en alternance"
 
-#: link-library-admin.php:2261
+#: link-library-admin.php:2416
 msgid "Number of columns in Categories Table"
 msgstr "Nombre de colonnes dans la table des catégories"
 
-#: link-library-admin.php:2268
+#: link-library-admin.php:2423
 msgid "First div class name"
 msgstr "Premier nom de classe de la div"
 
-#: link-library-admin.php:2276
+#: link-library-admin.php:2431
 msgid "Use Div Class or Heading tag around Category Names"
 msgstr ""
 "Utiliser une balise div ou une balise d'entête autour des noms de catégories"
 
-#: link-library-admin.php:2280
+#: link-library-admin.php:2435
 msgid "Div Class"
 msgstr "Classe Div"
 
-#: link-library-admin.php:2281
+#: link-library-admin.php:2436
 msgid "Heading Tag"
 msgstr "Balise d'entête"
 
-#: link-library-admin.php:2286
+#: link-library-admin.php:2441
 msgid "Second div class name"
 msgstr "Second nom de classe div"
 
-#: link-library-admin.php:2293 link-library-admin.php:2296
+#: link-library-admin.php:2448 link-library-admin.php:2451
 msgid "Example div class name: linklistcatname, Example Heading Label: h3"
 msgstr ""
 "Exemples de noms de classes div: linklistcatname, Exemples de balises "
 "d'entêtes : h3"
 
-#: link-library-admin.php:2294
+#: link-library-admin.php:2449
 msgid "Div Class Name or Heading label"
 msgstr "Nom de classe div ou type de la balise de titre"
 
-#: link-library-admin.php:2301
+#: link-library-admin.php:2456
 msgid "Third div class name"
 msgstr "Troisième nom de classe div"
 
-#: link-library-admin.php:2308 link-library-admin.php:2311
+#: link-library-admin.php:2463 link-library-admin.php:2466
 msgid ""
 "Set this address to a page running Link Library to place categories on a "
 "different page. Should always be used with the Show One Category at a Time "
@@ -1106,43 +1140,47 @@ msgstr ""
 "être utilisé en conjonction avec le mode \"N'affichez qu'une catégorie à la "
 "fois et la méthode HTML GET\"."
 
-#: link-library-admin.php:2309
+#: link-library-admin.php:2464
 msgid "Category Target Address"
 msgstr "Adresse cible pour les liens de catégories"
 
-#: link-library-admin.php:2326
+#: link-library-admin.php:2481
 msgid "Link Results Order"
 msgstr "Ordre des résultats"
 
-#: link-library-admin.php:2332
+#: link-library-admin.php:2487
 msgid "Order set by "
 msgstr "Trier par"
 
-#: link-library-admin.php:2333
+#: link-library-admin.php:2488
 msgid "Order randomly"
 msgstr "Trier au hazard"
 
-#: link-library-admin.php:2334
+#: link-library-admin.php:2489
 msgid "Order by updated date"
 msgstr "Trier par date de mise à jour"
 
-#: link-library-admin.php:2351
+#: link-library-admin.php:2506
 msgid "List Featured Links ahead of Regular Links"
 msgstr "Afficher les liens vedettes avant les liens réguliers"
 
-#: link-library-admin.php:2355 link-library-admin.php:2358
+#: link-library-admin.php:2509
+msgid "Show Expand Link button and hide links"
+msgstr "Montrer le bouton 'Développer les liens' et cacher les liens"
+
+#: link-library-admin.php:2513 link-library-admin.php:2516
 msgid "Except for My Link Order mode"
 msgstr "Sauf pour le mode \"My Link Order\""
 
-#: link-library-admin.php:2365 link-library-admin.php:2368
+#: link-library-admin.php:2523 link-library-admin.php:2526
 msgid "Leave empty to show all results"
 msgstr "Laissez vide pour afficher toutes les résultats"
 
-#: link-library-admin.php:2366
+#: link-library-admin.php:2524
 msgid "Max number of links to display"
 msgstr "Nombre maximum de liens à afficher"
 
-#: link-library-admin.php:2373 link-library-admin.php:2376
+#: link-library-admin.php:2531 link-library-admin.php:2534
 msgid ""
 "Sets default link target window, does not override specific targets set in "
 "links"
@@ -1150,47 +1188,47 @@ msgstr ""
 "Configure la fenêtre cible pour les liens. Cette valeur n'est pas "
 "prioritaire par rapport aux cibles spécifiques des liens."
 
-#: link-library-admin.php:2374
+#: link-library-admin.php:2532
 msgid "Link Target"
 msgstr "Cible du lien"
 
-#: link-library-admin.php:2381
+#: link-library-admin.php:2539
 msgid "Link Display Format"
 msgstr "Format d'affichage des liens"
 
-#: link-library-admin.php:2392
+#: link-library-admin.php:2550
 msgid "Show Column Headers"
 msgstr "Afficher les entêtes de colonnes"
 
-#: link-library-admin.php:2399
+#: link-library-admin.php:2557
 msgid "Link Column Header"
 msgstr "Entête de colonne de lien"
 
-#: link-library-admin.php:2407
+#: link-library-admin.php:2565
 msgid "Description Column Header"
 msgstr "Entête de colonne pour les descriptions"
 
-#: link-library-admin.php:2414
+#: link-library-admin.php:2572
 msgid "Notes Column Header"
 msgstr "Entête de la colonne des notes"
 
-#: link-library-admin.php:2422
+#: link-library-admin.php:2580
 msgid "Hide Category Names"
 msgstr "Masquer les noms de catégories"
 
-#: link-library-admin.php:2429
+#: link-library-admin.php:2587
 msgid "Show Hidden Links"
 msgstr "Afficher les liens cachés"
 
-#: link-library-admin.php:2436 link-library-admin.php:2439
+#: link-library-admin.php:2594 link-library-admin.php:2597
 msgid "Need to be active for Link Categories to work"
 msgstr "Doit être coché pour que les liens de catégories fonctionnent"
 
-#: link-library-admin.php:2437
+#: link-library-admin.php:2595
 msgid "Embed HTML anchors"
 msgstr "Inclusion d'ancrages HTML"
 
-#: link-library-admin.php:2451
+#: link-library-admin.php:2609
 msgid ""
 "Arrange the items below via drag-and-drop to order the various Link Library "
 "elements."
@@ -1198,71 +1236,71 @@ msgstr ""
 "Organiser les différents liens ci-dessous avec la souris ( cliquer-déplacer-"
 "déposer )"
 
-#: link-library-admin.php:2460 link-library-admin.php:2541
+#: link-library-admin.php:2618 link-library-admin.php:2699
 msgid "Image"
 msgstr "Image"
 
-#: link-library-admin.php:2463
+#: link-library-admin.php:2621
 msgid "Name"
 msgstr "Nom"
 
-#: link-library-admin.php:2466
+#: link-library-admin.php:2624
 msgid "Date"
 msgstr "Date"
 
-#: link-library-admin.php:2469
+#: link-library-admin.php:2627
 msgid "Desc"
 msgstr "Desc"
 
-#: link-library-admin.php:2472
+#: link-library-admin.php:2630
 msgid "Notes"
 msgstr "Notes"
 
-#: link-library-admin.php:2475
+#: link-library-admin.php:2633
 msgid "RSS"
 msgstr "RSS"
 
-#: link-library-admin.php:2478 link-library-admin.php:2649
+#: link-library-admin.php:2636 link-library-admin.php:2807
 msgid "Web Link"
 msgstr "Lien du site"
 
-#: link-library-admin.php:2481
+#: link-library-admin.php:2639
 msgid "Phone"
 msgstr "Tél"
 
-#: link-library-admin.php:2487
+#: link-library-admin.php:2645
 msgid "Hits"
 msgstr "Accès"
 
-#: link-library-admin.php:2490
+#: link-library-admin.php:2648
 msgid "Rating"
 msgstr "Classement"
 
-#: link-library-admin.php:2493
+#: link-library-admin.php:2651
 msgid "Large Desc"
 msgstr "Grande Desc"
 
-#: link-library-admin.php:2505
+#: link-library-admin.php:2663
 msgid "Display"
 msgstr "Afficher"
 
-#: link-library-admin.php:2506
+#: link-library-admin.php:2664
 msgid "Before"
 msgstr "Avant"
 
-#: link-library-admin.php:2507
+#: link-library-admin.php:2665
 msgid "After"
 msgstr "Après"
 
-#: link-library-admin.php:2508
+#: link-library-admin.php:2666
 msgid "Additional Details"
 msgstr "Détails additionnels"
 
-#: link-library-admin.php:2509
+#: link-library-admin.php:2667
 msgid "Link Source"
 msgstr "Source du lien"
 
-#: link-library-admin.php:2512
+#: link-library-admin.php:2670
 msgid ""
 "This column allows for the output of text/code before a number of links "
 "determined by the Display field"
@@ -1270,59 +1308,59 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant le "
 "nombre de liens spécifié sur la première ligne de cette table"
 
-#: link-library-admin.php:2512
+#: link-library-admin.php:2670
 msgid "Intermittent Before Link"
 msgstr "Balises intermittentes avant le lien"
 
-#: link-library-admin.php:2513
+#: link-library-admin.php:2671
 msgid "Frequency of additional output before and after complete link group"
 msgstr ""
 "Fréquence des affichages supplémentaires avant et après chaque groupe de "
 "liens"
 
-#: link-library-admin.php:2516 link-library-admin.php:2526
+#: link-library-admin.php:2674 link-library-admin.php:2684
 msgid "Output before complete link group (link, notes, desc, etc...)"
 msgstr "Afficher avant le groupe de liens (lien, notes, description, etc...)"
 
-#: link-library-admin.php:2524
+#: link-library-admin.php:2682
 msgid "This column allows for the output of text/code before each link"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque lien"
 
-#: link-library-admin.php:2524
+#: link-library-admin.php:2682
 msgid "Before Link"
 msgstr "Avant le lien"
 
-#: link-library-admin.php:2541
+#: link-library-admin.php:2699
 msgid "This column allows for the output of text/code before each link image"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque image"
 
-#: link-library-admin.php:2545
+#: link-library-admin.php:2703
 msgid "Code/Text to be displayed before each link image"
 msgstr "Code/Texte à afficher avant chaque image"
 
-#: link-library-admin.php:2548
+#: link-library-admin.php:2706
 msgid "Code/Text to be displayed after each link image"
 msgstr "Code/Texte à afficher après chaque image"
 
-#: link-library-admin.php:2551
+#: link-library-admin.php:2709
 msgid "CSS Class to be assigned to link image"
 msgstr "Classe CSS qui sera assignée à l'image"
 
-#: link-library-admin.php:2556 link-library-admin.php:2577
-#: link-library-admin.php:2668 link-library-admin.php:2696
+#: link-library-admin.php:2714 link-library-admin.php:2735
+#: link-library-admin.php:2826 link-library-admin.php:2854
 msgid "Primary"
 msgstr "Principal"
 
-#: link-library-admin.php:2557 link-library-admin.php:2578
-#: link-library-admin.php:2669 link-library-admin.php:2697
+#: link-library-admin.php:2715 link-library-admin.php:2736
+#: link-library-admin.php:2827 link-library-admin.php:2855
 msgid "Secondary"
 msgstr "Secondaire"
 
-#: link-library-admin.php:2564
+#: link-library-admin.php:2722
 msgid ""
 "This column allows for the output of text/code before and after each link "
 "name"
@@ -1330,15 +1368,15 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque nom"
 
-#: link-library-admin.php:2568
+#: link-library-admin.php:2726
 msgid "Code/Text to be displayed before each link"
 msgstr "Code/Texte à afficher avant chaque lien"
 
-#: link-library-admin.php:2571
+#: link-library-admin.php:2729
 msgid "Code/Text to be displayed after each link"
 msgstr "Code/Texte à afficher après chaque lien"
 
-#: link-library-admin.php:2585
+#: link-library-admin.php:2743
 msgid ""
 "This column allows for the output of text/code before and after each link "
 "date stamp"
@@ -1346,23 +1384,23 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque date"
 
-#: link-library-admin.php:2585
+#: link-library-admin.php:2743
 msgid "Link Date"
 msgstr "Date du lien"
 
-#: link-library-admin.php:2586
+#: link-library-admin.php:2744
 msgid "Check to display link date"
 msgstr "Cocher pour afficher la date de mise à jour du lien"
 
-#: link-library-admin.php:2589
+#: link-library-admin.php:2747
 msgid "Code/Text to be displayed before each date"
 msgstr "Code/Texte à afficher avant chaque date"
 
-#: link-library-admin.php:2592
+#: link-library-admin.php:2750
 msgid "Code/Text to be displayed after each date"
 msgstr "Code/Texte à afficher après chaque date"
 
-#: link-library-admin.php:2601
+#: link-library-admin.php:2759
 msgid ""
 "This column allows for the output of text/code before and after each link "
 "description"
@@ -1370,19 +1408,19 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque description"
 
-#: link-library-admin.php:2602
+#: link-library-admin.php:2760
 msgid "Check to display link descriptions"
 msgstr "Cocher pour afficher la description du lien"
 
-#: link-library-admin.php:2605
+#: link-library-admin.php:2763
 msgid "Code/Text to be displayed before each description"
 msgstr "Code/Texte à afficher avant chaque description"
 
-#: link-library-admin.php:2608
+#: link-library-admin.php:2766
 msgid "Code/Text to be displayed after each description"
 msgstr "Code/Texte à afficher après chaque description"
 
-#: link-library-admin.php:2617
+#: link-library-admin.php:2775
 msgid ""
 "This column allows for the output of text/code before and after each link "
 "notes"
@@ -1390,78 +1428,78 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque note"
 
-#: link-library-admin.php:2618
+#: link-library-admin.php:2776
 msgid "Check to display link notes"
 msgstr "Cocher pour afficher les notes du lien"
 
-#: link-library-admin.php:2621
+#: link-library-admin.php:2779
 msgid "Code/Text to be displayed before each note"
 msgstr "Code/Texte à afficher avant chaque note"
 
-#: link-library-admin.php:2624
+#: link-library-admin.php:2782
 msgid "Code/Text to be displayed after each note"
 msgstr "Code/Texte à afficher après chaque note"
 
-#: link-library-admin.php:2633
+#: link-library-admin.php:2791
 msgid ""
 "This column allows for the output of text/code before and after the RSS icons"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après les icônes RSS"
 
-#: link-library-admin.php:2633
+#: link-library-admin.php:2791
 msgid "RSS Icons"
 msgstr "Icône RSS"
 
-#: link-library-admin.php:2635
+#: link-library-admin.php:2793
 msgid "See below"
 msgstr "Voir ci-dessous"
 
-#: link-library-admin.php:2637
+#: link-library-admin.php:2795
 msgid "Code/Text to be displayed before RSS Icons"
 msgstr "Code/Texte à afficher avant les icônes RSS"
 
-#: link-library-admin.php:2640
+#: link-library-admin.php:2798
 msgid "Code/Text to be displayed after RSS Icons"
 msgstr "Code/Texte à afficher après les icônes RSS"
 
-#: link-library-admin.php:2649
+#: link-library-admin.php:2807
 msgid ""
 "This column allows for the output of text/code before and after the Web Link"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après les hyperliens"
 
-#: link-library-admin.php:2652 link-library-admin.php:2679
-#: link-library-admin.php:2707
+#: link-library-admin.php:2810 link-library-admin.php:2837
+#: link-library-admin.php:2865
 msgid "False"
 msgstr "Faux"
 
-#: link-library-admin.php:2653
+#: link-library-admin.php:2811
 msgid "Web Address"
 msgstr "Adresse du site"
 
-#: link-library-admin.php:2654 link-library-admin.php:2682
+#: link-library-admin.php:2812 link-library-admin.php:2840
 msgid "Label"
 msgstr "Identifiant"
 
-#: link-library-admin.php:2657
+#: link-library-admin.php:2815
 msgid "Code/Text to be displayed before Web Link"
 msgstr "Code/Texte à afficher avant l'hyperlien"
 
-#: link-library-admin.php:2660
+#: link-library-admin.php:2818
 msgid "Code/Text to be displayed after Web Link"
 msgstr "Code/Texte à afficher après l'hyperlien"
 
-#: link-library-admin.php:2663
+#: link-library-admin.php:2821
 msgid "Text Label that the web link will be assigned to."
 msgstr "Texte associé à l'hyperlien."
 
-#: link-library-admin.php:2666 link-library-admin.php:2694
+#: link-library-admin.php:2824 link-library-admin.php:2852
 msgid "Select which link address will be displayed / used for link"
 msgstr "Sélectionner l'adresse qui doit être utilisée / affichée pour le lien"
 
-#: link-library-admin.php:2676
+#: link-library-admin.php:2834
 msgid ""
 "This column allows for the output of text/code before and after the "
 "Telephone Number"
@@ -1469,63 +1507,63 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après le numéro de téléphone"
 
-#: link-library-admin.php:2680 link-library-admin.php:2708
+#: link-library-admin.php:2838 link-library-admin.php:2866
 msgid "Plain Text"
 msgstr "Texte simple"
 
-#: link-library-admin.php:2681
+#: link-library-admin.php:2839
 msgid "Link"
 msgstr "Lien"
 
-#: link-library-admin.php:2685
+#: link-library-admin.php:2843
 msgid "Code/Text to be displayed before Telephone Number"
 msgstr "Code/Texte à afficher avant le numéro de téléphone"
 
-#: link-library-admin.php:2688
+#: link-library-admin.php:2846
 msgid "Code/Text to be displayed after Telephone Number"
 msgstr "Code/Texte à afficher après le numéro de téléphone"
 
-#: link-library-admin.php:2691
+#: link-library-admin.php:2849
 msgid "Text Label that the telephone will be assigned to."
 msgstr "Texte associé au numéro de téléphone."
 
-#: link-library-admin.php:2704
+#: link-library-admin.php:2862
 msgid ""
 "This column allows for the output of text/code before and after the E-mail"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque email"
 
-#: link-library-admin.php:2709
+#: link-library-admin.php:2867
 msgid "MailTo Link"
 msgstr "Lien \"mailto\""
 
-#: link-library-admin.php:2710
+#: link-library-admin.php:2868
 msgid "MailTo Link with Label"
 msgstr "Lien \"Mailto\" avec libellé"
 
-#: link-library-admin.php:2711
+#: link-library-admin.php:2869
 msgid "Formatted Command"
 msgstr "Commande formattée"
 
-#: link-library-admin.php:2712
+#: link-library-admin.php:2870
 msgid "Formatted Command with Labels"
 msgstr "Commande formattée avec affichage textuel"
 
-#: link-library-admin.php:2715
+#: link-library-admin.php:2873
 msgid "Code/Text to be displayed before E-mail"
 msgstr "Code/Texte à afficher avant chaque courriel"
 
-#: link-library-admin.php:2718
+#: link-library-admin.php:2876
 msgid "Code/Text to be displayed after E-mail"
 msgstr "Code/Texte à afficher après le courriel"
 
-#: link-library-admin.php:2721
+#: link-library-admin.php:2879
 msgid ""
 "Text Label that the e-mail will be assigned to represent the e-mail link."
 msgstr "Attribut de l'encadré \"Email\""
 
-#: link-library-admin.php:2724
+#: link-library-admin.php:2882
 msgid ""
 "Command that the e-mail will be embedded in. In the case of a command, use "
 "the symbols #email and #company to indicate the position where these "
@@ -1535,26 +1573,26 @@ msgstr ""
 "d'une commande, utilisez les symboles #email et #company pour indiquer "
 "l'emplacement de ces éléments."
 
-#: link-library-admin.php:2731
+#: link-library-admin.php:2889
 msgid ""
 "This column allows for the output of text/code before and after Link Hits"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque hyperlien"
 
-#: link-library-admin.php:2731
+#: link-library-admin.php:2889
 msgid "Link Hits"
 msgstr "Statistiques du lien"
 
-#: link-library-admin.php:2735
+#: link-library-admin.php:2893
 msgid "Code/Text to be displayed before Link Hits"
 msgstr "Code/Texte à afficher avant les statistiques du lien"
 
-#: link-library-admin.php:2738
+#: link-library-admin.php:2896
 msgid "Code/Text to be displayed after Link Hits"
 msgstr "Code/Texte à afficher avant les statistiques du lien"
 
-#: link-library-admin.php:2747
+#: link-library-admin.php:2905
 msgid ""
 "This column allows for the output of text/code before and after the Link "
 "Rating"
@@ -1562,19 +1600,19 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après le classement du lien"
 
-#: link-library-admin.php:2747
+#: link-library-admin.php:2905
 msgid "Link Rating"
 msgstr "Classement du lien"
 
-#: link-library-admin.php:2751
+#: link-library-admin.php:2909
 msgid "Code/Text to be displayed before Link Rating"
 msgstr "Code/Texte à afficher après le classement du lien"
 
-#: link-library-admin.php:2754
+#: link-library-admin.php:2912
 msgid "Code/Text to be displayed after Link Rating"
 msgstr "Code/Texte à afficher avant le classement du lien"
 
-#: link-library-admin.php:2763
+#: link-library-admin.php:2921
 msgid ""
 "This column allows for the output of text/code before and after the Link "
 "Large Description"
@@ -1582,34 +1620,34 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché avant et "
 "après chaque grande description"
 
-#: link-library-admin.php:2763 link-library-admin.php:3386
+#: link-library-admin.php:2921 link-library-admin.php:3544
 #: usersubmission.php:188
 msgid "Link Large Description"
 msgstr "Grande Description du lien"
 
-#: link-library-admin.php:2767
+#: link-library-admin.php:2925
 msgid "Code/Text to be displayed before Link Large Description"
 msgstr "Code/Texte à afficher avant chaque grande description"
 
-#: link-library-admin.php:2770
+#: link-library-admin.php:2928
 msgid "Code/Text to be displayed after Link Large Description"
 msgstr "Code/Texte à afficher après chaque grande description"
 
-#: link-library-admin.php:2782
+#: link-library-admin.php:2940
 msgid "This column allows for the output of text/code after each link"
 msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché après "
 "chaque lien"
 
-#: link-library-admin.php:2782
+#: link-library-admin.php:2940
 msgid "After Link Block"
 msgstr "Après le lien complet"
 
-#: link-library-admin.php:2785
+#: link-library-admin.php:2943
 msgid "Output after complete link group (link, notes, desc, etc...)"
 msgstr "Afficher après le groupe de liens (lien, notes, description, etc...)"
 
-#: link-library-admin.php:2792
+#: link-library-admin.php:2950
 msgid ""
 "This column allows for the output of text/code after a number of links "
 "determined in the first column"
@@ -1617,108 +1655,108 @@ msgstr ""
 "Cette colonne permet de spécifier le texte/code qui sera affiché après le "
 "nombre de liens spécifié sur la première ligne de cette table"
 
-#: link-library-admin.php:2792
+#: link-library-admin.php:2950
 msgid "Intermittent After Link"
 msgstr "Balises intermittentes après le lien"
 
-#: link-library-admin.php:2807
+#: link-library-admin.php:2965
 msgid "Show Link Updated Flag"
 msgstr "Afficher l'indication de mise à jour des liens"
 
-#: link-library-admin.php:2815
+#: link-library-admin.php:2973
 msgid "Convert [] to &lt;&gt; in Link Description and Notes"
 msgstr "Convertir [] à &lt;&gt; dans les descriptions et notes de liens"
 
-#: link-library-admin.php:2823
+#: link-library-admin.php:2981
 msgid "Add nofollow tag to outgoing links"
 msgstr "Ajouter une balise \"nofollow\" aux liens sortants"
 
-#: link-library-admin.php:2830
+#: link-library-admin.php:2988
 msgid "Show edit links when logged in as editor or administrator"
 msgstr ""
 "Afficher un lien d'édition lorsque l'utilisateur est un éditeur ou un "
 "administrateur"
 
-#: link-library-admin.php:2838
+#: link-library-admin.php:2996
 msgid "Show link name when no image is assigned"
 msgstr "Afficher le nom du lien quand il n'y a pas d'image assignée au lien"
 
-#: link-library-admin.php:2854
+#: link-library-admin.php:3012
 msgid "Enable link Pop-Ups"
 msgstr "Activer les fenêtres Pop-up pour les liens"
 
-#: link-library-admin.php:2858
+#: link-library-admin.php:3016
 msgid "Pop-Up Width"
 msgstr "Largeur de la fenêtre pop-up"
 
-#: link-library-admin.php:2860
+#: link-library-admin.php:3018
 msgid "Pop-Up Height"
 msgstr "Hauteur de la fenêtre pop-up"
 
-#: link-library-admin.php:2864
+#: link-library-admin.php:3022
 msgid "Dialog contents"
 msgstr "Contenu de la fenêtre"
 
-#: link-library-admin.php:2878
+#: link-library-admin.php:3036
 msgid "Show RSS Link using Text"
 msgstr "Afficher le lien RSS de façon textuelle"
 
-#: link-library-admin.php:2884
+#: link-library-admin.php:3042
 msgid "Show RSS Link using Standard Icon"
 msgstr "Afficher le lien RSS en utilisant l'icône standard"
 
-#: link-library-admin.php:2893
+#: link-library-admin.php:3051
 msgid "Show RSS Preview Link"
 msgstr "Afficher un lien vers l'aperçu du flux d'informations"
 
-#: link-library-admin.php:2899
+#: link-library-admin.php:3057
 msgid "Number of articles shown in RSS Preview"
 msgstr "Nombre d'articles présentés dans l'aperçu du flux d'informations RSS"
 
-#: link-library-admin.php:2905
+#: link-library-admin.php:3063
 msgid "Show RSS Feed Headers in Link Library output"
 msgstr ""
 "Afficher les entêtes des flux d'informations RSS dans la page générée par "
 "\"Link Library\""
 
-#: link-library-admin.php:2913
+#: link-library-admin.php:3071
 msgid "Show RSS Feed Content in Link Library output"
 msgstr ""
 "Afficher le contenu des flux d'informations RSS dans la page générée par "
 "\"Link Library\""
 
-#: link-library-admin.php:2919
+#: link-library-admin.php:3077
 msgid "Number of RSS articles shown in Link Library Output"
 msgstr "Nombre d'articles RSS devant être affichés par \"Link Library\""
 
-#: link-library-admin.php:2927
+#: link-library-admin.php:3085
 msgid "RSS Preview Width"
 msgstr "Largeur de l'aperçu du flux d'informations RSS"
 
-#: link-library-admin.php:2929
+#: link-library-admin.php:3087
 msgid "RSS Preview Height"
 msgstr "Hauteur de l'aperçu du flux d'informations RSS"
 
-#: link-library-admin.php:2945 link-library-admin.php:2948
+#: link-library-admin.php:3103 link-library-admin.php:3106
 msgid ""
 "Checking this option will get images from the thumbshots web site every time"
 msgstr ""
 "L'activation de cette option active la récupération d'image du site internet "
 "thumbshots.org à chaque affichage de la page"
 
-#: link-library-admin.php:2946
+#: link-library-admin.php:3104
 msgid "Use Thumbshots.org for dynamic link images"
 msgstr "Utiliser \"Thumbshots.org\" pour la génération dynamique de vignettes"
 
-#: link-library-admin.php:2954
+#: link-library-admin.php:3112
 msgid "Give priority to images assigned to links if present"
 msgstr "Donner une priorité aux images liés aux liens si elles sont présentes"
 
-#: link-library-admin.php:2959
+#: link-library-admin.php:3117
 msgid "Generate Images / Favorite Icons"
 msgstr "Générer les images ou icônes de favoris"
 
-#: link-library-admin.php:2960 link-library-admin.php:3404
+#: link-library-admin.php:3118 link-library-admin.php:3562
 msgid ""
 "This button is only available when a valid API key is entered under the Link "
 "Library General Settings."
@@ -1726,131 +1764,131 @@ msgstr ""
 "Ce bouton est seulement disponible quand un CID valide est saisi dans les "
 "paramètres généraux de Link Library."
 
-#: link-library-admin.php:2960
+#: link-library-admin.php:3118
 msgid "Generate Thumbnails and Store locally"
 msgstr "Générer les vignettes et les conserver"
 
-#: link-library-admin.php:2961
+#: link-library-admin.php:3119
 msgid "Generate Favorite Icons and Store locally"
 msgstr "Générer les icônes de favoris et les conserver"
 
-#: link-library-admin.php:2974
+#: link-library-admin.php:3132
 msgid "Publish RSS Feed"
 msgstr "Publier un flux d'informations RSS"
 
-#: link-library-admin.php:2979
+#: link-library-admin.php:3137
 msgid "Number of items in RSS feed"
 msgstr "Nombre d'items dans le flux d'informations RSS"
 
-#: link-library-admin.php:2982
+#: link-library-admin.php:3140
 msgid "RSS Feed Title"
 msgstr "Titre du flux d'informations RSS"
 
-#: link-library-admin.php:2985
+#: link-library-admin.php:3143
 msgid "RSS Feed Description"
 msgstr "Description du flux d'informations RSS"
 
-#: link-library-admin.php:2988
+#: link-library-admin.php:3146
 msgid "RSS Feed Web Address (default /linkrss/1)"
 msgstr "Adresse du fil de nouvelles RSS (défaut /linkrss/1)"
 
-#: link-library-admin.php:3002
+#: link-library-admin.php:3160
 msgid "Search Label"
 msgstr "Texte pour la recherche"
 
-#: link-library-admin.php:3003 link-library.php:1813
+#: link-library-admin.php:3161 link-library.php:1933
 msgid "Search"
 msgstr "Rechercher"
 
-#: link-library-admin.php:3005 link-library-admin.php:3006
+#: link-library-admin.php:3163 link-library-admin.php:3164
 msgid "Leave empty when links are to be displayed on same page as search box"
 msgstr ""
 "Laissez ce champ vide lorsque les liens sont affichés sur la même page que "
 "la boîte de recherche"
 
-#: link-library-admin.php:3022
+#: link-library-admin.php:3180
 msgid "Following this link shows a list of all links awaiting moderation"
 msgstr ""
 "Suivez ce lien pour afficher une liste des liens en attente de modération"
 
-#: link-library-admin.php:3022
+#: link-library-admin.php:3180
 msgid "View list of links awaiting moderation"
 msgstr "Visionner la liste des liens qui attendent d'être modérés"
 
-#: link-library-admin.php:3025
+#: link-library-admin.php:3183
 msgid "Show user links immediately"
 msgstr "Afficher immédiatement les liens soumis par les utilisateurs"
 
-#: link-library-admin.php:3029
+#: link-library-admin.php:3187
 msgid "E-mail admin on link submission"
 msgstr "Envoyer un email à l'administrateur lors de la soumission"
 
-#: link-library-admin.php:3034
+#: link-library-admin.php:3192
 msgid "Require login to display form"
 msgstr "Nécessite une connexion pour afficher le formulaire"
 
-#: link-library-admin.php:3038
+#: link-library-admin.php:3196
 msgid "Allow link submission with empty link"
 msgstr "Accepter la soumission de liens sans adresse"
 
-#: link-library-admin.php:3043
+#: link-library-admin.php:3201
 msgid "Display captcha"
 msgstr "Afficher code de confirmation"
 
-#: link-library-admin.php:3047
+#: link-library-admin.php:3205
 msgid ""
 "This function will only store data when users are logged in to Wordpress"
 msgstr "Cette fonctionnalité ne peut être accessible qu'aux membres connectés"
 
-#: link-library-admin.php:3047
+#: link-library-admin.php:3205
 msgid "Store login name on link submission"
 msgstr "Sauvegarder le nom de l'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:3052
+#: link-library-admin.php:3210
 msgid "Add new link label"
 msgstr "Texte du champ d'ajout d'un nouveau lien"
 
-#: link-library-admin.php:3057
+#: link-library-admin.php:3215
 msgid "Link name label"
 msgstr "Texte pour le nom du lien"
 
-#: link-library-admin.php:3063
+#: link-library-admin.php:3221
 msgid "Link address label"
 msgstr "Texte pour l'adresse du lien"
 
-#: link-library-admin.php:3064 usersubmission.php:185
+#: link-library-admin.php:3222 usersubmission.php:185
 msgid "Link Address"
 msgstr "Adresse du lien"
 
-#: link-library-admin.php:3068
+#: link-library-admin.php:3226
 msgid "Link RSS label"
 msgstr "Texte du lien RSS"
 
-#: link-library-admin.php:3073 link-library-admin.php:3084
-#: link-library-admin.php:3115 link-library-admin.php:3125
-#: link-library-admin.php:3144 link-library-admin.php:3154
-#: link-library-admin.php:3165 link-library-admin.php:3175
-#: link-library-admin.php:3186 link-library-admin.php:3196
-#: link-library-admin.php:3207 link-library-admin.php:3217
-#: link-library-admin.php:3228
+#: link-library-admin.php:3231 link-library-admin.php:3242
+#: link-library-admin.php:3273 link-library-admin.php:3283
+#: link-library-admin.php:3302 link-library-admin.php:3312
+#: link-library-admin.php:3323 link-library-admin.php:3333
+#: link-library-admin.php:3344 link-library-admin.php:3354
+#: link-library-admin.php:3365 link-library-admin.php:3375
+#: link-library-admin.php:3386
 msgid "Hide"
 msgstr "Masquer"
 
-#: link-library-admin.php:3074 link-library-admin.php:3085
-#: link-library-admin.php:3116 link-library-admin.php:3126
-#: link-library-admin.php:3145 link-library-admin.php:3155
-#: link-library-admin.php:3166 link-library-admin.php:3176
-#: link-library-admin.php:3187 link-library-admin.php:3197
-#: link-library-admin.php:3208 link-library-admin.php:3218
-#: link-library-admin.php:3229
+#: link-library-admin.php:3232 link-library-admin.php:3243
+#: link-library-admin.php:3274 link-library-admin.php:3284
+#: link-library-admin.php:3303 link-library-admin.php:3313
+#: link-library-admin.php:3324 link-library-admin.php:3334
+#: link-library-admin.php:3345 link-library-admin.php:3355
+#: link-library-admin.php:3366 link-library-admin.php:3376
+#: link-library-admin.php:3387
 msgid "Show"
 msgstr "Afficher"
 
-#: link-library-admin.php:3079
+#: link-library-admin.php:3237
 msgid "Link category label"
 msgstr "Texte pour la catégorie du lien"
 
-#: link-library-admin.php:3089
+#: link-library-admin.php:3247
 msgid ""
 "Comma-seperated list of categories to be displayed in category selection box "
 "(e.g. 1,5,4) instead of displaying the set of categories specified by the "
@@ -1860,11 +1898,11 @@ msgstr ""
 "de sélection de catégories (e.g. 1,5,4) au lieu de celles spécifiées par la "
 "configuration des catégories de la librairie."
 
-#: link-library-admin.php:3089
+#: link-library-admin.php:3247
 msgid "Link category override selection list"
 msgstr "Liste de catégories de remplacement"
 
-#: link-library-admin.php:3090
+#: link-library-admin.php:3248
 msgid ""
 "Comma-seperated list of categories to be displayed in category selection box "
 "(e.g. 1,5,4)"
@@ -1872,88 +1910,88 @@ msgstr ""
 "Liste de catégories séparées par des virgules qui doivent être affichées "
 "dans la liste de sélection de catégories présentée aux usagers."
 
-#: link-library-admin.php:3099
+#: link-library-admin.php:3257
 msgid "No"
 msgstr "Non"
 
-#: link-library-admin.php:3100
+#: link-library-admin.php:3258
 msgid "Allow"
 msgstr "Permettre"
 
-#: link-library-admin.php:3104
+#: link-library-admin.php:3262
 msgid "User-submitted category prompt"
 msgstr "Texte pour la soumission de catégories par l'utilisateur"
 
-#: link-library-admin.php:3110
+#: link-library-admin.php:3268
 msgid "Link description label"
 msgstr "Texte pour la description du lien"
 
-#: link-library-admin.php:3120
+#: link-library-admin.php:3278
 msgid "Link notes label"
 msgstr "Texte pour les notes du lien"
 
-#: link-library-admin.php:3139
+#: link-library-admin.php:3297
 msgid "Reciprocal Link label"
 msgstr "Texte du lien réciproque"
 
-#: link-library-admin.php:3149
+#: link-library-admin.php:3307
 msgid "Secondary Address label"
 msgstr "Texte de l'adresse secondaire"
 
-#: link-library-admin.php:3160
+#: link-library-admin.php:3318
 msgid "Link Telephone label"
 msgstr "Texte du numéro de téléphone"
 
-#: link-library-admin.php:3170
+#: link-library-admin.php:3328
 msgid "Link E-mail label"
 msgstr "Texte pour l'adresse électronique"
 
-#: link-library-admin.php:3181
+#: link-library-admin.php:3339
 msgid "Link Submitter Name label"
 msgstr "Texte pour le nom d'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:3191
+#: link-library-admin.php:3349
 msgid "Link Submitter E-mail label"
 msgstr ""
 "Texte pour l'adresse électronique de l'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:3202
+#: link-library-admin.php:3360
 msgid "Link Submitter Comment Label"
 msgstr "Texte pour les Commentaires du lien"
 
-#: link-library-admin.php:3212
+#: link-library-admin.php:3370
 msgid "Large Description Label"
 msgstr "Texte de la Grande Description du lien"
 
-#: link-library-admin.php:3223
+#: link-library-admin.php:3381
 msgid "Custom Captcha Question"
 msgstr "Question de validation personalisée"
 
-#: link-library-admin.php:3233
+#: link-library-admin.php:3391
 msgid "Custom Captcha Answer"
 msgstr "Réponse à la question de validation"
 
-#: link-library-admin.php:3238
+#: link-library-admin.php:3396
 msgid "Add Link button label"
 msgstr "Texte du bouton d'ajout de lien"
 
-#: link-library-admin.php:3243
+#: link-library-admin.php:3401
 msgid "New Link Message"
 msgstr "Message pour les nouveaux liens"
 
-#: link-library-admin.php:3244
+#: link-library-admin.php:3402
 msgid "New link submitted"
 msgstr "Nouveau lien soumis"
 
-#: link-library-admin.php:3248
+#: link-library-admin.php:3406
 msgid "New Link Moderation Label"
 msgstr "Message pour les liens devant être modérés"
 
-#: link-library-admin.php:3249
+#: link-library-admin.php:3407
 msgid "it will appear in the list once moderated. Thank you."
 msgstr "il apparaîtra dans la liste une fois modéré. Merci."
 
-#: link-library-admin.php:3264
+#: link-library-admin.php:3422
 msgid ""
 "Allows for links to be added in batch to the Wordpress links database. CSV "
 "file needs to follow template for column layout."
@@ -1961,130 +1999,130 @@ msgstr ""
 "Permets d'ajouter des liens en groupe dans la base de données de liens de "
 "Wordpress. Le fichier CSV doit suivre le format établi dans l'exemple."
 
-#: link-library-admin.php:3264
+#: link-library-admin.php:3422
 msgid "CSV file to upload to import links"
 msgstr "Fichier CSV à transmettre pour importer des liens"
 
-#: link-library-admin.php:3264
+#: link-library-admin.php:3422
 msgid "file template"
 msgstr "example de fichier"
 
-#: link-library-admin.php:3266
+#: link-library-admin.php:3424
 msgid "Import Links"
 msgstr "Importer les liens"
 
-#: link-library-admin.php:3269
+#: link-library-admin.php:3427
 msgid "First row contains column headers"
 msgstr "La première ligne contient les entêtes"
 
-#: link-library-admin.php:3278
+#: link-library-admin.php:3436
 msgid "Overwrites current library settings with contents of CSV file"
 msgstr ""
 "Écrase la configuration de librairie courante avec le contenu du fichier CSV"
 
-#: link-library-admin.php:3278
+#: link-library-admin.php:3436
 msgid "Library Settings CSV file to import"
 msgstr "Fichier CSV contenant une configuration de librairie à importer"
 
-#: link-library-admin.php:3280
+#: link-library-admin.php:3438
 msgid "Import Library Settings"
 msgstr "Inporter une configuration de librairie"
 
-#: link-library-admin.php:3283
+#: link-library-admin.php:3441
 msgid "Generates CSV file with current library configuration for download"
 msgstr ""
 "Générer un fichier CSV contenant la configuration de la librairie courante "
 "afin de le télécharger"
 
-#: link-library-admin.php:3283
+#: link-library-admin.php:3441
 msgid "Export current library settings"
 msgstr "Exporter la configuration de la librairie courante"
 
-#: link-library-admin.php:3284
+#: link-library-admin.php:3442
 msgid "Export Library Settings"
 msgstr "Exporter la configuration de la librairie"
 
-#: link-library-admin.php:3295
+#: link-library-admin.php:3453
 msgid "Search string"
 msgstr "Chaîne de recherche"
 
-#: link-library-admin.php:3297
+#: link-library-admin.php:3455
 msgid "Check Reciprocal Links"
 msgstr "Vérifier les liens réciproques"
 
-#: link-library-admin.php:3300
+#: link-library-admin.php:3458
 msgid "Delete links that return a 403 error"
 msgstr "Supprimer les liens qui retournent une erreur 403"
 
-#: link-library-admin.php:3342
+#: link-library-admin.php:3500
 msgid "Featured Link"
 msgstr "Lien vedette"
 
-#: link-library-admin.php:3346
+#: link-library-admin.php:3504
 msgid "No Follow"
 msgstr "No Follow"
 
-#: link-library-admin.php:3350
+#: link-library-admin.php:3508
 msgid "Updated Date"
 msgstr "Date de mise à jour"
 
-#: link-library-admin.php:3354
+#: link-library-admin.php:3512
 msgid "Secondary Web Address"
 msgstr "Adresse Internet secondaire"
 
-#: link-library-admin.php:3355 link-library-admin.php:3367
+#: link-library-admin.php:3513 link-library-admin.php:3525
 msgid "Visit"
 msgstr "Visiter"
 
-#: link-library-admin.php:3370
+#: link-library-admin.php:3528
 msgid "Number of link views"
 msgstr "Nombre de visites du lien"
 
-#: link-library-admin.php:3374 usersubmission.php:195
+#: link-library-admin.php:3532 usersubmission.php:195
 msgid "Link Submitter"
 msgstr "Utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:3378 usersubmission.php:196
+#: link-library-admin.php:3536 usersubmission.php:196
 msgid "Link Submitter Name"
 msgstr "Nom de l'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:3382 usersubmission.php:197
+#: link-library-admin.php:3540 usersubmission.php:197
 msgid "Link Submitter E-mail"
 msgstr "Courriel de l'utilisateur ayant soumis le lien"
 
-#: link-library-admin.php:3390
+#: link-library-admin.php:3548
 msgid "Current Link Image"
 msgstr "Image assignée au lien"
 
-#: link-library-admin.php:3396
+#: link-library-admin.php:3554
 msgid "None Assigned"
 msgstr "Non disponible"
 
-#: link-library-admin.php:3403 link-library-admin.php:3410
+#: link-library-admin.php:3561 link-library-admin.php:3568
 msgid "Automatic Image Generation"
 msgstr "Génération automatique des images"
 
-#: link-library-admin.php:3404
+#: link-library-admin.php:3562
 msgid "Generate Thumbnail and Store locally"
 msgstr "Générer la vignette et la conserver"
 
-#: link-library-admin.php:3405
+#: link-library-admin.php:3563
 msgid "Generate Favorite Icon and Store locally"
 msgstr "Générer l'icône de favori et la conserver"
 
-#: link-library-admin.php:3411
+#: link-library-admin.php:3569
 msgid "Only available once link is saved"
 msgstr "Seulement disponible lorsque le lien est sauvegardé"
 
-#: link-library-admin.php:3416
+#: link-library-admin.php:3574
 msgid "Manual Image Upload"
 msgstr "Téléchargement manuel de l'image"
 
-#: link-library-admin.php:3417
+#: link-library-admin.php:3575
 msgid "Launch Media Uploader"
 msgstr "Démarrer le gestionnaire de téléchargement des médias"
 
-#: link-library-admin.php:3420
+#: link-library-admin.php:3578
 msgid ""
 "Manual upload requires a wp-content\\uploads directory to be present with "
 "write permissions"
@@ -2092,131 +2130,135 @@ msgstr ""
 "Le téléchargement manuel requiert la présence du répertoire wp-content"
 "\\uploads avec des permissions d'écriture"
 
-#: link-library-admin.php:3522
+#: link-library-admin.php:3680
 msgid ""
 "Cannot generate thumbnail when no name and no web address are specified."
 msgstr ""
 "Il n'est pas possible de générer de vignette puisque qu'aucun nom ou adresse "
 "web n'est spécifiée."
 
-#: link-library-admin.php:3562
+#: link-library-admin.php:3720
 msgid ""
 "Cannot generate favorite icon when no name and no web address are specified."
 msgstr ""
 "Il n'est pas possible de générer l'icône de favori puisque qu'aucun nom ou "
 "adresse web n'est spécifiée."
 
-#: link-library.php:305
+#: link-library.php:328
 msgid "Link Library Generated Feed"
 msgstr "Flux d'informations généré par \"Link Library\""
 
-#: link-library.php:684
+#: link-library.php:714
 msgid "Go!"
 msgstr "Allez-y!"
 
-#: link-library.php:717
+#: link-library.php:747
 msgid "No categories found"
 msgstr "Aucune catégorie trouvée"
 
-#: link-library.php:763 link-library.php:766 link-library.php:772
-#: link-library.php:780
+#: link-library.php:793 link-library.php:796 link-library.php:802
+#: link-library.php:810
 msgid "Previous"
 msgstr "Précédent"
 
-#: link-library.php:835 link-library.php:841 link-library.php:847
-#: link-library.php:855
+#: link-library.php:865 link-library.php:871 link-library.php:877
+#: link-library.php:885
 msgid "Next"
 msgstr "Suivant"
 
-#: link-library.php:1177
+#: link-library.php:1207
 msgid "Search Results for"
 msgstr "Résultats de la recherche pour"
 
-#: link-library.php:1428
+#: link-library.php:1532
 msgid "Last updated"
 msgstr "Dernière mise à jour"
 
-#: link-library.php:1527
+#: link-library.php:1631
 msgid "Edit"
 msgstr "Éditer"
 
-#: link-library.php:1576
+#: link-library.php:1680
 msgid "Preview of RSS feed for"
 msgstr "Aperçu du flux d'informations RSS de"
 
-#: link-library.php:1802
+#: link-library.php:1918
+msgid "No links found matching your search criteria"
+msgstr "Aucun lien trouvé qui correspondent à vos critères de recherche"
+
+#: link-library.php:1922
 msgid "No links found"
 msgstr "Aucun lien trouvé"
 
-#: link-library.php:1851
+#: link-library.php:1971
 msgid "Confirm code not given"
 msgstr "Le code de confirmation n'a pas été saisi"
 
-#: link-library.php:1853
+#: link-library.php:1973
 msgid "Captcha code is wrong"
 msgstr "Le code de confirmation est incorrect"
 
-#: link-library.php:1855
+#: link-library.php:1975
 msgid "Captcha code is only valid for 5 minutes"
 msgstr "Le code de confirmation n'est valide que durant 5 minutes"
 
-#: link-library.php:1857
+#: link-library.php:1977
 msgid "No captcha cookie given. Make sure cookies are enabled"
 msgstr ""
 "Le cookie pour le code de confirmation est absent. Veuillez vous assurer que "
 "les cookies sont activés."
 
-#: link-library.php:1859
+#: link-library.php:1979
 msgid "Captcha answer was not provided."
 msgstr "La réponse à la question de validation n'a pas été envoyée."
 
-#: link-library.php:1861
+#: link-library.php:1981
 msgid "Captcha answer is incorrect"
 msgstr "La réponse à la question de validation incorrecte"
 
-#: link-library.php:1863
+#: link-library.php:1983
 msgid "User Category was not provided correctly. Link insertion failed."
 msgstr ""
 "La catégorie spécifiée par l'utilisateur n'a pas été correctement saisie. "
 "L'ajout du lien à échoué."
 
-#: link-library.php:1872
+#: link-library.php:1992
 msgid "Error: Link does not have an address."
 msgstr "Erreur: Le lien n'a pas d'adresse spécifiée."
 
-#: link-library.php:1874
+#: link-library.php:1994
 msgid "Error: Link already exists."
 msgstr "Erreur: Ce lien existe déjà"
 
-#: link-library.php:1944
+#: link-library.php:2064
 msgid "Link category"
 msgstr "Catégorie du lien"
 
-#: link-library.php:1974
+#: link-library.php:2094
 msgid "Link description"
 msgstr "Description du lien"
 
-#: link-library.php:1980
+#: link-library.php:2100
 msgid "Large description"
 msgstr "Grande Description du lien"
 
-#: link-library.php:1986
+#: link-library.php:2106
 msgid "Link notes"
 msgstr "Notes du lien"
 
-#: link-library.php:2049
+#: link-library.php:2169
 msgid "Enter code from above image"
 msgstr "Entrer le code de l'image ci-dessus"
 
-#: link-library.php:2060
+#: link-library.php:2180
 msgid "Add link"
 msgstr "Ajouter un lien"
 
-#: link-library.php:2450
+#: link-library.php:2570
 msgid "Could not update link in the database"
 msgstr "Le lien n'a pas pu être mis à jour dans la base de données"
 
-#: link-library.php:2457
+#: link-library.php:2577
 msgid "Could not insert link into the database"
 msgstr "Le lien n'a pas pu être inséré dans la base de données"
 

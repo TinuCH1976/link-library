@@ -59,6 +59,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.4 =
+* Updated french translation
+* Added missing translation strings
+* Fixed problem with reciprocal link checker and rss feed if links_recently_updated_time variable not set
+
 = 5.8.6.3 =
 * Fixed fatal error on ll_reset_options
 * Added space between track_this_link and featured classes in Link Library output

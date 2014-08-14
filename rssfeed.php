@@ -37,8 +37,7 @@ function link_library_generate_rss_feed () {
         null // Skip Hours
     );
 
-    $linkquery = "SELECT distinct *, UNIX_TIMESTAMP(l.link_updated) as link_date, ";
-    $linkquery .= "IF (DATE_ADD(l.link_updated, INTERVAL " . get_option('links_recently_updated_time') . " MINUTE) >= NOW(), 1,0) as recently_updated ";
+    $linkquery = "SELECT distinct *, UNIX_TIMESTAMP(l.link_updated) as link_date ";
     $linkquery .= "FROM " . $wpdb->prefix . "terms t ";
     $linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
     $linkquery .= "LEFT JOIN " . $wpdb->prefix . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
