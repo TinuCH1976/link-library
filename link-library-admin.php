@@ -3142,7 +3142,7 @@ class link_library_plugin_admin {
 			<td><?php _e('RSS Feed Description', 'link-library'); ?></td><td colspan=3><input type="text" id="rssfeeddescription" name="rssfeeddescription" size="80" value="<?php echo strval(esc_html(stripslashes($options['rssfeeddescription']))); ?>"/></td>
 		</tr>
 		<tr>
-			<td><?php _e('RSS Feed Web Address (default /linkrss/1)', 'link-library'); ?></td><td colspan=3><input type="text" id="rssfeedaddress" name="rssfeedaddress" size="80" value="<?php echo strval(esc_html(stripslashes($options['rssfeedaddress']))); ?>"/></td>
+			<td><?php _e('RSS Feed Web Address (default yoursite.com?link_library_rss_feed=1&settingset=1 )', 'link-library'); ?></td><td colspan=3><input type="text" id="rssfeedaddress" name="rssfeedaddress" size="80" value="<?php echo strval(esc_html(stripslashes($options['rssfeedaddress']))); ?>"/></td>
 		</tr>
 		</table>
 
