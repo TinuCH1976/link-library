@@ -44,14 +44,15 @@ class link_library_plugin_admin {
     }
 
     function ll_link_category_new_fields( $tag ) {
+
+	    $caturl = '';
+
         if ( is_object( $tag ) ) {
             $mode = "edit";
+	        $caturl = get_metadata( 'linkcategory', $tag->term_id, 'linkcaturl', true );
         } else {
             $mode = 'new';
         }
-
-        $caturl = '';
-        $caturl = get_metadata( 'linkcategory', $tag->term_id, 'linkcaturl', true );
 
         ?>
 
@@ -320,6 +321,7 @@ class link_library_plugin_admin {
         $options['popup_width'] = 300;
         $options['popup_height'] = 400;
         $options['nocatonstartup'] = false;
+        $options['linktitlecontent'] = 'linkname';
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		update_option($settingsname, $options);
@@ -864,6 +866,7 @@ class link_library_plugin_admin {
 
 			if (isset($_GET['messages']))
 			{
+				$categoryid = '';
 				$messagelist = explode(",", $_GET['messages']);
 
 				foreach ($messagelist as $message)
@@ -940,21 +943,20 @@ class link_library_plugin_admin {
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet updated', 'link-library') . ".</strong></p></div>";
 			elseif (isset( $_GET['message'] ) && $_GET['message'] == '2')
 				echo "<div id='message' class='updated fade'><p><strong>" . __('Stylesheet reset to original state', 'link-library') . ".</strong></p></div>";			
-		}
-		elseif ($_GET['page'] == 'link-library-reciprocal')
-		{
+		} elseif ( $_GET['page'] == 'link-library-reciprocal' ) {
 			$formvalue = 'save_link_library_reciprocal';
 			$pagetitle = '';
 			
-			if (isset( $_GET['message'] ) && $_GET['message'] == '1')
-				echo "<div id='message' class='updated fade'><p><strong>" . __('Settings updated', 'link-library') . ".</strong></p></div>";
-			elseif (isset( $_GET['message'] ) && $_GET['message'] == '2')
-			{
+			if ( isset( $_GET['message'] ) && $_GET['message'] == '1' ) {
+                echo "<div id='message' class='updated fade'><p><strong>" . __('Settings updated', 'link-library') . ".</strong></p></div>";
+            } elseif ( isset( $_GET['message'] ) && $_GET['message'] == '2' ) {
 				echo "<div id='message' class='updated fade'><p>";
-				echo $this->ReciprocalLinkChecker($genoptions['recipcheckaddress'], $genoptions['recipcheckdelete403']);
+				echo $this->ReciprocalLinkChecker( $genoptions['recipcheckaddress'], $genoptions['recipcheckdelete403'] );
 				echo "</p></div>";
 			}
-		}		
+		} elseif ( $_GET['page'] == 'link-library-faq' ) {
+            $formvalue = 'save_link_library_faq';
+        }
 
 		$data = array();
 		$data['settings'] = $settings;
@@ -1152,7 +1154,7 @@ class link_library_plugin_admin {
                         $headerrow[] = '"' . $key . '"';
                     }
 
-                    $headerdata .= join(',', $headerrow)."\n";
+                    $headerdata = join(',', $headerrow)."\n";
                     fwrite($fh, $headerdata);
 
                     foreach ( $linkitems as $linkitem ) {
@@ -1292,7 +1294,7 @@ class link_library_plugin_admin {
 					$headerrow[] = '"' . $key . '"';
 				}
 
-				$headerdata .= join(',', $headerrow)."\n";
+				$headerdata = join(',', $headerrow)."\n";
 				fwrite($fh, $headerdata);
 
 				$datarow = array();
@@ -1302,7 +1304,7 @@ class link_library_plugin_admin {
 					$datarow[] = '"' . $option . '"';
 				}
 
-				$data .= join(',', $datarow)."\n";
+				$data = join(',', $datarow)."\n";
 				fwrite($fh, $data);
 
 				fclose($fh);
@@ -1773,6 +1775,7 @@ class link_library_plugin_admin {
         <li>[link-library tableoverride=0]</li>
 
         <p>Set to 0 or 1 to display links in an unordered list or a table.</p>
+        </ul>
     <?php }
 
 	function general_meta_box($data) {
@@ -2150,7 +2153,7 @@ class link_library_plugin_admin {
                 $linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
                 $linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
 
-                $linkcatquery .= " ORDER by t.name " . $direction;
+                $linkcatquery .= " ORDER by t.name " . $settings['direction'];
 
                 $catnames = $wpdb->get_results($linkcatquery);
 
@@ -3601,7 +3604,7 @@ class link_library_plugin_admin {
                     file_frame = wp.media.frames.file_frame = wp.media({
                         title: jQuery( this ).data( 'uploader_title' ),
                         button: {
-                            text: jQuery( this ).data( 'uploader_button_text' ),
+                            text: jQuery( this ).data( 'uploader_button_text' )
                         },
                         multiple: false  // Set to true to allow multiple files to be selected
                     });

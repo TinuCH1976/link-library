@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.6.5
+Version: 5.8.6.6
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -2447,6 +2447,10 @@ class link_library_plugin {
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
 	
 	function link_library_cats_func($atts) {
+		$categorylistoverride = '';
+		$excludecategoryoverride = '';
+		$settings = '';
+
 		extract(shortcode_atts(array(
 			'categorylistoverride' => '',
 			'excludecategoryoverride' => '',
@@ -2486,6 +2490,8 @@ class link_library_plugin {
 	/********************************************** Function to Process [link-library-search] shortcode *********************************************/
 
 	function link_library_search_func($atts) {
+		$settings = '';
+
 		extract(shortcode_atts(array(
 			'settings' => ''
 		), $atts));
@@ -2505,6 +2511,8 @@ class link_library_plugin {
 
 	function link_library_insert_link( $linkdata, $wp_error = false, $addlinknoaddress = false) {
 		global $wpdb;
+		$link_name = '';
+		$link_url = '';
 
 		$defaults = array( 'link_id' => 0, 'link_name' => '', 'link_url' => '', 'link_rating' => 0 );
 
@@ -2594,6 +2602,10 @@ class link_library_plugin {
 	}
 
 	function link_library_addlink_func($atts, $content, $code) {
+		$settings = '';
+		$categorylistoverride = '';
+		$excludecategoryoverride = '';
+
 		extract(shortcode_atts(array(
 			'settings' => '',
 			'categorylistoverride' => '',
@@ -2601,12 +2613,12 @@ class link_library_plugin {
 		), $atts));
                 
 		if ($settings == '')
-                    $settings = 1;
+			$settings = 1;
 
-                $settingsname = 'LinkLibraryPP' . $settings;
-                $options = get_option($settingsname);
+		$settingsname = 'LinkLibraryPP' . $settings;
+        $options = get_option($settingsname);
                 
-                $genoptions = get_option('LinkLibraryGeneral');
+        $genoptions = get_option('LinkLibraryGeneral');
 				
 		if ($categorylistoverride != '')
 			$selectedcategorylist = $categorylistoverride;
@@ -2638,6 +2650,14 @@ class link_library_plugin {
 	/********************************************** Function to Process [link-library] shortcode *********************************************/
 
 	function link_library_func($atts) {
+		$settings = '';
+		$notesoverride = '';
+		$descoverride = '';
+		$rssoverride = '';
+		$categorylistoverride = '';
+		$excludecategoryoverride = '';
+		$tableoverride = '';
+
 		extract(shortcode_atts(array(
 			'categorylistoverride' => '',
 			'excludecategoryoverride' => '',

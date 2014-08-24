@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.6 =
+* Corrected PHP warnings
+
 = 5.8.6.5 =
 * Updated information on RSS feed link
 
