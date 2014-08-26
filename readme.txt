@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.7 =
+* Fixed issue with link category list not appearing correctly when selecting in Multi-select list mode
+* Added warning for users who do not have any link categories in their install
+
 = 5.8.6.6 =
 * Corrected PHP warnings
 

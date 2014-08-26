@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.6.6
+Version: 5.8.6.7
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -168,22 +168,21 @@ class link_library_plugin {
 				link_no_follow VARCHAR(1) NULL,
 				link_featured VARCHAR(1) NULL,
 				link_manual_updated VARCHAR(1) NULL,
-				UNIQUE KEY  link_id (link_id)
+				UNIQUE KEY link_id (link_id)
 				);";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        dbDelta($creationquery);
+        dbDelta( $creationquery );
 
         $wpdb->linkcategorymeta = $this->db_prefix().'linkcategorymeta';
 
         $meta_creation_query =
             'CREATE TABLE ' . $wpdb->linkcategorymeta . ' (
-        `meta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-        `linkcategory_id` bigint(20) unsigned NOT NULL DEFAULT "0",
-        `meta_key` varchar(255) DEFAULT NULL,
-        `meta_value` longtext,
-        PRIMARY KEY (`meta_id`),
-        KEY `meta_key` (`meta_key`)
+        meta_id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+        linkcategory_id bigint(20) unsigned NOT NULL DEFAULT "0",
+        meta_key varchar(255) DEFAULT NULL,
+        meta_value longtext,
+        UNIQUE KEY (meta_id)
         );';
 
         dbDelta ( $meta_creation_query );

@@ -41,6 +41,20 @@ class link_library_plugin_admin {
 
         add_action( 'edited_link_category', array( $this, 'll_save_link_category_new_fields'), 10, 2) ;
         add_action( 'created_link_category', array( $this, 'll_save_link_category_new_fields'), 10, 2 );
+
+        global $wpdb;
+        $linkcatquery = "SELECT distinct ";
+        $linkcatquery .= "t.name, t.term_id ";
+        $linkcatquery .= "FROM " . $this->db_prefix() . "terms t LEFT JOIN " . $this->db_prefix(). "term_taxonomy tt ON (t.term_id = tt.term_id)";
+        $linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
+        $linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
+
+        $catnames = $wpdb->get_results($linkcatquery);
+
+        if ( empty( $catnames ) ) {
+            add_action('admin_notices', array( $this, 'll_missing_categories') );
+        }
+
     }
 
     function ll_link_category_new_fields( $tag ) {
@@ -575,6 +589,11 @@ class link_library_plugin_admin {
     function ll_thumbshots_warning() {
         echo "
         <div id='ll-warning' class='updated fade'><p><strong>". __('Link Library: Missing Thumbshots API Key', 'link-library') ."</strong></p> <p>". __('One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com API Key. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library'). " <a href='" . add_query_arg( array( 'page' => 'link-library'), admin_url('admin.php') ) . "'>". __('Jump to Link Library admin', 'link-library') . "</a></p></div>";
+    }
+
+    function ll_missing_categories() {
+        echo "
+        <div id='ll-warning' class='updated fade'><p><strong>". __('Link Library: No Link Categories on your site', 'link-library') ."</strong></p> <p>". __('There are currently no link categories defined in your WordPress site. Link Library will not work correctly without categories. Please create at least one before trying to use Link Library and make sure each link is assigned a category.', 'link-library') . "</p></div>";
     }
 	
 	function filter_mce_buttons( $buttons ) {
@@ -2153,7 +2172,7 @@ class link_library_plugin_admin {
                 $linkcatquery .= " LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
                 $linkcatquery .= "WHERE tt.taxonomy = 'link_category'";
 
-                $linkcatquery .= " ORDER by t.name " . $settings['direction'];
+                $linkcatquery .= " ORDER by t.name " . $options['direction'];
 
                 $catnames = $wpdb->get_results($linkcatquery);
 
@@ -2169,6 +2188,8 @@ class link_library_plugin_admin {
 
                         <?php } ?>
                         </select>
+                    <?php } else { ?>
+                        No link categories! Create some!
                     <?php } ?>
                 </td>
             <?php } ?>
@@ -2194,6 +2215,8 @@ class link_library_plugin_admin {
 
                             <?php } ?>
                         </select>
+                    <?php } else { ?>
+                        No link categories! Create some!
                     <?php } ?>
                 </td>
             <?php } ?>
