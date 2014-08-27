@@ -1240,11 +1240,11 @@ class link_library_plugin_admin {
 						{
                             if ( !empty( $data[5] ) ) {
                                 $existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
-                                $existingcatquery .= "WHERE t.name = '" . $data[5] . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+                                $existingcatquery .= "WHERE t.name = '" . esc_html( $data[5] ) . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
                                 $existingcat = $wpdb->get_var($existingcatquery);
 
                                 if ( !$existingcat ) {
-                                    $newlinkcatdata = array("cat_name" => $data[5], "category_description" => "", "category_nicename" => $wpdb->escape($data[5]));
+                                    $newlinkcatdata = array("cat_name" => $data[5], "category_description" => "", "category_nicename" => esc_sql($data[5]));
                                     $newlinkcat = wp_insert_category($newlinkcatdata);
 
                                     $newcatarray = array("term_id" => $newlinkcat);

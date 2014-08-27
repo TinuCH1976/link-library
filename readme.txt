@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.9 =
+* Fixed problem with importer when category name contains special characters
+
 = 5.8.6.8 =
 * Added options to specify custom images for expand and collapse icons
 
