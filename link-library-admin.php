@@ -697,7 +697,7 @@ class link_library_plugin_admin {
 	function on_load_page() {
 	
 		global $pagehooktop, $pagehookmoderate, $pagehooksettingssets, $pagehookstylesheet, $pagehookreciprocal, $pagehookfaq;
-		
+
 		//ensure, that the needed javascripts been loaded to allow drag/drop, expand/collapse and hide/show of boxes
 		wp_enqueue_script('tiptip', plugins_url( '/tiptip/jquery.tipTip.minified.js' , __FILE__ ), "jQuery", "1.0rc3");
 		wp_enqueue_style('tiptipstyle', plugins_url( '/tiptip/tipTip.css' , __FILE__ ));
@@ -712,6 +712,7 @@ class link_library_plugin_admin {
 		//add several metaboxes now, all metaboxes registered during load page can be switched off/on at "Screen Options" automatically, nothing special to do therefore
         add_meta_box('linklibrary_general_save_meta_box_top', __('Save', 'link-library'), array($this, 'general_save_meta_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_meta_box', __('General Settings', 'link-library'), array($this, 'general_meta_box'), $pagehooktop, 'normal', 'high');
+        add_meta_box('linklibrary_general_images_box', __('Image Configuration', 'link-library'), array($this, 'general_image_meta_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_bookmarklet_meta_box', __('Bookmarklet', 'link-library'), array($this, 'general_meta_bookmarklet_box'), $pagehooktop, 'normal', 'high');
 		add_meta_box('linklibrary_general_moderation_meta_box', __('General Moderation Options', 'link-library'), array($this, 'general_moderation_meta_box'), $pagehooktop, 'normal', 'high');
 
@@ -1121,7 +1122,7 @@ class link_library_plugin_admin {
 
 		foreach (array('numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 						'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
-						'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath', 'catselectmethod') as $option_name) {
+						'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath', 'catselectmethod', 'expandiconpath', 'collapseiconpath' ) as $option_name) {
 			if (isset($_POST[$option_name])) {
 				$genoptions[$option_name] = $_POST[$option_name];
 			}
@@ -1866,6 +1867,22 @@ class link_library_plugin_admin {
             <?php } ?>
 			</table>
 		<?php }
+
+    function general_image_meta_box( $data ) {
+        $genoptions = $data['genoptions'];
+        ?>
+            <table>
+                <tr>
+                    <td class='lltooltip' title='<?php _e('Custom full URL for expand icon. Uses default image if left empty.', 'link-library'); ?>'><?php _e('Expand Icon Image', 'link-library'); ?></td>
+                    <td colspan='4' class='lltooltip' title='<?php _e('Custom full URL for expand icon. Uses default image if left empty.', 'link-library'); ?>'><input type="text" id="expandiconpath" name="expandiconpath" style="width:100%" value="<?php if ( isset( $genoptions['expandiconpath'] ) ) echo $genoptions['expandiconpath']; ?>"/></td>
+                </tr>
+                <tr>
+                    <td class='lltooltip' title='<?php _e('Custom full URL for collapse icon. Uses default image if left empty.', 'link-library'); ?>'><?php _e('Collapse Icon Image', 'link-library'); ?></td>
+                    <td colspan='4' class='lltooltip' title='<?php _e('Custom full URL for collapse icon. Uses default image if left empty.', 'link-library'); ?>'><input type="text" id="collapseiconpath" name="collapseiconpath" style="width:100%" value="<?php if ( isset( $genoptions['collapseiconpath'] ) ) echo $genoptions['collapseiconpath']; ?>"/></td>
+                </tr>
+            </table>
+
+    <?php }
 		
 	function general_meta_bookmarklet_box($data) {
 			$bookmarkletcode = 'javascript:void(linkmanpopup=window.open(\''.get_bloginfo('wpurl').'/wp-admin/link-add.php?action=popup&linkurl=\'+escape(location.href)+\'&name=\'+(document.title),\'LinkManager\',\'scrollbars=yes,width=900px,height=600px,left=15,top=15,status=yes,resizable=yes\'));linkmanpopup.focus();window.focus();linkmanpopup.focus();';

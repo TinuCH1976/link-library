@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.6.8 =
+* Added options to specify custom images for expand and collapse icons
+
 = 5.8.6.7 =
 * Fixed issue with link category list not appearing correctly when selecting in Multi-select list mode
 * Added warning for users who do not have any link categories in their install

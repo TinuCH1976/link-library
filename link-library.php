@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.6.7
+Version: 5.8.6.8
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -913,7 +913,7 @@ class link_library_plugin {
 									$beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '', $afterlinkhits = '', $emailcommand = '',
 									$sourceimage = '', $sourcename = '', $thumbshotscid = '', $maxlinks = '', $beforelinkrating = '', $afterlinkrating = '',
 									$showlargedescription = false, $beforelargedescription = '', $afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false,
-                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false, $showlinksonclick = false ) {
+                                    $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false, $showlinksonclick = false, $expandiconpath = '', $collapseiconpath = '' ) {
 
 		global $wpdb;
 		
@@ -1341,7 +1341,16 @@ class link_library_plugin {
 
                             if ( $showlinksonclick ) {
                                 $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
-                                $catlink .= '<img src="' . plugins_url( 'icons/expand-32.png', __FILE__ ) . '" />';
+                                $catlink .= '<img src="';
+
+                                if ( !empty( $expandiconpath ) ) {
+                                    $catlink .= $expandiconpath;
+                                } else {
+                                    $catlink .= plugins_url( 'icons/expand-32.png', __FILE__ );
+                                }
+
+                                $catlink .= '" />';
+
                                 $catlink .= '</span>';
                             }
 
@@ -1399,7 +1408,15 @@ class link_library_plugin {
 
                             if ( $showlinksonclick ) {
                                 $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
-                                $catlink .= '<img src="' . plugins_url( 'icons/expand-32.png', __FILE__ ) . '" />';
+                                $catlink .= '<img src="';
+
+                                if ( !empty( $expandiconpath ) ) {
+                                    $catlink .= $expandiconpath;
+                                } else {
+                                    $catlink .= plugins_url( 'icons/expand-32.png', __FILE__ );
+                                }
+
+                                $catlink .= '" />';
                                 $catlink .= '</span>';
                             }
 
@@ -1899,10 +1916,26 @@ class link_library_plugin {
             $output .= "target = '.' + jQuery(this).attr('id');\n";
             $output .= "if ( jQuery( target ).is(':visible') ) {\n";
             $output .= "jQuery(target).slideUp();\n";
-            $output .= "jQuery(this).children('img').attr('src', '" . plugins_url( 'icons/expand-32.png', __FILE__ ) . "');\n";
+            $output .= "jQuery(this).children('img').attr('src', '";
+
+            if ( !empty( $expandiconpath ) ) {
+                $output .= $expandiconpath;
+            } else {
+                $output .= plugins_url( 'icons/expand-32.png', __FILE__ );
+            }
+
+            $output .= "');\n";
             $output .= "} else {\n";
             $output .= "jQuery(target).slideDown();\n";
-            $output .= "jQuery(this).children('img').attr('src', '" . plugins_url( 'icons/collapse-32.png', __FILE__ ) . "');\n";
+            $output .= "jQuery(this).children('img').attr('src', '";
+
+            if ( !empty( $collapseiconpath ) ) {
+                $output .= $collapseiconpath;
+            } else {
+                $output .= plugins_url( 'icons/collapse-32.png', __FILE__ );
+            }
+
+            $output .= "');\n";
             $output .= "}\n";
             $output .= "});\n";
 			$output .= "});\n";
@@ -2388,7 +2421,7 @@ class link_library_plugin {
 									$beforetelephone = '', $aftertelephone = '', $telephonelabel = '', $beforeemail = '', $afteremail = '', $emaillabel = '', $beforelinkhits = '',
 									$afterlinkhits = '', $emailcommand = '', $sourceimage = 'primary', $sourcename = 'primary', $thumbshotscid = '',
 									$maxlinks = '', $beforelinkrating = '', $afterlinkrating = '', $showlargedescription = false, $beforelargedescription = '',
-									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false, $showlinksonclick = false ) {
+									$afterlargedescription = '', $featuredfirst = false, $shownameifnoimage = false, $enablelinkpopup = false, $popupwidth = 300, $popupheight = 400, $nocatonstartup = false, $linktitlecontent = 'linkname', $paginationposition = 'AFTER', $uselocalimagesoverthumbshots = false, $showlinksonclick = false, $expandiconpath = '', $collapseiconpath = '' ) {
 
 		if (strpos($order, 'AdminSettings') !== false)
 		{
@@ -2422,7 +2455,7 @@ class link_library_plugin {
 									  $options['sourcename'], $genoptions['thumbshotscid'], $options['maxlinks'], $options['beforelinkrating'],
 									  $options['afterlinkrating'], $options['showlargedescription'], $options['beforelargedescription'],
 									  $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'], $options['enable_link_popup'],
-                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'], $options['uselocalimagesoverthumbshots'], $options['showlinksonclick'] );
+                                      $options['popup_width'], $options['popup_height'], $options['nocatonstartup'], $options['linktitlecontent'], $options['paginationposition'], $options['uselocalimagesoverthumbshots'], $options['showlinksonclick'], $options['expandiconpath'], $options['collapseiconpath'] );
 		}
 		else
 			return $this->PrivateLinkLibrary($order, $hide_if_empty, $catanchor, $showdescription, $shownotes, $showrating,
@@ -2440,7 +2473,7 @@ class link_library_plugin {
 									$sourcetelephone, $showemail, $showlinkhits, $beforeweblink, $afterweblink, $weblinklabel, $beforetelephone, $aftertelephone,
 									$telephonelabel, $beforeemail, $afteremail, $emaillabel, $beforelinkhits, $afterlinkhits, $emailcommand, $sourceimage, $sourcename,
 									$thumbshotscid, $maxlinks, $beforelinkrating, $afterlinkrating, $showlargedescription, $beforelargedescription,
-									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition, $uselocalimagesoverthumbshots, $showlinksonclick );
+									$afterlargedescription, $featuredfirst, $shownameifnoimage, $enablelinkpopup, $popupwidth, $popupheight, $nocatonstartup, $linktitlecontent, $paginationposition, $uselocalimagesoverthumbshots, $showlinksonclick, $expandiconpath, $collapseiconpath );
 	}
 	
 	/********************************************** Function to Process [link-library-cats] shortcode *********************************************/
@@ -2753,7 +2786,7 @@ class link_library_plugin {
 									  $options['afterlinkhits'], $options['emailcommand'], $options['sourceimage'], $options['sourcename'], $genoptions['thumbshotscid'],
 									  $options['maxlinks'], $options['beforelinkrating'], $options['afterlinkrating'], $options['showlargedescription'],
 									  $options['beforelargedescription'], $options['afterlargedescription'], $options['featuredfirst'], $options['shownameifnoimage'],
-                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ), $options['uselocalimagesoverthumbshots'], $options['showlinksonclick'] );
+                                      ( isset($options['enable_link_popup']) ? $options['enable_link_popup'] : false ), ( isset($options['popup_width']) ? $options['popup_width'] : 300 ), ( isset( $options['popup_height'] ) ? $options['popup_height'] : 400 ), $options['nocatonstartup'], $options['linktitlecontent'], ( isset( $options['paginationposition'] ) ? $options['paginationposition'] : 'AFTER' ), $options['uselocalimagesoverthumbshots'], $options['showlinksonclick'], ( isset( $genoptions['expandiconpath'] ) ? $genoptions['expandiconpath'] : '' ), ( isset( $genoptions['collapseiconpath'] ) ? $genoptions['collapseiconpath'] : '' ) );
 			
 		return $linklibraryoutput;
 	}
