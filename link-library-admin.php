@@ -3537,6 +3537,8 @@ class link_library_plugin_admin {
 			$originaldata = array();
 		}
 	?>
+
+        <input type="hidden" name="form_submitted" value="true">
 		<table>
 			<tr>
 				<td style='width: 200px'><?php _e('Featured Link', 'link-library'); ?></td>
@@ -3771,96 +3773,98 @@ class link_library_plugin_admin {
 	
 	/******************************* Store extra field data when link is saved *******************************************/
 	function add_link_field($link_id) {
-		global $wpdb;
-		
-		$uploads = wp_upload_dir();
-        
-        $genoptions = get_option('LinkLibraryGeneral');
+        if ( isset( $_POST['form_submitted'] ) && $_POST['form_submitted'] ) {
+            global $wpdb;
 
-		if(array_key_exists('linkimageupload', $_FILES))
-		{
-			if (!file_exists($uploads['basedir'] . '/link-library-images'))
-				mkdir($uploads['basedir'] . '/link-library-images');
-			$target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
-            
-            if ( $genoptions['imagefilepath'] == 'absolute' || empty( $genoptions['imagefilepath'] ) ) {
-                $file_path = $uploads['baseurl'] . "/link-library-images/" . $link_id . ".jpg";
-            } elseif ( $genoptions['imagefilepath'] == 'relative' ) {
-                $parseaddress = parse_url( $uploads['baseurl'] );
-                $file_path = $parseaddress['path'] . "/link-library-images/" . $link_id . ".jpg";
+            $uploads = wp_upload_dir();
+
+            $genoptions = get_option('LinkLibraryGeneral');
+
+            if(array_key_exists('linkimageupload', $_FILES))
+            {
+                if (!file_exists($uploads['basedir'] . '/link-library-images'))
+                    mkdir($uploads['basedir'] . '/link-library-images');
+                $target_path = $uploads['basedir'] . "/link-library-images/" . $link_id . ".jpg";
+
+                if ( $genoptions['imagefilepath'] == 'absolute' || empty( $genoptions['imagefilepath'] ) ) {
+                    $file_path = $uploads['baseurl'] . "/link-library-images/" . $link_id . ".jpg";
+                } elseif ( $genoptions['imagefilepath'] == 'relative' ) {
+                    $parseaddress = parse_url( $uploads['baseurl'] );
+                    $file_path = $parseaddress['path'] . "/link-library-images/" . $link_id . ".jpg";
+                }
+
+                if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
+                    $withimage = true;
+                else
+                    $withimage = false;
             }
-            
-			if (move_uploaded_file($_FILES['linkimageupload']['tmp_name'], $target_path))
-				$withimage = true;
-			else
-				$withimage = false;
-		}
-		else
-			$withimage = false;
-			
-		$tablename = $this->db_prefix() . "links";
-		
-		if (isset($_POST['ll_link_updated']))
-			$link_updated = $_POST['ll_link_updated'];
-		elseif (!isset($_POST['ll_link_updated']))
-			$link_updated = date("Y-m-d H:i", current_time( 'timestamp' ) );
-		
-		if ($withimage == true)
-			$wpdb->update( $tablename, array( 'link_updated' => $link_updated, 'link_image' => $file_path ), array( 'link_id' => $link_id ));
-		else
-			$wpdb->update( $tablename, array( 'link_updated' => $link_updated ), array( 'link_id' => $link_id ));
-				
-		$extradatatable = $this->db_prefix() . "links_extrainfo";
-		
-		$linkextradataquery = "select * from " . $this->db_prefix() . "links_extrainfo where link_id = " . $link_id;
-		$extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
-		
-		global $current_user;
+            else
+                $withimage = false;
 
-		get_currentuserinfo();
+            $tablename = $this->db_prefix() . "links";
 
-		$username = $current_user->user_login;
-		
-		$updatearray = array();
-		
-		if (isset($_POST['ll_updated_manual']))
-			$updatearray['link_manual_updated'] = 'Y';
-		else
-			$updatearray['link_manual_updated'] = 'N';
-		
-		if (isset($_POST['ll_secondwebaddr']))
-			$updatearray['link_second_url'] = $_POST['ll_secondwebaddr'];
-			
-		if (isset($_POST['ll_telephone']))
-			$updatearray['link_telephone'] = $_POST['ll_telephone'];
-			
-		if (isset($_POST['ll_email']))
-			$updatearray['link_email'] = $_POST['ll_email'];
-			
-		if (isset($_POST['ll_reciprocal']))
-			$updatearray['link_reciprocal'] = $_POST['ll_reciprocal'];
-		
-		if (isset($_POST['link_textfield']))
-			$updatearray['link_textfield'] = esc_html($_POST['link_textfield']);
-			
-		if ( isset($_POST['link_no_follow']) && $_POST['link_no_follow'] == 'on' )
-            $updatearray['link_no_follow'] = true;
-        else
-            $updatearray['link_no_follow'] = false;
-			
-		if ( isset($_POST['link_featured']) && $_POST['link_featured'] == 'on' )
-			$updatearray['link_featured'] = true;
-        else
-            $updatearray['link_featured'] = false;
+            if (isset($_POST['ll_link_updated']))
+                $link_updated = $_POST['ll_link_updated'];
+            elseif (!isset($_POST['ll_link_updated']))
+                $link_updated = date("Y-m-d H:i", current_time( 'timestamp' ) );
 
-		if ($extradata)
-			$wpdb->update( $extradatatable, $updatearray, array( 'link_id' => $link_id ));
-		else
-		{
-			$updatearray['link_id'] = $link_id;
-			$updatearray['link_submitter'] = $username;
-			$wpdb->insert( $extradatatable, $updatearray );
-		}
+            if ($withimage == true)
+                $wpdb->update( $tablename, array( 'link_updated' => $link_updated, 'link_image' => $file_path ), array( 'link_id' => $link_id ));
+            else
+                $wpdb->update( $tablename, array( 'link_updated' => $link_updated ), array( 'link_id' => $link_id ));
+
+            $extradatatable = $this->db_prefix() . "links_extrainfo";
+
+            $linkextradataquery = "select * from " . $this->db_prefix() . "links_extrainfo where link_id = " . $link_id;
+            $extradata = $wpdb->get_row($linkextradataquery, ARRAY_A);
+
+            global $current_user;
+
+            get_currentuserinfo();
+
+            $username = $current_user->user_login;
+
+            $updatearray = array();
+
+            if (isset($_POST['ll_updated_manual']))
+                $updatearray['link_manual_updated'] = 'Y';
+            else
+                $updatearray['link_manual_updated'] = 'N';
+
+            if (isset($_POST['ll_secondwebaddr']))
+                $updatearray['link_second_url'] = $_POST['ll_secondwebaddr'];
+
+            if (isset($_POST['ll_telephone']))
+                $updatearray['link_telephone'] = $_POST['ll_telephone'];
+
+            if (isset($_POST['ll_email']))
+                $updatearray['link_email'] = $_POST['ll_email'];
+
+            if (isset($_POST['ll_reciprocal']))
+                $updatearray['link_reciprocal'] = $_POST['ll_reciprocal'];
+
+            if (isset($_POST['link_textfield']))
+                $updatearray['link_textfield'] = esc_html($_POST['link_textfield']);
+
+            if ( isset($_POST['link_no_follow']) && $_POST['link_no_follow'] == 'on' )
+                $updatearray['link_no_follow'] = true;
+            else
+                $updatearray['link_no_follow'] = false;
+
+            if ( isset($_POST['link_featured']) && $_POST['link_featured'] == 'on' )
+                $updatearray['link_featured'] = true;
+            else
+                $updatearray['link_featured'] = false;
+
+            if ($extradata)
+                $wpdb->update( $extradatatable, $updatearray, array( 'link_id' => $link_id ));
+            else
+            {
+                $updatearray['link_id'] = $link_id;
+                $updatearray['link_submitter'] = $username;
+                $wpdb->insert( $extradatatable, $updatearray );
+            }
+        }
 	}
 
 	/************************************************ Delete extra field data when link is deleted ***********************************/
