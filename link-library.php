@@ -2543,8 +2543,6 @@ class link_library_plugin {
 
 	function link_library_insert_link( $linkdata, $wp_error = false, $addlinknoaddress = false) {
 		global $wpdb;
-		$link_name = '';
-		$link_url = '';
 
 		$defaults = array( 'link_id' => 0, 'link_name' => '', 'link_url' => '', 'link_rating' => 0 );
 
@@ -2558,8 +2556,8 @@ class link_library_plugin {
 		if ( !empty( $link_id ) )
 			$update = true;
 
-		if ( trim( $link_name ) == '' ) {
-			if ( trim( $link_url ) != '' ) {
+		if ( isset( $link_name ) && trim( $link_name ) == '' ) {
+			if ( isset( $link_url ) && trim( $link_url ) != '' ) {
 				$link_name = $link_url;
 			} else {
 				return 0;

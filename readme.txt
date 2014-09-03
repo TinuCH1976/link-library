@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.7.1 =
+* Corrected problem with user link submissions not getting stored
+
 = 5.8.7 =
 * Fixed problem with link losing some data such as featured flag when generating favicons for all links
 
