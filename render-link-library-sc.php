@@ -585,7 +585,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
                         if ( 'left' == $catdescpos ) {
                             if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . addhttp( $caturl ) . '" ';
+                                $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
 
                                 if ( !empty( $linktarget ) )
                                     $catlink .= ' target="' . $linktarget . '"';
@@ -625,7 +625,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
                         if ( 'right' == $catdescpos || empty( $catdescpos ) ) {
                             if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . addhttp( $caturl ). '" ';
+                                $catlink .= '<a href="' . link_library_add_http( $caturl ). '" ';
 
                                 if ( !empty( $linktarget ) )
                                     $catlink .= ' target="' . $linktarget . '"';
@@ -648,7 +648,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
                         if ( 'left' == $catdescpos ) {
                             if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . addhttp( $caturl ) . '" ';
+                                $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
 
                                 if ( !empty( $linktarget ) )
                                     $catlink .= ' target="' . $linktarget . '"';

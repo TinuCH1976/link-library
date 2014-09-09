@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.8.1 =
+* Fixed error with missing function addhttp
+
 = 5.8.8 =
 * Re-arranged Link Library code only to load necessary elements depending on the shortcodes that are actually used to increase performance
 * If you run into any major issues and need to roll back to previous version until I address them. [Download here](http://downloads.wordpress.org/plugin/link-library.5.8.7.1.zip), then report issue in [support forum](http://wordpress.org/support/plugin/link-library)
