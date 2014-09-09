@@ -311,6 +311,3 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
     wp_redirect( $redirectaddress );
     exit;
 }
-
-
-?>

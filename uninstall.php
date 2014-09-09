@@ -33,5 +33,3 @@ $wpdb->links_extrainfo = db_prefix().'links_extrainfo';
 $deletionquery = 'DROP TABLE IF EXISTS ' . $wpdb->links_extrainfo;
 
 $wpdb->get_results( $deletionquery );
-
-?>

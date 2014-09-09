@@ -15,5 +15,3 @@ function link_library_ajax_image_generator ( $my_link_library_plugin_admin ) {
     echo $my_link_library_plugin_admin->ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath, $filepathtype );
     exit;
 }
-
-?>

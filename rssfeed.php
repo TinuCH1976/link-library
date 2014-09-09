@@ -82,5 +82,3 @@ function link_library_generate_rss_feed () {
     echo $rss->getFeed();
     exit;
 }
-	
-?>

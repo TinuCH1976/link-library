@@ -235,6 +235,3 @@ function link_library_popup_content( $my_link_library_plugin ) {
     exit;
 }
 
-    
-    ?>
-
