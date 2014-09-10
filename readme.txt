@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.8.3 =
+* Fixed issue with creating new libraries beyond the initial first library
+
 = 5.8.8.2 =
 * Fixed issue with default category is displayed when only showing one category at a time
 

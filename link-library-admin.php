@@ -505,12 +505,7 @@ class link_library_plugin_admin {
 		// If general options don't exist, create them
 		if ($genoptions == FALSE)
 		{
-			$genoptions = $this->ll_reset_gen_settings( 'return_and_set' );
-		}
-		elseif ($genoptions['schemaversion'] == '' || floatval($genoptions['schemaversion']) < "4.6") // If they exist, make sure they are up to date
-		{
-			$this->ll_install();
-			$genoptions = get_option('LinkLibraryGeneral');
+			$genoptions = ll_reset_gen_settings( 'return_and_set' );
 		}
         
         $settingsname = 'LinkLibraryPP' . $settings;
@@ -518,7 +513,7 @@ class link_library_plugin_admin {
 
         if ( empty($options) )
         {
-            $options = $this->ll_reset_options($settings, 'list', 'return_and_set');
+            $options = ll_reset_options($settings, 'list', 'return_and_set');
         }
 
 		if ( isset($_GET['genthumbs']) || isset($_GET['genfavicons']) || isset($_GET['genthumbsingle']) || isset($_GET['genfaviconsingle'])) {
@@ -606,10 +601,10 @@ class link_library_plugin_admin {
 			$formvalue = 'save_link_library_settingssets';
 
 			if ( isset($_GET['reset']))
-				$options = $this->ll_reset_options($settings, 'list', 'return_and_set');
+				$options = ll_reset_options($settings, 'list', 'return_and_set');
 
 			if ( isset($_GET['resettable']) )
-				$options = $this->ll_reset_options($settings, 'table', 'return_and_set');
+				$options = ll_reset_options($settings, 'table', 'return_and_set');
 
 			if ( isset($_GET['copy']))
 			{
@@ -3260,11 +3255,6 @@ class link_library_plugin_admin {
 		global $wpdb;
 
 		$genoptions = get_option('LinkLibraryGeneral');
-
-		if (floatval($genoptions['schemaversion']) < "4.6")
-		{
-			$this->ll_install();
-		}
 
 		if (isset( $link->link_id ) && $link->link_id != '')
 		{
