@@ -200,10 +200,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
         $categoryname = $wp_query->query_vars['cat_name'];
         $AJAXcatid = $categoryname;
-    } elseif ( $showonecatonly && isset( $AJAXcatid ) && empty( $AJAXcatid ) && !empty( $defaultsinglecat ) && ( !isset( $_GET['searchll'] ) || ( isset( $_GET['searchll'] ) && empty( $_GET['searchll'] ) ) ) ) {
+    } elseif ( $showonecatonly && ( !isset( $AJAXcatid ) || empty( $AJAXcatid ) ) && !empty( $defaultsinglecat ) && ( !isset( $_GET['searchll'] ) || ( isset( $_GET['searchll'] ) && empty( $_GET['searchll'] ) ) ) ) {
         $categorylist = $defaultsinglecat;
         $AJAXcatid = $categorylist;
-    } elseif ( $showonecatonly && isset( $AJAXcatid ) && empty( $AJAXcatid ) && empty( $defaultsinglecat ) && empty( $_GET['searchll'] ) ) {
+    } elseif ( $showonecatonly && ( !isset( $AJAXcatid ) || empty( $AJAXcatid ) ) && empty( $defaultsinglecat ) && empty( $_GET['searchll'] ) ) {
         $catquery = 'SELECT distinct t.name, t.term_id ';
         $catquery .= 'FROM ' . $LLPluginClass->db_prefix() . 'terms t ';
         $catquery .= 'LEFT JOIN ' . $LLPluginClass->db_prefix() . 'term_taxonomy tt ON (t.term_id = tt.term_id) ';
