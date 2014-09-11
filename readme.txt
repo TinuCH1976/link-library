@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.8.4 =
+* Fixed issue with pagination in AJAX mode
+
 = 5.8.8.3 =
 * Fixed issue with creating new libraries beyond the initial first library
 

@@ -51,7 +51,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 $paginationoutput .= '<a href="' . $targetaddress . '">' . __('Previous', 'link-library') . '</a>';
             } elseif ( $showonecatonly ) {
                 if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
-                    $paginationoutput .= '<a href="#" onClick="showLinkCat("' . $AJAXcatid . '", "' . $settings . '", ' . $previouspagenumber . ');return false;" >' . __('Previous', 'link-library') . '</a>';
+                    $paginationoutput .= "<a href=\"#\" onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . '</a>';
                 } elseif ( 'HTMLGET' == $showonecatmode ) {
                     $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $previouspagenumber, 'cat_id' => $AJAXcatid );
                     $argumentarray = array_merge( $argumentarray, $incomingget );
@@ -82,7 +82,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                     $paginationoutput .= '<a href="' . $targetaddress . '">' . $counter . '</a>';
                 } elseif ( $showonecatonly ) {
                     if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
-                        $paginationoutput .= '<a href="#" onClick="showLinkCat("' . $AJAXcatid . '", "' . $settings . '", ' . $counter . ');return false;" >' . $counter . '</a>';
+                        $paginationoutput .= "<a href=\"#\" onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . '</a>';
                     } elseif ( 'HTMLGET' == $showonecatmode ) {
                         $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'cat_id' => $AJAXcatid );
                         $argumentarray = array_merge( $argumentarray, $incomingget );
@@ -95,14 +95,15 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 $paginationoutput .= '</a></span>';
             }
 
-            $paginationoutput .= '...';
             $dotabove = false;
             $dotbelow = false;
 
             if ( $counter >= 2 && $counter < $pagenumber - 2 && false == $dotbelow ) {
                 $dotbelow = true;
+	            $paginationoutput .= '...';
             } elseif ( $counter > $pagenumber + 2 && $counter < $numberofpages - 1 && false == $dotabove ) {
                 $dotabove = true;
+	            $paginationoutput .= '...';
             }
         }
 
@@ -117,7 +118,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 $paginationoutput .= '<a href="' . $targetaddress . '">' . __('Next', 'link-library') . '</a>';
             } elseif ( $showonecatonly ) {
                 if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
-                    $paginationoutput .= '<a href="#" onClick="showLinkCat("' . $AJAXcatid . '", "' . $settings . '", ' . $nextpagenumber . ');return false;" >' . __('Next', 'link-library') . '</a>';
+                    $paginationoutput .= "<a href=\"#\" onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . '</a>';
                 } elseif ( 'HTMLGET' == $showonecatmode ) {
                     $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
                     $argumentarray = array_merge( $argumentarray, $incomingget );
