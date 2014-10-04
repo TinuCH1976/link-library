@@ -285,30 +285,33 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $linkquery .= 'AND l.link_id is not NULL AND l.link_description not like "%LinkLibrary:AwaitingModeration:RemoveTextToApprove%" ';
     }
 
-    if ( !empty( $categorylist ) || isset( $_GET['cat_id'] ) ) {
+    if ( !empty( $categorylist ) || isset( $_GET['cat_id'] ) && empty( $singlelinkid ) ) {
         $linkquery .= ' AND t.term_id in (' . $categorylist. ')';
     }
 
-    if ( isset( $categoryname ) && !empty( $categoryname ) && 'HTMLGETPERM' == $showonecatmode ) {
+    if ( isset( $categoryname ) && !empty( $categoryname ) && 'HTMLGETPERM' == $showonecatmode && empty( $singlelinkid ) ) {
         $linkquery .= ' AND t.slug = "' . $categoryname. '"';
     }
 
-    if ( !empty( $excludecategorylist ) ) {
+    if ( !empty( $excludecategorylist ) && empty( $singlelinkid ) ) {
         $linkquery .= ' AND t.term_id not in (' . $excludecategorylist . ')';
     }
+
+	if ( !empty( $singlelinkid ) && intval( $singlelinkid ) ) {
+		$linkquery .= ' AND l.link_id = ' . $singlelinkid . ' ';
+	}
 
     if ( false == $showinvisible ) {
         $linkquery .= ' AND l.link_visible != "N"';
     }
 
-    if ( isset($_GET['searchll'] ) && $_GET['searchll'] != "")
-    {
+    if ( isset($_GET['searchll'] ) && !empty( $_GET['searchll'] ) && empty( $singlelinkid ) ) {
         $searchterms = array();
         $searchstring = $_GET['searchll'];
 
         $offset = 0;
-        while ( strpos( $searchstring, '"', $offset ) !== false ) {
-            if ( $offset == 0 ) {
+        while ( false !== strpos( $searchstring, '"', $offset ) ) {
+            if ( 0 == $offset ) {
                 $offset = strpos( $searchstring, '"' );
             } else {
                 $endpos = strpos( $searchstring, '"', $offset + 1);

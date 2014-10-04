@@ -209,6 +209,7 @@ function ll_reset_options( $settings = 1, $layout = 'list', $setoptions = 'retur
     $options['popup_height'] = 400;
     $options['nocatonstartup'] = false;
     $options['linktitlecontent'] = 'linkname';
+	$options['singlelinkid'] = '';
 
     if ( 'return_and_set' == $setoptions ) {
         $settingsname = 'LinkLibraryPP' . $settings;

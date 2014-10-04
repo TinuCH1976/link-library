@@ -59,9 +59,11 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
-= Next Version =
+= Beta Features =
 * Fixed bug with pagination when displayed before Link Library
 * Added performance metrics in debug mode
+* Added new [link-library] shortcode option to display single link (singlelinkid)
+* Change user permission check only to be done one per library instead of every link
 
 = 5.8.8.4 =
 * Fixed issue with pagination in AJAX mode

@@ -628,6 +628,7 @@ class link_library_plugin {
 		$categorylistoverride = '';
 		$excludecategoryoverride = '';
 		$tableoverride = '';
+		$singlelinkid = '';
 
 		extract( shortcode_atts( array(
 			'categorylistoverride' => '',
@@ -636,7 +637,8 @@ class link_library_plugin {
 			'descoverride' => '',
 			'rssoverride' => '',
 			'tableoverride' => '',
-			'settings' => ''
+			'settings' => '',
+			'singlelinkid' => ''
 		), $atts ) );
 
 		if ( empty( $settings ) && !isset( $_POST['settings'] ) ) {
@@ -667,6 +669,10 @@ class link_library_plugin {
 		if ( !empty( $excludecategoryoverride ) ) {
             $options['excludecategorylist'] = $excludecategoryoverride;
         }
+
+		if ( !empty( $singlelinkid ) ) {
+			$options['singlelinkid'] = $singlelinkid;
+		}
 
 		if ( !empty( $tableoverride ) ) {
             $options['displayastable'] = $tableoverride;
