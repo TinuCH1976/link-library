@@ -27,6 +27,10 @@ class link_library_plugin_admin {
 		//register callback for admin menu  setup
 		add_action( 'admin_menu', array( $this, 'on_admin_menu' ), 100 );
 
+		if ( is_network_admin() ) {
+			add_action( 'network_admin_menu', array( $this, 'network_settings_menu' ) );
+		}
+
 		// Capture and process user submissions for custom fields in Link Edition page
 		add_action( 'add_link', array( $this, 'add_link_field' ) );
 		add_action( 'edit_link', array( $this, 'add_link_field' ) );
@@ -1592,6 +1596,7 @@ class link_library_plugin_admin {
 				<td>
 					<input type='hidden' value='<?php echo $genoptions['schemaversion']; ?>' name='schemaversion' id='schemaversion' />
 					<table>
+						<?php if ( !is_multisite() ) { ?>
 						<tr>
 							<td><?php _e( 'Update channel', 'link-library' ); ?></td>
 							<td><select id="updatechannel" name="updatechannel">
@@ -1599,6 +1604,7 @@ class link_library_plugin_admin {
 									<option value="beta" <?php selected( $genoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
 								</select></td>
 						</tr>
+						<?php } ?>
 						<tr>
 							<td class='lltooltip' title='<?php _e( 'The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library' ); ?>' style='width:200px'><?php _e( 'Stylesheet', 'link-library' ); ?></td>
 							<td class='lltooltip' title='<?php _e( 'The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library' ); ?>'>
@@ -4171,6 +4177,51 @@ class link_library_plugin_admin {
 
 	<?php
 	}
+
+	function network_settings_menu() {
+		add_submenu_page( 'settings.php', 'Link Library Network Config', 'Link Library Network Config', 'manage_options', 'link_library_network_admin_page', array( $this, 'link_library_network_admin_page' ) );
+	}
+
+	function link_library_network_admin_page() {
+
+		if ( isset( $_POST['link-library-submit-settings'] ) && check_admin_referer( 'link-library-network' ) ) {
+
+			$optionnames = array( 'updatechannel' );
+
+			foreach ( $optionnames as $optionname ) {
+				if ( isset( $_POST[$optionname] ) && !empty( $_POST[$optionname] ) ) {
+					$networkoptions[$optionname] = $_POST[$optionname];
+				}
+			}
+
+			update_site_option( 'LinkLibraryNetworkOptions', $networkoptions );
+
+			echo '<div id="message" class="updated fade"><p><strong>Network Settings Saved</strong></p></div>';
+		}
+
+		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
+		?>
+
+		<div id="link_library_network_options" class="wrap">
+			<h2>Link Library Network Options</h2>
+
+			<form name="link_library_network_options_form" method="post">
+				<input type="hidden" name="link-library-submit-settings" value="1">
+				<?php wp_nonce_field( 'link-library-network' ); ?>
+				<table>
+					<tr>
+						<td><?php _e( 'Update channel', 'link-library' ); ?></td>
+						<td><select id="updatechannel" name="updatechannel">
+								<option value="stable" <?php selected( $networkoptions['updatechannel'], 'stable' ); ?>><?php _e( 'Stable channel - Monthly updates', 'link-library' ); ?>
+								<option value="beta" <?php selected( $networkoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
+							</select></td>
+					</tr>
+				</table><br />
+				<input type="submit" value="Submit" class="button-primary" />
+			</form>
+		</div>
+
+	<?php }
 
 	/******************************* Store extra field data when link is saved *******************************************/
 	function add_link_field( $link_id ) {

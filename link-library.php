@@ -46,23 +46,42 @@ if ( !get_option( 'link_manager_enabled' ) ) {
 }
 
 if ( is_admin() ) {
-	include_once( 'includes/updater.php' );
+	$updatechannel = 'stable';
 
-	$config = array(
-		'slug' => plugin_basename( __FILE__ ),
-		'proper_folder_name' => 'link-library',
-		'api_url' => 'https://api.github.com/repos/ylefebvre/link-library',
-		'raw_url' => 'https://raw.github.com/ylefebvre/link-library/master',
-		'github_url' => 'https://github.com/ylefebvre/link-library',
-		'zip_url' => 'https://github.com/ylefebvre/link-library/zipball/master',
-		'sslverify' => false,
-        'requires' => '3.0',
-        'tested' => '4.0',
-        'readme' => 'readme.txt',
-        'access_token' => '',
-    );
+	if ( !is_multisite() ) {
+		$genoptions = get_option( 'LinkLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
 
-    new WP_GitHub_Updater( $config );
+		if ( !empty( $genoptions['updatechannel'] ) ) {
+			$updatechannel = $genoptions['updatechannel'];
+		}
+	} else if ( is_multisite() && is_network_admin() ) {
+		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
+
+		if ( !empty( $networkoptions['updatechannel'] ) ) {
+			$updatechannel = $networkoptions['updatechannel'];
+		}
+	}
+
+	if ( 'beta' == $updatechannel ) {
+		include_once( 'includes/updater.php' );
+
+		$config = array(
+			'slug' => plugin_basename( __FILE__ ),
+			'proper_folder_name' => 'link-library',
+			'api_url' => 'https://api.github.com/repos/ylefebvre/link-library',
+			'raw_url' => 'https://raw.github.com/ylefebvre/link-library/master',
+			'github_url' => 'https://github.com/ylefebvre/link-library',
+			'zip_url' => 'https://github.com/ylefebvre/link-library/zipball/master',
+			'sslverify' => false,
+			'requires' => '3.0',
+			'tested' => '4.0',
+			'readme' => 'readme.txt',
+			'access_token' => '',
+		);
+
+		new WP_GitHub_Updater( $config );
+	}
 
     global $my_link_library_plugin_admin;
     require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
