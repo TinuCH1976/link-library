@@ -180,6 +180,8 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
     $validdirections = array( 'ASC', 'DESC' );
 
+	$linkeditoruser = current_user_can( 'manage_links' );
+
     $output = "\n<!-- Beginning of Link Library Output -->\n\n";
 
     $currentcategory = 1;
@@ -930,7 +932,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                         $output .= '</a>';
                                     }
 
-                                    if ( $showadmineditlinks && current_user_can( 'manage_links' ) ) {
+                                    if ( $showadmineditlinks && $linkeditoruser ) {
                                         $output .= $between . '<a href="' . add_query_arg( array(
                                                 'action' => 'edit', 'link_id' => $linkitem['proper_link_id'] ),
                                                 admin_url( 'link.php' ) ) . '">(' . __('Edit', 'link-library') . ')</a>';
