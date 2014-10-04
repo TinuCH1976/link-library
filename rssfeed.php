@@ -8,7 +8,7 @@ function link_library_generate_rss_feed () {
 
     global $wpdb;
 
-    $settingsetid = intval($_GET['settingset']);
+    $settingsetid = intval( $_GET['settingset'] );
 
     $settingsname = 'LinkLibraryPP' . $settingsetid;
     $options = get_option($settingsname);

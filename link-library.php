@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.8.5
+Version: 5.8.10
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -46,7 +46,9 @@ if ( !get_option( 'link_manager_enabled' ) ) {
 }
 
 if ( is_admin() ) {
-	$updatechannel = 'stable';
+
+	/* Determine update method selected by user under General Settings or under Network Settings */
+	$updatechannel = 'standard';
 
 	if ( !is_multisite() ) {
 		$genoptions = get_option( 'LinkLibraryGeneral' );
@@ -63,29 +65,37 @@ if ( is_admin() ) {
 		}
 	}
 
-	if ( 'beta' == $updatechannel ) {
-		include_once( 'includes/updater.php' );
-
-		$config = array(
-			'slug' => plugin_basename( __FILE__ ),
-			'proper_folder_name' => 'link-library',
-			'api_url' => 'https://api.github.com/repos/ylefebvre/link-library',
-			'raw_url' => 'https://raw.github.com/ylefebvre/link-library/master',
-			'github_url' => 'https://github.com/ylefebvre/link-library',
-			'zip_url' => 'https://github.com/ylefebvre/link-library/zipball/master',
-			'sslverify' => false,
-			'requires' => '3.0',
-			'tested' => '4.0',
-			'readme' => 'readme.txt',
-			'access_token' => '',
-		);
-
-		new WP_GitHub_Updater( $config );
+	/* Install filter is user selected monthly updates to filter out dot dot dot minor releases (e.g. 5.8.8.x) */
+	if ( 'monthly' == $updatechannel ) {
+		add_filter( 'http_response', 'link_library_tweak_plugins_http_filter', 10, 3 );
 	}
 
     global $my_link_library_plugin_admin;
     require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
     $my_link_library_plugin_admin = new link_library_plugin_admin();
+}
+
+function link_library_tweak_plugins_http_filter( $response, $r, $url ) {
+	if ( stristr( $url, 'api.wordpress.org/plugins/update-check/1.1' ) ) {
+		$wpapi_response = json_decode( $response['body'] );
+		$wpapi_response->plugins = link_library_modify_http_response( $wpapi_response->plugins );
+		$response['body'] = json_encode( $wpapi_response );
+	}
+
+	return $response;
+}
+
+function link_library_modify_http_response( $plugins_response ) {
+
+	foreach ( $plugins_response as $response_key => $plugin_response ) {
+		if ( plugin_basename(__FILE__) == $plugin_response->plugin ) {
+			if ( 3 <= substr_count( $plugin_response->new_version, '.' ) ) {
+				unset( $plugins_response->$response_key );
+			}
+		}
+	}
+
+	return $plugins_response;
 }
 
 /*********************************** Link Library Class *****************************************************************************/

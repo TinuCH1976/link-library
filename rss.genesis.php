@@ -91,7 +91,7 @@
       $pubDate = ($pubDate == null) ? "" : $pubDate;
       $lastBuildDate = ($lastBuildDate == null) ? "" : $lastBuildDate;
 	  $category = ($category == null) ? "" : $category;
-	  $generator = ($generator == null) ? "" : $generator;
+	  $generator = ( !isset( $generator ) || $generator == null) ? "" : $generator;
       $docs = ($docs == null) ? "" : $docs;
 	  $timetolive = ($timetolive == null) ? "" : $timetolive;
       $skipDays = ($skipDays == null) ? "" : $skipDays;
@@ -127,28 +127,28 @@
       // Copyright parser // Optional data
       if (empty ($copyright)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<copyright>{channel_Copyright}</copyright>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<copyright>{channel_Copyright}</copyright>", "", $this->channel_data);
         
       endif;
       
       // Managing Editor parser // Optional data
       if (empty ($managingEditor)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<managingEditor>{channel_ManagingEditor}</managingEditor>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<managingEditor>{channel_ManagingEditor}</managingEditor>", "", $this->channel_data);
       
       endif;
       
       // WebMaster parser // Optional data
       if (empty ($webMaster)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<webMaster>{channel_WebMaster}</webMaster>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<webMaster>{channel_WebMaster}</webMaster>", "", $this->channel_data);
       
       endif;
       
       // Rating parser // Optional data
       if (empty ($rating)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<rating>{channel_Rating}</rating>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<rating>{channel_Rating}</rating>", "", $this->channel_data);
       
       endif;
       
@@ -162,7 +162,7 @@
       // PubDate parser // Optional data
       if (empty ($pubDate)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<pubDate>{channel_PubDate}</pubDate>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<pubDate>{channel_PubDate}</pubDate>", "", $this->channel_data);
       
       endif;
       
@@ -176,7 +176,7 @@
       // Last Build Date parser // Optional data
       if (empty ($lastBuildDate)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<lastBuildDate>{channel_LastBuildDate}</lastBuildDate>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<lastBuildDate>{channel_LastBuildDate}</lastBuildDate>", "", $this->channel_data);
       
       endif;
 	  
@@ -184,7 +184,7 @@
 		  // Category parser // Optional data
 		  if (empty ($category)) :
 		  
-			$this->channel_data = ereg_replace ("\r\n\t\t<category>{channel_Category}</category>", "", $this->channel_data);
+			$this->channel_data = str_replace ("\r\n\t\t<category>{channel_Category}</category>", "", $this->channel_data);
 		  
 		  endif;
 		}
@@ -221,7 +221,7 @@
       // Skip Days parser // Optional data
       if (empty ($skipDays)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<skipDays>{channel_SkipDays}</skipDays>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<skipDays>{channel_SkipDays}</skipDays>", "", $this->channel_data);
       
       endif;
       
@@ -250,53 +250,53 @@
       // Skip Hours parser // Optional data
       if (empty ($skipHours)) :
       
-        $this->channel_data = ereg_replace ("\r\n\t\t<skipHours>{channel_SkipHours}</skipHours>", "", $this->channel_data);
+        $this->channel_data = str_replace ("\r\n\t\t<skipHours>{channel_SkipHours}</skipHours>", "", $this->channel_data);
       
       endif;
       
       // Inserts channel title // Replaces {channel_Title}
-      $this->channel_data = ereg_replace ("{channel_Title}", $title, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Title}", $title, $this->channel_data);
       
       // Inserts channel link // Replaces {channel_Link}
-      $this->channel_data = ereg_replace ("{channel_Link}", $link, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Link}", $link, $this->channel_data);
       
       // Inserts channel language // Replaces {channel_Language}
-      $this->channel_data = ereg_replace ("{channel_Language}", $language, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Language}", $language, $this->channel_data);
       
       // Inserts channel description // Replaces {channel_Description}
-      $this->channel_data = ereg_replace ("{channel_Description}", $description, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Description}", $description, $this->channel_data);
       
       // Inserts channel copyright // Replaces {channel_Copyright}
-      $this->channel_data = ereg_replace ("{channel_Copyright}", $copyright, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Copyright}", $copyright, $this->channel_data);
       
       // Inserts channel managingEditor // Replaces {channel_ManagingEditor}
-      $this->channel_data = ereg_replace ("{channel_ManagingEditor}", $managingEditor, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_ManagingEditor}", $managingEditor, $this->channel_data);
       
       // Inserts channel webMaster // Replaces {channel_WebMaster}
-      $this->channel_data = ereg_replace ("{channel_WebMaster}", $webMaster, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_WebMaster}", $webMaster, $this->channel_data);
       
       // Inserts channel rating // Replaces {channel_Rating}
-      $this->channel_data = ereg_replace ("{channel_Rating}", $rating, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Rating}", $rating, $this->channel_data);
       
       // Inserts channel pubDate // Replaces {channel_PubDate}
-      $this->channel_data = ereg_replace ("{channel_PubDate}", $pubDate, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_PubDate}", $pubDate, $this->channel_data);
       
       // Inserts channel lastBuildDate // Replaces {channel_LastBuildDate}
-      $this->channel_data = ereg_replace ("{channel_LastBuildDate}", $lastBuildDate, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_LastBuildDate}", $lastBuildDate, $this->channel_data);
 	  
 	  if ($this->rssformat == "RSS20") {
 		// Inserts channel category // Replaces {channel_Category}
-		$this->channel_data = ereg_replace ("{channel_Category}", $category, $this->channel_data);
+		$this->channel_data = str_replace ("{channel_Category}", $category, $this->channel_data);
 	  }
       
       // Inserts channel docs // Replaces {channel_Docs}
-      $this->channel_data = ereg_replace ("{channel_Docs}", $docs, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_Docs}", $docs, $this->channel_data);
       
       // Inserts channel skipDays // Replaces {channel_SkipDays}
-      $this->channel_data = ereg_replace ("{channel_SkipDays}", $skipDays, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_SkipDays}", $skipDays, $this->channel_data);
       
       // Inserts channel skipHours // Replaces {channel_SkipHours}
-      $this->channel_data = ereg_replace ("{channel_SkipHours}", $skipHours, $this->channel_data);
+      $this->channel_data = str_replace ("{channel_SkipHours}", $skipHours, $this->channel_data);
       
     }
     
@@ -342,7 +342,7 @@
         $height = $dimensions[1];
 		
 		if ($this->rssformat == "RSS20") {
-			$this->image_data = ereg_replace ("\r\n\t\t\t<width>{image_Width}</width>\r\n\t\t\t<height>{image_Height}</height>", "", $this->image_data);
+			$this->image_data = str_replace ("\r\n\t\t\t<width>{image_Width}</width>\r\n\t\t\t<height>{image_Height}</height>", "", $this->image_data);
 		}
       
       endif;
@@ -358,22 +358,22 @@
       $description = (empty ($description)) ? "Powered by: RSS Genesis!" : $description;
       
       // Inserts image title // Replaces {image_Title}
-      $this->image_data = ereg_replace ("{image_Title}", $title, $this->rss_image);
+      $this->image_data = str_replace ("{image_Title}", $title, $this->rss_image);
       
       // Inserts image source // Replaces {image_Source}
-      $this->image_data = ereg_replace ("{image_Source}", $src, $this->image_data);
+      $this->image_data = str_replace ("{image_Source}", $src, $this->image_data);
       
       // Inserts image link // Replaces {image_Link}
-      $this->image_data = ereg_replace ("{image_Link}", $link, $this->image_data);
+      $this->image_data = str_replace ("{image_Link}", $link, $this->image_data);
       
       // Inserts image width // Replaces {image_Width}
-      $this->image_data = ereg_replace ("{image_Width}", "$width", $this->image_data);
+      $this->image_data = str_replace ("{image_Width}", "$width", $this->image_data);
       
       // Inserts image height // Replaces {image_Height}
-      $this->image_data = ereg_replace ("{image_Height}", "$height", $this->image_data);
+      $this->image_data = str_replace ("{image_Height}", "$height", $this->image_data);
       
       // Inserts image description // Replaces {image_Description}
-      $this->image_data = ereg_replace ("{image_Description}", $description, $this->image_data);
+      $this->image_data = str_replace ("{image_Description}", $description, $this->image_data);
       
     }
     
@@ -416,19 +416,19 @@
       $category = stripslashes (htmlspecialchars (trim ($category), ENT_QUOTES));
       
       // Inserts item title // Replaces {item_Title}
-      $temp = ereg_replace ("{item_Title}", $title, $this->rss_item);
+      $temp = str_replace ("{item_Title}", $title, $this->rss_item);
       
       // Inserts item link // Replaces {item_Link}
-      $temp = ereg_replace ("{item_Link}", $link, $temp);
+      $temp = str_replace ("{item_Link}", $link, $temp);
       
       // Inserts item description // Replaces {item_Description}
-      $temp = ereg_replace ("{item_Description}", $description, $temp);
+      $temp = str_replace ("{item_Description}", $description, $temp);
 	  
 	  //Inserts publication date if feed is RSS20
 	  if ($this->rssformat == "RSS20") {
-			$temp = ereg_replace ("{item_PubDate}", $pubdate, $temp);
+			$temp = str_replace ("{item_PubDate}", $pubdate, $temp);
 			
-			$temp = ereg_replace ("{item_category}", $category, $temp);
+			$temp = str_replace ("{item_category}", $category, $temp);
 	  }
       
       // Stores the new added item
@@ -475,16 +475,16 @@
       endif;
       
       // Inserts input title // Replaces {input_Title}
-      $this->input_data = ereg_replace ("{input_Title}", $title, $this->rss_input);
+      $this->input_data = str_replace ("{input_Title}", $title, $this->rss_input);
       
       // Inserts input description // Replaces {input_Description}
-      $this->input_data = ereg_replace ("{input_Description}", $description, $this->input_data);
+      $this->input_data = str_replace ("{input_Description}", $description, $this->input_data);
       
       // Inserts input name // Replaces {input_Name}
-      $this->input_data = ereg_replace ("{input_Name}", $name, $this->input_data);
+      $this->input_data = str_replace ("{input_Name}", $name, $this->input_data);
       
       // Inserts input link // Replaces {input_Link}
-      $this->input_data = ereg_replace ("{input_Link}", $link, $this->input_data);
+      $this->input_data = str_replace ("{input_Link}", $link, $this->input_data);
       
     }
     

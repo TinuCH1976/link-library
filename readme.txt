@@ -5,7 +5,6 @@ Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, pa
 Requires at least: 3.0
 Tested up to: 4.0
 Stable tag: trunk
-~Current Version:5.8.8.5~
 
 The purpose of this plugin is to add the ability to output a list of link categories and a complete list of links with notes and descriptions.
 
@@ -60,12 +59,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
-= 5.8.8.5 =
+= 5.8.10 - October 2014 =
+* Ability to select standard updates (as soon as they are released) or monthly updates (rolled up on first of month)
 * Fixed bug with pagination when displayed before Link Library
 * Added performance metrics in debug mode
 * Added new [link-library] shortcode option to display single link (singlelinkid)
 * Change user permission check only to be done one per library instead of every link
-* Ability to select stable branch (updates from wordpress.org) or beta branch (updates from github)
+* Updated RSS Genesis library to avoid some warnings
 
 = 5.8.8.4 =
 * Fixed issue with pagination in AJAX mode

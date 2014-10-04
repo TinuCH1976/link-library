@@ -1600,8 +1600,8 @@ class link_library_plugin_admin {
 						<tr>
 							<td><?php _e( 'Update channel', 'link-library' ); ?></td>
 							<td><select id="updatechannel" name="updatechannel">
-									<option value="stable" <?php selected( $genoptions['updatechannel'], 'stable' ); ?>><?php _e( 'Stable channel - Monthly updates', 'link-library' ); ?>
-									<option value="beta" <?php selected( $genoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
+									<option value="standard" <?php selected( $genoptions['updatechannel'], 'standard' ); ?>><?php _e( 'Standard channel - Updates as they are released', 'link-library' ); ?>
+									<option value="monthly" <?php selected( $genoptions['updatechannel'], 'monthly' ); ?>><?php _e( 'Monthly Channel - Updates once per month', 'link-library' ); ?>
 								</select></td>
 						</tr>
 						<?php } ?>
@@ -4202,7 +4202,7 @@ class link_library_plugin_admin {
 		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
 
 		if ( empty( $networkoptions ) ) {
-			$networkoptions['updatechannel'] = 'stable';
+			$networkoptions['updatechannel'] = 'standard';
 		}
 		?>
 
@@ -4216,8 +4216,8 @@ class link_library_plugin_admin {
 					<tr>
 						<td><?php _e( 'Update channel', 'link-library' ); ?></td>
 						<td><select id="updatechannel" name="updatechannel">
-							<option value="stable" <?php selected( $networkoptions['updatechannel'], 'stable' ); ?>><?php _e( 'Stable channel - Monthly updates', 'link-library' ); ?>
-							<option value="beta" <?php selected( $networkoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
+							<option value="standard" <?php selected( $networkoptions['updatechannel'], 'standard' ); ?>><?php _e( 'Standard channel - Updates as they are released', 'link-library' ); ?>
+							<option value="monthly" <?php selected( $networkoptions['updatechannel'], 'monthly' ); ?>><?php _e( 'Monthly Channel - Updates once per month', 'link-library' ); ?>
 							</select></td>
 					</tr>
 				</table><br />
