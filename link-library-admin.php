@@ -58,7 +58,6 @@ class link_library_plugin_admin {
 		if ( empty( $catnames ) ) {
 			add_action( 'admin_notices', array( $this, 'll_missing_categories' ) );
 		}
-
 	}
 
 	function ll_link_category_new_fields( $tag ) {
@@ -912,7 +911,7 @@ class link_library_plugin_admin {
 			array(
 				'numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 				'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
-				'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath', 'catselectmethod', 'expandiconpath', 'collapseiconpath'
+				'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath', 'catselectmethod', 'expandiconpath', 'collapseiconpath', 'updatechannel'
 			) as $option_name
 		) {
 			if ( isset( $_POST[$option_name] ) ) {
@@ -1584,6 +1583,8 @@ class link_library_plugin_admin {
 
 	function general_meta_box( $data ) {
 		$genoptions = $data['genoptions'];
+		$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
+		extract( $genoptions );
 
 		?>
 		<table>
@@ -1591,6 +1592,13 @@ class link_library_plugin_admin {
 				<td>
 					<input type='hidden' value='<?php echo $genoptions['schemaversion']; ?>' name='schemaversion' id='schemaversion' />
 					<table>
+						<tr>
+							<td><?php _e( 'Update channel', 'link-library' ); ?></td>
+							<td><select id="updatechannel" name="updatechannel">
+									<option value="stable" <?php selected( $genoptions['updatechannel'], 'stable' ); ?>><?php _e( 'Stable channel - Monthly updates', 'link-library' ); ?>
+									<option value="beta" <?php selected( $genoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
+								</select></td>
+						</tr>
 						<tr>
 							<td class='lltooltip' title='<?php _e( 'The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library' ); ?>' style='width:200px'><?php _e( 'Stylesheet', 'link-library' ); ?></td>
 							<td class='lltooltip' title='<?php _e( 'The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library' ); ?>'>

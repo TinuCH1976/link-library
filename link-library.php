@@ -46,6 +46,24 @@ if ( !get_option( 'link_manager_enabled' ) ) {
 }
 
 if ( is_admin() ) {
+	include_once( 'includes/updater.php' );
+
+	$config = array(
+		'slug' => plugin_basename( __FILE__ ),
+		'proper_folder_name' => 'link-library',
+		'api_url' => 'https://api.github.com/repos/ylefebvre/link-library',
+		'raw_url' => 'https://raw.github.com/ylefebvre/link-library/master',
+		'github_url' => 'https://github.com/ylefebvre/link-library',
+		'zip_url' => 'https://github.com/ylefebvre/link-library/zipball/master',
+		'sslverify' => false,
+        'requires' => '3.0',
+        'tested' => '4.0',
+        'readme' => 'readme.txt',
+        'access_token' => '',
+    );
+
+    new WP_GitHub_Updater( $config );
+
     global $my_link_library_plugin_admin;
     require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
     $my_link_library_plugin_admin = new link_library_plugin_admin();
