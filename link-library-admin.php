@@ -4200,6 +4200,10 @@ class link_library_plugin_admin {
 		}
 
 		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
+
+		if ( empty( $networkoptions ) ) {
+			$networkoptions['updatechannel'] = 'stable';
+		}
 		?>
 
 		<div id="link_library_network_options" class="wrap">
@@ -4212,8 +4216,8 @@ class link_library_plugin_admin {
 					<tr>
 						<td><?php _e( 'Update channel', 'link-library' ); ?></td>
 						<td><select id="updatechannel" name="updatechannel">
-								<option value="stable" <?php selected( $networkoptions['updatechannel'], 'stable' ); ?>><?php _e( 'Stable channel - Monthly updates', 'link-library' ); ?>
-								<option value="beta" <?php selected( $networkoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
+							<option value="stable" <?php selected( $networkoptions['updatechannel'], 'stable' ); ?>><?php _e( 'Stable channel - Monthly updates', 'link-library' ); ?>
+							<option value="beta" <?php selected( $networkoptions['updatechannel'], 'beta' ); ?>><?php _e( 'Beta Channel - Frequent updates', 'link-library' ); ?>
 							</select></td>
 					</tr>
 				</table><br />

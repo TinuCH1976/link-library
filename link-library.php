@@ -58,7 +58,7 @@ if ( is_admin() ) {
 	} else if ( is_multisite() && is_network_admin() ) {
 		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
 
-		if ( !empty( $networkoptions['updatechannel'] ) ) {
+		if ( isset( $networkoptions ) && !empty( $networkoptions['updatechannel'] ) ) {
 			$updatechannel = $networkoptions['updatechannel'];
 		}
 	}
