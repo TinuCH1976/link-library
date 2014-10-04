@@ -32,7 +32,7 @@ class link_library_plugin_admin {
         
         add_action( 'wp_dashboard_setup', array( $this, 'dashboard_widget') );
         
-        add_filter("plugin_row_meta", array( $this, 'set_plugin_row_meta' ), 1, 2);
+        add_filter( 'plugin_row_meta', array( $this, 'set_plugin_row_meta' ), 1, 2);
 		
 		add_action( 'wpmu_new_blog', array($this, 'new_network_site'), 10, 6);
 

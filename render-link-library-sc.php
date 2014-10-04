@@ -413,11 +413,16 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
     }
 
+    if ( true == $debugmode ) {
+        $linkquerystarttime = microtime ( true );
+    }
+
     $linkitems = $wpdb->get_results( $linkquery, ARRAY_A );
 
     if ( $debugmode ) {
-        $output .= "\n<!-- Link Query: " . print_r($linkquery, TRUE) . "-->\n\n";
-        $output .= "\n<!-- Link Results: " . print_r($linkitems, TRUE) . "-->\n\n";
+        $output .= "\n<!-- Link Query: " . print_r( $linkquery, TRUE ) . "-->\n\n";
+        $output .= "\n<!-- Link Results: " . print_r( $linkitems, TRUE ) . "-->\n\n";
+        $output .= "\n<!-- Link Query Execution Time: " . ( microtime( true ) - $linkquerystarttime ) . "-->\n\n";
     }
 
     if ( $pagination ) {
@@ -448,14 +453,6 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
     }
 
-    if ( $pagination && $mode != "search" && 'BEFORE' == $paginationposition ) {
-        $previouspagenumber = $pagenumber - 1;
-        $nextpagenumber = $pagenumber + 1;
-        $pageID = get_the_ID();
-
-        $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
-    }
-
     if ( $debugmode ) {
         echo '<!-- showonecatmode: ' . $showonecatonly . ', AJAXnocatset: ' . $AJAXnocatset . ', nocatonstartup: ' . $nocatonstartup . '-->';
     }
@@ -466,6 +463,14 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $output .= '</div>';
     } elseif ( $linkitems ) {
         $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
+
+        if ( $pagination && $mode != "search" && 'BEFORE' == $paginationposition ) {
+            $previouspagenumber = $pagenumber - 1;
+            $nextpagenumber = $pagenumber + 1;
+            $pageID = get_the_ID();
+
+            $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
+        }
 
         if ( 'search' == $mode ) {
             $output .= '<div class="resulttitle">' . __('Search Results for', 'link-library') . ' "' . stripslashes( $_GET['searchll'] ) . '"</div>';

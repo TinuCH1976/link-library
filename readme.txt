@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= Next Version =
+* Fixed bug with pagination when displayed before Link Library
+* Added performance metrics in debug mode
+
 = 5.8.8.4 =
 * Fixed issue with pagination in AJAX mode
 

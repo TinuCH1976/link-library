@@ -543,8 +543,18 @@ class link_library_plugin {
 
 		$genoptions = get_option( 'LinkLibraryGeneral' );
 
+        if ( $genoptions['debugmode'] ) {
+            $mainoutputstarttime = microtime( true );
+            $linklibraryoutput .= "\n<!-- Start Link Library Cats Time: " . $mainoutputstarttime . "-->\n";
+        }
+
         require_once plugin_dir_path( __FILE__ ) . 'render-link-library-cats-sc.php';
-		return RenderLinkLibraryCategories( $this, $genoptions, $options, $settings );
+
+        if ( $genoptions['debugmode'] ) {
+            $timeoutput = "\n<!-- [link-library-cats] shortcode execution time: " . ( microtime( true ) - $mainoutputstarttime ) . "-->\n";
+        }
+
+		return RenderLinkLibraryCategories( $this, $genoptions, $options, $settings )  . ( true == $genoptions['debugmode'] ? $timeoutput : '' );
 	}
 	
 	/********************************************** Function to Process [link-library-search] shortcode *********************************************/
@@ -676,7 +686,7 @@ class link_library_plugin {
 
         $genoptions = get_option( 'LinkLibraryGeneral' );
 		
-		if ( floatval( $genoptions['schemaversion'] ) < '4.6') {
+		if ( floatval( $genoptions['schemaversion'] ) < '4.6' ) {
 			$this->ll_install();
 			$genoptions = get_option( 'LinkLibraryGeneral' );
 			
@@ -692,6 +702,8 @@ class link_library_plugin {
 
         if ( $genoptions['debugmode'] ) {
             $linklibraryoutput .= "\n<!-- Library Settings Info:" . print_r( $options, true ) . "-->\n";
+            $mainoutputstarttime = microtime( true );
+            $linklibraryoutput .= "\n<!-- Start Time: " . $mainoutputstarttime . "-->\n";
         }
 
         require_once plugin_dir_path( __FILE__ ) . 'render-link-library-sc.php';
@@ -699,9 +711,16 @@ class link_library_plugin {
 
         if ( isset( $_POST['ajaxupdate'] ) ) {
             echo $linklibraryoutput;
+
+            if ( $genoptions['debugmode'] ) {
+                echo "\n<!-- Execution Time: " . ( microtime( true ) - $mainoutputstarttime ) . "-->\n";
+            }
             exit;
         } else {
-            return $linklibraryoutput;
+            if ( $genoptions['debugmode'] ) {
+                $timeoutput = "\n<!-- [link-library] shortcode execution time: " . ( microtime( true ) - $mainoutputstarttime ) . "-->\n";
+            }
+            return $linklibraryoutput . ( true == $genoptions['debugmode'] ? $timeoutput : '' );
         }
 	}
 
