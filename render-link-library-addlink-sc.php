@@ -46,19 +46,19 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
     if ( 'link-library-addlink' == $code || 'link-library-addlinkcustommsg' == $code ) {
         if ( isset( $_GET['addlinkmessage'] ) ) {
             if ( 1 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Confirm code not given', 'link-library') . '.</div>';
+                $output .= '<div class="llmessage">' . __('Confirm code not given', 'link-library') . '.</div>';
             } elseif ( 2 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Captcha code is wrong', 'link-library') . '.</div>';
+                $output .= '<div class="llmessage">' . __('Captcha code is wrong', 'link-library') . '.</div>';
             } elseif ( 3 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Captcha code is only valid for 5 minutes', 'link-library') . '.</div>';
+                $output .= '<div class="llmessage">' . __('Captcha code is only valid for 5 minutes', 'link-library') . '.</div>';
             } elseif ( 4 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('No captcha cookie given. Make sure cookies are enabled', 'link-library') . '.</div>';
+                $output .= '<div class="llmessage">' . __('No captcha cookie given. Make sure cookies are enabled', 'link-library') . '.</div>';
             } elseif ( 5 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Captcha answer was not provided.', 'link-library') . '</div>';
+                $output .= '<div class="llmessage">' . __('Captcha answer was not provided.', 'link-library') . '</div>';
             } elseif ( 6 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Captcha answer is incorrect', 'link-library') . '.</div>';
+                $output .= '<div class="llmessage">' . __('Captcha answer is incorrect', 'link-library') . '.</div>';
             } elseif ( 7 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . '</div>';
+                $output .= '<div class="llmessage">' . __('User Category was not provided correctly. Link insertion failed.', 'link-library') . '</div>';
             } elseif ( 8 == $_GET['addlinkmessage'] ) {
                 $output .= '<div class="llmessage">' . $newlinkmsg;
                 if ( !$showuserlinks ) {
@@ -66,9 +66,9 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
                 }
                 $output .= '</div>';
             } elseif ( 9 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Error: Link does not have an address.', 'link-library') . '</div>';
+                $output .= '<div class="llmessage">' . __('Error: Link does not have an address.', 'link-library') . '</div>';
             } elseif ( 10 == $_GET['addlinkmessage'] ) {
-                $output = '<div class="llmessage">' . __('Error: Link already exists.', 'link-library') . '</div>';
+                $output .= '<div class="llmessage">' . __('Error: Link already exists.', 'link-library') . '</div>';
             }
         }
     }

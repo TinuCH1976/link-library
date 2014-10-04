@@ -545,7 +545,7 @@ class link_library_plugin {
 
         if ( $genoptions['debugmode'] ) {
             $mainoutputstarttime = microtime( true );
-            $linklibraryoutput .= "\n<!-- Start Link Library Cats Time: " . $mainoutputstarttime . "-->\n";
+            $timeoutputstart = "\n<!-- Start Link Library Cats Time: " . $mainoutputstarttime . "-->\n";
         }
 
         require_once plugin_dir_path( __FILE__ ) . 'render-link-library-cats-sc.php';
@@ -554,7 +554,7 @@ class link_library_plugin {
             $timeoutput = "\n<!-- [link-library-cats] shortcode execution time: " . ( microtime( true ) - $mainoutputstarttime ) . "-->\n";
         }
 
-		return RenderLinkLibraryCategories( $this, $genoptions, $options, $settings )  . ( true == $genoptions['debugmode'] ? $timeoutput : '' );
+		return ( true == $genoptions['debugmode'] ? $timeoutputstart : '' ) . RenderLinkLibraryCategories( $this, $genoptions, $options, $settings )  . ( true == $genoptions['debugmode'] ? $timeoutput : '' );
 	}
 	
 	/********************************************** Function to Process [link-library-search] shortcode *********************************************/

@@ -482,6 +482,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
         foreach ( $linkitems as $linkitem ) {
 
+            if ( true == $debugmode ) {
+                $linkstarttime = microtime ( true );
+            }
+
             if ( $currentcategoryid != $linkitem['term_id'] ) {
                 if ( -1 != $currentcategoryid && $showonecatonly && empty( $_GET['searchll'] ) ) {
                     break;
@@ -841,6 +845,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                 $imageoutput = '';
 
                                 if ( ( ( !empty( $linkitem['link_image'] ) || $usethumbshotsforimages ) ) && ( $show_images ) ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimeimage = microtime ( true );
+                                    }
+
                                     $imageoutput .= stripslashes( $beforeimage ) . '<a href="';
 
                                     if ( !$enable_link_popup ) {
@@ -879,6 +887,11 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
                                         $imageoutput .= '</a>' . stripslashes( $afterimage );
                                     }
+
+                                    if ( true == $debugmode ) {
+                                        $output .= '<!-- Time to render image section of link id ' . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimeimage ) . " --> \n";
+                                    }
+
                                 }
 
                                 if ( ( !empty( $imageoutput ) || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) ) && $show_images ) {
@@ -889,6 +902,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
                             case 2: 	//------------------ Name Output --------------------
                                 if ( ( $showname ) || ( $show_images && empty( $linkitem['link_image'] ) && 1 == $arrayelements ) ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimename = microtime ( true );
+                                    }
+
                                     $output .= stripslashes( $beforelink );
 
                                     if ( ( 'primary' == $sourcename && $the_link != '#') || ( 'secondary' == $sourcename && $the_second_link != '#' ) ) {
@@ -924,16 +941,28 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     }
 
                                     $output .= stripslashes( $afterlink );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render name section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimename ) . " --> \n";
+                                    }
                                 }
 
                                 break;
 
                             case 3: 	//------------------ Date Output --------------------
 
-                                $formatteddate = date_i18n( get_option( 'links_updated_date_format' ), $linkitem['link_date'] );
-
                                 if ( $showdate ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimedate = microtime ( true );
+                                    }
+
+                                    $formatteddate = date_i18n( get_option( 'links_updated_date_format' ), $linkitem['link_date'] );
+
                                     $output .= $between . stripslashes( $beforedate ) . $formatteddate . stripslashes( $afterdate );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render date section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimedate ) . " --> \n";
+                                    }
                                 }
 
                                 break;
@@ -941,7 +970,15 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 4: 	//------------------ Description Output --------------------
 
                                 if ( $showdescription ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimedesc = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforedesc ) . $desc . stripslashes( $afterdesc );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render description section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimedesc ) . " --> \n";
+                                    }
                                 }
 
                                 break;
@@ -949,7 +986,15 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 5: 	//------------------ Notes Output --------------------
 
                                 if ( $shownotes ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimenotes = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforenote ) . $descnotes . stripslashes( $afternote );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render notes section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimenotes ) . " --> \n";
+                                    }
                                 }
 
                                 break;
@@ -957,26 +1002,36 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 6: 	//------------------ RSS Icons Output --------------------
 
                                 if ( $show_rss || $show_rss_icon || $rsspreview ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimerssicon = microtime ( true );
+                                    }
+
                                     $output .= stripslashes( $beforerss ) . '<div class="rsselements">';
-                                }
 
-                                if ( $show_rss && !empty( $linkitem['link_rss'] ) ) {
-                                    $output .= $between . '<a class="rss" href="' . $linkitem['link_rss'] . '">RSS</a>';
-                                }
+                                    if ( $show_rss && !empty( $linkitem['link_rss'] ) ) {
+                                        $output .= $between . '<a class="rss" href="' . $linkitem['link_rss'] . '">RSS</a>';
+                                    }
 
-                                if ( $show_rss_icon && !empty( $linkitem['link_rss'] ) ) {
-                                    $output .= $between . '<a class="rssicon" href="' . $linkitem['link_rss'] . '"><img src="' . plugins_url( 'icons/feed-icon-14x14.png', __FILE__ ) . '" /></a>';
-                                }
+                                    if ( $show_rss_icon && !empty( $linkitem['link_rss'] ) ) {
+                                        $output .= $between . '<a class="rssicon" href="' . $linkitem['link_rss'] . '"><img src="' . plugins_url( 'icons/feed-icon-14x14.png', __FILE__ ) . '" /></a>';
+                                    }
 
-                                if ( $rsspreview && !empty( $linkitem['link_rss'] ) ) {
-                                    $output .= $between . '<a href="' . home_url() . '/?link_library_rss_preview=1&keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . ( empty( $rsspreviewwidth ) ?  900 : $rsspreviewwidth ) . '&width=' . ( empty( $rsspreviewheight ) ? 700 : $rsspreviewheight ) . '&xpath=' . urlencode( $xpath ) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . plugins_url( 'icons/preview-16x16.png', __FILE__ ) . '" /></a>';
-                                }
+                                    if ( $rsspreview && !empty( $linkitem['link_rss'] ) ) {
+                                        $output .= $between . '<a href="' . home_url() . '/?link_library_rss_preview=1&keepThis=true&linkid=' . $linkitem['proper_link_id'] . '&previewcount=' . $rsspreviewcount . 'height=' . ( empty( $rsspreviewwidth ) ?  900 : $rsspreviewwidth ) . '&width=' . ( empty( $rsspreviewheight ) ? 700 : $rsspreviewheight ) . '&xpath=' . urlencode( $xpath ) . '" title="' . __('Preview of RSS feed for', 'link-library') . ' ' . $cleanname . '" class="thickbox"><img src="' . plugins_url( 'icons/preview-16x16.png', __FILE__ ) . '" /></a>';
+                                    }
 
-                                if ( $show_rss || $show_rss_icon || $rsspreview ) {
                                     $output .= '</div>' . stripslashes( $afterrss );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render RSS Icon section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimerssicon ) . " --> \n";
+                                    }
                                 }
 
                                 if ( $rssfeedinline && $linkitem['link_rss'] ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimerssfeed = microtime ( true );
+                                    }
+
                                     $rss = fetch_feed( $linkitem['link_rss'] );
                                     if ( !is_wp_error( $rss ) ) {
                                         $maxitems = $rss->get_item_quantity( $rssfeedinlinecount );
@@ -1001,11 +1056,19 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                             $output .= '</div>';
                                         }
                                     }
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render RSS Feed section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimerssfeed ) . " --> \n";
+                                    }
                                 }
                                 break;
                             case 7: 	//------------------ Web Link Output --------------------
 
                                 if ( 'false' != $displayweblink ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimerweblink = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforeweblink ) . '<a href="';
 
                                     if ( 'primary' == $sourceweblink || empty( $sourceweblink ) ) {
@@ -1027,12 +1090,20 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     }
 
                                     $output .= '</a>' . stripslashes( $afterweblink );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render web link section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimerweblink ) . " --> \n";
+                                    }
                                 }
 
                                 break;
                             case 8: 	//------------------ Telephone Output --------------------
 
                                 if ( 'false' != $showtelephone ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimertelephone = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforetelephone );
 
                                     if ( 'plain' != $showtelephone ) {
@@ -1058,11 +1129,19 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     }
 
                                     $output .= stripslashes( $aftertelephone );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render telephone section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimertelephone ) . " --> \n";
+                                    }
                                 }
                                 break;
                             case 9: 	//------------------ E-mail Output --------------------
 
                                 if ( 'false' != $showemail ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimeremail = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforeemail );
 
                                     if ( 'plain' != $showemail ) {
@@ -1091,15 +1170,27 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     }
 
                                     $output .= stripslashes( $afteremail );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render e-mail section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimeremail ) . " --> \n";
+                                    }
                                 }
 
                                 break;
                             case 10: 	//------------------ Link Hits Output --------------------
 
                                 if ( $showlinkhits ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimerhits = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforelinkhits );
                                     $output .= $linkitem['link_visits'];
                                     $output .= stripslashes( $afterlinkhits );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render link hits section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimerhits ) . " --> \n";
+                                    }
                                 }
 
                                 break;
@@ -1107,9 +1198,17 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 11: 	//------------------ Link Rating Output --------------------
 
                                 if ( $showrating ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimerrating = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforelinkrating );
                                     $output .= $linkitem['link_rating'];
                                     $output .= stripslashes( $afterlinkrating );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render link rating section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimerrating ) . " --> \n";
+                                    }
                                 }
 
                                 break;
@@ -1117,9 +1216,17 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 12: 	//------------------ Link Large Description Output --------------------
 
                                 if ( $showlargedescription ) {
+                                    if ( true == $debugmode ) {
+                                        $starttimerlargedesc = microtime ( true );
+                                    }
+
                                     $output .= $between . stripslashes( $beforelargedescription );
                                     $output .= $textfield;
                                     $output .= stripslashes( $afterlargedescription );
+
+                                    if ( true == $debugmode ) {
+                                        $output .= "\n<!-- Time to render link large description section of link id " . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimerlargedesc ) . " --> \n";
+                                    }
                                 }
 
                                 break;
@@ -1134,6 +1241,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                         $output .= stripslashes( $addafterlink );
                     }
                 }
+            }
+
+            if ( true == $debugmode ) {
+                $output .= '<!-- Time to render link id ' . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $linkstarttime ) . " --> \n";
             }
 
         } // end while
