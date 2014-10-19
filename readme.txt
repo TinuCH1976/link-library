@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.10.1 =
+* Fix problem on WordPress 3.0 with is_multisite and is_network_admin functions not existing
+* Fix for category meta creation issue on upgrade
+
 = 5.8.10 - October 2014 =
 * Ability to select standard updates (as soon as they are released) or monthly updates (rolled up on first of month)
 * Fixed bug with pagination when displayed before Link Library
