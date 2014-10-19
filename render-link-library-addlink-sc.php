@@ -43,7 +43,7 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
         }
     }
 
-    if ( 'link-library-addlink' == $code || 'link-library-addlinkcustommsg' == $code ) {
+    if ( 'link-library-addlink' == $code || 'addlink-link-library' == $code || 'link-library-addlinkcustommsg' == $code || 'addlinkcustommsg-link-library' == $code ) {
         if ( isset( $_GET['addlinkmessage'] ) ) {
             if ( 1 == $_GET['addlinkmessage'] ) {
                 $output .= '<div class="llmessage">' . __('Confirm code not given', 'link-library') . '.</div>';
@@ -73,7 +73,7 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
         }
     }
 
-    if ( 'link-library-addlink' == $code && ( ( $addlinkreqlogin && current_user_can( 'read' ) ) || !$addlinkreqlogin ) ) {
+    if ( ( 'link-library-addlink' == $code || 'addlink-link-library' == $code ) && ( ( $addlinkreqlogin && current_user_can( 'read' ) ) || !$addlinkreqlogin ) ) {
         $output .= '<form method="post" id="lladdlink" action="">';
 
         $output .= wp_nonce_field( 'LL_ADDLINK_FORM', '_wpnonce', true, false );

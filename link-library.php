@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.8.8.4
+Version: 5.8.10.4
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -46,9 +46,56 @@ if ( !get_option( 'link_manager_enabled' ) ) {
 }
 
 if ( is_admin() ) {
+
+	/* Determine update method selected by user under General Settings or under Network Settings */
+	$updatechannel = 'standard';
+
+	if ( ( function_exists( 'is_multisite' ) && !is_multisite() ) || !function_exists( 'is_multisite' ) ) {
+		$genoptions = get_option( 'LinkLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
+
+		if ( !empty( $genoptions['updatechannel'] ) ) {
+			$updatechannel = $genoptions['updatechannel'];
+		}
+	} else if ( function_exists( 'is_multisite' ) && function_exists( 'is_network_admin' ) && is_multisite() && is_network_admin() ) {
+		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
+
+		if ( isset( $networkoptions ) && !empty( $networkoptions['updatechannel'] ) ) {
+			$updatechannel = $networkoptions['updatechannel'];
+		}
+	}
+
+	/* Install filter is user selected monthly updates to filter out dot dot dot minor releases (e.g. 5.8.8.x) */
+	if ( 'monthly' == $updatechannel ) {
+		add_filter( 'http_response', 'link_library_tweak_plugins_http_filter', 10, 3 );
+	}
+
     global $my_link_library_plugin_admin;
     require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
     $my_link_library_plugin_admin = new link_library_plugin_admin();
+}
+
+function link_library_tweak_plugins_http_filter( $response, $r, $url ) {
+	if ( stristr( $url, 'api.wordpress.org/plugins/update-check/1.1' ) ) {
+		$wpapi_response = json_decode( $response['body'] );
+		$wpapi_response->plugins = link_library_modify_http_response( $wpapi_response->plugins );
+		$response['body'] = json_encode( $wpapi_response );
+	}
+
+	return $response;
+}
+
+function link_library_modify_http_response( $plugins_response ) {
+
+	foreach ( $plugins_response as $response_key => $plugin_response ) {
+		if ( plugin_basename(__FILE__) == $plugin_response->plugin ) {
+			if ( 3 <= substr_count( $plugin_response->new_version, '.' ) ) {
+				unset( $plugins_response->$response_key );
+			}
+		}
+	}
+
+	return $plugins_response;
 }
 
 /*********************************** Link Library Class *****************************************************************************/
@@ -78,9 +125,13 @@ class link_library_plugin {
 		// Add short codes
         add_shortcode( 'link-library', array( $this, 'link_library_func' ) );
 		add_shortcode( 'link-library-cats', array( $this, 'link_library_cats_func' ) );
+		add_shortcode( 'cats-link-library', array( $this, 'link_library_cats_func' ) );
 		add_shortcode( 'link-library-search', array( $this, 'link_library_search_func' ) );
+		add_shortcode( 'search-link-library', array( $this, 'link_library_search_func' ) );
 		add_shortcode( 'link-library-addlink', array( $this, 'link_library_addlink_func' ) );
+		add_shortcode( 'addlink-link-library', array( $this, 'link_library_addlink_func' ) );
 		add_shortcode( 'link-library-addlinkcustommsg', array( $this, 'link_library_addlink_func' ) );
+		add_shortcode( 'addlinkcustommsg-link-library', array( $this, 'link_library_addlink_func' ) );
 
         // Function to determine if Link Library is used on a page before printing headers
         // the_posts gets triggered before wp_head
@@ -105,6 +156,8 @@ class link_library_plugin {
 
 		// Load text domain for translation of admin pages and text strings
 		load_plugin_textdomain( 'link-library', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+		add_filter( 'kses_allowed_protocols', array( $this, 'll_add_protocols' ) );
 
         global $wpdb;
 
@@ -259,6 +312,9 @@ class link_library_plugin {
                 update_option( $settingsname, $options );
             }
         }
+
+		$genoptions['schemaversion'] = '5.0';
+		update_option( 'LinkLibraryGeneral', $genoptions );
     }
 
     function remove_querystring_var( $url, $key ) {
@@ -300,6 +356,22 @@ class link_library_plugin {
         } else {
             return $wpdb->prefix;
         }
+	}
+
+	function ll_add_protocols( $protocols ) {
+		$genoptions = get_option( 'LinkLibraryGeneral' );
+
+		if ( isset( $genoptions['extraprotocols'] ) && !empty( $genoptions['extraprotocols'] ) ) {
+			$extra_protocol_array = explode( ',', $genoptions['extraprotocols'] );
+
+			if ( !empty( $extra_protocol_array ) ) {
+				foreach( $extra_protocol_array as $extra_protocol ) {
+					$protocols[] = $extra_protocol;
+				}
+			}
+		}
+
+		return $protocols;
 	}
     
     	/******************************************** Print style data to header *********************************************/
@@ -545,7 +617,7 @@ class link_library_plugin {
 
         if ( $genoptions['debugmode'] ) {
             $mainoutputstarttime = microtime( true );
-            $linklibraryoutput .= "\n<!-- Start Link Library Cats Time: " . $mainoutputstarttime . "-->\n";
+            $timeoutputstart = "\n<!-- Start Link Library Cats Time: " . $mainoutputstarttime . "-->\n";
         }
 
         require_once plugin_dir_path( __FILE__ ) . 'render-link-library-cats-sc.php';
@@ -554,7 +626,7 @@ class link_library_plugin {
             $timeoutput = "\n<!-- [link-library-cats] shortcode execution time: " . ( microtime( true ) - $mainoutputstarttime ) . "-->\n";
         }
 
-		return RenderLinkLibraryCategories( $this, $genoptions, $options, $settings )  . ( true == $genoptions['debugmode'] ? $timeoutput : '' );
+		return ( true == $genoptions['debugmode'] ? $timeoutputstart : '' ) . RenderLinkLibraryCategories( $this, $genoptions, $options, $settings )  . ( true == $genoptions['debugmode'] ? $timeoutput : '' );
 	}
 	
 	/********************************************** Function to Process [link-library-search] shortcode *********************************************/
@@ -628,6 +700,7 @@ class link_library_plugin {
 		$categorylistoverride = '';
 		$excludecategoryoverride = '';
 		$tableoverride = '';
+		$singlelinkid = '';
 
 		extract( shortcode_atts( array(
 			'categorylistoverride' => '',
@@ -636,7 +709,8 @@ class link_library_plugin {
 			'descoverride' => '',
 			'rssoverride' => '',
 			'tableoverride' => '',
-			'settings' => ''
+			'settings' => '',
+			'singlelinkid' => ''
 		), $atts ) );
 
 		if ( empty( $settings ) && !isset( $_POST['settings'] ) ) {
@@ -668,6 +742,10 @@ class link_library_plugin {
             $options['excludecategorylist'] = $excludecategoryoverride;
         }
 
+		if ( !empty( $singlelinkid ) ) {
+			$options['singlelinkid'] = $singlelinkid;
+		}
+
 		if ( !empty( $tableoverride ) ) {
             $options['displayastable'] = $tableoverride;
         }
@@ -686,7 +764,7 @@ class link_library_plugin {
 
         $genoptions = get_option( 'LinkLibraryGeneral' );
 		
-		if ( floatval( $genoptions['schemaversion'] ) < '4.6' ) {
+		if ( floatval( $genoptions['schemaversion'] ) < '5.0' ) {
 			$this->ll_install();
 			$genoptions = get_option( 'LinkLibraryGeneral' );
 			

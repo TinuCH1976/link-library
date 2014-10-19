@@ -1,4 +1,4 @@
-﻿﻿=== Link Library ===
+﻿=== Link Library ===
 Contributors: jackdewey
 Donate link: http://ylefebvre.ca/wordpress-plugins/link-library
 Tags: link, list, directory, page, library, AJAX, RSS, feeds, inline, search, paging, add, submit, import, batch, pop-up
@@ -59,9 +59,26 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
-= Next Version =
+= 5.8.10.4 =
+* Added new general option to allow user to specify additional link protocols to be accepted by link editor
+
+= 5.8.10.3 =
+* Added alternate shortcode with different endings to resolve issue in WP 3.0.1 around shortcode confusion [search-link-library][cats-link-library] and [addlink-link-library]
+
+= 5.8.10.2 =
+* Fixed problem with new singlelinkid option
+
+= 5.8.10.1 =
+* Fix problem on WordPress 3.0 with is_multisite and is_network_admin functions not existing
+* Fix for category meta creation issue on upgrade
+
+= 5.8.10 - October 2014 =
+* Ability to select standard updates (as soon as they are released) or monthly updates (rolled up on first of month)
 * Fixed bug with pagination when displayed before Link Library
 * Added performance metrics in debug mode
+* Added new [link-library] shortcode option to display single link (singlelinkid)
+* Change user permission check only to be done one per library instead of every link
+* Updated RSS Genesis library to avoid some warnings
 
 = 5.8.8.4 =
 * Fixed issue with pagination in AJAX mode

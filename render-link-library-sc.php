@@ -285,7 +285,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $linkquery .= 'AND l.link_id is not NULL AND l.link_description not like "%LinkLibrary:AwaitingModeration:RemoveTextToApprove%" ';
     }
 
-    if ( !empty( $categorylist ) || isset( $_GET['cat_id'] ) && empty( $singlelinkid ) ) {
+    if ( ( !empty( $categorylist ) || isset( $_GET['cat_id'] ) ) && empty( $singlelinkid ) ) {
         $linkquery .= ' AND t.term_id in (' . $categorylist. ')';
     }
 

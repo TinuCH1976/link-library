@@ -245,6 +245,7 @@ function ll_reset_gen_settings( $setoptions = 'return' ) {
     $genoptions['catselectmethod'] = 'multiselectlist';
     $genoptions['hidedonation'] = false;
 	$genoptions['updatechannel'] = 'standard';
+	$genoptions['extraprotocols'] = '';
 
     $stylesheetlocation = plugins_url( 'stylesheettemplate.css' , __FILE__ );
     $genoptions['fullstylesheet'] = @file_get_contents($stylesheetlocation);
