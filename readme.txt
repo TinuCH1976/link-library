@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.10.5 =
+* Updated internationalization template
+
 = 5.8.10.4 =
 * Added new general option to allow user to specify additional link protocols to be accepted by link editor
 
