@@ -478,7 +478,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
 
         if ( 'search' == $mode ) {
-            $output .= '<div class="resulttitle">' . __('Search Results for', 'link-library') . ' "' . stripslashes( $_GET['searchll'] ) . '"</div>';
+            $output .= '<div class="resulttitle">' . __('Search Results for', 'link-library') . ' "' . esc_html( stripslashes( $_GET['searchll'] ) ) . '"</div>';
         }
 
         $currentcategoryid = -1;

@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.11 =
+* Resolved XSS security issue
+
 = 5.8.10.6 =
 * Change in general defaults function to avoid reading in stylesheet file unless necessary
 
