@@ -169,7 +169,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
                     $newlinkid = $my_link_library_plugin->link_library_insert_link($newlink, false, $options['addlinknoaddress']);
 
                     $extradatatable = $my_link_library_plugin->db_prefix() . "links_extrainfo";
-                    $wpdb->insert( $extradatatable, array( 'link_id' => $newlinkid, 'link_second_url' => $captureddata['ll_secondwebaddr'], 'link_telephone' => $captureddata['ll_telephone'], 'link_email' => $captureddata['ll_email'], 'link_reciprocal' => $captureddata['ll_reciprocal'], 'link_submitter' => ( isset( $username ) ? $username : null ), 'link_submitter_name' => $captureddata['ll_submittername'], 'link_submitter_email' => $captureddata['ll_submitteremail'], 'link_textfield' => $captureddata['link_textfield'], 'link_no_follow' => 'N', 'link_featured' => 'N', 'link_manual_updated' => 'N' ) );
+                    $wpdb->insert( $extradatatable, array( 'link_id' => $newlinkid, 'link_second_url' => $captureddata['ll_secondwebaddr'], 'link_telephone' => $captureddata['ll_telephone'], 'link_email' => $captureddata['ll_email'], 'link_reciprocal' => $captureddata['ll_reciprocal'], 'link_submitter' => ( isset( $username ) ? $username : null ), 'link_submitter_name' => $captureddata['ll_submittername'], 'link_submitter_email' => $captureddata['ll_submitteremail'], 'link_textfield' => $captureddata['link_textfield'], 'link_no_follow' => '', 'link_featured' => '', 'link_manual_updated' => '' ) );
 
                     if ($options['emailnewlink'])
                     {

@@ -774,7 +774,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                     $rel = ' rel="' . $rel . '"';
                 } elseif ( !empty( $rel ) && ( $nofollow || $linkitem['link_no_follow'] ) ) {
                     $rel = ' rel="' . $rel . ' nofollow"';
-                } elseif ( empty( $rel ) && ( $nofollow or $linkitem['link_no_follow'] ) ) {
+                } elseif ( empty( $rel ) && ( $nofollow || $linkitem['link_no_follow'] ) ) {
                     $rel = ' rel="nofollow"';
                 }
 

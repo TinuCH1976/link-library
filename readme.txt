@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.11.3 =
+* Corrected problem with no follow option getting set when users submit links
+
 = 5.8.11.2 =
 * Update french translation
 * Fix one string that could not be translated
