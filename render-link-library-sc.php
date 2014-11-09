@@ -227,7 +227,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $catquery .= ' AND t.term_id not in (' . $excludecategorylist . ')';
         }
 
-        if ( false == $showinvisible ) {
+        if ( false == $showinvisible && ( false == $showinvisibleadmin || ( true == $showinvisibleadmin && ! $linkeditoruser ) ) ) {
             $catquery .= ' AND l.link_visible != "N"';
         }
 
@@ -301,7 +301,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 		$linkquery .= ' AND l.link_id = ' . $singlelinkid . ' ';
 	}
 
-    if ( false == $showinvisible ) {
+	if ( false == $showinvisible && ( false == $showinvisibleadmin || ( true == $showinvisibleadmin && ! $linkeditoruser ) ) ) {
         $linkquery .= ' AND l.link_visible != "N"';
     }
 

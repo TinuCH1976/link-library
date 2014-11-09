@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.11.1 =
+* Added new option to show hidden links to editors and administrators
+
 = 5.8.11 =
 * Resolved XSS security issue
 

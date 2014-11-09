@@ -113,6 +113,7 @@ function ll_reset_options( $settings = 1, $layout = 'list', $setoptions = 'retur
 	$options['linksperpage']                  = 5;
 	$options['hidecategorynames']             = false;
 	$options['showinvisible']                 = false;
+	$options['showinvisibleadmin']            = false;
 	$options['showdate']                      = false;
 	$options['catdescpos']                    = 'right';
 	$options['catlistdescpos']                = 'right';

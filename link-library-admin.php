@@ -1218,7 +1218,7 @@ class link_library_plugin_admin {
 					'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages', 'uselocalimagesoverthumbshots',
 					'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 					'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
-					'enable_link_popup', 'nocatonstartup', 'showlinksonclick'
+					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin'
 				)
 				as $option_name
 			) {
@@ -2639,18 +2639,14 @@ class link_library_plugin_admin {
 					<?php _e( 'Hide Category Names', 'link-library' ); ?>
 				</td>
 				<td>
-					<input type="checkbox" id="hidecategorynames" name="hidecategorynames" <?php if ( $options['hidecategorynames'] == true ) {
-						echo ' checked="checked" ';
-					} ?>/>
+					<input type="checkbox" id="hidecategorynames" name="hidecategorynames" <?php checked( $options['hidecategorynames'] ); ?>/>
 				</td>
 				<td></td>
 				<td>
 					<?php _e( 'Show Hidden Links', 'link-library' ); ?>
 				</td>
 				<td>
-					<input type="checkbox" id="showinvisible" name="showinvisible" <?php if ( $options['showinvisible'] == true ) {
-						echo ' checked="checked" ';
-					} ?>/>
+					<input type="checkbox" id="showinvisible" name="showinvisible" <?php checked( $options['showinvisible'] ); ?>/>
 				</td>
 			</tr>
 			<tr>
@@ -2661,6 +2657,13 @@ class link_library_plugin_admin {
 					<input type="checkbox" id="catanchor" name="catanchor" <?php if ( $options['catanchor'] ) {
 						echo ' checked="checked" ';
 					} ?>/>
+				</td>
+				<td></td>
+				<td>
+					<?php _e( 'Show Hidden Links to Admins/Editors', 'link-library' ); ?>
+				</td>
+				<td>
+					<input type="checkbox" id="showinvisibleadmin" name="showinvisibleadmin" <?php if ( isset( $options['showinvisibleadmin'] ) ) { checked( $options['showinvisibleadmin'] ); } ?>/>
 				</td>
 			</tr>
 		</table>
