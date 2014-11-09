@@ -3615,7 +3615,7 @@ class link_library_plugin_admin {
 			<td></td>
 			<td></td>
 			<td></td>
-			<td>Use Text Area for Notes</td>
+			<td><?php _e( 'Use Text Area for Notes', 'link-library' ); ?></td>
 			<td>
 				<input type="checkbox" id="usetextareaforusersubmitnotes" name="usetextareaforusersubmitnotes" <?php if ( $options['usetextareaforusersubmitnotes'] ) {
 					echo ' checked="checked" ';

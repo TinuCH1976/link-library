@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.11.2 =
+* Update french translation
+* Fix one string that could not be translated
+
 = 5.8.11.1 =
 * Added new option to show hidden links to editors and administrators
 
