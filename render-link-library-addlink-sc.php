@@ -274,8 +274,7 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
         }
 
         if ( $showcaptcha ) {
-            $output .= '<tr><td></td><td><span id="captchaimage"><img src="' . plugins_url( 'captcha/easycaptcha.php', __FILE__ ) . "\" /></span></td></tr>\n";
-            $output .= '<tr><th>' . __('Enter code from above image', 'link-library') . "</th><td><input type='text' name='confirm_code' /></td></tr>\n";
+            $output .= apply_filters( 'link_library_generate_captcha', '' );
         }
 
         if ( $showcustomcaptcha ) {
@@ -300,3 +299,11 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
 
     return $output;
 }
+
+function link_library_generate_captcha() {
+    $captcha = '<tr><td></td><td><span id="captchaimage"><img src="' . plugins_url( 'captcha/easycaptcha.php', __FILE__ ) . "\" /></span></td></tr>\n";
+	$captcha .= '<tr><th>' . __('Enter code from above image', 'link-library') . "</th><td><input type='text' name='confirm_code' /></td></tr>\n";
+    return $captcha;
+}
+
+add_filter( 'link_library_generate_captcha', 'link_library_generate_captcha' );

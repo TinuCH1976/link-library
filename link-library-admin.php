@@ -62,6 +62,164 @@ class link_library_plugin_admin {
 		if ( empty( $catnames ) ) {
 			add_action( 'admin_notices', array( $this, 'll_missing_categories' ) );
 		}
+
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ), 99 );
+		add_action( 'media_buttons', array( $this, 'render_button'), 20 );
+		add_action( 'admin_footer',  array( $this, 'render_modal' ) );
+	}
+
+	public function admin_scripts() {
+		wp_enqueue_script( 'linklibrary-shortcodes-embed', plugins_url( "js/linklibrary-shortcode-embed.js", __FILE__ ), array( 'jquery' ), '', true );
+	}
+
+	function render_button() {
+		echo '<a id="insert_linklibrary_shortcodes" href="#TB_inline?width=660&height=800&inlineId=select_linklibrary_shortcode" class="thickbox button linklibrary_media_link" data-width="800">' . __( 'Add Link Library Shortcode', 'link-library' ) . '</a>';
+	}
+
+	public function render_modal() {
+		$genoptions = get_option( 'LinkLibraryGeneral' );
+		?>
+		<div id="select_linklibrary_shortcode" style="display:none;">
+			<div class="wrap">
+				<h3><?php _e( 'Insert a Link Library shortcode', 'link-library' ); ?></h3>
+				<div class="alignleft">
+					<select id="linklibrary_shortcode_selector">
+						<option value="link-library">Link List</option>
+						<option value="link-library-cats">Link Category List</option>
+						<option value="link-library-search">Link Search</option>
+						<option value="link-library-addlink">Add Link Form</option>
+					</select>
+				</div>
+				<div class="alignright">
+					<a id="linklibrary_insert" class="button-primary" href="#" style="color:#fff;"><?php esc_attr_e( 'Insert Shortcode', 'link-library' ); ?></a>
+					<a id="linklibrary_cancel" class="button-secondary" href="#"><?php esc_attr_e( 'Cancel', 'link-library' ); ?></a>
+				</div>
+				<div id="shortcode_options" class="alignleft clear">
+					<div class="linklibrary-shortcode-section alignleft" id="link-library_wrapper"><p><strong>[link-library]</strong> - Render a list of links.</p>
+						<div class="linklibrary_input alignleft">
+							<label for="linklibrary_link-library_libraryid">Library ID</label>
+							<br/>
+							<select class="linklibrary_settings select" id="linklibrary_settings" name="settings" data-slug="settings" data-shortcode="settings" />
+							<?php if ( $genoptions['numberstylesets'] == '' ) {
+								$numberofsets = 1;
+							} else {
+								$numberofsets = $genoptions['numberstylesets'];
+							}
+							for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
+								<?php $tempoptionname = "LinkLibraryPP" . $counter;
+								$tempoptions          = get_option( $tempoptionname ); ?>
+								<option value="<?php echo $counter ?>"><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( !empty( $tempoptions ) ) {
+										echo " (" . $tempoptions['settingssetname'] . ")";
+									} ?></option>
+							<?php endfor; ?>
+							</select>
+							<br /><br />
+							<label for="linklibrary_link-library_categorylistoverride">Single Link ID</label>
+							<br />
+							<input class="linklibrary_singlelinkid text" type="text" id="linklibrary_singlelinkid" name="singlelinkid" />
+							<p class="description">Specify ID of single link to be displayed</p>
+							<br />
+							<label for="linklibrary_link-library_categorylistoverride">Category Override</label>
+							<br />
+							<input class="linklibrary_categorylistoverride text" type="text" id="linklibrary_categorylistoverride" name="categorylistoverride" />
+							<p class="description">Single, or comma-separated list of categories IDs to be displayed in the link list</p>
+							<br />
+							<label for="linklibrary_link-library_excludecategoryoverride">Excluded Category Override</label>
+							<br />
+							<input class="linklibrary_excludecategoryoverride text" type="text" id="linklibrary_excludecategoryoverride" name="excludecategoryoverride" />
+							<p class="description">Single, or comma-separated list of categories IDs to be excluded from the link list</p>
+							<br />
+							<label for="linklibrary_link-library_notesoverride">Notes Override</label>
+							<br />
+							<input class="linklibrary_notesoverride text" type="text" id="linklibrary_notesoverride" name="notesoverride" />
+							<p class="description">Set to 0 or 1 to display or not display link notes</p>
+							<br />
+							<label for="linklibrary_link-library_descoverride">Notes Override</label>
+							<br />
+							<input class="linklibrary_descoverride text" type="text" id="linklibrary_descoverride" name="descoverride" />
+							<p class="description">Set to 0 or 1 to display or not display link descriptions</p>
+							<br />
+							<label for="linklibrary_link-library_rssoverride">Notes Override</label>
+							<br />
+							<input class="linklibrary_rssoverride text" type="text" id="linklibrary_rssoverride" name="rssoverride" />
+							<p class="description">Set to 0 or 1 to display or not display rss information</p>
+							<br />
+							<label for="linklibrary_link-library_tableoverride">Notes Override</label>
+							<br />
+							<input class="linklibrary_tableoverride text" type="text" id="linklibrary_tableoverride" name="tableoverride" />
+							<p class="description">Set to 0 or 1 to display links in an unordered list or a table</p>
+						</div>
+					</div>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library-cats_wrapper"><p><strong>[link-library-cats]</strong> - Render a list of link categories.</p>
+						<div class="linklibrary_input alignleft">
+							<label for="linklibrary_link-library_libraryid">Library ID</label>
+							<br/>
+							<select class="linklibrary_settings select" id="linklibrary_settings" name="settings" data-slug="settings" data-shortcode="settings" />
+							<?php if ( $genoptions['numberstylesets'] == '' ) {
+								$numberofsets = 1;
+							} else {
+								$numberofsets = $genoptions['numberstylesets'];
+							}
+							for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
+								<?php $tempoptionname = "LinkLibraryPP" . $counter;
+								$tempoptions          = get_option( $tempoptionname ); ?>
+								<option value="<?php echo $counter ?>"><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( !empty( $tempoptions ) ) {
+										echo " (" . $tempoptions['settingssetname'] . ")";
+									} ?></option>
+							<?php endfor; ?>
+							</select>
+							<br /><br />
+							<label for="linklibrary_link-library_categorylistoverride">Category Override</label>
+							<br />
+							<input class="linklibrary_categorylistoverride text" type="text" id="linklibrary_categorylistoverride" name="categorylistoverride" />
+							<p class="description">Single, or comma-separated list of categories IDs to be displayed in the link list</p>
+							<br />
+							<label for="linklibrary_link-library_excludecategoryoverride">Excluded Category Override</label>
+							<br />
+							<input class="linklibrary_excludecategoryoverride text" type="text" id="linklibrary_excludecategoryoverride" name="excludecategoryoverride" />
+							<p class="description">Single, or comma-separated list of categories IDs to be excluded from the link list</p>
+						</div>
+					</div>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library-search_wrapper"><p><strong>[link-library-search]</strong> - Render a search box to search through links.</p>
+						<div class="linklibrary_input alignleft">
+							<p class="description">There are no options for this shortcode.</p>
+						</div>
+					</div>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library-addlink_wrapper"><p><strong>[link-library-addlink]</strong> - Render a form for visitors to submit new links.</p>
+						<div class="linklibrary_input alignleft">
+							<label for="linklibrary_link-library_libraryid">Library ID</label>
+							<br/>
+							<select class="linklibrary_settings select" id="linklibrary_settings" name="settings" data-slug="settings" data-shortcode="settings" />
+							<?php if ( $genoptions['numberstylesets'] == '' ) {
+								$numberofsets = 1;
+							} else {
+								$numberofsets = $genoptions['numberstylesets'];
+							}
+							for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
+								<?php $tempoptionname = "LinkLibraryPP" . $counter;
+								$tempoptions          = get_option( $tempoptionname ); ?>
+								<option value="<?php echo $counter ?>"><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( !empty( $tempoptions ) ) {
+										echo " (" . $tempoptions['settingssetname'] . ")";
+									} ?></option>
+							<?php endfor; ?>
+							</select>
+							<br /><br />
+							<label for="linklibrary_link-library_categorylistoverride">Category Override</label>
+							<br />
+							<input class="linklibrary_categorylistoverride text" type="text" id="linklibrary_categorylistoverride" name="categorylistoverride" />
+							<p class="description">Single, or comma-separated list of categories IDs to be displayed in the link list</p>
+							<br />
+							<label for="linklibrary_link-library_excludecategoryoverride">Excluded Category Override</label>
+							<br />
+							<input class="linklibrary_excludecategoryoverride text" type="text" id="linklibrary_excludecategoryoverride" name="excludecategoryoverride" />
+							<p class="description">Single, or comma-separated list of categories IDs to be excluded from the link list</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<?php
 	}
 
 	function ll_link_category_new_fields( $tag ) {

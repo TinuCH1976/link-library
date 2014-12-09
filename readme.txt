@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.12 =
+* Added filters to allow users to implement their own captcha and captcha validation solution
+* Added new dialog above text editor to simplify insert of Link Library shortcodes in content
+
 = 5.8.11.3 =
 * Corrected problem with no follow option getting set when users submit links
 
