@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.12.1 =
+* Updated code for translation and translation files
+* Added new option to combine all links results together without displaying category
+
 = 5.8.12 =
 * Added filters to allow users to implement their own captcha and captcha validation solution
 * Added new dialog above text editor to simplify insert of Link Library shortcodes in content

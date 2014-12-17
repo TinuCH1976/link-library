@@ -239,24 +239,28 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $catquery .= 'le.link_featured DESC, ';
         }
 
-        if ( 'name' == $order ) {
-            $catquery .= ' name ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
-        } elseif ( 'id' == $order ) {
-            $catquery .= ' t.term_id ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
-        } elseif ( 'order' == $order ) {
-            $catquery .= ' t.term_order ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
-        } elseif ( 'catlist' == $order ) {
-            $catquery .= ' FIELD(t.term_id,' . $categorylist . ') ';
+        if ( !$combineresults ) {
+            if ( 'name' == $order ) {
+                $catquery .= ' name ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
+            } elseif ( 'id' == $order ) {
+                $catquery .= ' t.term_id ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
+            } elseif ( 'order' == $order ) {
+                $catquery .= ' t.term_order ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
+            } elseif ( 'catlist' == $order ) {
+                $catquery .= ' FIELD(t.term_id,' . $categorylist . ') ';
+            }
+
+            $catquery .= ', ';
         }
 
         if ( 'name' == $linkorder ) {
-            $catquery .= ', link_name ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+            $catquery .= 'link_name ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
         } elseif ( 'id' == $linkorder ) {
-            $catquery .= ', link_id ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+            $catquery .= 'link_id ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
         } elseif ( 'order' == $linkorder ) {
-            $catquery .= ', link_order ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+            $catquery .= 'link_order ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
         } elseif ( 'date' == $linkorder ) {
-            $catquery .= ', link_updated ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+            $catquery .= 'link_updated ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
         }
 
         $catitems = $wpdb->get_results( $catquery );
@@ -374,24 +378,28 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $linkquery .= 'link_featured DESC, ';
     }
 
-    if ( 'name' == $order ) {
-        $linkquery .= ' name ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
-    } elseif ( 'id' == $order ) {
-        $linkquery .= ' t.term_id ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
-    } elseif ( 'order' == $order ) {
-        $linkquery .= ' t.term_order ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
-    } elseif ( 'catlist' == $order ) {
-        $linkquery .= ' FIELD(t.term_id,' . $categorylist . ') ';
+    if ( !$combineresults ) {
+        if ( 'name' == $order ) {
+            $linkquery .= ' name ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
+        } elseif ( 'id' == $order ) {
+            $linkquery .= ' t.term_id ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
+        } elseif ( 'order' == $order ) {
+            $linkquery .= ' t.term_order ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
+        } elseif ( 'catlist' == $order ) {
+            $linkquery .= ' FIELD(t.term_id,' . $categorylist . ') ';
+        }
+
+        $linkquery .= ', ';
     }
 
     if ( 'name' == $linkorder || 'random' == $linkorder ) {
-        $linkquery .= ', l.link_name ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_name ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
     } elseif ( 'id' == $linkorder ) {
-        $linkquery .= ', l.link_id ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_id ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
     } elseif ( 'order' == $linkorder ) {
-        $linkquery .= ', l.link_order '. ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_order '. ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
     } elseif ( 'date' == $linkorder ) {
-        $linkquery .= ', l.link_updated '. ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_updated '. ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
     }
 
     if ( $pagination && 'search' != $mode ) {
@@ -491,7 +499,9 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                 $linkstarttime = microtime ( true );
             }
 
-            if ( $currentcategoryid != $linkitem['term_id'] ) {
+            $linkcount = 0;
+
+            if ( $currentcategoryid != $linkitem['term_id'] && ! $combineresults ) {
                 if ( -1 != $currentcategoryid && $showonecatonly && empty( $_GET['searchll'] ) ) {
                     break;
                 }
@@ -1261,7 +1271,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $output .= "\t</ul>\n";
         }
 
-        if ( !empty( $catlistwrappers ) ) {
+        if ( !empty( $catlistwrappers ) && ! $combineresults ) {
             $output .= '</div>';
         }
 
@@ -1273,7 +1283,9 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $output .= '</div>';
         }
 
-        $output .= '</div>';
+        if ( ! $combineresults ) {
+            $output .= '</div>';
+        }
 
         if ( $pagination && 'search' != $mode && ( 'AFTER' == $paginationposition || empty( $pagination ) ) ) {
             $previouspagenumber = $pagenumber - 1;

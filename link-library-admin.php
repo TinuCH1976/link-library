@@ -84,10 +84,10 @@ class link_library_plugin_admin {
 				<h3><?php _e( 'Insert a Link Library shortcode', 'link-library' ); ?></h3>
 				<div class="alignleft">
 					<select id="linklibrary_shortcode_selector">
-						<option value="link-library">Link List</option>
-						<option value="link-library-cats">Link Category List</option>
-						<option value="link-library-search">Link Search</option>
-						<option value="link-library-addlink">Add Link Form</option>
+						<option value="link-library"><?php _e( 'Link List', 'link-library' ); ?></option>
+						<option value="link-library-cats"><?php _e( 'Link Category List', 'link-library' ); ?></option>
+						<option value="link-library-search"><?php _e( 'Link Search', 'link-library' ); ?></option>
+						<option value="link-library-addlink"><?php _e( 'Add Link Form', 'link-library' ); ?></option>
 					</select>
 				</div>
 				<div class="alignright">
@@ -95,9 +95,9 @@ class link_library_plugin_admin {
 					<a id="linklibrary_cancel" class="button-secondary" href="#"><?php esc_attr_e( 'Cancel', 'link-library' ); ?></a>
 				</div>
 				<div id="shortcode_options" class="alignleft clear">
-					<div class="linklibrary-shortcode-section alignleft" id="link-library_wrapper"><p><strong>[link-library]</strong> - Render a list of links.</p>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library_wrapper"><p><strong>[link-library]</strong> - <?php _e( 'Render a list of links.', 'link-library' ); ?></p>
 						<div class="linklibrary_input alignleft">
-							<label for="linklibrary_link-library_libraryid">Library ID</label>
+							<label for="linklibrary_link-library_libraryid"><?php _e( 'Library ID', 'link-library' ); ?></label>
 							<br/>
 							<select class="linklibrary_settings select" id="linklibrary_settings" name="settings" data-slug="settings" data-shortcode="settings" />
 							<?php if ( $genoptions['numberstylesets'] == '' ) {
@@ -114,45 +114,45 @@ class link_library_plugin_admin {
 							<?php endfor; ?>
 							</select>
 							<br /><br />
-							<label for="linklibrary_link-library_categorylistoverride">Single Link ID</label>
+							<label for="linklibrary_link-library_categorylistoverride"><?php _e( 'Single Link ID', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_singlelinkid text" type="text" id="linklibrary_singlelinkid" name="singlelinkid" />
-							<p class="description">Specify ID of single link to be displayed</p>
+							<p class="description"><?php _e( 'Specify ID of single link to be displayed', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_categorylistoverride">Category Override</label>
+							<label for="linklibrary_link-library_categorylistoverride"><?php _e( 'Category Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_categorylistoverride text" type="text" id="linklibrary_categorylistoverride" name="categorylistoverride" />
-							<p class="description">Single, or comma-separated list of categories IDs to be displayed in the link list</p>
+							<p class="description"><?php _e( 'Single, or comma-separated list of categories IDs to be displayed in the link list', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_excludecategoryoverride">Excluded Category Override</label>
+							<label for="linklibrary_link-library_excludecategoryoverride"><?php _e( 'Excluded Category Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_excludecategoryoverride text" type="text" id="linklibrary_excludecategoryoverride" name="excludecategoryoverride" />
-							<p class="description">Single, or comma-separated list of categories IDs to be excluded from the link list</p>
+							<p class="description"><?php _e( 'Single, or comma-separated list of categories IDs to be excluded from the link list', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_notesoverride">Notes Override</label>
+							<label for="linklibrary_link-library_notesoverride"><?php _e( 'Notes Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_notesoverride text" type="text" id="linklibrary_notesoverride" name="notesoverride" />
-							<p class="description">Set to 0 or 1 to display or not display link notes</p>
+							<p class="description"><?php _e( 'Set to 0 or 1 to display or not display link notes', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_descoverride">Notes Override</label>
+							<label for="linklibrary_link-library_descoverride"><?php _e( 'Notes Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_descoverride text" type="text" id="linklibrary_descoverride" name="descoverride" />
-							<p class="description">Set to 0 or 1 to display or not display link descriptions</p>
+							<p class="description"><?php _e( 'Set to 0 or 1 to display or not display link descriptions', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_rssoverride">Notes Override</label>
+							<label for="linklibrary_link-library_rssoverride"><?php _e( 'Notes Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_rssoverride text" type="text" id="linklibrary_rssoverride" name="rssoverride" />
-							<p class="description">Set to 0 or 1 to display or not display rss information</p>
+							<p class="description"><?php _e( 'Set to 0 or 1 to display or not display rss information', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_tableoverride">Notes Override</label>
+							<label for="linklibrary_link-library_tableoverride"><?php _e( 'Notes Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_tableoverride text" type="text" id="linklibrary_tableoverride" name="tableoverride" />
-							<p class="description">Set to 0 or 1 to display links in an unordered list or a table</p>
+							<p class="description"><?php _e( 'Set to 0 or 1 to display links in an unordered list or a table', 'link-library' ); ?></p>
 						</div>
 					</div>
-					<div class="linklibrary-shortcode-section alignleft" id="link-library-cats_wrapper"><p><strong>[link-library-cats]</strong> - Render a list of link categories.</p>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library-cats_wrapper"><p><strong>[link-library-cats]</strong> - <?php _e( 'Render a list of link categories.', 'link-library' ); ?></p>
 						<div class="linklibrary_input alignleft">
-							<label for="linklibrary_link-library_libraryid">Library ID</label>
+							<label for="linklibrary_link-library_libraryid"><?php _e( 'Library ID', 'link-library' ); ?></label>
 							<br/>
 							<select class="linklibrary_settings select" id="linklibrary_settings" name="settings" data-slug="settings" data-shortcode="settings" />
 							<?php if ( $genoptions['numberstylesets'] == '' ) {
@@ -169,25 +169,25 @@ class link_library_plugin_admin {
 							<?php endfor; ?>
 							</select>
 							<br /><br />
-							<label for="linklibrary_link-library_categorylistoverride">Category Override</label>
+							<label for="linklibrary_link-library_categorylistoverride"><?php _e( 'Category Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_categorylistoverride text" type="text" id="linklibrary_categorylistoverride" name="categorylistoverride" />
-							<p class="description">Single, or comma-separated list of categories IDs to be displayed in the link list</p>
+							<p class="description"><?php _e( 'Single, or comma-separated list of categories IDs to be displayed in the link list', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_excludecategoryoverride">Excluded Category Override</label>
+							<label for="linklibrary_link-library_excludecategoryoverride"><?php _e( 'Excluded Category Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_excludecategoryoverride text" type="text" id="linklibrary_excludecategoryoverride" name="excludecategoryoverride" />
-							<p class="description">Single, or comma-separated list of categories IDs to be excluded from the link list</p>
+							<p class="description"><?php _e( 'Single, or comma-separated list of categories IDs to be excluded from the link list', 'link-library' ); ?></p>
 						</div>
 					</div>
-					<div class="linklibrary-shortcode-section alignleft" id="link-library-search_wrapper"><p><strong>[link-library-search]</strong> - Render a search box to search through links.</p>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library-search_wrapper"><p><strong>[link-library-search]</strong> - <?php _e( 'Render a search box to search through links.', 'link-library' ); ?></p>
 						<div class="linklibrary_input alignleft">
-							<p class="description">There are no options for this shortcode.</p>
+							<p class="description"><?php _e( 'There are no options for this shortcode.', 'link-library' ); ?></p>
 						</div>
 					</div>
-					<div class="linklibrary-shortcode-section alignleft" id="link-library-addlink_wrapper"><p><strong>[link-library-addlink]</strong> - Render a form for visitors to submit new links.</p>
+					<div class="linklibrary-shortcode-section alignleft" id="link-library-addlink_wrapper"><p><strong>[link-library-addlink]</strong> - <?php _e( 'Render a form for visitors to submit new links.', 'link-library' ); ?></p>
 						<div class="linklibrary_input alignleft">
-							<label for="linklibrary_link-library_libraryid">Library ID</label>
+							<label for="linklibrary_link-library_libraryid"><?php _e( 'Library ID', 'link-library' ); ?></label>
 							<br/>
 							<select class="linklibrary_settings select" id="linklibrary_settings" name="settings" data-slug="settings" data-shortcode="settings" />
 							<?php if ( $genoptions['numberstylesets'] == '' ) {
@@ -204,15 +204,15 @@ class link_library_plugin_admin {
 							<?php endfor; ?>
 							</select>
 							<br /><br />
-							<label for="linklibrary_link-library_categorylistoverride">Category Override</label>
+							<label for="linklibrary_link-library_categorylistoverride"><?php _e( 'Category Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_categorylistoverride text" type="text" id="linklibrary_categorylistoverride" name="categorylistoverride" />
-							<p class="description">Single, or comma-separated list of categories IDs to be displayed in the link list</p>
+							<p class="description"><?php _e( 'Single, or comma-separated list of categories IDs to be displayed in the link list', 'link-library' ); ?></p>
 							<br />
-							<label for="linklibrary_link-library_excludecategoryoverride">Excluded Category Override</label>
+							<label for="linklibrary_link-library_excludecategoryoverride"><?php _e( 'Excluded Category Override', 'link-library' ); ?></label>
 							<br />
 							<input class="linklibrary_excludecategoryoverride text" type="text" id="linklibrary_excludecategoryoverride" name="excludecategoryoverride" />
-							<p class="description">Single, or comma-separated list of categories IDs to be excluded from the link list</p>
+							<p class="description"><?php _e( 'Single, or comma-separated list of categories IDs to be excluded from the link list', 'link-library' ); ?></p>
 						</div>
 					</div>
 				</div>
@@ -679,6 +679,7 @@ class link_library_plugin_admin {
 
 		$settingsname = 'LinkLibraryPP' . $settings;
 		$options      = get_option( $settingsname );
+		$options = wp_parse_args( $options, ll_reset_options( 1, 'list', 'return' ) );
 
 		if ( empty( $options ) ) {
 			$options = ll_reset_options( $settings, 'list', 'return_and_set' );
@@ -1376,7 +1377,7 @@ class link_library_plugin_admin {
 					'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages', 'uselocalimagesoverthumbshots',
 					'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 					'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
-					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin'
+					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin', 'combineresults'
 				)
 				as $option_name
 			) {
@@ -1891,7 +1892,7 @@ class link_library_plugin_admin {
 		?>
 		<p><?php _e( 'Add new links to your site with this bookmarklet.', 'link-library' ); ?></p>
 		<p><?php _e( 'To use this feature, drag-and-drop the button below to your favorite / bookmark toolbar.', 'link-library' ); ?></p>
-		<a href="<?php echo $bookmarkletcode; ?>" class='button' title="Add to Links"><?php _e( 'Add to Links', 'link-library' ); ?></a>
+		<a href="<?php echo $bookmarkletcode; ?>" class='button' title="<?php _e( 'Add to Links', 'link-library' ); ?>"><?php _e( 'Add to Links', 'link-library' ); ?></a>
 
 	<?php
 	}
@@ -2260,7 +2261,7 @@ class link_library_plugin_admin {
 						$categorylistarray = explode( ',', $options['categorylist'] );
 						?>
 						<td>
-							Show all categories
+							<?php _e( 'Show all categories', 'link-library' ); ?>
 							<input type="checkbox" id="nospecificcats" name="nospecificcats" <?php if ( empty( $options['categorylist'] ) ) {
 								echo ' checked="checked" ';
 							} ?>/>
@@ -2272,7 +2273,7 @@ class link_library_plugin_admin {
 									<?php } ?>
 								</select>
 							<?php } else { ?>
-								No link categories! Create some!
+								<?php _e( 'No link categories! Create some!', 'link-library' ); ?>
 							<?php } ?>
 						</td>
 					<?php } ?>
@@ -2290,7 +2291,7 @@ class link_library_plugin_admin {
 						$excludecategorylistarray = explode( ',', $options['excludecategorylist'] );
 						?>
 						<td>
-							No Exclusions
+							<?php _e( 'No Exclusions', 'link-library' ); ?>
 							<input type="checkbox" id="noexclusions" name="noexclusions" <?php if ( empty( $options['excludecategorylist'] ) ) {
 								echo ' checked="checked" ';
 							} ?>/>
@@ -2302,7 +2303,7 @@ class link_library_plugin_admin {
 									<?php } ?>
 								</select>
 							<?php } else { ?>
-								No link categories! Create some!
+								<?php _e( 'No link categories! Create some!', 'link-library' ); ?>
 							<?php } ?>
 						</td>
 					<?php } ?>
@@ -2667,21 +2668,11 @@ class link_library_plugin_admin {
 				</td>
 				<td>
 					<select name="linkorder" id="linkorder" style="width:250px;">
-						<option value="name"<?php if ( $options['linkorder'] == 'name' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Order by Name', 'link-library' ); ?></option>
-						<option value="id"<?php if ( $options['linkorder'] == 'id' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Order by ID', 'link-library' ); ?></option>
-						<option value="order"<?php if ( $options['linkorder'] == 'order' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Order set by ', 'link-library' ); ?>'My Link Order' <?php _e( 'Wordpress Plugin', 'link-library' ); ?></option>
-						<option value="random"<?php if ( $options['linkorder'] == 'random' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Order randomly', 'link-library' ); ?></option>
-						<option value="date"<?php if ( $options['linkorder'] == 'date' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Order by updated date', 'link-library' ); ?></option>
+						<option value="name"<?php selected( $options['linkorder'] == 'name' ); ?>><?php _e( 'Order by Name', 'link-library' ); ?></option>
+						<option value="id"<?php selected ( $options['linkorder'] == 'id' ); ?>><?php _e( 'Order by ID', 'link-library' ); ?></option>
+						<option value="order"<?php selected ( $options['linkorder'] == 'order' ); ?>><?php _e( 'Order set by ', 'link-library' ); ?>'My Link Order' <?php _e( 'Wordpress Plugin', 'link-library' ); ?></option>
+						<option value="random"<?php selected( $options['linkorder'] == 'random' ); ?>><?php _e( 'Order randomly', 'link-library' ); ?></option>
+						<option value="date"<?php selected( $options['linkorder'] == 'date' ); ?>><?php _e( 'Order by updated date', 'link-library' ); ?></option>
 					</select>
 				</td>
 				<td style='width:100px'></td>
@@ -2694,27 +2685,24 @@ class link_library_plugin_admin {
 					} ?>/>
 					<span style='margin-left: 17px'><?php _e( 'Position', 'link-library' ); ?>:</span>
 					<select name="catdescpos" id="catdescpos" style="width:100px;">
-						<option value="right"<?php if ( $options['catdescpos'] == 'right' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Right', 'link-library' ); ?></option>
-						<option value="left"<?php if ( $options['catdescpos'] == 'left' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Left', 'link-library' ); ?></option>
+						<option value="right"<?php selected( $options['catdescpos'] == 'right' ); ?>><?php _e( 'Right', 'link-library' ); ?></option>
+						<option value="left"<?php selected( $options['catdescpos'] == 'left' ); ?>><?php _e( 'Left', 'link-library' ); ?></option>
 					</select>
 				</td>
 			</tr>
 			<tr>
 				<td><?php _e( 'List Featured Links ahead of Regular Links', 'link-library' ); ?></td>
 				<td>
-					<input type="checkbox" id="featuredfirst" name="featuredfirst" <?php if ( $options['featuredfirst'] ) {
-						echo ' checked="checked" ';
-					} ?>/></td>
+					<input type="checkbox" id="featuredfirst" name="featuredfirst" <?php checked( $options['featuredfirst'] ); ?>/></td>
 				<td></td>
 				<td><?php _e( 'Show Expand Link button and hide links', 'link-library' ); ?></td>
 				<td>
-					<input type="checkbox" id="showlinksonclick" name="showlinksonclick" <?php if ( $options['showlinksonclick'] ) {
-						echo ' checked="checked" ';
-					} ?>/></td>
+					<input type="checkbox" id="showlinksonclick" name="showlinksonclick" <?php checked( $options['showlinksonclick'] ); ?>/></td>
+			</tr>
+			<tr>
+				<td><?php _e( 'Combine all results without categories', 'link-library' ); ?></td>
+				<td>
+					<input type="checkbox" id="combineresults" name="combineresults" <?php checked( $options['combineresults'] ); ?>/></td>
 			</tr>
 			<tr>
 				<td class="lltooltip" title='<?php _e( 'Except for My Link Order mode', 'link-library' ); ?>'>
@@ -2722,12 +2710,8 @@ class link_library_plugin_admin {
 				</td>
 				<td class="lltooltip" title='<?php _e( 'Except for My Link Order mode', 'link-library' ); ?>'>
 					<select name="linkdirection" id="linkdirection" style="width:200px;">
-						<option value="ASC"<?php if ( $options['linkdirection'] == 'ASC' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Ascending', 'link-library' ); ?></option>
-						<option value="DESC"<?php if ( $options['linkdirection'] == 'DESC' ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Descending', 'link-library' ); ?></option>
+						<option value="ASC"<?php selected( $options['linkdirection'] == 'ASC' ); ?>><?php _e( 'Ascending', 'link-library' ); ?></option>
+						<option value="DESC"<?php selected( $options['linkdirection'] == 'DESC' ); ?>><?php _e( 'Descending', 'link-library' ); ?></option>
 					</select>
 				</td>
 				<td></td>
@@ -3481,7 +3465,7 @@ class link_library_plugin_admin {
 			</tr>
 			<tr>
 				<td>
-					<?php _e( 'Give priority to images assigned to links if present' ); ?>
+					<?php _e( 'Give priority to images assigned to links if present', 'link-library' ); ?>
 				</td>
 				<td>
 					<input type="checkbox" id="uselocalimagesoverthumbshots" name="uselocalimagesoverthumbshots" <?php if ( $options['uselocalimagesoverthumbshots'] ) {
@@ -3565,7 +3549,7 @@ class link_library_plugin_admin {
 					<td style='padding-right:20px'>
 						<input type="text" id="searchlabel" name="searchlabel" size="30" value="<?php echo $options['searchlabel']; ?>" />
 					</td>
-					<td class="lltooltip" title='<?php _e( 'Leave empty when links are to be displayed on same page as search box', 'link-library' ); ?>'>Results Page Address</td>
+					<td class="lltooltip" title='<?php _e( 'Leave empty when links are to be displayed on same page as search box', 'link-library' ); ?>'><?php _e( 'Results Page Address', 'link-library' ); ?></td>
 					<td class="lltooltip" title='<?php _e( 'Leave empty when links are to be displayed on same page as search box', 'link-library' ); ?>'>
 						<input type="text" id="searchresultsaddress" name="searchresultsaddress" size="80" value="<?php echo strval( esc_html( stripslashes( $options['searchresultsaddress'] ) ) ); ?>" />
 					</td>
