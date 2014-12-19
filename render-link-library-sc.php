@@ -493,20 +493,21 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
         $xpath = $LLPluginClass->relativePath( dirname( __FILE__ ), ABSPATH );
 
+
+        $linkcount = 0;
+
         foreach ( $linkitems as $linkitem ) {
 
             if ( true == $debugmode ) {
                 $linkstarttime = microtime ( true );
             }
 
-            $linkcount = 0;
-
-            if ( $currentcategoryid != $linkitem['term_id'] && ! $combineresults ) {
-                if ( -1 != $currentcategoryid && $showonecatonly && empty( $_GET['searchll'] ) ) {
+            if ( $currentcategoryid != $linkitem['term_id'] ) {
+                if ( -1 != $currentcategoryid && $showonecatonly && empty( $_GET['searchll'] ) && ! $combineresults ) {
                     break;
                 }
 
-                if ( -1 != $currentcategoryid ) {
+                if ( -1 != $currentcategoryid && ! $combineresults) {
                     // Close the last category
                     if ( $displayastable ) {
                         $output .= "\t</table>\n";
@@ -527,196 +528,198 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                     $currentcategory = $currentcategory + 1;
                 }
 
-                $currentcategoryid = $linkitem['term_id'];
-                $output .= '<div class="LinkLibraryCat LinkLibraryCat' . $currentcategoryid . '">';
-                $linkcount = 0;
-                $catlink = '';
-                $cattext = '';
-                $catenddiv = '';
+                if ( ! $combineresults ) {
+                    $currentcategoryid = $linkitem['term_id'];
+                    $output .= '<div class="LinkLibraryCat LinkLibraryCat' . $currentcategoryid . '">';
+                    $linkcount = 0;
+                    $catlink = '';
+                    $cattext = '';
+                    $catenddiv = '';
 
-                if ( 1 == $catlistwrappers ) {
-                    $output .= '<div class="' . $beforecatlist1 . '">';
-                } else if ( $catlistwrappers == 2 ) {
-                    $remainder = $currentcategory % $catlistwrappers;
-                    switch ( $remainder ) {
+                    if ( 1 == $catlistwrappers ) {
+                        $output .= '<div class="' . $beforecatlist1 . '">';
+                    } else if ( $catlistwrappers == 2 ) {
+                        $remainder = $currentcategory % $catlistwrappers;
+                        switch ( $remainder ) {
 
-                        case 0:
-                            $output .= '<div class="' . $beforecatlist2 . '">';
-                            break;
+                            case 0:
+                                $output .= '<div class="' . $beforecatlist2 . '">';
+                                break;
 
-                        case 1:
-                            $output .= '<div class="' . $beforecatlist1 . '">';
-                            break;
+                            case 1:
+                                $output .= '<div class="' . $beforecatlist1 . '">';
+                                break;
+                        }
+                    } else if ( 3 == $catlistwrappers ) {
+                        $remainder = $currentcategory % $catlistwrappers;
+                        switch ( $remainder ) {
+
+                            case 0:
+                                $output .= '<div class="' . $beforecatlist3 . '">';
+                                break;
+
+                            case 2:
+                                $output .= '<div class="' . $beforecatlist2 . '">';
+                                break;
+
+                            case 1:
+                                $output .= '<div class="' . $beforecatlist1 . '">';
+                                break;
+                        }
                     }
-                } else if ( 3 == $catlistwrappers ) {
-                    $remainder = $currentcategory % $catlistwrappers;
-                    switch ( $remainder ) {
 
-                        case 0:
-                            $output .= '<div class="' . $beforecatlist3 . '">';
-                            break;
+                    // Display the category name
+                    if ( !$hidecategorynames || empty( $hidecategorynames ) ) {
+                        $caturl = get_metadata( 'linkcategory', $linkitem['term_id'], 'linkcaturl', true );
 
-                        case 2:
-                            $output .= '<div class="' . $beforecatlist2 . '">';
-                            break;
+                        if ( $catanchor ) {
+                            $cattext = '<div id="' . $linkitem['slug'] . '">';
+                        } else {
+                            $cattext = '';
+                        }
 
-                        case 1:
-                            $output .= '<div class="' . $beforecatlist1 . '">';
-                            break;
+                        if ( !$divorheader ) {
+                            if ( 'search' == $mode ) {
+                                foreach ( $searchterms as $searchterm ) {
+                                    $linkitem['name'] = link_library_highlight_phrase( $linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>' );
+                                }
+                            }
+
+                            $catlink = '<div class="' . $catnameoutput . '">';
+
+                            if ( 'right' == $catdescpos || empty( $catdescpos ) ) {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
+                            if ( $showcategorydesclinks ) {
+                                $catlink .= '<span class="linklistcatnamedesc">';
+                                $linkitem['description'] = str_replace( '[', '<', $linkitem['description'] );
+                                $linkitem['description'] = str_replace( ']', '>', $linkitem['description'] );
+                                $catlink .= $linkitem['description'];
+                                $catlink .= '</span>';
+                            }
+
+                            if ( 'left' == $catdescpos ) {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
+                            if ( $showlinksonclick ) {
+                                $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
+                                $catlink .= '<img src="';
+
+                                if ( !empty( $expandiconpath ) ) {
+                                    $catlink .= $expandiconpath;
+                                } else {
+                                    $catlink .= plugins_url( 'icons/expand-32.png', __FILE__ );
+                                }
+
+                                $catlink .= '" />';
+
+                                $catlink .= '</span>';
+                            }
+
+                            $catlink .= '</div>';
+                        } else if ( $divorheader ) {
+                            if ( 'search' == $mode ) {
+                                foreach ( $searchterms as $searchterm ) {
+                                    $linkitem['name'] = link_library_highlight_phrase( $linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>' );
+                                }
+                            }
+
+                            $catlink = '<div class="'. $catnameoutput . '">';
+
+                            if ( 'right' == $catdescpos || empty( $catdescpos ) ) {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . link_library_add_http( $caturl ). '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
+                            if ( $showcategorydesclinks ) {
+                                $catlink .= '<span class="linklistcatnamedesc">';
+                                $linkitem['description'] = str_replace( '[', '<', $linkitem['description'] );
+                                $linkitem['description'] = str_replace(']', '>', $linkitem['description'] );
+                                $catlink .= $linkitem['description'];
+                                $catlink .= '</span>';
+                            }
+
+                            if ( 'left' == $catdescpos ) {
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
+
+                                    if ( !empty( $linktarget ) )
+                                        $catlink .= ' target="' . $linktarget . '"';
+
+                                    $catlink .= '>';
+                                }
+                                $catlink .= $linkitem['name'];
+                                if ( !empty( $caturl ) ) {
+                                    $catlink .= '</a>';
+                                }
+                            }
+
+                            if ( $showlinksonclick ) {
+                                $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
+                                $catlink .= '<img src="';
+
+                                if ( !empty( $expandiconpath ) ) {
+                                    $catlink .= $expandiconpath;
+                                } else {
+                                    $catlink .= plugins_url( 'icons/expand-32.png', __FILE__ );
+                                }
+
+                                $catlink .= '" />';
+                                $catlink .= '</span>';
+                            }
+
+                            $catlink .= '</div>';
+                        }
+
+                        if ($catanchor) {
+                            $catenddiv = '</div>';
+                        } else {
+                            $catenddiv = '';
+                        }
+                    }
+
+                    $output .= $cattext . $catlink . $catenddiv;
+
+                    if ( $showlinksonclick ) {
+                        $output .= '<div class="LinksInCat' . $currentcategoryid . ' LinksInCat">';
                     }
                 }
 
-                // Display the category name
-                if ( !$hidecategorynames || empty( $hidecategorynames ) ) {
-                    $caturl = get_metadata( 'linkcategory', $linkitem['term_id'], 'linkcaturl', true );
-
-                    if ( $catanchor ) {
-                        $cattext = '<div id="' . $linkitem['slug'] . '">';
-                    } else {
-                        $cattext = '';
-                    }
-
-                    if ( !$divorheader ) {
-                        if ( 'search' == $mode ) {
-                            foreach ( $searchterms as $searchterm ) {
-                                $linkitem['name'] = link_library_highlight_phrase( $linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>' );
-                            }
-                        }
-
-                        $catlink = '<div class="' . $catnameoutput . '">';
-
-                        if ( 'right' == $catdescpos || empty( $catdescpos ) ) {
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
-
-                                if ( !empty( $linktarget ) )
-                                    $catlink .= ' target="' . $linktarget . '"';
-
-                                $catlink .= '>';
-                            }
-                            $catlink .= $linkitem['name'];
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '</a>';
-                            }
-                        }
-
-                        if ( $showcategorydesclinks ) {
-                            $catlink .= '<span class="linklistcatnamedesc">';
-                            $linkitem['description'] = str_replace( '[', '<', $linkitem['description'] );
-                            $linkitem['description'] = str_replace( ']', '>', $linkitem['description'] );
-                            $catlink .= $linkitem['description'];
-                            $catlink .= '</span>';
-                        }
-
-                        if ( 'left' == $catdescpos ) {
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
-
-                                if ( !empty( $linktarget ) )
-                                    $catlink .= ' target="' . $linktarget . '"';
-
-                                $catlink .= '>';
-                            }
-                            $catlink .= $linkitem['name'];
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '</a>';
-                            }
-                        }
-
-                        if ( $showlinksonclick ) {
-                            $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
-                            $catlink .= '<img src="';
-
-                            if ( !empty( $expandiconpath ) ) {
-                                $catlink .= $expandiconpath;
-                            } else {
-                                $catlink .= plugins_url( 'icons/expand-32.png', __FILE__ );
-                            }
-
-                            $catlink .= '" />';
-
-                            $catlink .= '</span>';
-                        }
-
-                        $catlink .= '</div>';
-                    } else if ( $divorheader ) {
-                        if ( 'search' == $mode ) {
-                            foreach ( $searchterms as $searchterm ) {
-                                $linkitem['name'] = link_library_highlight_phrase( $linkitem['name'], $searchterm, '<span class="highlight_word">', '</span>' );
-                            }
-                        }
-
-                        $catlink = '<div class="'. $catnameoutput . '">';
-
-                        if ( 'right' == $catdescpos || empty( $catdescpos ) ) {
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . link_library_add_http( $caturl ). '" ';
-
-                                if ( !empty( $linktarget ) )
-                                    $catlink .= ' target="' . $linktarget . '"';
-
-                                $catlink .= '>';
-                            }
-                            $catlink .= $linkitem['name'];
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '</a>';
-                            }
-                        }
-
-                        if ( $showcategorydesclinks ) {
-                            $catlink .= '<span class="linklistcatnamedesc">';
-                            $linkitem['description'] = str_replace( '[', '<', $linkitem['description'] );
-                            $linkitem['description'] = str_replace(']', '>', $linkitem['description'] );
-                            $catlink .= $linkitem['description'];
-                            $catlink .= '</span>';
-                        }
-
-                        if ( 'left' == $catdescpos ) {
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '<a href="' . link_library_add_http( $caturl ) . '" ';
-
-                                if ( !empty( $linktarget ) )
-                                    $catlink .= ' target="' . $linktarget . '"';
-
-                                $catlink .= '>';
-                            }
-                            $catlink .= $linkitem['name'];
-                            if ( !empty( $caturl ) ) {
-                                $catlink .= '</a>';
-                            }
-                        }
-
-                        if ( $showlinksonclick ) {
-                            $catlink .= '<span class="expandlinks" id="LinksInCat' . $linkitem['term_id'] . '">';
-                            $catlink .= '<img src="';
-
-                            if ( !empty( $expandiconpath ) ) {
-                                $catlink .= $expandiconpath;
-                            } else {
-                                $catlink .= plugins_url( 'icons/expand-32.png', __FILE__ );
-                            }
-
-                            $catlink .= '" />';
-                            $catlink .= '</span>';
-                        }
-
-                        $catlink .= '</div>';
-                    }
-
-                    if ($catanchor) {
-                        $catenddiv = '</div>';
-                    } else {
-                        $catenddiv = '';
-                    }
-                }
-
-                $output .= $cattext . $catlink . $catenddiv;
-
-                if ( $showlinksonclick ) {
-                    $output .= '<div class="LinksInCat' . $currentcategoryid . ' LinksInCat">';
-                }
-
-                if ( $displayastable ) {
+                if ( $displayastable && ( ! $combineresults || ( $combineresults && $linkcount == 0 ) ) ) {
                     $catstartlist = "\n\t<table class='linklisttable'>\n";
                     if ( $showcolumnheaders ) {
                         $catstartlist .= '<div class="linklisttableheaders"><tr>';
@@ -737,8 +740,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                     } else {
                         $catstartlist .= '';
                     }
-                } else {
+                } elseif ( ! $combineresults || ( $combineresults && $linkcount == 0 ) ) {
                     $catstartlist = "\n\t<ul>\n";
+                } else {
+                    $catstartlist = '';
                 }
 
                 $output .= $catstartlist;
