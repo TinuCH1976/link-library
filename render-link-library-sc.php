@@ -649,7 +649,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                 }
                             }
 
-                            $catlink = '<div class="'. $catnameoutput . '">';
+                            $catlink = '<'. $catnameoutput . '>';
 
                             if ( 'right' == $catdescpos || empty( $catdescpos ) ) {
                                 if ( !empty( $caturl ) ) {
@@ -703,7 +703,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                 $catlink .= '</span>';
                             }
 
-                            $catlink .= '</div>';
+                            $catlink .= '</' . $catnameoutput . '>';
                         }
 
                         if ($catanchor) {

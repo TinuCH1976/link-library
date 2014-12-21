@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.12.4 =
+* Fixed problem with Heading tag around category names
+
 = 5.8.12.3 =
 * Fixed favicon generator
 * Minor PHP warning bug fixes
