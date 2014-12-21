@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.12.3 =
+* Fixed favicon generator
+* Minor PHP warning bug fixes
+
 = 5.8.12.2 =
 * Fixed problem with table layout introduced in version 5.8.12.1
 * Updated french translation

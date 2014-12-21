@@ -377,7 +377,7 @@ class link_library_plugin_admin {
 					$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . rawurlencode( $cid ) . "&v1=w=120&url=" . esc_html( $url );
 				}
 			} elseif ( $mode == 'favicon' || $mode == 'favicononly' ) {
-				$genthumburl = "http://g.etfv.co/" . $url;
+				$genthumburl = "http://www.google.com/s2/favicons?domain=" . $url;
 			}
 
 			$uploads = wp_upload_dir();
@@ -392,7 +392,7 @@ class link_library_plugin_admin {
 				}
 			}
 
-			$img    = $uploads['basedir'] . "/" . $filepath . "/" . $linkid . ".jpg";
+			$img    = $uploads['basedir'] . "/" . $filepath . "/" . $linkid . '.png';
 			$status = file_put_contents( $img, @file_get_contents( $genthumburl ) );
 
 			if ( $status !== false ) {
@@ -2511,26 +2511,6 @@ class link_library_plugin_admin {
 						} ?>/></td>
 				</tr>
 				<tr>
-					<td><?php _e( 'Link Title Content', 'link-library' ); ?></td>
-					<td>
-						<select name="linktitlecontent">
-
-							<?php $modes = array( 'linkname' => __( 'Link Name', 'link-library' ), 'linkdesc' => __( 'Link Description', 'link-library' ) );
-
-							// Generate all items of drop-down list
-							foreach ($modes as $mode => $modename) {
-							?>
-							<option value="<?php echo $mode; ?>"
-								<?php selected( $options['linktitlecontent'], $mode ); ?>>
-								<?php echo $modename; ?>
-								<?php } ?>
-						</select>
-					</td>
-					<td style='width:100px'></td>
-					<td></td>
-					<td></td>
-				</tr>
-				<tr>
 					<td class="lltooltip" title="<?php _e( 'This setting does not apply when selecting My Link Order for the order', 'link-library' ); ?>">
 						<?php _e( 'Direction', 'link-library' ); ?>
 					</td>
@@ -2703,6 +2683,22 @@ class link_library_plugin_admin {
 				<td><?php _e( 'Combine all results without categories', 'link-library' ); ?></td>
 				<td>
 					<input type="checkbox" id="combineresults" name="combineresults" <?php checked( $options['combineresults'] ); ?>/></td>
+				<td style='width:100px'></td>
+				<td><?php _e( 'Link Title Content', 'link-library' ); ?></td>
+				<td>
+					<select name="linktitlecontent">
+
+						<?php $modes = array( 'linkname' => __( 'Link Name', 'link-library' ), 'linkdesc' => __( 'Link Description', 'link-library' ) );
+
+						// Generate all items of drop-down list
+						foreach ($modes as $mode => $modename) {
+						?>
+						<option value="<?php echo $mode; ?>"
+							<?php selected( $options['linktitlecontent'], $mode ); ?>>
+							<?php echo $modename; ?>
+							<?php } ?>
+					</select>
+				</td>
 			</tr>
 			<tr>
 				<td class="lltooltip" title='<?php _e( 'Except for My Link Order mode', 'link-library' ); ?>'>

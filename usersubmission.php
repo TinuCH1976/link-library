@@ -112,6 +112,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 						$newlinkvisibility = 'Y';
 					}
 
+					$username = '';
 					if ( $options['storelinksubmitter'] == true ) {
 						global $current_user;
 
@@ -154,7 +155,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 						if ( $genoptions['moderatoremail'] != '' ) {
 							$adminmail = $genoptions['moderatoremail'];
 						} else {
-							$adminmail = $get_option['admin_email'];
+							$adminmail = get_option( 'admin_email' );
 						}
 						$headers = "MIME-Version: 1.0\r\n";
 						$headers .= "Content-type: text/html; charset=iso-8859-1\r\n";

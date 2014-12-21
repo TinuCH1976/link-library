@@ -29,6 +29,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
 
     $dotbelow = false;
     $dotabove = false;
+    $paginationoutput = '';
 
     if ( isset( $_GET ) ) {
         $incomingget = $_GET;
