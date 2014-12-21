@@ -459,6 +459,7 @@ class link_library_plugin_admin {
 			for ( $counter = 1; $counter <= $numberofsets; $counter ++ ) {
 				$tempoptionname = "LinkLibraryPP" . $counter;
 				$tempoptions    = get_option( $tempoptionname );
+				$tempoptions = wp_parse_args( $tempoptions, ll_reset_options( 1, 'list', 'return' ) );
 				if ( $tempoptions['usethumbshotsforimages'] ) {
 					$thumbshotsactive = true;
 				}
@@ -1223,7 +1224,16 @@ class link_library_plugin_admin {
 								if ( $newlinkid != 0 ) {
 									$extradatatable = $this->db_prefix() . "links_extrainfo";
 									$nofollowvalue  = ( $data[13] == 'Y' ? true : false );
-									$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html( $data[12] ), 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ) );
+
+									$existingextrainfo = "SELECT linkid FROM " . $extradatatable . " ";
+									$existingextrainfo .= "WHERE linkid = '" . $newlinkid . "'";
+									$existingextrainfoid = $wpdb->get_var( $existingextrainfo );
+
+									if ( !empty( $existingextrainfoid ) ) {
+										$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html( $data[12] ), 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ) );
+									} elseif ( empty( $existingextrainfoid ) ) {
+										$wpdb->insert( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html( $data[12] ), 'link_no_follow' => $nofollowvalue, 'link_id' => $newlinkid ) );
+									}
 
 									$successfulimport += 1;
 								}
@@ -2132,7 +2142,7 @@ class link_library_plugin_admin {
 					$tempoptions          = get_option( $tempoptionname ); ?>
 					<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
 						echo 'SELECTED';
-					} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( $tempoptions != "" ) {
+					} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( !empty( $tempoptions ) && isset( $tempoptions['settingssetname'] ) ) {
 							echo " (" . $tempoptions['settingssetname'] . ")";
 						} ?></option>
 				<?php endfor; ?>

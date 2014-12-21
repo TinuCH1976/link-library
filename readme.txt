@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.12.5 =
+* Fixed link importer to import extended fields (large description field, no follow, etc...)
+
 = 5.8.12.4 =
 * Fixed problem with Heading tag around category names
 
