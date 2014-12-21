@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.8.12.6 =
+* Added new configuration options under User Submission form configuration to allow to set fields as Required
+
 = 5.8.12.5 =
 * Fixed link importer to import extended fields (large description field, no follow, etc...)
 

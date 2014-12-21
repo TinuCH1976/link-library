@@ -16,6 +16,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 	$genoptions = get_option( 'LinkLibraryGeneral' );
 
 	$valid   = false;
+	$requiredcheck = true;
 	$message = "";
 
 	$captureddata                           = array();
@@ -36,7 +37,42 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 	$captureddata['ll_submittercomment']    = ( isset( $_POST['ll_submittercomment'] ) ? $_POST['ll_submittercomment'] : '' );
 	$captureddata['ll_customcaptchaanswer'] = ( isset( $_POST['ll_customcaptchaanswer'] ) ? $_POST['ll_customcaptchaanswer'] : '' );
 
-	if ( $captureddata['link_name'] != '' ) {
+	if ( 'required' == $options['showaddlinkrss'] && empty( $captureddata['link_rss'] ) ) {
+		$requiredcheck = false;
+		$message = 11;
+	} else if ( 'required' == $options['showaddlinkdesc'] && empty( $captureddata['link_description'] ) ) {
+		$requiredcheck = false;
+		$message = 12;
+	} else if ( 'required' == $options['showaddlinknotes'] && empty( $captureddata['link_notes'] ) ) {
+		$requiredcheck = false;
+		$message = 13;
+	} else if ( 'required' == $options['showaddlinkreciprocal'] && empty( $captureddata['ll_reciprocal'] ) ) {
+		$requiredcheck = false;
+		$message = 14;
+	} else if ( 'required' == $options['showaddlinksecondurl'] && empty( $captureddata['ll_secondwebaddr'] ) ) {
+		$requiredcheck = false;
+		$message = 15;
+	} else if ( 'required' == $options['showaddlinktelephone'] && empty( $captureddata['ll_telephone'] ) ) {
+		$requiredcheck = false;
+		$message = 16;
+	} else if ( 'required' == $options['showaddlinkemail'] && empty( $captureddata['ll_email'] ) ) {
+		$requiredcheck = false;
+		$message = 17;
+	} else if ( 'required' == $options['showlinksubmittername'] && empty( $captureddata['ll_submittername'] ) ) {
+		$requiredcheck = false;
+		$message = 18;
+	} else if ( 'required' == $options['showaddlinksubmitteremail'] && empty( $captureddata['ll_submitteremail'] ) ) {
+		$requiredcheck = false;
+		$message = 19;
+	} else if ( 'required' == $options['showlinksubmittercomment'] && empty( $captureddata['ll_submittercomment'] ) ) {
+		$requiredcheck = false;
+		$message = 20;
+	} else if ( 'required' == $options['showuserlargedescription'] && empty( $captureddata['link_textfield'] ) ) {
+		$requiredcheck = false;
+		$message = 21;
+	}
+
+	if ( $captureddata['link_name'] != '' && $requiredcheck ) {
 		if ( $options['showcaptcha'] ) {
 			$message = apply_filters( 'link_library_verify_captcha', '' );
 			if ( $message > 0 ) {
@@ -46,7 +82,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 			}
 		}
 
-		if ( $options['showcustomcaptcha'] ) {
+		if ( $options['showcustomcaptcha'] == 'show' ) {
 			if ( $captureddata['ll_customcaptchaanswer'] == '' ) {
 				$valid   = false;
 				$message = 5;
@@ -60,7 +96,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 			}
 		}
 
-		if ( $valid || ( $options['showcaptcha'] == false && $options['showcustomcaptcha'] == false ) ) {
+		if ( $valid || ( $options['showcaptcha'] == false && $options['showcustomcaptcha'] == 'hide' ) ) {
 			$existinglinkquery = "SELECT * from " . $my_link_library_plugin->db_prefix() . "links l where l.link_name = '" . $captureddata['link_name'] . "' ";
 
 			if ( ( $options['addlinknoaddress'] == false ) || ( $options['addlinknoaddress'] == true && $captureddata['link_url'] != "" ) ) {
@@ -215,7 +251,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 
 	$redirectaddress = add_query_arg( 'addlinkmessage', $message, $redirectaddress );
 
-	if ( $valid == false && ( $options['showcaptcha'] == true || $options['showcustomcaptcha'] == true ) ) {
+	if ( $valid == false && ( $options['showcaptcha'] == true || $options['showcustomcaptcha'] == 'show' ) ) {
 		if ( isset( $_POST['link_name'] ) && $_POST['link_name'] != '' ) {
 			$redirectaddress = add_query_arg( 'addlinkname', rawurlencode( $captureddata['link_name'] ), $redirectaddress );
 		}

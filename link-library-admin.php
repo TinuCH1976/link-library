@@ -1371,7 +1371,10 @@ class link_library_plugin_admin {
 					'beforelink', 'afterlink', 'beforeitem', 'afteritem', 'beforedesc', 'afterdesc', 'addbeforelink', 'addafterlink',
 					'beforelinkrating', 'afterlinkrating', 'linksubmitternamelabel', 'linksubmitteremaillabel', 'linksubmittercommentlabel',
 					'addlinkcatlistoverride', 'beforelargedescription', 'afterlargedescription', 'customcaptchaquestion', 'customcaptchaanswer',
-					'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent', 'paginationposition'
+					'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent', 'paginationposition',
+					'showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes', 'addlinkcustomcat',
+					'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
+					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription'
 				) as $option_name
 			) {
 				if ( isset( $_POST[$option_name] ) ) {
@@ -1400,9 +1403,7 @@ class link_library_plugin_admin {
 
 			foreach (
 				array(
-					'displayastable', 'divorheader', 'showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes', 'addlinkcustomcat',
-					'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
-					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription'
+					'displayastable', 'divorheader'
 				) as $option_name
 			) {
 				if ( $_POST[$option_name] == 'true' ) {
@@ -3569,6 +3570,90 @@ class link_library_plugin_admin {
 	function settingssets_linksubmission_meta_box( $data ) {
 		$options  = $data['options'];
 		$settings = $data['settings'];
+
+		if ( $options['showaddlinkrss'] === false ) {
+			$options['showaddlinkrss'] = 'hide';
+		} elseif ( $options['showaddlinkrss'] === true ) {
+			$options['showaddlinkrss'] = 'show';
+		}
+
+		if ( $options['showaddlinkdesc'] === false ) {
+			$options['showaddlinkdesc'] = 'hide';
+		} elseif ( $options['showaddlinkdesc'] === true ) {
+			$options['showaddlinkdesc'] = 'show';
+		}
+
+		if ( $options['showaddlinkcat'] === false ) {
+			$options['showaddlinkcat'] = 'hide';
+		} elseif ( $options['showaddlinkcat'] === true ) {
+			$options['showaddlinkcat'] = 'show';
+		}
+
+		if ( $options['showaddlinknotes'] === false ) {
+			$options['showaddlinknotes'] = 'hide';
+		} elseif ( $options['showaddlinknotes'] === true ) {
+			$options['showaddlinknotes'] = 'show';
+		}
+
+		if ( $options['addlinkcustomcat'] === false ) {
+			$options['addlinkcustomcat'] = 'hide';
+		} elseif ( $options['addlinkcustomcat'] === true ) {
+			$options['addlinkcustomcat'] = 'show';
+		}
+
+		if ( $options['showaddlinkreciprocal'] === false ) {
+			$options['showaddlinkreciprocal'] = 'hide';
+		} elseif ( $options['showaddlinkreciprocal'] === true ) {
+			$options['showaddlinkreciprocal'] = 'show';
+		}
+
+		if ( $options['showaddlinksecondurl'] === false ) {
+			$options['showaddlinksecondurl'] = 'hide';
+		} elseif ( $options['showaddlinksecondurl'] === true ) {
+			$options['showaddlinksecondurl'] = 'show';
+		}
+
+		if ( $options['showaddlinktelephone'] === false ) {
+			$options['showaddlinktelephone'] = 'hide';
+		} elseif ( $options['showaddlinktelephone'] === true ) {
+			$options['showaddlinktelephone'] = 'show';
+		}
+
+		if ( $options['showaddlinkemail'] === false ) {
+			$options['showaddlinkemail'] = 'hide';
+		} elseif ( $options['showaddlinkemail'] === true ) {
+			$options['showaddlinkemail'] = 'show';
+		}
+
+		if ( $options['showlinksubmittername'] === false ) {
+			$options['showlinksubmittername'] = 'hide';
+		} elseif ( $options['showlinksubmittername'] === true ) {
+			$options['showlinksubmittername'] = 'show';
+		}
+
+		if ( $options['showaddlinksubmitteremail'] === false ) {
+			$options['showaddlinksubmitteremail'] = 'hide';
+		} elseif ( $options['showaddlinksubmitteremail'] === true ) {
+			$options['showaddlinksubmitteremail'] = 'show';
+		}
+
+		if ( $options['showlinksubmittercomment'] === false ) {
+			$options['showlinksubmittercomment'] = 'hide';
+		} elseif ( $options['showlinksubmittercomment'] === true ) {
+			$options['showlinksubmittercomment'] = 'show';
+		}
+
+		if ( $options['showcustomcaptcha'] === false ) {
+			$options['showcustomcaptcha'] = 'hide';
+		} elseif ( $options['showcustomcaptcha'] === true ) {
+			$options['showcustomcaptcha'] = 'show';
+		}
+
+		if ( $options['showuserlargedescription'] === false ) {
+			$options['showuserlargedescription'] = 'hide';
+		} elseif ( $options['showuserlargedescription'] === true ) {
+			$options['showuserlargedescription'] = 'show';
+		}
 		?>
 		<div>
 		<table>
@@ -3660,12 +3745,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinkrss" id="showaddlinkrss" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinkrss'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinkrss'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinkrss'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinkrss'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinkrss'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -3679,12 +3761,8 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinkcat" id="showaddlinkcat" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinkcat'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinkcat'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinkcat'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinkcat'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
@@ -3703,12 +3781,8 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="addlinkcustomcat" id="addlinkcustomcat" style="width:60px;">
-					<option value="false"<?php if ( $options['addlinkcustomcat'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'No', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['addlinkcustomcat'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Allow', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['addlinkcustomcat'] == 'hide' ); ?>><?php _e( 'No', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['addlinkcustomcat'] == 'show' ); ?>><?php _e( 'Allow', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td></td>
@@ -3731,12 +3805,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinkdesc" id="showaddlinkdesc" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinkdesc'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinkdesc'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinkdesc'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinkdesc'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinkdesc'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
@@ -3749,12 +3820,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinknotes" id="showaddlinknotes" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinknotes'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinknotes'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinknotes'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinknotes'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinknotes'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -3779,12 +3847,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinkreciprocal" id="showaddlinkreciprocal" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinkreciprocal'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinkreciprocal'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinkreciprocal'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinkreciprocal'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinkreciprocal'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
@@ -3797,12 +3862,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinksecondurl" id="showaddlinksecondurl" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinksecondurl'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinksecondurl'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinksecondurl'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinksecondurl'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinksecondurl'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -3816,12 +3878,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinktelephone" id="showaddlinktelephone" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinktelephone'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinktelephone'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinktelephone'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinktelephone'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinktelephone'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
@@ -3834,12 +3893,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinkemail" id="showaddlinkemail" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinkemail'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinkemail'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinkemail'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinkemail'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinkemail'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -3853,12 +3909,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showlinksubmittername" id="showlinksubmittername" style="width:60px;">
-					<option value="false"<?php if ( $options['showlinksubmittername'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showlinksubmittername'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showlinksubmittername'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showlinksubmittername'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showlinksubmittername'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
@@ -3871,12 +3924,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showaddlinksubmitteremail" id="showaddlinksubmitteremail" style="width:60px;">
-					<option value="false"<?php if ( $options['showaddlinksubmitteremail'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showaddlinksubmitteremail'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showaddlinksubmitteremail'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showaddlinksubmitteremail'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showaddlinksubmitteremail'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -3890,12 +3940,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showlinksubmittercomment" id="showlinksubmittercomment" style="width:60px;">
-					<option value="false"<?php if ( $options['showlinksubmittercomment'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showlinksubmittercomment'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showlinksubmittercomment'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showlinksubmittercomment'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showlinksubmittercomment'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
@@ -3908,12 +3955,9 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showuserlargedescription" id="showuserlargedescription" style="width:60px;">
-					<option value="false"<?php if ( $options['showuserlargedescription'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showuserlargedescription'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showuserlargedescription'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showuserlargedescription'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="required"<?php selected( $options['showuserlargedescription'] == 'required' ); ?>><?php _e( 'Required', 'link-library' ); ?></option>
 				</select>
 			</td>
 		</tr>
@@ -3927,12 +3971,8 @@ class link_library_plugin_admin {
 			</td>
 			<td>
 				<select name="showcustomcaptcha" id="showcustomcaptcha" style="width:60px;">
-					<option value="false"<?php if ( $options['showcustomcaptcha'] == false ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Hide', 'link-library' ); ?></option>
-					<option value="true"<?php if ( $options['showcustomcaptcha'] == true ) {
-						echo ' selected="selected"';
-					} ?>><?php _e( 'Show', 'link-library' ); ?></option>
+					<option value="hide"<?php selected( $options['showcustomcaptcha'] == 'hide' ); ?>><?php _e( 'Hide', 'link-library' ); ?></option>
+					<option value="show"<?php selected( $options['showcustomcaptcha'] == 'show' ); ?>><?php _e( 'Show', 'link-library' ); ?></option>
 				</select>
 			</td>
 			<td style='width: 20px'></td>
