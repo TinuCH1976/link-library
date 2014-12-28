@@ -63,9 +63,27 @@ class link_library_plugin_admin {
 			add_action( 'admin_notices', array( $this, 'll_missing_categories' ) );
 		}
 
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ), 99 );
-		add_action( 'media_buttons', array( $this, 'render_button'), 20 );
-		add_action( 'admin_footer',  array( $this, 'render_modal' ) );
+		if ( $this->is_edit_page() ) {
+			add_action( 'admin_enqueue_scripts', array( $this, 'admin_scripts' ), 99 );
+			add_action( 'media_buttons', array( $this, 'render_button'), 20 );
+			add_action( 'admin_footer',  array( $this, 'render_modal' ) );
+		}
+	}
+
+	function is_edit_page( $new_edit = null ) {
+		global $pagenow;
+		//make sure we are on the backend
+		if ( ! is_admin() ) {
+			return false;
+		}
+
+		if ( 'edit' == $new_edit ) {
+			return in_array( $pagenow, array( 'post.php', ) );
+		} elseif ( 'new' == $new_edit ) { //check for new post page
+			return in_array( $pagenow, array( 'post-new.php' ) );
+		} else { //check for either new or edit
+			return in_array( $pagenow, array( 'post.php', 'post-new.php' ) );
+		}
 	}
 
 	public function admin_scripts() {
