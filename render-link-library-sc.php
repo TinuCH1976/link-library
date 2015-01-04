@@ -885,8 +885,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     $imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enable_link_popup ? 'thickbox' : 'track_this_link' ) . ' ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
                                     if ( $usethumbshotsforimages && ( !$uselocalimagesoverthumbshots || empty( $uselocalimagesoverthumbshots ) || ( $uselocalimagesoverthumbshots && empty( $linkitem['link_image'] ) ) ) ) {
-                                        if ( !empty( $thumbshotscid ) )
-                                            $imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . rawurlencode( $thumbshotscid ) . '&v=1&w=120&url=' . $the_link . '"';
+                                            $imageoutput .= '<img src="http://www.robothumb.com/src/?url=' . $the_link . '&size=' . $generaloptions['thumbnailsize'] . '"';
                                     } else if ( !$usethumbshotsforimages || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
                                         if ( strpos( $linkitem['link_image'], 'http' ) !== false ) {
                                             $imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
@@ -1282,7 +1281,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
 
         if ( $usethumbshotsforimages ) {
-            $output .= '<div class="llthumbshotsnotice"><a href="http://www.thumbshots.com" target="_blank" title="Thumbnails Screenshots by Thumbshots">Thumbnail Screenshots by Thumbshots</a></div>';
+            $output .= '<div class="llthumbshotsnotice"><a href="http://www.robothumb.com">Screenshots par Robothumb</a></div>';
         }
 
         if ( $showlinksonclick ) {

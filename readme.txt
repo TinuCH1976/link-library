@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1 =
+* Replaced Thumbshots.org service with Robothumb.com to avoid regular issues with site
+* Added new option to specify thumbnail size under general settings
+
 = 5.8.12.7 =
 * Fix issue with theme preview not working when Link Library is enabled
 

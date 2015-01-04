@@ -229,7 +229,6 @@ function ll_reset_gen_settings( $setoptions = 'return' ) {
 	$genoptions['schemaversion']               = '5.0';
 	$genoptions['pagetitleprefix']             = '';
 	$genoptions['pagetitlesuffix']             = '';
-	$genoptions['thumbshotscid']               = '';
 	$genoptions['emaillinksubmitter']          = false;
 	$genoptions['suppressemailfooter']         = false;
 	$genoptions['moderatorname']               = '';
@@ -249,6 +248,7 @@ function ll_reset_gen_settings( $setoptions = 'return' ) {
 	$genoptions['updatechannel']               = 'standard';
 	$genoptions['extraprotocols']              = '';
 	$genoptions['fullstylesheet']              = '';
+	$genoptions['thumbnailsize']               = '120x90';
 
 	if ( 'return_and_set' == $setoptions ) {
 		$stylesheetlocation           = plugins_url( 'stylesheettemplate.css', __FILE__ );
