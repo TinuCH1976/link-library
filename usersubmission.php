@@ -115,7 +115,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 						$newlinkcatdata = array(
 							"cat_name"             => $captureddata['link_user_category'],
 							"category_description" => "",
-							"category_nicename"    => $wpdb->escape( $captureddata['link_user_category'] )
+							"category_nicename"    => sanitize_text_field( $captureddata['link_user_category'] )
 						);
 						$newlinkcat     = wp_insert_category( $newlinkcatdata );
 						$newcatarray    = array( "term_id" => $newlinkcat );
@@ -126,7 +126,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 						$newlinkcat = array( $existingcat );
 					}
 
-
+					$message = 8;
 					$validcat = true;
 				} elseif ( $captureddata['link_category'] == 'new' && $captureddata['link_user_category'] == '' ) {
 					$message  = 7;
