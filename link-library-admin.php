@@ -2157,7 +2157,7 @@ class link_library_plugin_admin {
 					<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
 						echo 'SELECTED';
 					} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( !empty( $tempoptions ) && isset( $tempoptions['settingssetname'] ) ) {
-							echo " (" . $tempoptions['settingssetname'] . ")";
+							echo " (" . stripslashes( $tempoptions['settingssetname'] ) . ")";
 						} ?></option>
 				<?php endfor; ?>
 			</SELECT>
@@ -2172,7 +2172,7 @@ class link_library_plugin_admin {
 							<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
 								echo 'SELECTED';
 							} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( $tempoptions != "" ) {
-									echo " (" . $tempoptions['settingssetname'] . ")";
+									echo " (" . stripslashes( $tempoptions['settingssetname'] ) . ")";
 								} ?></option>
 						<?php endif;
 					endfor;
@@ -2199,7 +2199,7 @@ class link_library_plugin_admin {
 				</thead>
 				<tr>
 					<td style='background: #FFF'><?php echo $settings; ?></td>
-					<td style='background: #FFF'><?php echo $options['settingssetname']; ?></a></td>
+					<td style='background: #FFF'><?php echo stripslashes( $options['settingssetname'] ); ?></a></td>
 					<td style='background: #FFF'><?php _e( 'Display basic link library', 'link-library' ); ?></td>
 					<td style='background: #FFF'><?php echo "[link-library settings=" . $settings . "]"; ?></td>
 				</tr>
@@ -2254,7 +2254,7 @@ class link_library_plugin_admin {
 						<?php _e( 'Current Library Name', 'link-library' ); ?>
 					</td>
 					<td>
-						<input type="text" id="settingssetname" name="settingssetname" size="40" value="<?php echo $options['settingssetname']; ?>" />
+						<input type="text" id="settingssetname" name="settingssetname" size="40" value="<?php echo stripslashes( $options['settingssetname'] ); ?>" />
 					</td>
 				</tr>
 				<tr>

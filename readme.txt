@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1.2 =
+* Fixed issue with single quote in library name
+
 = 5.9.1.1 =
 * Fixed issue with submission message not appearing when user specifies user-defined category
 * Updated french translation
