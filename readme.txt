@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1.3 =
+* Re-integrate Thumbshots.org service to generate thumbnails and offer users choice between Thumbshots and Robothumb
+
 = 5.9.1.2 =
 * Fixed issue with single quote in library name
 

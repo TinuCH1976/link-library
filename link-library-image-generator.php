@@ -15,10 +15,11 @@ function link_library_ajax_image_generator ( $my_link_library_plugin_admin ) {
     $name = $_POST['name'];
     $url = $_POST['url'];
     $mode = $_POST['mode'];
+    $cid = $_POST['cid'];
     $filepath = $_POST['filepath'];
     $filepathtype = $_POST['filepathtype'];
     $linkid = intval($_POST['linkid']);
 
-    echo $my_link_library_plugin_admin->ll_get_link_image($url, $name, $mode, $linkid, $filepath, $filepathtype, $generaloptions['thumbnailsize'] );
+    echo $my_link_library_plugin_admin->ll_get_link_image($url, $name, $mode, $linkid, $cid, $filepath, $filepathtype, $generaloptions['thumbnailsize'], $generaloptions['thumbnailgenerator'] );
     exit;
 }

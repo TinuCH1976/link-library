@@ -388,10 +388,17 @@ class link_library_plugin_admin {
 		}
 	}
 
-	function ll_get_link_image( $url, $name, $mode, $linkid, $filepath, $filepathtype, $thumbnailsize ) {
+	function ll_get_link_image( $url, $name, $mode, $linkid, $cid, $filepath, $filepathtype, $thumbnailsize, $thumbnailgenerator ) {
 		if ( $url != "" && $name != "" ) {
 			if ( $mode == 'thumb' || $mode == 'thumbonly' ) {
-				$genthumburl = "http://www.robothumb.com/src/?url=" . esc_html( $url ) . "&size=" . $thumbnailsize;
+				if ( $thumbnailgenerator == 'robothumb' ) {
+					$genthumburl = "http://www.robothumb.com/src/?url=" . esc_html( $url ) . "&size=" . $thumbnailsize;
+				} elseif ( $thumbnailgenerator == 'thumbshots' ) {
+					if ( !empty ( $cid ) ) {
+						$genthumburl = "http://images.thumbshots.com/image.aspx?cid=" . rawurlencode( $cid ) . "&v1=w=120&url=" . esc_html( $url );
+					}
+				}
+
 			} elseif ( $mode == 'favicon' || $mode == 'favicononly' ) {
 				$genthumburl = "http://www.google.com/s2/favicons?domain=" . $url;
 			}
@@ -480,6 +487,10 @@ class link_library_plugin_admin {
 					$thumbshotsactive = true;
 				}
 			}
+
+			if ( $thumbshotsactive && empty( $genoptions['thumbshotscid'] ) && $genoptions['thumbnailgenerator'] == 'thumbshots' ) {
+				add_action( 'admin_notices', array( $this, 'll_thumbshots_warning' ) );
+			}
 		}
 	}
 
@@ -511,6 +522,12 @@ class link_library_plugin_admin {
 		}
 
 		return $post;
+	}
+
+
+	function ll_thumbshots_warning() {
+		echo "
+        <div id='ll-warning' class='updated fade'><p><strong>" . __( 'Link Library: Missing Thumbshots API Key', 'link-library' ) . "</strong></p> <p>" . __( 'One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com API Key. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library' ) . " <a href='" . add_query_arg( array( 'page' => 'link-library' ), admin_url( 'admin.php' ) ) . "'>" . __( 'Jump to Link Library admin', 'link-library' ) . "</a></p></div>";
 	}
 
 	function ll_missing_categories() {
@@ -739,7 +756,7 @@ class link_library_plugin_admin {
 					$filescreated = 0;
 					$totallinks   = count( $linkitems );
 					foreach ( $linkitems as $linkitem ) {
-						$this->ll_get_link_image( $linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $filepath, $genoptions['imagefilepath'], $genoptions['thumbnailsize'] );
+						$this->ll_get_link_image( $linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $filepath, $genoptions['imagefilepath'], $genoptions['thumbnailsize'], $genoptions['thumbnailgenerator'] );
 						$linkname = $linkitem->link_name;
 					}
 
@@ -1079,10 +1096,10 @@ class link_library_plugin_admin {
 
 		foreach (
 			array(
-				'numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'approvalemailtitle',
+				'numberstylesets', 'includescriptcss', 'pagetitleprefix', 'pagetitlesuffix', 'schemaversion', 'thumbshotscid', 'approvalemailtitle',
 				'moderatorname', 'moderatoremail', 'rejectedemailtitle', 'approvalemailbody', 'rejectedemailbody', 'moderationnotificationtitle',
 				'linksubmissionthankyouurl', 'recipcheckaddress', 'imagefilepath', 'catselectmethod', 'expandiconpath', 'collapseiconpath', 'updatechannel',
-				'extraprotocols', 'thumbnailsize'
+				'extraprotocols', 'thumbnailsize', 'thumbnailgenerator'
 			) as $option_name
 		) {
 			if ( isset( $_POST[$option_name] ) ) {
@@ -1829,15 +1846,34 @@ class link_library_plugin_admin {
 							</td>
 						</tr>
 						<tr>
-							<td class='lltooltip' title='<?php _e( 'Path for images files that are uploaded manually or generated through Robothumb service', 'link-library' ); ?>'><?php _e( 'Link Image File Path', 'link-library' ); ?></td>
-							<td colspan='4' class='lltooltip' title='<?php _e( 'Path for images files that are uploaded manually or generated through Robothumb service', 'link-library' ); ?>'>
+							<td class='lltooltip' title='<?php _e( 'Path for images files that are uploaded manually or generated through thumbnail generation service', 'link-library' ); ?>'><?php _e( 'Link Image File Path', 'link-library' ); ?></td>
+							<td colspan='4' class='lltooltip' title='<?php _e( 'Path for images files that are uploaded manually or generated through thumbnail generation service', 'link-library' ); ?>'>
 								<select id="imagefilepath" name="imagefilepath">
 									<option value="absolute" <?php selected( $genoptions['imagefilepath'], 'absolute' ); ?>><?php _e( 'Absolute', 'link-library' ); ?>
 									<option value="relative" <?php selected( $genoptions['imagefilepath'], 'relative' ); ?>><?php _e( 'Relative', 'link-library' ); ?>
 								</select></td>
 						</tr>
 						<tr>
-							<td><?php _e( 'Thumbnail size' ); ?>
+							<td><?php _e( 'Thumbnail Generator', 'link-library' ); ?></td>
+							<td>
+								<select id="thumbnailgenerator" name="thumbnailgenerator">
+									<option value="robothumb" <?php selected( $genoptions['thumbnailgenerator'], 'robothumb' ); ?>>Robothumb.com
+									<option value="thumbshots" <?php selected( $genoptions['thumbnailgenerator'], 'thumbshots' ); ?>>Thumbshots.org
+								</select>
+							</td>
+						</tr>
+						<tr class="thumbshotsapikey" <?php if ( $genoptions['thumbnailgenerator'] != 'thumbshots' ) {
+							echo 'style="display:none;"';
+						} ?>>
+							<td class='lltooltip' title='<?php _e( 'API Key for Thumbshots.com thumbnail generation accounts', 'link-library' ); ?>'><?php _e( 'Thumbshots API Key', 'link-library' ); ?></td>
+							<td colspan='4' class='lltooltip' title='<?php _e( 'API Key for Thumbshots.com thumbnail generation accounts', 'link-library' ); ?>'>
+								<input type="text" id="thumbshotscid" name="thumbshotscid" size="20" value="<?php echo $genoptions['thumbshotscid']; ?>" />
+							</td>
+						</tr>
+						<tr class="robothumbsize" <?php if ( $genoptions['thumbnailgenerator'] != 'robothumb' ) {
+							echo 'style="display:none;"';
+						} ?>>
+							<td><?php _e( 'Robothumb Thumbnail size' ); ?>
 							</td>
 							<td>
 								<select id="thumbnailsize" name="thumbnailsize">
@@ -1865,8 +1901,6 @@ class link_library_plugin_admin {
 								<input type="submit" name="exportalllinks" value="<?php _e( 'Export All Links', 'link-library' ); ?>" />
 							</td>
 						</tr>
-
-
 					</table>
 				</td>
 				<?php if ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) { ?>
@@ -1877,7 +1911,7 @@ class link_library_plugin_admin {
 									<td>
 										<a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book"><img src='<?php echo plugins_url( 'icons/7683os_cover_small.jpg', __FILE__ ); ?>'>
 									</td>
-									<td></a>Learn how to create your own plugins with my upcoming book, coming out August 2012.<br /><br />Pre-order now!<br /><br /><a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book">Packt Publishing</a><br /><a href="http://www.amazon.com/dp/1849517681/?tag=packtpubli-20">Amazon.com</a><br /><a href="http://www.amazon.ca/WordPress-Development-Cookbook-Yannick-Lefebvre/dp/1849517681/ref=sr_1_1?ie=UTF8&qid=1336252569&sr=8-1">Amazon.ca</a>
+									<td></a>Learn how to create your own plugins with my book.<br /><br />Order now!<br /><br /><a href="http://www.packtpub.com/wordpress-plugin-development-cookbook/book">Packt Publishing</a><br /><a href="http://www.amazon.com/dp/1849517681/?tag=packtpubli-20">Amazon.com</a><br /><a href="http://www.amazon.ca/WordPress-Development-Cookbook-Yannick-Lefebvre/dp/1849517681/ref=sr_1_1?ie=UTF8&qid=1336252569&sr=8-1">Amazon.ca</a>
 									</td>
 								</tr>
 							</table>
@@ -1885,6 +1919,15 @@ class link_library_plugin_admin {
 					</td>
 				<?php } ?>
 		</table>
+
+		<script type="text/javascript">
+			jQuery(document).ready(function () {
+				jQuery("#thumbnailgenerator").change(function () {
+					jQuery(".thumbshotsapikey").toggle();
+					jQuery(".robothumbsize").toggle();
+				});
+			});
+		</script>
 	<?php
 	}
 
@@ -3475,7 +3518,7 @@ class link_library_plugin_admin {
 		<table>
 			<tr>
 				<td style='width: 400px' class='lltooltip' title='<?php _e( 'Checking this option will get images from the Robothumb web site every time', 'link-library' ); ?>.'>
-					<?php _e( 'Use Robothumb.com for dynamic link images', 'link-library' ); ?>
+					<?php _e( 'Use thumbnail service for dynamic link images', 'link-library' ); ?>
 				</td>
 				<td class='lltooltip' title='<?php _e( 'Checking this option will get images from the thumbshots web site every time', 'link-library' ); ?>.' style='width:75px;padding-right:20px'>
 					<input type="checkbox" id="usethumbshotsforimages" name="usethumbshotsforimages" <?php if ( $options['usethumbshotsforimages'] ) {
@@ -3494,7 +3537,9 @@ class link_library_plugin_admin {
 			</tr>
 			<tr>
 				<td><?php _e( 'Generate Images / Favorite Icons', 'link-library' ); ?></td>
-				<td class="lltooltip"><INPUT type="button" name="genthumbs" value="<?php _e( 'Generate Thumbnails and Store locally', 'link-library' ); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'">
+				<td class="lltooltip" title="<?php if ( $genoptions['thumbnailgenerator'] == 'thumbshots' && empty( $genoptions['thumbshotscid'] ) ) {
+					_e( 'This button is only available when a valid API key is entered under the Link Library General Settings.', 'link-library' );
+				} ?>"><INPUT type="button" name="genthumbs" <?php disabled( $genoptions['thumbnailgenerator'] == 'thumbshots' && empty( $genoptions['thumbshotscid'] ) ); ?> value="<?php _e( 'Generate Thumbnails and Store locally', 'link-library' ); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genthumbs=<?php echo $settings; ?>'">
 				</td>
 				<td>
 					<INPUT type="button" name="genfavicons" value="<?php _e( 'Generate Favorite Icons and Store locally', 'link-library' ); ?>" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;genfavicons=<?php echo $settings; ?>'">
@@ -4214,8 +4259,10 @@ class link_library_plugin_admin {
 			<?php if ( isset( $link->link_id ) && $link->link_id != '' ): ?>
 				<tr>
 					<td><?php _e( 'Automatic Image Generation', 'link-library' ); ?></td>
-					<td>
-						<INPUT type="button" id="genthumbs" name="genthumbs" value="<?php _e( 'Generate Thumbnail and Store locally', 'link-library' ); ?>">
+					<td title="<?php if ( $genoptions['thumbnailgenerator'] == 'thumbshots' && empty( $genoptions['thumbshotscid'] ) ) {
+						_e( 'This button is only available when a valid API key is entered under the Link Library General Settings.', 'link-library' );
+					} ?>">
+						<INPUT type="button" id="genthumbs" name="genthumbs" <?php disabled( $genoptions['thumbnailgenerator'] == 'thumbshots' && empty( $genoptions['thumbshotscid'] ) );?>value="<?php _e( 'Generate Thumbnail and Store locally', 'link-library' ); ?>">
 						<INPUT type="button" id="genfavicons" name="genfavicons" value="<?php _e( 'Generate Favorite Icon and Store locally', 'link-library' ); ?>">
 					</td>
 				</tr>
@@ -4316,6 +4363,7 @@ class link_library_plugin_admin {
 								name        : linkname,
 								url         : linkurl,
 								mode        : 'thumbonly',
+								cid         : '<?php echo $genoptions['thumbshotscid']; ?>',
 								filepath    : 'link-library-images',
 								filepathtype: 'absolute',
 								linkid      : <?php if( isset( $link->link_id ) ) { echo $link->link_id; } else { echo "''"; } ?>
