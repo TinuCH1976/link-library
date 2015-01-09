@@ -667,20 +667,6 @@ class link_library_plugin_admin {
 		add_meta_box( 'linklibrary_general_save_meta_box', __( 'Save', 'link-library' ), array( $this, 'general_save_meta_box' ), $pagehooktop, 'normal', 'high' );
 		add_meta_box( 'linklibrary_moderation_meta_box', __( 'Links awaiting moderation', 'link-library' ), array( $this, 'moderate_meta_box' ), $pagehookmoderate, 'normal', 'high' );
 		add_meta_box( 'linklibrary_stylesheet_meta_box', __( 'Editor', 'link-library' ), array( $this, 'stylesheet_meta_box' ), $pagehookstylesheet, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_usage_meta_box', __( 'Library Selection and Usage Instructions', 'link-library' ), array( $this, 'settingssets_usage_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_side_meta_box', __( 'Save', 'link-library' ), array( $this, 'settingssets_save_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_common_meta_box', __( 'Common Parameters', 'link-library' ), array( $this, 'settingssets_common_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_categories_meta_box', __( 'Link Categories Settings', 'link-library' ), array( $this, 'settingssets_categories_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_linkelement_meta_box', __( 'Link Element Settings', 'link-library' ), array( $this, 'settingssets_linkelement_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_subfieldtable_meta_box', __( 'Link Sub-Field Configuration Table', 'link-library' ), array( $this, 'settingssets_subfieldtable_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_linkpopup_meta_box', __( 'Link Pop-Up', 'link-library' ), array( $this, 'settingssets_linkpopup_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_rssconfig_meta_box', __( 'RSS Field Configuration', 'link-library' ), array( $this, 'settingssets_rssconfig_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_thumbnails_meta_box', __( 'Thumbnail Generation and Use', 'link-library' ), array( $this, 'settingssets_thumbnails_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_rssgen_meta_box', __( 'RSS Generation', 'link-library' ), array( $this, 'settingssets_rssgen_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_search_meta_box', __( 'Search Form Configuration', 'link-library' ), array( $this, 'settingssets_search_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_linksubmission_meta_box', __( 'Link User Submission', 'link-library' ), array( $this, 'settingssets_linksubmission_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_importexport_meta_box', __( 'Import / Export', 'link-library' ), array( $this, 'settingssets_importexport_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
-		add_meta_box( 'linklibrary_settingssets_side_meta_box_2', __( 'Save', 'link-library' ), array( $this, 'settingssets_save_meta_box' ), $pagehooksettingssets, 'normal', 'high' );
 		add_meta_box( 'linklibrary_reciprocal_meta_box', __( 'Reciprocal Link Checker', 'link-library' ), array( $this, 'reciprocal_meta_box' ), $pagehookreciprocal, 'normal', 'high' );
 		add_meta_box( 'linklibrary_reciprocal_save_meta_box', __( 'Save', 'link-library' ), array( $this, 'general_save_meta_box' ), $pagehookreciprocal, 'normal', 'high' );
 		add_meta_box( 'linklibrary_faq_meta_box', __( 'FAQ', 'link-library' ), array( $this, 'faq_meta_box' ), $pagehookfaq, 'normal', 'high' );
@@ -756,7 +742,7 @@ class link_library_plugin_admin {
 					$filescreated = 0;
 					$totallinks   = count( $linkitems );
 					foreach ( $linkitems as $linkitem ) {
-						$this->ll_get_link_image( $linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $filepath, $genoptions['imagefilepath'], $genoptions['thumbnailsize'], $genoptions['thumbnailgenerator'] );
+						$this->ll_get_link_image( $linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $genoptions['thumbshotscid'], $filepath, $genoptions['imagefilepath'], $genoptions['thumbnailsize'], $genoptions['thumbnailgenerator'] );
 						$linkname = $linkitem->link_name;
 					}
 
@@ -819,7 +805,7 @@ class link_library_plugin_admin {
 				$settings           = 1;
 			}
 
-			$pagetitle = __( 'Library', 'link-library' ) . ' #' . $settings . " - " . $options['settingssetname'];
+			$pagetitle = __( 'Library', 'link-library' ) . ' #' . $settings . " - " . stripslashes( $options['settingssetname'] );
 
 			if ( isset( $_GET['messages'] ) ) {
 				$categoryid  = '';
@@ -971,13 +957,13 @@ class link_library_plugin_admin {
 		</div>
 		<div id="link-library-general" class="wrap">
 			<div class='icon32'>
-				<img src="<?php echo plugins_url( 'icons/folder-beige-internet-icon32.png', __FILE__ ); ?>" /></div>
+				<img src="<?php echo plugins_url( 'icons/folder-beige-internet-icon32.png', __FILE__ ); ?>" />
+			</div>
 			<div><h2><?php if ( !empty( $pagetitle ) ) {
 						echo $pagetitle;
 					} ?>
-
-
-				</h2></div>
+			</h2>
+			</div>
 			<div>
 				<form name='linklibrary' enctype="multipart/form-data" action="admin-post.php" method="post">
 					<input type="hidden" name="MAX_FILE_SIZE" value="100000" />
@@ -1021,7 +1007,24 @@ class link_library_plugin_admin {
 								if ( $_GET['page'] == 'link-library' ) {
 									do_meta_boxes( $pagehooktop, 'normal', $data );
 								} elseif ( $_GET['page'] == 'link-library-settingssets' ) {
-									do_meta_boxes( $pagehooksettingssets, 'normal', $data );
+									$this->settingssets_selection_meta_box( $data );
+									$this->display_settingsset_menu();
+									$this->settingssets_usage_meta_box( $data );
+									$this->settingssets_common_meta_box( $data );
+									$this->settingssets_categories_meta_box( $data );
+									$this->settingssets_linkelement_meta_box( $data );
+									$this->settingssets_subfieldtable_meta_box( $data );
+									$this->settingssets_linkpopup_meta_box( $data );
+									$this->settingssets_rssconfig_meta_box( $data );
+									$this->settingssets_thumbnails_meta_box( $data );
+									$this->settingssets_rssgen_meta_box( $data );
+									$this->settingssets_search_meta_box( $data );
+									$this->settingssets_linksubmission_meta_box( $data );
+									$this->settingssets_importexport_meta_box( $data );
+
+									$this->general_save_meta_box( $data );
+
+									//do_meta_boxes( $pagehooksettingssets, 'normal', $data );
 								} elseif ( $_GET['page'] == 'link-library-moderate' ) {
 									do_meta_boxes( $pagehookmoderate, 'normal', $data );
 								} elseif ( $_GET['page'] == 'link-library-stylesheet' ) {
@@ -1078,10 +1081,76 @@ class link_library_plugin_admin {
 				});
 
 			});
+
 		</script>
 
 	<?php
 	}
+
+	function display_settingsset_menu() {
+
+		$tabitems = array ( 'usage' => 'Usage',
+		      'common' => __( 'Common', 'link-library' ),
+		      'categories' => __( 'Categories', 'link-library' ),
+		      'links' => __( 'Links', 'link-library' ),
+		      'advanced' => __( 'Advanced', 'link-library' ),
+		      'popup' => __( 'Pop-Ups', 'link-library' ),
+		      'rssdisplay' => __( 'RSS Display', 'link-library' ),
+		      'thumbnails' => __( 'Thumbnails', 'link-library' ),
+		      'rssfeed' => __( 'RSS Feed', 'link-library' ),
+		      'searchfield' => __( 'Search', 'link-library' ),
+		      'userform' => __( 'User Submission', 'link-library' ),
+		      'importexport' => __( 'Import/Export', 'link-library' ),
+		);
+
+		$array_keys = array_keys( $tabitems );
+
+		if ( isset( $_GET['currenttab'] ) ) {
+			$currenttab = array_search( $_GET['currenttab'], $array_keys );
+		} else {
+			$currenttab = 0;
+		}
+
+		?>
+		<div>
+			<input type="hidden" name="currenttab" class="current-tab" value="<?php echo $array_keys[$currenttab]; ?>">
+		<ul id="settings-sections" class="subsubsub hide-if-no-js">
+			<?php
+				$index = 0;
+				foreach ( $tabitems as $tabkey => $tabitem ) { ?>
+				<li><a href="#<?php echo $tabkey; ?>" class="tab <?php echo $tabkey; ?> general <?php if ( $currenttab == $index ) echo 'current'; ?>"><?php echo $tabitem; ?></a> | </li>
+			<?php
+				$index++;
+				} ?>
+		</ul>
+		</div>
+		<br /><br />
+
+		<script type="text/javascript">
+			jQuery(document).ready(function() {
+				jQuery('.content-section:not(:eq(<?php echo $currenttab; ?>))').hide();
+				jQuery('.subsubsub a.tab').click(function(e) {
+
+					// Move the "current" CSS class.
+					jQuery(this).parents('.subsubsub').find('.current').removeClass('current');
+					jQuery(this).addClass('current');
+
+					// If the link is a tab, show only the specified tab.
+					var toShow = jQuery(this).attr('href');
+
+					// Remove the first occurance of # from the selected string (will be added manually below).
+					toShow = toShow.replace('#', '');
+
+					jQuery('.content-section:not(#' + toShow + ')').hide();
+					jQuery('.content-section#' + toShow).show();
+
+					jQuery('.current-tab').val(toShow);
+
+					return false;
+				});
+			});
+		</script>
+	<?php }
 
 	//executed if the post arrives initiated by pressing the submit button of form
 	function on_save_changes_general() {
@@ -1499,6 +1568,7 @@ class link_library_plugin_admin {
 		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
 		$messagelist      = implode( ",", $messages );
 		$cleanredirecturl = $this->remove_querystring_var( $_POST['_wp_http_referer'], 'messages' );
+		$cleanredirecturl = $this->remove_querystring_var( $cleanredirecturl, 'currenttab' );
 		$cleanredirecturl = $this->remove_querystring_var( $cleanredirecturl, 'importrowscount' );
 		$cleanredirecturl = $this->remove_querystring_var( $cleanredirecturl, 'successimportcount' );
 		$cleanredirecturl = $this->remove_querystring_var( $cleanredirecturl, 'copy' );
@@ -1517,6 +1587,10 @@ class link_library_plugin_admin {
 
 		if ( $successfulimport != 0 ) {
 			$redirecturl .= "&successimportcount=" . $successfulimport;
+		}
+
+		if ( isset( $_POST['currenttab'] ) ) {
+			$redirecturl .= "&currenttab=" . $_POST['currenttab'];
 		}
 
 		wp_redirect( $redirecturl );
@@ -2063,8 +2137,8 @@ class link_library_plugin_admin {
 
 	function general_save_meta_box() {
 		?>
-		<div class="submitbox">
-			<input type="submit" name="submit" class="button-primary" value="<?php _e( 'Save', 'link-library' ); ?>" />
+		<div class="submitbox" style="padding-top: 15px">
+			<input type="submit" name="submit" class="button-primary" value="<?php _e( 'Save Settings', 'link-library' ); ?>" />
 		</div>
 	<?php
 	}
@@ -2181,50 +2255,57 @@ class link_library_plugin_admin {
 	<?php
 	}
 
-	function settingssets_usage_meta_box( $data ) {
+	function settingssets_selection_meta_box( $data ) {
 		$options    = $data['options'];
 		$settings   = $data['settings'];
 		$genoptions = $data['genoptions'];
 		?>
 		<div>
-			<?php _e( 'Select Current Library Settings', 'link-library' ); ?> :
-			<SELECT id="settingsetlist" name="settingsetlist" style='width: 300px'>
-				<?php if ( $genoptions['numberstylesets'] == '' ) {
-					$numberofsets = 1;
-				} else {
-					$numberofsets = $genoptions['numberstylesets'];
-				}
-				for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
+		<?php _e( 'Select Current Library Settings', 'link-library' ); ?> :
+		<SELECT id="settingsetlist" name="settingsetlist" style='width: 300px'>
+			<?php if ( $genoptions['numberstylesets'] == '' ) {
+				$numberofsets = 1;
+			} else {
+				$numberofsets = $genoptions['numberstylesets'];
+			}
+			for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
+				<?php $tempoptionname = "LinkLibraryPP" . $counter;
+				$tempoptions          = get_option( $tempoptionname ); ?>
+				<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
+					echo 'SELECTED';
+				} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( ! empty( $tempoptions ) && isset( $tempoptions['settingssetname'] ) ) {
+						echo " (" . stripslashes( $tempoptions['settingssetname'] ) . ")";
+					} ?></option>
+			<?php endfor; ?>
+		</SELECT>
+		<INPUT type="button" name="go" value="<?php _e( 'Go', 'link-library' ); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=' + jQuery('#settingsetlist').val()">
+		<?php if ( $numberofsets > 1 ): ?>
+			<?php _e( 'Copy from:', 'link-library' ); ?>
+			<SELECT id="copysource" name="copysource" style='width: 300px'>
+				<?php for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
 					<?php $tempoptionname = "LinkLibraryPP" . $counter;
-					$tempoptions          = get_option( $tempoptionname ); ?>
-					<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
-						echo 'SELECTED';
-					} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( !empty( $tempoptions ) && isset( $tempoptions['settingssetname'] ) ) {
-							echo " (" . stripslashes( $tempoptions['settingssetname'] ) . ")";
-						} ?></option>
-				<?php endfor; ?>
+					$tempoptions          = get_option( $tempoptionname );
+					if ( $counter != $settings ):?>
+						<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
+							echo 'SELECTED';
+						} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( $tempoptions != "" ) {
+								echo " (" . stripslashes( $tempoptions['settingssetname'] ) . ")";
+							} ?></option>
+					<?php endif;
+				endfor;
+				?>
 			</SELECT>
-			<INPUT type="button" name="go" value="<?php _e( 'Go', 'link-library' ); ?>!" onClick="window.location= 'admin.php?page=link-library-settingssets&amp;settings=' + jQuery('#settingsetlist').val()">
-			<?php if ( $numberofsets > 1 ): ?>
-				<?php _e( 'Copy from:', 'link-library' ); ?>
-				<SELECT id="copysource" name="copysource" style='width: 300px'>
-					<?php for ( $counter = 1; $counter <= $numberofsets; $counter ++ ): ?>
-						<?php $tempoptionname = "LinkLibraryPP" . $counter;
-						$tempoptions          = get_option( $tempoptionname );
-						if ( $counter != $settings ):?>
-							<option value="<?php echo $counter ?>" <?php if ( $settings == $counter ) {
-								echo 'SELECTED';
-							} ?>><?php _e( 'Library', 'link-library' ); ?> <?php echo $counter ?><?php if ( $tempoptions != "" ) {
-									echo " (" . stripslashes( $tempoptions['settingssetname'] ) . ")";
-								} ?></option>
-						<?php endif;
-					endfor;
-					?>
-				</SELECT>
-				<INPUT type="button" name="copy" value="<?php _e( 'Copy', 'link-library' ); ?>!" onClick="if (confirm('Are you sure you want to copy the contents of the selected library over the current library settings?')) { window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val(); };">
-			<?php endif; ?>
-			<br />
-			<br />
+			<INPUT type="button" name="copy" value="<?php _e( 'Copy', 'link-library' ); ?>!" onClick="if (confirm('Are you sure you want to copy the contents of the selected library over the current library settings?')) { window.location= 'admin.php?page=link-library-settingssets&amp;settings=<?php echo $settings; ?>&amp;copy=<?php echo $settings; ?>&source=' + jQuery('#copysource').val(); };">
+		<?php endif; ?>
+		</div>
+	<?php }
+
+	function settingssets_usage_meta_box( $data ) {
+		$options    = $data['options'];
+		$settings   = $data['settings'];
+		$genoptions = $data['genoptions'];
+		?>
+		<div style='padding-top:15px' id="usage" class="content-section">
 			<table class='widefat' style='clear:none;width:100%;background-color:#F1F1F1;background-image: linear-gradient(to top, #ECECEC, #F9F9F9);background-position:initial initial;background-repeat: initial initial'>
 				<thead>
 				<tr>
@@ -2265,10 +2346,6 @@ class link_library_plugin_admin {
 					<td style='background: #FFF'><?php echo "[link-library-addlink settings=" . $settings . "]"; ?></td>
 				</tr>
 			</table>
-			<br />
-		</div>
-
-		<div>
 			<table>
 				<tr>
 					<td style='text-align:right'>
@@ -2288,10 +2365,9 @@ class link_library_plugin_admin {
 		$genoptions = $data['genoptions'];
 		?>
 
-		<div style='padding-top: 15px'>
+		<div style='padding-top: 15px' id="common" class="content-section">
 			<input type='hidden' value='<?php echo $settings; ?>' name='settingsetid' id='settingsetid' />
 			<table>
-
 				<tr>
 					<td style='width: 300px;padding-right: 50px'>
 						<?php _e( 'Current Library Name', 'link-library' ); ?>
@@ -2519,7 +2595,7 @@ class link_library_plugin_admin {
 		$settings   = $data['settings'];
 		$genoptions = $data['genoptions'];
 		?>
-		<div style='padding-top:15px'>
+		<div style='padding-top:15px' id="categories" class="content-section">
 			<table>
 				<tr>
 					<td>
@@ -2707,7 +2783,7 @@ class link_library_plugin_admin {
 		$options  = $data['options'];
 		$settings = $data['settings'];
 		?>
-
+		<div style='padding-top:15px' id="links" class="content-section">
 		<table>
 			<tr>
 				<td>
@@ -2872,6 +2948,7 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
+		</div>
 	<?php
 	}
 
@@ -2880,6 +2957,7 @@ class link_library_plugin_admin {
 		$settings = $data['settings'];
 		?>
 
+		<div style='padding-top:15px' id="advanced" class="content-section">
 		<?php _e( 'Arrange the items below via drag-and-drop to order the various Link Library elements.', 'link-library' ); ?>
 		<br /><br />
 		<ul id="sortable">
@@ -3371,7 +3449,7 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
-
+		</div>
 	<?php
 	}
 
@@ -3379,6 +3457,7 @@ class link_library_plugin_admin {
 		$options  = $data['options'];
 		$settings = $data['settings'];
 		?>
+		<div style='padding-top:15px' id="popup" class="content-section">
 		<table>
 			<tr>
 				<td style='width:175px;'><?php _e( 'Enable link Pop-Ups', 'link-library' ); ?></td>
@@ -3407,6 +3486,7 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
+		</div>
 	<?php
 	}
 
@@ -3414,7 +3494,7 @@ class link_library_plugin_admin {
 		$options  = $data['options'];
 		$settings = $data['settings'];
 		?>
-
+		<div style='padding-top:15px' id="rssdisplay" class="content-section">
 		<table>
 			<tr>
 				<td>
@@ -3505,7 +3585,7 @@ class link_library_plugin_admin {
 				<td></td>
 			</tr>
 		</table>
-
+		</div>
 	<?php
 	}
 
@@ -3515,6 +3595,7 @@ class link_library_plugin_admin {
 		$settings   = $data['settings'];
 		?>
 
+		<div style='padding-top:15px' id="thumbnails" class="content-section">
 		<table>
 			<tr>
 				<td style='width: 400px' class='lltooltip' title='<?php _e( 'Checking this option will get images from the Robothumb web site every time', 'link-library' ); ?>.'>
@@ -3546,6 +3627,7 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
+		</div>
 	<?php
 	}
 
@@ -3554,6 +3636,7 @@ class link_library_plugin_admin {
 		$settings = $data['settings'];
 		?>
 
+		<div style='padding-top:15px' id="rssfeed" class="content-section">
 		<table>
 			<tr>
 				<td>
@@ -3591,7 +3674,7 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
-
+		</div>
 	<?php
 	}
 
@@ -3599,8 +3682,7 @@ class link_library_plugin_admin {
 		$options  = $data['options'];
 		$settings = $data['settings'];
 		?>
-
-		<div>
+		<div style='padding-top:15px' id="searchfield" class="content-section">
 			<table>
 				<tr>
 					<td style='width:200px'><?php _e( 'Search Label', 'link-library' ); ?></td>
@@ -3617,7 +3699,6 @@ class link_library_plugin_admin {
 				</tr>
 			</table>
 		</div>
-
 	<?php
 	}
 
@@ -3709,7 +3790,7 @@ class link_library_plugin_admin {
 			$options['showuserlargedescription'] = 'show';
 		}
 		?>
-		<div>
+		<div style='padding-top:15px' id="userform" class="content-section">
 		<table>
 		<tr>
 			<td colspan=5 class="lltooltip" title='<?php _e( 'Following this link shows a list of all links awaiting moderation', 'link-library' ); ?>.'>
@@ -4076,6 +4157,7 @@ class link_library_plugin_admin {
 		$settings = $data['settings'];
 		?>
 
+		<div style='padding-top:15px' id="importexport" class="content-section">
 		<table>
 			<tr>
 				<td class='lltooltip' title='<?php _e( 'Allows for links to be added in batch to the Wordpress links database. CSV file needs to follow template for column layout.', 'link-library' ); ?>' style='width: 330px'><?php _e( 'CSV file to upload to import links', 'link-library' ); ?> (<a href="<?php echo plugins_url( 'importtemplate.csv', __FILE__ ); ?>"><?php _e( 'file template', 'link-library' ); ?></a>)
@@ -4107,7 +4189,7 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
-
+		</div>
 	<?php
 	}
 

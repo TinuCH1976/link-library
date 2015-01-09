@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1.4 =
+* Re-structured Library Settings section to use tab to avoid scrolling up and down all the time
+
 = 5.9.1.3 =
 * Re-integrate Thumbshots.org service to generate thumbnails and offer users choice between Thumbshots and Robothumb
 
