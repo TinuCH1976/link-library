@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1.5 =
+* Additional enhancements to admin panel to organize using tabs
+
 = 5.9.1.4 =
 * Re-structured Library Settings section to use tab to avoid scrolling up and down all the time
 

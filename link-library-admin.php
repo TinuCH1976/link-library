@@ -654,16 +654,6 @@ class link_library_plugin_admin {
 		$genoptions = get_option( 'LinkLibraryGeneral' );
 
 		//add several metaboxes now, all metaboxes registered during load page can be switched off/on at "Screen Options" automatically, nothing special to do therefore
-		add_meta_box( 'linklibrary_general_save_meta_box_top', __( 'Save', 'link-library' ), array( $this, 'general_save_meta_box' ), $pagehooktop, 'normal', 'high' );
-		add_meta_box( 'linklibrary_general_meta_box', __( 'General Settings', 'link-library' ), array( $this, 'general_meta_box' ), $pagehooktop, 'normal', 'high' );
-		add_meta_box( 'linklibrary_general_images_box', __( 'Image Configuration', 'link-library' ), array( $this, 'general_image_meta_box' ), $pagehooktop, 'normal', 'high' );
-		add_meta_box( 'linklibrary_general_bookmarklet_meta_box', __( 'Bookmarklet', 'link-library' ), array( $this, 'general_meta_bookmarklet_box' ), $pagehooktop, 'normal', 'high' );
-		add_meta_box( 'linklibrary_general_moderation_meta_box', __( 'General Moderation Options', 'link-library' ), array( $this, 'general_moderation_meta_box' ), $pagehooktop, 'normal', 'high' );
-
-		if ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) {
-			add_meta_box( 'linklibrary_hide_donation_meta_box', __( 'Hide Donation and Support Links', 'link-library' ), array( $this, 'general_hide_donation_meta_box' ), $pagehooktop, 'normal', 'high' );
-		}
-
 		add_meta_box( 'linklibrary_general_save_meta_box', __( 'Save', 'link-library' ), array( $this, 'general_save_meta_box' ), $pagehooktop, 'normal', 'high' );
 		add_meta_box( 'linklibrary_moderation_meta_box', __( 'Links awaiting moderation', 'link-library' ), array( $this, 'moderate_meta_box' ), $pagehookmoderate, 'normal', 'high' );
 		add_meta_box( 'linklibrary_stylesheet_meta_box', __( 'Editor', 'link-library' ), array( $this, 'stylesheet_meta_box' ), $pagehookstylesheet, 'normal', 'high' );
@@ -1005,10 +995,20 @@ class link_library_plugin_admin {
 							<div id="post-body-content" class="has-sidebar-content">
 								<?php
 								if ( $_GET['page'] == 'link-library' ) {
-									do_meta_boxes( $pagehooktop, 'normal', $data );
+									$this->display_menu( 'general', $genoptions );
+									$this->general_meta_box( $data );
+									$this->general_image_meta_box( $data );
+									$this->general_meta_bookmarklet_box( $data );
+									$this->general_moderation_meta_box( $data );
+									if ( isset( $genoptions['hidedonation'] ) && !$genoptions['hidedonation'] ) {
+										$this->general_hide_donation_meta_box( $data );
+									}
+
+									$this->general_save_meta_box();
+
 								} elseif ( $_GET['page'] == 'link-library-settingssets' ) {
 									$this->settingssets_selection_meta_box( $data );
-									$this->display_settingsset_menu();
+									$this->display_menu( 'settingsset' );
 									$this->settingssets_usage_meta_box( $data );
 									$this->settingssets_common_meta_box( $data );
 									$this->settingssets_categories_meta_box( $data );
@@ -1087,21 +1087,34 @@ class link_library_plugin_admin {
 	<?php
 	}
 
-	function display_settingsset_menu() {
+	function display_menu( $menu_name = 'settingsset', $genoptions = '' ) {
 
-		$tabitems = array ( 'usage' => 'Usage',
-		      'common' => __( 'Common', 'link-library' ),
-		      'categories' => __( 'Categories', 'link-library' ),
-		      'links' => __( 'Links', 'link-library' ),
-		      'advanced' => __( 'Advanced', 'link-library' ),
-		      'popup' => __( 'Pop-Ups', 'link-library' ),
-		      'rssdisplay' => __( 'RSS Display', 'link-library' ),
-		      'thumbnails' => __( 'Thumbnails', 'link-library' ),
-		      'rssfeed' => __( 'RSS Feed', 'link-library' ),
-		      'searchfield' => __( 'Search', 'link-library' ),
-		      'userform' => __( 'User Submission', 'link-library' ),
-		      'importexport' => __( 'Import/Export', 'link-library' ),
-		);
+		if ( $menu_name == 'general' ) {
+			$tabitems = array ( 'general' => __( 'General', 'link-library' ),
+			                    'images' => __( 'Images', 'link-library' ),
+			                    'bookmarklet' => __( 'Bookmarklet', 'link-library' ),
+			                    'moderation' => __( 'Moderation', 'link-library' ),
+			                    'hidedonation' => __( 'Hide Donation', 'link-library' ),
+			);
+
+			if ( isset( $genoptions['hidedonation'] ) && $genoptions['hidedonation'] ) {
+				unset ( $tabitems['hidedonation'] );
+			}
+		} elseif ( $menu_name == 'settingsset' ) {
+			$tabitems = array ( 'usage' => __( 'Usage', 'link-library' ),
+			                    'common' => __( 'Common', 'link-library' ),
+			                    'categories' => __( 'Categories', 'link-library' ),
+			                    'links' => __( 'Links', 'link-library' ),
+			                    'advanced' => __( 'Advanced', 'link-library' ),
+			                    'popup' => __( 'Pop-Ups', 'link-library' ),
+			                    'rssdisplay' => __( 'RSS Display', 'link-library' ),
+			                    'thumbnails' => __( 'Thumbnails', 'link-library' ),
+			                    'rssfeed' => __( 'RSS Feed', 'link-library' ),
+			                    'searchfield' => __( 'Search', 'link-library' ),
+			                    'userform' => __( 'User Submission', 'link-library' ),
+			                    'importexport' => __( 'Import/Export', 'link-library' ),
+			);
+		}
 
 		$array_keys = array_keys( $tabitems );
 
@@ -1243,7 +1256,13 @@ class link_library_plugin_admin {
 
 
 		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
-		wp_redirect( $this->remove_querystring_var( $_POST['_wp_http_referer'], 'message' ) . "&message=" . $message );
+		$redirecturl = $this->remove_querystring_var( $_POST['_wp_http_referer'], 'message' ). "&message=" . $message;
+
+		if ( isset( $_POST['currenttab'] ) ) {
+			$redirecturl .= "&currenttab=" . $_POST['currenttab'];
+		}
+
+		wp_redirect( $redirecturl );
 	}
 
 	//executed if the post arrives initiated by pressing the submit button of form
@@ -1859,6 +1878,7 @@ class link_library_plugin_admin {
 		extract( $genoptions );
 
 		?>
+		<div style='padding-top:15px' id="general" class="content-section">
 		<table>
 			<tr>
 				<td>
@@ -1993,6 +2013,7 @@ class link_library_plugin_admin {
 					</td>
 				<?php } ?>
 		</table>
+		</div>
 
 		<script type="text/javascript">
 			jQuery(document).ready(function () {
@@ -2008,6 +2029,7 @@ class link_library_plugin_admin {
 	function general_image_meta_box( $data ) {
 		$genoptions = $data['genoptions'];
 		?>
+		<div style='padding-top:15px' id="images" class="content-section">
 		<table>
 			<tr>
 				<td class='lltooltip' title='<?php _e( 'Custom full URL for expand icon. Uses default image if left empty.', 'link-library' ); ?>'><?php _e( 'Expand Icon Image', 'link-library' ); ?></td>
@@ -2024,16 +2046,18 @@ class link_library_plugin_admin {
 					} ?>" /></td>
 			</tr>
 		</table>
-
+		</div>
 	<?php
 	}
 
 	function general_meta_bookmarklet_box( $data ) {
 		$bookmarkletcode = 'javascript:void(linkmanpopup=window.open(\'' . get_bloginfo( 'wpurl' ) . '/wp-admin/link-add.php?action=popup&linkurl=\'+escape(location.href)+\'&name=\'+(document.title),\'LinkManager\',\'scrollbars=yes,width=900px,height=600px,left=15,top=15,status=yes,resizable=yes\'));linkmanpopup.focus();window.focus();linkmanpopup.focus();';
 		?>
+		<div style='padding-top:15px' id="bookmarklet" class="content-section">
 		<p><?php _e( 'Add new links to your site with this bookmarklet.', 'link-library' ); ?></p>
 		<p><?php _e( 'To use this feature, drag-and-drop the button below to your favorite / bookmark toolbar.', 'link-library' ); ?></p>
 		<a href="<?php echo $bookmarkletcode; ?>" class='button' title="<?php _e( 'Add to Links', 'link-library' ); ?>"><?php _e( 'Add to Links', 'link-library' ); ?></a>
+		</div>
 
 	<?php
 	}
@@ -2041,6 +2065,7 @@ class link_library_plugin_admin {
 	function general_moderation_meta_box( $data ) {
 		$genoptions = $data['genoptions'];
 		?>
+		<div style='padding-top:15px' id="moderation" class="content-section">
 		<table>
 			<tr>
 				<td colspan="2">
@@ -2117,11 +2142,13 @@ class link_library_plugin_admin {
 				</td>
 			</tr>
 		</table>
+		</div>
 	<?php
 	}
 
 	function general_hide_donation_meta_box() {
 		?>
+		<div style='padding-top:15px' id="hidedonation" class="content-section">
 		<p><?php _e( 'The following option allows you to hide the Donate button and Support the Author section in the Link Library Admin pages. If you enjoy this plugin and use it regularly, please consider making a donation to the author before turning off these messages. This menu section will disappear along with the other elements.', 'link-library' ); ?></p>
 		<table>
 			<tr>
@@ -2132,6 +2159,7 @@ class link_library_plugin_admin {
 					} ?>/></td>
 			</tr>
 		</table>
+		</div>
 	<?php
 	}
 
@@ -2309,7 +2337,7 @@ class link_library_plugin_admin {
 			<table class='widefat' style='clear:none;width:100%;background-color:#F1F1F1;background-image: linear-gradient(to top, #ECECEC, #F9F9F9);background-position:initial initial;background-repeat: initial initial'>
 				<thead>
 				<tr>
-					<th style='width:40px' class="lltooltip" title='<?php _e( 'Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library' ); ?>'>
+					<th style='width:80px' class="lltooltip" title='<?php _e( 'Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library' ); ?>'>
 						<?php _e( 'Library #', 'link-library' ); ?>
 					</th>
 					<th style='width:130px' class="lltooltip" title='<?php _e( 'Link Library Supports the Creation of an unlimited number of configurations to display link lists on your site', 'link-library' ); ?>'>
@@ -2404,12 +2432,8 @@ class link_library_plugin_admin {
 						$categorylistarray = explode( ',', $options['categorylist'] );
 						?>
 						<td>
-							<?php _e( 'Show all categories', 'link-library' ); ?>
-							<input type="checkbox" id="nospecificcats" name="nospecificcats" <?php if ( empty( $options['categorylist'] ) ) {
-								echo ' checked="checked" ';
-							} ?>/>
 							<?php if ( !empty( $catnames ) ) { ?>
-								<select id="categorylist" name="categorylist[]" multiple <?php disabled( empty( $options['categorylist'] ), true, true ); ?>>
+								<select style="width:100%" id="categorylist" name="categorylist[]" multiple <?php disabled( empty( $options['categorylist'] ), true, true ); ?>>
 									<?php foreach ( $catnames as $catname ) { ?>
 										<option value="<?php echo $catname->term_id; ?>" <?php selected( in_array( $catname->term_id, $categorylistarray ), true, true ); ?> ><?php echo $catname->name; ?></option>
 
@@ -2418,6 +2442,11 @@ class link_library_plugin_admin {
 							<?php } else { ?>
 								<?php _e( 'No link categories! Create some!', 'link-library' ); ?>
 							<?php } ?>
+							<?php _e( 'Show all categories', 'link-library' ); ?>
+							<input type="checkbox" id="nospecificcats" name="nospecificcats" <?php if ( empty( $options['categorylist'] ) ) {
+								echo ' checked="checked" ';
+							} ?>/>
+
 						</td>
 					<?php } ?>
 				</tr>
@@ -2434,12 +2463,8 @@ class link_library_plugin_admin {
 						$excludecategorylistarray = explode( ',', $options['excludecategorylist'] );
 						?>
 						<td>
-							<?php _e( 'No Exclusions', 'link-library' ); ?>
-							<input type="checkbox" id="noexclusions" name="noexclusions" <?php if ( empty( $options['excludecategorylist'] ) ) {
-								echo ' checked="checked" ';
-							} ?>/>
 							<?php if ( !empty( $catnames ) ) { ?>
-								<select id="excludecategorylist" name="excludecategorylist[]" multiple <?php disabled( empty( $options['excludecategorylist'] ), true, true ); ?>>
+								<select style="width:100%" id="excludecategorylist" name="excludecategorylist[]" multiple <?php disabled( empty( $options['excludecategorylist'] ), true, true ); ?>>
 									<?php foreach ( $catnames as $catname ) { ?>
 										<option value="<?php echo $catname->term_id; ?>" <?php selected( in_array( $catname->term_id, $excludecategorylistarray ), true, true ); ?> ><?php echo $catname->name; ?></option>
 
@@ -2448,6 +2473,11 @@ class link_library_plugin_admin {
 							<?php } else { ?>
 								<?php _e( 'No link categories! Create some!', 'link-library' ); ?>
 							<?php } ?>
+							<?php _e( 'No Exclusions', 'link-library' ); ?>
+							<input type="checkbox" id="noexclusions" name="noexclusions" <?php if ( empty( $options['excludecategorylist'] ) ) {
+								echo ' checked="checked" ';
+							} ?>/>
+
 						</td>
 					<?php } ?>
 				</tr>
