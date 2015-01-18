@@ -4262,6 +4262,8 @@ class link_library_plugin_admin {
 			$linkextradataquery = "select * from " . $this->db_prefix() . "links_extrainfo where link_id = " . $link->link_id;
 			$extradata          = $wpdb->get_row( $linkextradataquery, ARRAY_A );
 
+			$extradata['link_second_url'] = stripslashes( $extradata['link_second_url'] );
+
 			if ( $extradata['link_visits'] == '' ) {
 				$extradata['link_visits'] = 0;
 			}
@@ -4304,7 +4306,7 @@ class link_library_plugin_admin {
 				<td style='width: 200px'><?php _e( 'Secondary Web Address', 'link-library' ); ?></td>
 				<td>
 					<input type="text" id="ll_secondwebaddr" name="ll_secondwebaddr" size="80" value="<?php echo( isset( $extradata['link_second_url'] ) ? $extradata['link_second_url'] : '' ); ?>" /> <?php if ( isset( $extradata['link_second_url'] ) && $extradata['link_second_url'] != "" ) {
-						echo " <a href=" . esc_url( stripslashes( $extradata['link_second_url'] ) ) . ">" . __( 'Visit', 'link-library' ) . "</a>";
+						echo " <a href=" . esc_html( $extradata['link_second_url'] ) . ">" . __( 'Visit', 'link-library' ) . "</a>";
 					} ?></td>
 			</tr>
 			<tr>

@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1.6 =
+* Fixed to support file links in secondary link field
+
 = 5.9.1.5 =
 * Additional enhancements to admin panel to organize using tabs
 

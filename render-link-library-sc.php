@@ -782,7 +782,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
                 $the_second_link = '#';
                 if ( !empty( $linkitem['link_second_url'] ) ) {
-                    $the_second_link = esc_html( $linkitem['link_second_url'] );
+                    $the_second_link = esc_html( stripslashes( $linkitem['link_second_url'] ) );
                 }
 
                 $rel = $linkitem['link_rel'];
