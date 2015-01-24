@@ -394,13 +394,13 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
     }
 
     if ( 'name' == $linkorder || 'random' == $linkorder ) {
-        $linkquery .= 'l.link_name ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_name ' . ( in_array( $linkdirection, $validdirections ) ? $linkdirection : 'ASC' );
     } elseif ( 'id' == $linkorder ) {
-        $linkquery .= 'l.link_id ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_id ' . ( in_array( $linkdirection, $validdirections ) ? $linkdirection : 'ASC' );
     } elseif ( 'order' == $linkorder ) {
-        $linkquery .= 'l.link_order '. ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_order '. ( in_array( $linkdirection, $validdirections ) ? $linkdirection : 'ASC' );
     } elseif ( 'date' == $linkorder ) {
-        $linkquery .= 'l.link_updated '. ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
+        $linkquery .= 'l.link_updated '. ( in_array( $linkdirection, $validdirections ) ? $linkdirection : 'ASC' );
     }
 
     if ( $pagination && 'search' != $mode ) {

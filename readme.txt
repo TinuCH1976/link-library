@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.1.7 =
+* Fixed issue with ordering links in descending order
+
 = 5.9.1.6 =
 * Fixed to support file links in secondary link field
 
