@@ -53,8 +53,13 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
             } elseif ( $showonecatonly ) {
                 if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
                     $paginationoutput .= "<a href=\"#\" onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $previouspagenumber . ");return false;\" >" . __('Previous', 'link-library') . '</a>';
-                } elseif ( 'HTMLGET' == $showonecatmode ) {
-                    $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $previouspagenumber, 'cat_id' => $AJAXcatid );
+                } elseif ( 'HTMLGET' == $showonecatmode || 'HTMLGETSLUG' == $showonecatmode ) {
+                    if ( 'HTMLGET' == $showonecatmode ) {
+                        $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $previouspagenumber, 'cat_id' => $AJAXcatid );
+                    } else {
+                        $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $previouspagenumber, 'cat' => $AJAXcatid );
+                    }
+
                     $argumentarray = array_merge( $argumentarray, $incomingget );
                     $targetaddress = add_query_arg( $argumentarray );
 
@@ -84,8 +89,13 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 } elseif ( $showonecatonly ) {
                     if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
                         $paginationoutput .= "<a href=\"#\" onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $counter . ");return false;\" >" . $counter . '</a>';
-                    } elseif ( 'HTMLGET' == $showonecatmode ) {
-                        $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'cat_id' => $AJAXcatid );
+                    } elseif ( 'HTMLGET' == $showonecatmode || 'HTMLGETSLUG' == $showonecatmode ) {
+                        if ( 'HTMLGET' == $showonecatmode ) {
+                            $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'cat_id' => $AJAXcatid );
+                        } else {
+                            $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'cat' => $AJAXcatid );
+                        }
+
                         $argumentarray = array_merge( $argumentarray, $incomingget );
                         $targetaddress = add_query_arg( $argumentarray );
 
@@ -120,7 +130,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
             } elseif ( $showonecatonly ) {
                 if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
                     $paginationoutput .= "<a href=\"#\" onClick=\"showLinkCat('" . $AJAXcatid . "', '" . $settings . "', " . $nextpagenumber . ");return false;\" >" . __('Next', 'link-library') . '</a>';
-                } elseif ( 'HTMLGET' == $showonecatmode ) {
+                } elseif ( 'HTMLGET' == $showonecatmode || 'HTMLGETSLUG' == $showonecatmode ) {
                     $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
                     $argumentarray = array_merge( $argumentarray, $incomingget );
                     $targetaddress = add_query_arg( $argumentarray );
@@ -199,6 +209,8 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
     } elseif ($showonecatonly && 'HTMLGET' == $showonecatmode && isset( $_GET['cat_id'] ) && ( !isset( $_GET['searchll'] ) || ( isset( $_GET['searchll'] ) && empty( $_GET['searchll'] ) ) ) ) {
         $categorylist = intval( $_GET['cat_id'] );
         $AJAXcatid = $categorylist;
+    } elseif ($showonecatonly && 'HTMLGETSLUG' == $showonecatmode && isset( $_GET['cat'] ) && ( !isset( $_GET['searchll'] ) || ( isset( $_GET['searchll'] ) && empty( $_GET['searchll'] ) ) ) ) {
+        $categorysluglist = $_GET['cat'];
     } elseif ( $showonecatonly && 'HTMLGETPERM' == $showonecatmode && empty( $_GET['searchll'] ) ) {
         global $wp_query;
 
@@ -292,6 +304,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
     if ( ( !empty( $categorylist ) || isset( $_GET['cat_id'] ) ) && empty( $singlelinkid ) ) {
         $linkquery .= ' AND t.term_id in (' . $categorylist. ')';
+    }
+
+    if ( ( !empty( $categorysluglist ) || isset( $_GET['cat'] ) ) && empty( $singlelinkid ) ) {
+        $linkquery .= ' AND t.slug in ("' . $categorysluglist. '")';
     }
 
     if ( isset( $categoryname ) && !empty( $categoryname ) && 'HTMLGETPERM' == $showonecatmode && empty( $singlelinkid ) ) {
@@ -482,6 +498,9 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $previouspagenumber = $pagenumber - 1;
             $nextpagenumber = $pagenumber + 1;
             $pageID = get_the_ID();
+            if ( empty( $AJAXcatid ) && !empty( $categorysluglist ) ) {
+                $AJAXcatid = $categorysluglist;
+            }
 
             $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
         }
