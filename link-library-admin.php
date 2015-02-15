@@ -732,7 +732,9 @@ class link_library_plugin_admin {
 					$filescreated = 0;
 					$totallinks   = count( $linkitems );
 					foreach ( $linkitems as $linkitem ) {
-						$this->ll_get_link_image( $linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $genoptions['thumbshotscid'], $filepath, $genoptions['imagefilepath'], $genoptions['thumbnailsize'], $genoptions['thumbnailgenerator'] );
+						if ( !$options['uselocalimagesoverthumbshots'] || ( $options['uselocalimagesoverthumbshots'] && empty( $linkitem->link_image ) ) ) {
+							$this->ll_get_link_image( $linkitem->link_url, $linkitem->link_name, $genmode, $linkitem->link_id, $genoptions['thumbshotscid'], $filepath, $genoptions['imagefilepath'], $genoptions['thumbnailsize'], $genoptions['thumbnailgenerator'] );
+						}
 						$linkname = $linkitem->link_name;
 					}
 

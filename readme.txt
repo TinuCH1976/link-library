@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.2.1 =
+* Modified thumbnail generation to skip items that already have images when option 'Give priority to images assigned to links if present' is active
+
 = 5.9.2 =
 * Added new option to build URLs for one category at a time mode using category slugs
 
