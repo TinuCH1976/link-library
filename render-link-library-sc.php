@@ -884,64 +884,70 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 1: 	//------------------ Image Output --------------------
                                 $imageoutput = '';
 
-                                if ( ( ( !empty( $linkitem['link_image'] ) || $usethumbshotsforimages ) ) && ( $show_images ) ) {
-                                    if ( true == $debugmode ) {
-                                        $starttimeimage = microtime ( true );
-                                    }
+								if ( $show_images ) {
+									$imageoutput .= stripslashes( $beforeimage );
 
-                                    $imageoutput .= stripslashes( $beforeimage ) . '<a href="';
+									if ( !empty( $linkitem['link_image'] ) || $usethumbshotsforimages ) {
+										if ( true == $debugmode ) {
+											$starttimeimage = microtime ( true );
+										}
 
-                                    if ( !$enable_link_popup ) {
-                                        if ( 'primary' == $sourceimage || empty( $sourceimage ) ) {
-                                            $imageoutput .= $the_link;
-                                        } elseif ( 'secondary' == $sourceimage ) {
-                                            $imageoutput .= $the_second_link;
-                                        }
-                                    } else {
-                                        $imageoutput .= home_url() . '/?link_library_popup_content=1&linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ) . '&xpath=' . $xpath;
-                                    }
+										$imageoutput .= '<a href="';
 
-                                    $imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enable_link_popup ? 'thickbox' : 'track_this_link' ) . ' ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
+										if ( !$enable_link_popup ) {
+											if ( 'primary' == $sourceimage || empty( $sourceimage ) ) {
+												$imageoutput .= $the_link;
+											} elseif ( 'secondary' == $sourceimage ) {
+												$imageoutput .= $the_second_link;
+											}
+										} else {
+											$imageoutput .= home_url() . '/?link_library_popup_content=1&linkid=' . $linkitem['proper_link_id'] . '&settings=' . $settings . '&height=' . ( empty( $popupheight ) ? 300 : $popupheight ) . '&width=' . ( empty( $popupwidth ) ? 400 : $popupwidth ) . '&xpath=' . $xpath;
+										}
 
-                                    if ( $usethumbshotsforimages && ( !$uselocalimagesoverthumbshots || empty( $uselocalimagesoverthumbshots ) || ( $uselocalimagesoverthumbshots && empty( $linkitem['link_image'] ) ) ) ) {
-                                        if ( $thumbnailgenerator == 'robothumb' ) {
-                                            $imageoutput .= '<img src="http://www.robothumb.com/src/?url=' . $the_link . '&size=' . $generaloptions['thumbnailsize'] . '"';
-                                        } elseif ( $thumbnailgenerator == 'thumbshots' ) {
-                                            if ( !empty( $thumbshotscid ) ) {
-                                                $imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . rawurlencode( $thumbshotscid ) . '&v=1&w=120&url=' . $the_link . '"';
-                                            }
-                                        }
-                                    } else if ( !$usethumbshotsforimages || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
-                                        if ( strpos( $linkitem['link_image'], 'http' ) !== false ) {
-                                            $imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
-                                        } else {
-                                            // If it's a relative path
-                                            $imageoutput .= '<img src="' . get_option( 'siteurl' ) . $linkitem['link_image'] . '"';
-                                        }
-                                    }
+										$imageoutput .= '" id="link-' . $linkitem['proper_link_id'] . '" class="' . ( $enable_link_popup ? 'thickbox' : 'track_this_link' ) . ' ' . ( $linkitem['link_featured'] ? 'featured' : '' ). '" ' . $rel . $title . $target. '>';
 
-                                    if ( !$usethumbshotsforimages || ($usethumbshotsforimages && !empty( $thumbshotscid ) ) || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
+										if ( $usethumbshotsforimages && ( !$uselocalimagesoverthumbshots || empty( $uselocalimagesoverthumbshots ) || ( $uselocalimagesoverthumbshots && empty( $linkitem['link_image'] ) ) ) ) {
+											if ( $thumbnailgenerator == 'robothumb' ) {
+												$imageoutput .= '<img src="http://www.robothumb.com/src/?url=' . $the_link . '&size=' . $generaloptions['thumbnailsize'] . '"';
+											} elseif ( $thumbnailgenerator == 'thumbshots' ) {
+												if ( !empty( $thumbshotscid ) ) {
+													$imageoutput .= '<img src="http://images.thumbshots.com/image.aspx?cid=' . rawurlencode( $thumbshotscid ) . '&v=1&w=120&url=' . $the_link . '"';
+												}
+											}
+										} else if ( !$usethumbshotsforimages || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
+											if ( strpos( $linkitem['link_image'], 'http' ) !== false ) {
+												$imageoutput .= '<img src="' . $linkitem['link_image'] . '"';
+											} else {
+												// If it's a relative path
+												$imageoutput .= '<img src="' . get_option( 'siteurl' ) . $linkitem['link_image'] . '"';
+											}
+										}
 
-                                        $imageoutput .= $alt . $title;
+										if ( !$usethumbshotsforimages || ($usethumbshotsforimages && !empty( $thumbshotscid ) ) || ( $usethumbshotsforimages && $uselocalimagesoverthumbshots && !empty( $linkitem['link_image'] ) ) ) {
 
-                                        if ( !empty( $imageclass ) ) {
-                                            $imageoutput .= ' class="' . $imageclass . '" ';
-                                        }
+											$imageoutput .= $alt . $title;
 
-                                        $imageoutput .= '/>';
+											if ( !empty( $imageclass ) ) {
+												$imageoutput .= ' class="' . $imageclass . '" ';
+											}
 
-                                        $imageoutput .= '</a>' . stripslashes( $afterimage );
-                                    }
+											$imageoutput .= '/>';
 
-                                    if ( true == $debugmode ) {
-                                        $output .= '<!-- Time to render image section of link id ' . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimeimage ) . " --> \n";
-                                    }
+											$imageoutput .= '</a>' . stripslashes( $afterimage );
+										}
 
-                                }
+										if ( true == $debugmode ) {
+											$output .= '<!-- Time to render image section of link id ' . $linkitem['proper_link_id'] . ': ' . ( microtime( true ) - $starttimeimage ) . " --> \n";
+										}
 
-                                if ( ( !empty( $imageoutput ) || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) ) && $show_images ) {
-                                    $output .= $imageoutput;
-                                }
+									}
+
+									$imageoutput .= stripslashes( $afterimage );
+
+									if ( ( !empty( $imageoutput ) || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) ) && $show_images ) {
+										$output .= $imageoutput;
+									}
+								}
 
                                 break;
 

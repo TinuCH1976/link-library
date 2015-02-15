@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.2.2 =
+* Modification to image display code to always show before and after tags, whether or not an image is present
+
 = 5.9.2.1 =
 * Modified thumbnail generation to skip items that already have images when option 'Give priority to images assigned to links if present' is active
 
