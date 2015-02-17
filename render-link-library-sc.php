@@ -933,7 +933,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
 											$imageoutput .= '/>';
 
-											$imageoutput .= '</a>' . stripslashes( $afterimage );
+											$imageoutput .= '</a>';
 										}
 
 										if ( true == $debugmode ) {

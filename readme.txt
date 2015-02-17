@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.2.3 =
+* Corrected to modified image display code
+
 = 5.9.2.2 =
 * Modification to image display code to always show before and after tags, whether or not an image is present
 
