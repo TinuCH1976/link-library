@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.2.3
+Version: 5.9.2.4
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -37,6 +37,7 @@ I, Yannick Lefebvre, can be contacted via e-mail at ylefebvre@gmail.com
 
 require_once(ABSPATH . '/wp-admin/includes/bookmark.php');
 require_once plugin_dir_path( __FILE__ ) . 'link-library-defaults.php';
+require_once plugin_dir_path( __FILE__ ) . 'rssfeed.php';
 
 global $my_link_library_plugin;
 global $my_link_library_plugin_admin;
@@ -142,6 +143,8 @@ class link_library_plugin {
 
 		add_filter( 'wp_title', array( $this, 'll_title_creator' ) );
 
+		add_action( 'init', array( $this, 'links_rss' ) );
+
 		// Re-write rules filters to allow for custom permalinks
 		add_filter( 'rewrite_rules_array', array( $this, 'll_insertMyRewriteRules' ) );
 		add_filter( 'query_vars', array( $this, 'll_insertMyRewriteQueryVars' ) );
@@ -162,6 +165,10 @@ class link_library_plugin {
         global $wpdb;
 
         $wpdb->linkcategorymeta = $wpdb->get_blog_prefix() . 'linkcategorymeta';
+	}
+
+	function links_rss() {
+		add_feed( 'linklibraryfeed', 'link_library_generate_rss_feed' );
 	}
 
     /************************** Link Library Installation Function **************************/
@@ -919,13 +926,9 @@ class link_library_plugin {
 	}
 
     function ll_template_redirect( $template ) {
-        if ( !empty( $_POST['link_library_user_link_submission'] ) ) {
+	    if ( !empty( $_POST['link_library_user_link_submission'] ) ) {
             require_once plugin_dir_path( __FILE__ ) . 'usersubmission.php';
             link_library_process_user_submission( $this );
-            return '';
-        } else if ( !empty( $_GET['link_library_rss_feed'] ) ) {
-            require_once plugin_dir_path( __FILE__ ) . 'rssfeed.php';
-            link_library_generate_rss_feed();
             return '';
         } else if ( !empty( $_GET['link_library_popup_content'] ) ) {
             require_once plugin_dir_path( __FILE__ ) . 'linkpopup.php';

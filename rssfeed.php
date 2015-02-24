@@ -8,8 +8,8 @@ function link_library_generate_rss_feed () {
 
     global $wpdb;
 
-    if ( isset ( $_GET['settingset'] ) ) {
-        $settingsetid = intval( $_GET['settingset'] );
+    if ( isset( $_GET['settingsset'] ) && !empty( $_GET['settingsset'] ) ) {
+        $settingsetid = intval( $_GET['settingsset'] );
     } else {
         $settingsetid = 1;
     }
@@ -25,7 +25,7 @@ function link_library_generate_rss_feed () {
     // CHANNEL
     $rss->setChannel (
         $feedtitle, // Title
-        home_url () . '?link_library_rss_feed=1&settingset=' . $settingsetid, // Link
+        home_url () . '/feed/linklibraryfeed?settingsset=' . $settingsetid, // Link
         $feeddescription, // Description
         null, // Language
         null, // Copyright
@@ -83,6 +83,7 @@ function link_library_generate_rss_feed () {
         }
     }
 
-    echo $rss->getFeed();
+	header( 'Content-Type: '. feed_content_type('rss-http') . '; charset=' . get_option('blog_charset') );
+    print( $rss->getFeed() );
     exit;
 }
