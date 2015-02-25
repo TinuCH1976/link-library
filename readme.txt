@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.2.5 =
+* Additional corrections for RSS feeds
+
 = 5.9.2.4 =
 * Changed to RSS feed generation to make it compatible with feedburner and other rss services. RSS feed address is now site/feed/linklibraryfeed?settingsset=1.
 

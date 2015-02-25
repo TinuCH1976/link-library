@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.2.4
+Version: 5.9.2.5
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -393,7 +393,7 @@ class link_library_plugin {
 			$feedtitle = ( empty( $options['rssfeedtitle'] ) ? __('Link Library Generated Feed', 'link-library') : $options['rssfeedtitle'] );
 
 			$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
-			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html( stripslashes( $feedtitle ) ) . '" href="' . home_url('/?link_library_rss_feed=1&settingset=' . $rss_settings/* . '&xpath=' . $xpath*/) . '" />';
+			echo '<link rel="alternate" type="application/rss+xml" title="' . esc_html( stripslashes( $feedtitle ) ) . '" href="' . home_url('/feed/linklibraryfeed?settingsset=' . $rss_settings/* . '&xpath=' . $xpath*/) . '" />';
 			unset( $xpath );
 		}
 
@@ -457,9 +457,7 @@ class link_library_plugin {
 					$xpath = $this->relativePath( dirname( __FILE__ ), ABSPATH );
 
 					if ( !empty( $options['rssfeedaddress'] ) ) {
-                        $newrules['(' . $options['rssfeedaddress'] . ')/(.+?)$'] = home_url() . '?link_library_rss_feed=1&settingset=$matches[1]';
-                    } elseif ( empty( $options['rssfeedaddress'] ) ) {
-                        $newrules['(linkrss)/(.+?)$'] = plugins_url( 'link_library_rss_feed=1?settingset=$matches[1]' . '&xpath=' . $xpath, __FILE__ );
+                        $newrules['(' . $options['rssfeedaddress'] . ')/(.+?)$'] = home_url() . '/feed/linklibraryfeed?settingsset=$matches[1]';
                     }
 					unset( $xpath );
 				}
