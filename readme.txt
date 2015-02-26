@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.2.6 =
+* Added new option to build URLs for one category at a time mode using category names
+
 = 5.9.2.5 =
 * Additional corrections for RSS feeds
 

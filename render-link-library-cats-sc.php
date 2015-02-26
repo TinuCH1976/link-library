@@ -229,6 +229,24 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                         if ( 'dropdown' != $flatlist ) {
                             $cattext .= "'>";
                         }
+                    }  elseif ( 'HTMLGETCATNAME' == $showonecatmode ) {
+                        if ( 'dropdown' != $flatlist ) {
+                            $cattext = "<a href='";
+                        }
+
+                        if ( !empty( $cattargetaddress ) && strpos( $cattargetaddress, '?' ) != false ) {
+                            $cattext .= $cattargetaddress . '&catname=';
+                        } elseif ( !empty( $cattargetaddress ) && strpos( $cattargetaddress, '?' ) == false ) {
+                            $cattext .= $cattargetaddress . '?catname=';
+                        } elseif ( empty( $cattargetaddress ) ) {
+                            $cattext .= '?catname=';
+                        }
+
+                        $cattext .= urlencode( $catname->name );
+
+                        if ( 'dropdown' != $flatlist ) {
+                            $cattext .= "'>";
+                        }
                     } elseif ( 'HTMLGETPERM' == $showonecatmode ) {
                         if ( 'dropdown' != $flatlist ) {
                             $cattext = "<a href='";

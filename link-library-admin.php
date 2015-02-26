@@ -2507,6 +2507,10 @@ class link_library_plugin_admin {
 								echo ' selected="selected"';
 							} ?>>HTML GET Using Slugs
 							</option>
+							<option value="HTMLGETCATNAME"<?php if ( $options['showonecatmode'] == 'HTMLGETCATNAME' ) {
+								echo ' selected="selected"';
+							} ?>>HTML GET Using Category Name
+							</option>
 							<option value="HTMLGETPERM"<?php if ( $options['showonecatmode'] == 'HTMLGETPERM' ) {
 								echo ' selected="selected"';
 							} ?>>HTML GET + Permalink
