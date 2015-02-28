@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.2.6
+Version: 5.9.2.7
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -245,7 +245,7 @@ class link_library_plugin {
 
         $genoptions = get_option( 'LinkLibraryGeneral' );
 
-        if ( empty( $genoptions ) ) {
+        if ( !empty( $genoptions ) ) {
 
             if ( empty( $genoptions['schemaversion'] ) || floatval( $genoptions['schemaversion'] ) < 3.5 ) {
                 $genoptions['schemaversion'] = '3.5';
