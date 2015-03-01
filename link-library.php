@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.2.7
+Version: 5.9.3
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -44,36 +44,6 @@ global $my_link_library_plugin_admin;
 
 if ( !get_option( 'link_manager_enabled' ) ) {
     add_filter( 'pre_option_link_manager_enabled', '__return_true' );
-}
-
-if ( is_admin() ) {
-
-	/* Determine update method selected by user under General Settings or under Network Settings */
-	$updatechannel = 'standard';
-
-	if ( ( function_exists( 'is_multisite' ) && !is_multisite() ) || !function_exists( 'is_multisite' ) ) {
-		$genoptions = get_option( 'LinkLibraryGeneral' );
-		$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
-
-		if ( !empty( $genoptions['updatechannel'] ) ) {
-			$updatechannel = $genoptions['updatechannel'];
-		}
-	} else if ( function_exists( 'is_multisite' ) && function_exists( 'is_network_admin' ) && is_multisite() && is_network_admin() ) {
-		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
-
-		if ( isset( $networkoptions ) && !empty( $networkoptions['updatechannel'] ) ) {
-			$updatechannel = $networkoptions['updatechannel'];
-		}
-	}
-
-	/* Install filter is user selected monthly updates to filter out dot dot dot minor releases (e.g. 5.8.8.x) */
-	if ( 'monthly' == $updatechannel ) {
-		add_filter( 'http_response', 'link_library_tweak_plugins_http_filter', 10, 3 );
-	}
-
-    global $my_link_library_plugin_admin;
-    require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
-    $my_link_library_plugin_admin = new link_library_plugin_admin();
 }
 
 function link_library_tweak_plugins_http_filter( $response, $r, $url ) {
@@ -489,6 +459,22 @@ class link_library_plugin {
 
         return $return;
     }
+
+	function CheckReciprocalLink( $RecipCheckAddress = '', $external_link = '' ) {
+		$sitecontent = file_get_contents( $external_link );
+
+		if ( strpos( $http_response_header[0], '200' ) ) {
+			if ( strpos( $sitecontent, $RecipCheckAddress ) === false ) {
+				return 'exists_notfound';
+			} elseif ( strpos( $sitecontent, $RecipCheckAddress ) !== false ) {
+				return 'exists_found';
+			}
+		} elseif ( strpos( $http_response_header[0], '403' ) ) {
+			return 'error_403';
+		}
+
+		return 'unreachable';
+	}
 
     function link_library_insert_link( $linkdata, $wp_error = false, $addlinknoaddress = false) {
         global $wpdb;
@@ -961,3 +947,33 @@ class link_library_plugin {
 
 global $my_link_library_plugin;
 $my_link_library_plugin = new link_library_plugin();
+
+if ( is_admin() ) {
+
+	/* Determine update method selected by user under General Settings or under Network Settings */
+	$updatechannel = 'standard';
+
+	if ( ( function_exists( 'is_multisite' ) && !is_multisite() ) || !function_exists( 'is_multisite' ) ) {
+		$genoptions = get_option( 'LinkLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
+
+		if ( !empty( $genoptions['updatechannel'] ) ) {
+			$updatechannel = $genoptions['updatechannel'];
+		}
+	} else if ( function_exists( 'is_multisite' ) && function_exists( 'is_network_admin' ) && is_multisite() && is_network_admin() ) {
+		$networkoptions = get_site_option( 'LinkLibraryNetworkOptions' );
+
+		if ( isset( $networkoptions ) && !empty( $networkoptions['updatechannel'] ) ) {
+			$updatechannel = $networkoptions['updatechannel'];
+		}
+	}
+
+	/* Install filter is user selected monthly updates to filter out dot dot dot minor releases (e.g. 5.8.8.x) */
+	if ( 'monthly' == $updatechannel ) {
+		add_filter( 'http_response', 'link_library_tweak_plugins_http_filter', 10, 3 );
+	}
+
+	global $my_link_library_plugin_admin;
+	require plugin_dir_path( __FILE__ ) . 'link-library-admin.php';
+	$my_link_library_plugin_admin = new link_library_plugin_admin();
+}

@@ -12,8 +12,10 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 	$settings     = ( isset( $_POST['settingsid'] ) ? $_POST['settingsid'] : 1 );
 	$settingsname = 'LinkLibraryPP' . $settings;
 	$options      = get_option( $settingsname );
+	$options = wp_parse_args( $options, ll_reset_options( 1, 'list', 'return' ) );
 
 	$genoptions = get_option( 'LinkLibraryGeneral' );
+	$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
 
 	$valid   = false;
 	$requiredcheck = true;
@@ -141,11 +143,25 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 
 				if ( $validcat == true ) {
 					if ( $options['showuserlinks'] == false ) {
-						$newlinkdesc       = "(LinkLibrary:AwaitingModeration:RemoveTextToApprove)" . $captureddata['link_description'];
-						$newlinkvisibility = 'N';
+						if ( $options['showifreciprocalvalid'] ) {
+							$reciprocal_return = $my_link_library_plugin->CheckReciprocalLink( $genoptions['recipcheckaddress'], $captureddata['ll_reciprocal'] );
+
+							if ( $reciprocal_return == 'exists_found' ) {
+								$newlinkdesc       = $captureddata['link_description'];
+								$newlinkvisibility = 'Y';
+								unset ( $message );
+							} else {
+								$newlinkdesc       = '(LinkLibrary:AwaitingModeration:RemoveTextToApprove)' . $captureddata['link_description'];
+								$newlinkvisibility = 'N';
+							}
+						} else {
+							$newlinkdesc       = '(LinkLibrary:AwaitingModeration:RemoveTextToApprove)' . $captureddata['link_description'];
+							$newlinkvisibility = 'N';
+						}
 					} else {
 						$newlinkdesc       = $captureddata['link_description'];
 						$newlinkvisibility = 'Y';
+						unset ( $message );
 					}
 
 					$username = '';

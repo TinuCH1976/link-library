@@ -363,21 +363,20 @@ class link_library_plugin_admin {
 
 			if ( $links ) {
 				foreach ( $links as $link ) {
-					$sitecontent = file_get_contents( $link->link_reciprocal );
+					global $my_link_library_plugin;
+					$reciprocal_result = $my_link_library_plugin->CheckReciprocalLink( $RecipCheckAddress, $link->link_reciprocal );
 
-					$output .= "<a href='" . $link->link_url . "'>" . $link->link_name . "</a>: ";
+					$output .= '<a href="' . $link->link_url . '">' . $link->link_name . '</a>: ';
 
-					if ( strpos( $http_response_header[0], "200" ) ) {
-						if ( strpos( $sitecontent, $RecipCheckAddress ) === false ) {
-							$output .= "<span style='color: #FF0000'>Not Found</span><br />";
-						} elseif ( strpos( $sitecontent, $RecipCheckAddress ) !== false ) {
-							$output .= "<span style='color: #00FF00'>OK</span><br />";
-						}
-					} elseif ( strpos( $http_response_header[0], "403" ) && $recipcheckdelete403 == true ) {
+					if ( $reciprocal_result == 'exists_notfound' ) {
+						$output .= '<span style="color: #FF0000">Not Found</span><br />';
+					} elseif ( $reciprocal_result == 'exists_found' ) {
+						$output .= '<span style="color: #00FF00">OK</span><br />';
+					} elseif ( $reciprocal_result == 'error_403' && $recipcheckdelete403 == true ) {
 						wp_delete_link( $link->link_id );
-						$output .= "Error 403: Link Deleted";
-					} else {
-						$output .= "Website Unreachable";
+						$output .= 'Error 403: Link Deleted';
+					} elseif ( $reciprocal_result == 'unreachable' ) {
+						$output .= 'Website Unreachable';
 					}
 				}
 			} else {
@@ -386,6 +385,7 @@ class link_library_plugin_admin {
 
 			return $output;
 		}
+		return '';
 	}
 
 	function ll_get_link_image( $url, $name, $mode, $linkid, $cid, $filepath, $filepathtype, $thumbnailsize, $thumbnailgenerator ) {
@@ -1503,7 +1503,7 @@ class link_library_plugin_admin {
 					'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages', 'uselocalimagesoverthumbshots',
 					'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 					'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
-					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin', 'combineresults'
+					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin', 'combineresults', 'showifreciprocalvalid'
 				)
 				as $option_name
 			) {
@@ -4002,15 +4002,13 @@ class link_library_plugin_admin {
 			</td>
 		</tr>
 		<tr>
-			<td></td>
-			<td></td>
+			<td class='lltooltip' title="<?php _e('Reciprocal link must be configured for this option to work correctly', 'link-library' ); ?>"><?php _e( 'Show immediately if reciprocal link valid', 'link-library' ); ?></td>
+			<td class='lltooltip' title="<?php _e('Reciprocal link must be configured for this option to work correctly', 'link-library' ); ?>"><input type="checkbox" id="showifreciprocalvalid" name="showifreciprocalvalid" <?php checked( $options['showifreciprocalvalid'] ); ?>/></td>
 			<td></td>
 			<td></td>
 			<td><?php _e( 'Use Text Area for Notes', 'link-library' ); ?></td>
 			<td>
-				<input type="checkbox" id="usetextareaforusersubmitnotes" name="usetextareaforusersubmitnotes" <?php if ( $options['usetextareaforusersubmitnotes'] ) {
-					echo ' checked="checked" ';
-				} ?>/></td>
+				<input type="checkbox" id="usetextareaforusersubmitnotes" name="usetextareaforusersubmitnotes" <?php checked( $options['usetextareaforusersubmitnotes'] ); ?>/></td>
 		</tr>
 		<tr>
 			<td style='width:200px'><?php _e( 'Reciprocal Link label', 'link-library' ); ?></td>
