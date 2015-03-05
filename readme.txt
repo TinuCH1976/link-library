@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.3.1 =
+* Corrects activation error for new users *
+
 = 5.9.3 =
 * Added ability to approve user-submitted links automatically if they provide a valid reciprocal link
 
