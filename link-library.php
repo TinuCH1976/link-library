@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.3.1
+Version: 5.9.3.2
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -180,22 +180,22 @@ class link_library_plugin {
 
         $wpdb->links_extrainfo = $this->db_prefix() . 'links_extrainfo';
 
-        $creationquery = 'CREATE TABLE ' . $wpdb->links_extrainfo . '(
-				link_id bigint(20) NOT NULL DEFAULT "0",
+        $creationquery = "CREATE TABLE " . $wpdb->links_extrainfo . " (
+				link_id bigint(20) NOT NULL DEFAULT '0',
 				link_second_url varchar(255) CHARACTER SET utf8 DEFAULT NULL,
 				link_telephone varchar(128) CHARACTER SET utf8 DEFAULT NULL,
 				link_email varchar(128) CHARACTER SET utf8 DEFAULT NULL,
-				link_visits bigint(20) DEFAULT "0",
+				link_visits bigint(20) DEFAULT '0',
 				link_reciprocal varchar(255) DEFAULT NULL,
 				link_submitter varchar(255) DEFAULT NULL,
-				link_submitter_name VARCHAR( 128 ) NULL,
-				link_submitter_email VARCHAR( 128 ) NULL,
+				link_submitter_name VARCHAR(128) NULL,
+				link_submitter_email VARCHAR(128) NULL,
 				link_textfield TEXT NULL,
 				link_no_follow VARCHAR(1) NULL,
 				link_featured VARCHAR(1) NULL,
 				link_manual_updated VARCHAR(1) NULL,
-				UNIQUE KEY link_id (link_id)
-				);';
+				UNIQUE KEY (link_id)
+				)";
 
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $creationquery );
