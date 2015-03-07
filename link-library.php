@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.3.2
+Version: 5.9.4
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -56,12 +56,41 @@ function link_library_tweak_plugins_http_filter( $response, $r, $url ) {
 	return $response;
 }
 
+function link_library_strposX( $haystack, $needle, $number ) {
+	if( $number == '1' ){
+		return strpos($haystack, $needle);
+	} elseif( $number > '1' ){
+		return strpos( $haystack, $needle, link_library_strposX( $haystack, $needle, $number - 1 ) + strlen( $needle ) );
+	} else {
+		return error_log( 'Error: Value for parameter $number is out of range' );
+	}
+}
+
 function link_library_modify_http_response( $plugins_response ) {
 
 	foreach ( $plugins_response as $response_key => $plugin_response ) {
 		if ( plugin_basename(__FILE__) == $plugin_response->plugin ) {
 			if ( 3 <= substr_count( $plugin_response->new_version, '.' ) ) {
-				unset( $plugins_response->$response_key );
+				$plugin_info = get_plugin_data( __FILE__ );
+				$period_position = link_library_strposX( $plugin_info['Version'], '.', 3 );
+				if ( false !== $period_position ) {
+					$current_version = substr( $plugin_info['Version'], 0, $period_position );
+				} else {
+					$current_version = $plugin_info['Version'];
+				}
+
+				$period_position2 = link_library_strposX( $plugin_response->new_version, '.', 3 );
+				if ( false !== $period_position ) {
+					$new_version = substr( $plugin_response->new_version, 0, $period_position2 );
+				} else {
+					$new_version = $plugin_response->new_version;
+				}
+
+				$version_diff = version_compare( $current_version, $new_version );
+
+				if ( -1 < $version_diff ) {
+					unset( $plugins_response->$response_key );
+				}
 			}
 		}
 	}
