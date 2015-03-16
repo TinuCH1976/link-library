@@ -2665,15 +2665,10 @@ class link_library_plugin_admin {
 					</td>
 					<td>
 						<select name="flatlist" id="flatlist" style="width:200px;">
-							<option value="table"<?php if ( $options['flatlist'] == 'table' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Table', 'link-library' ); ?></option>
-							<option value="unordered"<?php if ( $options['flatlist'] == 'unordered' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Unordered List', 'link-library' ); ?></option>
-							<option value="dropdown"<?php if ( $options['flatlist'] == 'dropdown' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Drop-Down List', 'link-library' ); ?></option>
+							<option value="table"<?php selected( $options['flatlist'] == 'table' ); ?>><?php _e( 'Table', 'link-library' ); ?></option>
+							<option value="unordered"<?php selected( $options['flatlist'] == 'unordered' ); ?>><?php _e( 'Unordered List', 'link-library' ); ?></option>
+							<option value="dropdown"<?php selected( $options['flatlist'] == 'dropdown' ); ?>><?php _e( 'Drop-Down List', 'link-library' ); ?></option>
+							<option value="dropdowndirect"<?php selected( $options['flatlist'] == 'dropdowndirect' ); ?>><?php _e( 'Drop-Down List Direct Access', 'link-library' ); ?></option>
 						</select>
 					</td>
 				</tr>

@@ -156,8 +156,12 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                 $output .= "<table width=\"" . $table_width . "%\">\n";
             } elseif ( 'unordered' == $flatlist ) {
                 $output .= "<ul class='menu'>\n";
-            } elseif ( 'dropdown' == $flatlist ) {
-                $output .= "<form name='catselect'><select name='catdropdown' class='catdropdown'>";
+            } elseif ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) {
+                $output .= "<form name='catselect'><select ";
+	            if ( 'dropdowndirect' == $flatlist ) {
+		            $output .= "onchange='showcategory()' ";
+	            }
+	            $output .= "name='catdropdown' class='catdropdown'>";
             }
 
             $linkcount = 0;
@@ -178,7 +182,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                     $catfront = "\t<td>";
                 } elseif ( 'unordered' == $flatlist ) {
                     $catfront = "\t<li>";
-                } elseif ( 'dropdown' == $flatlist ) {
+                } elseif ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) {
                     $catfront = "\t<option ";
                     if ( !empty( $categoryid ) && $categoryid == $catname->term_id ) {
                         $catfront .= 'selected="selected" ';
@@ -188,13 +192,13 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
 
                 if ( $showonecatonly ) {
                     if ( 'AJAX' == $showonecatmode || empty( $showonecatmode ) ) {
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext = "<a href='#' onClick=\"showLinkCat('" . $catname->term_id. "', '" . $settings . "', 1);return false;\" >";
-                        } elseif ( 'dropdown' == $flatlist ) {
+                        } elseif ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) {
                             $cattext = $catname->term_id;
                         }
                     } elseif ( 'HTMLGET' == $showonecatmode ) {
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext = "<a href='";
                         }
 
@@ -208,11 +212,11 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
 
                         $cattext .= $catname->term_id;
 
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext .= "'>";
                         }
                     } elseif ( 'HTMLGETSLUG' == $showonecatmode ) {
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext = "<a href='";
                         }
 
@@ -226,11 +230,11 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
 
                         $cattext .= $catname->category_nicename;
 
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext .= "'>";
                         }
                     }  elseif ( 'HTMLGETCATNAME' == $showonecatmode ) {
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext = "<a href='";
                         }
 
@@ -260,13 +264,13 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                     }
                 } else if ( $catanchor ) {
                     if ( !$pagination ) {
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext = '<a href="';
                         }
 
                         $cattext .= '#' . $catname->category_nicename;
 
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext .= '">';
                         }
                     } elseif ( $pagination ) {
@@ -283,17 +287,17 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
 
                             $cattext .= get_permalink() . '#' . $catname->category_nicename;
 
-                            if ( 'dropdown' != $flatlist ) {
+                            if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                                 $cattext .= '">';
                             }
                         } else {
-                            if ( 'dropdown' != $flatlist ) {
+                            if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                                 $cattext = '<a href="';
                             }
 
                             $cattext .= '?linkresultpage=' . ( $ceilpageposition == 0 ? 1 : $ceilpageposition ) . '#' . $catname->category_nicename;
 
-                            if ( 'dropdown' != $flatlist ) {
+                            if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                                 $cattext .= '">';
                             }
                         }
@@ -304,7 +308,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                     $cattext = '';
                 }
 
-                if ( 'dropdown' == $flatlist ) {
+                if ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) {
                     $cattext .= '">';
                 }
 
@@ -330,7 +334,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                     }
                 }
 
-                if ( ( $catanchor || $showonecatonly ) && 'dropdown' != $flatlist ) {
+                if ( ( $catanchor || $showonecatonly ) && 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                     $catitem .= '</a>';
                 }
 
@@ -340,7 +344,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                     $catterminator = "	</td>\n";
                 } elseif ( 'unordered' == $flatlist ) {
                     $catterminator = "	</li>\n";
-                } elseif ( 'dropdown' == $flatlist ) {
+                } elseif ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) {
                     $catterminator = "	</option>\n";
                 }
 
@@ -359,9 +363,11 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                 $output .= "</table>\n";
             } elseif ( 'unordered' == $flatlist && $catnames ) {
                 $output .= "</ul>\n";
-            } elseif ( 'dropdown' == $flatlist && $catnames ) {
+            } elseif ( ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) && $catnames ) {
                 $output .= "</select>\n";
-                $output .= "<button type='button' onclick='showcategory()'>" . __('Go!', 'link-library') . "</button>";
+	            if ( 'dropdown' == $flatlist ) {
+		            $output .= "<button type='button' onclick='showcategory()'>" . __('Go!', 'link-library') . "</button>";
+	            }
                 $output .= '</form>';
             }
 
@@ -375,7 +381,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                 $output .= "<div class='contentLoading' id='contentLoading' style='display: none;'><img src='" . plugins_url( $loadingicon, __FILE__ ) . "' alt='Loading data, please wait...'></div>\n";
             }
 
-            if ( 'dropdown' == $flatlist ) {
+            if ( 'dropdown' == $flatlist || 'dropdowndirect' == $flatlist ) {
                 $output .= "<SCRIPT TYPE='text/javascript'>\n";
                 $output .= "\tfunction showcategory(){\n";
 

@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.4.1 =
+* Added new option for category drop-down list to go directly to selection without needed visitor to press Go button
+
 = 5.9.4 =
 * Fix monthly update mechanism. Setting number and leaving for a few days to make sure update occurs
 
