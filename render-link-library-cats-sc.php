@@ -248,17 +248,17 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
 
                         $cattext .= urlencode( $catname->name );
 
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext .= "'>";
                         }
                     } elseif ( 'HTMLGETPERM' == $showonecatmode ) {
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext = "<a href='";
                         }
 
                         $cattext .= '/' . $rewritepage . '/' . $catname->category_nicename;
 
-                        if ( 'dropdown' != $flatlist ) {
+                        if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                             $cattext .= "'>";
                         }
                     }
@@ -281,7 +281,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
                         $pageposition = ( $linkcount + 1 ) / $linksperpage;
                         $ceilpageposition = ceil( $pageposition );
                         if ( 0 == $ceilpageposition && !isset( $_GET['linkresultpage'] ) ) {
-                            if ( 'dropdown' != $flatlist ) {
+                            if ( 'dropdown' != $flatlist && 'dropdowndirect' != $flatlist ) {
                                 $cattext = '<a href="';
                             }
 

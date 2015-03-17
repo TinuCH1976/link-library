@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.4.2 =
+* Fix for new functionality introduced in 5.9.4.2 when using HTML Get with category names method
+
 = 5.9.4.1 =
 * Added new option for category drop-down list to go directly to selection without needed visitor to press Go button
 
