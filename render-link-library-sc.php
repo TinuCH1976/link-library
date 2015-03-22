@@ -960,13 +960,13 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 									if ( ( !empty( $imageoutput ) || ( $usethumbshotsforimages && !empty( $thumbshotscid ) ) ) && $show_images ) {
 										$output .= $imageoutput;
 									}
+
+									break;
 								}
 
-	                            break;
-
                             case 2: 	//------------------ Name Output --------------------
-                                if ( ( $showname ) || ( $show_images && empty( $linkitem['link_image'] ) && 1 == $arrayelements ) ||
-                                     ( $show_images && $shownameifnoimage && empty( $linkitem['link_image'] ) && !$usethumbshotsforimages ) ) {
+                                if ( ( $showname && 2 == $arrayelements ) ||
+                                     ( $show_images && $shownameifnoimage && empty( $linkitem['link_image'] ) && !$usethumbshotsforimages && 1 == $arrayelements ) ) {
                                     if ( true == $debugmode ) {
                                         $starttimename = microtime ( true );
                                     }

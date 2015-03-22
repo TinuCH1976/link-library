@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.4.4 =
+* Additional fix for 'Show link name when no image is assigned' option
+
 = 5.9.4.3 =
 * Fix for 'Show link name when no image is assigned' option
 
