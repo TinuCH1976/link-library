@@ -897,7 +897,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                             case 1: 	//------------------ Image Output --------------------
                                 $imageoutput = '';
 
-								if ( $show_images ) {
+								if ( ( $show_images && !$shownameifnoimage ) || ( $show_images && $shownameifnoimage && !empty( $linkitem['link_image'] ) || $usethumbshotsforimages ) ) {
 									$imageoutput .= stripslashes( $beforeimage );
 
 									if ( !empty( $linkitem['link_image'] ) || $usethumbshotsforimages ) {
@@ -962,10 +962,11 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 									}
 								}
 
-                                break;
+	                            break;
 
                             case 2: 	//------------------ Name Output --------------------
-                                if ( ( $showname ) || ( $show_images && empty( $linkitem['link_image'] ) && 1 == $arrayelements ) ) {
+                                if ( ( $showname ) || ( $show_images && empty( $linkitem['link_image'] ) && 1 == $arrayelements ) ||
+                                     ( $show_images && $shownameifnoimage && empty( $linkitem['link_image'] ) && !$usethumbshotsforimages ) ) {
                                     if ( true == $debugmode ) {
                                         $starttimename = microtime ( true );
                                     }
