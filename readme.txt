@@ -692,6 +692,13 @@ Further configuration is available under the Link Library Settings panel.
 
 == Frequently Asked Questions ==
 
+= Who are the translators behind Link Library? =
+
+* French Translation courtesy of Luc Capronnier
+* Danish Translation courtesy of [GeorgWP](http://wordpress.blogos.dk)
+* Italian Translation courtesy of Gianni Diurno
+* Serbian Translation courtesy of [Ogi Djuraskovic, firstsiteguide.com](firstsiteguide.com)
+
 = Where do I find my category IDs to place in the "Categories to be Displayed" and "Categories to be Excluded" fields? =
 
 The category IDs are numeric IDs. You can find them by going to the page to see and edit link categories, then placing your mouse over a category and seeing its numeric ID in the link that is associated with that name.
