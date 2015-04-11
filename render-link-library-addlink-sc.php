@@ -269,7 +269,7 @@ function RenderLinkLibraryAddLinkForm( $LLPluginClass, $generaloptions, $library
                     $output .= '>' . $linkcat->name;
                 }
 
-                if ( $addlinkcustomcat ) {
+                if ( 'show' == $addlinkcustomcat ) {
                     $output .= '<OPTION VALUE="new">' . stripslashes($linkcustomcatlistentry) . "\n";
                 }
 
