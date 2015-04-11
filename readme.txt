@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.5.1 =
+* Added Serbian translation
+
 = 5.9.5 =
 * Correct problem with user-submission form, displaying a choice for user-defined categories even if configured not to allow them
 
