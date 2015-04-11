@@ -697,7 +697,7 @@ Further configuration is available under the Link Library Settings panel.
 * French Translation courtesy of Luc Capronnier
 * Danish Translation courtesy of [GeorgWP](http://wordpress.blogos.dk)
 * Italian Translation courtesy of Gianni Diurno
-* Serbian Translation courtesy of [Ogi Djuraskovic, firstsiteguide.com](firstsiteguide.com)
+* Serbian Translation courtesy of [Ogi Djuraskovic, firstsiteguide.com](http://firstsiteguide.com)
 
 = Where do I find my category IDs to place in the "Categories to be Displayed" and "Categories to be Excluded" fields? =
 
