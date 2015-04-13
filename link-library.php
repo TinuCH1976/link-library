@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.5.2
+Version: 5.9.5.3
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -132,6 +132,7 @@ class link_library_plugin {
 		add_shortcode( 'addlink-link-library', array( $this, 'link_library_addlink_func' ) );
 		add_shortcode( 'link-library-addlinkcustommsg', array( $this, 'link_library_addlink_func' ) );
 		add_shortcode( 'addlinkcustommsg-link-library', array( $this, 'link_library_addlink_func' ) );
+		add_shortcode( 'link-library-count', array( $this, 'link_library_count_func' ) );
 
         // Function to determine if Link Library is used on a page before printing headers
         // the_posts gets triggered before wp_head
@@ -704,6 +705,35 @@ class link_library_plugin {
         require_once plugin_dir_path( __FILE__ ) . 'render-link-library-addlink-sc.php';
         return RenderLinkLibraryAddLinkForm( $this, $genoptions, $options, $settings, $code);
 	}
+
+	/********************************************** Function to Process [link-library-count] shortcode ***************************************/
+
+	function link_library_count_func( $atts ) {
+		extract( shortcode_atts( array(
+			'categorylistoverride' => '',
+			'excludecategoryoverride' => '',
+			'settings' => ''
+		), $atts ) );
+
+		if ( empty( $settings ) ) {
+			$settings = 1;
+		}
+
+		$settingsname = 'LinkLibraryPP' . $settings;
+		$options = get_option( $settingsname );
+		$genoptions = get_option( 'LinkLibraryGeneral' );
+
+		if ( !empty( $categorylistoverride ) ) {
+			$options['categorylist'] = $categorylistoverride;
+		}
+
+		if ( !empty( $excludecategoryoverride ) ) {
+			$options['excludecategorylist'] = $excludecategoryoverride;
+		}
+
+		require_once plugin_dir_path( __FILE__ ) . 'render-link-library-sc.php';
+		return RenderLinkLibrary( $this, $genoptions, $options, $settings, true );
+	}
 	
 	/********************************************** Function to Process [link-library] shortcode *********************************************/
 
@@ -807,7 +837,7 @@ class link_library_plugin {
         }
 
         require_once plugin_dir_path( __FILE__ ) . 'render-link-library-sc.php';
-        $linklibraryoutput .= RenderLinkLibrary( $this, $genoptions, $options, $settings );
+        $linklibraryoutput .= RenderLinkLibrary( $this, $genoptions, $options, $settings, false );
 
         if ( isset( $_POST['ajaxupdate'] ) ) {
             echo $linklibraryoutput;

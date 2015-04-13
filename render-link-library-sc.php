@@ -166,7 +166,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
  * @return                  List of categories output for browser
  */
 
-function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $settings ) {
+function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $settings, $onlycount = 'false' ) {
 
     global $wpdb;
 
@@ -501,7 +501,9 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
     if ( ( $linkitems && $showonecatonly && $AJAXnocatset && $nocatonstartup && !isset( $_GET['searchll'] ) ) || ( empty( $linkitems ) && $nocatonstartup && empty( $_GET['searchll'] ) ) ) {
         $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
         $output .= '</div>';
-    } elseif ( $linkitems ) {
+    } elseif ( $linkitems && $onlycount ) {
+	    return count( $linkitems );
+    } elseif ( $linkitems && !$onlycount ) {
         $output .= "<div id='linklist" . $settings . "' class='linklist'>\n";
 
         if ( $pagination && $mode != "search" && 'BEFORE' == $paginationposition ) {
