@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.5.2 =
+* Added visual editor for large description
+* Allow HTML code to be part of large description
+
 = 5.9.5.1 =
 * Added Serbian translation
 

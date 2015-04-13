@@ -1343,9 +1343,9 @@ class link_library_plugin_admin {
 									$existingextrainfoid = $wpdb->get_var( $existingextrainfo );
 
 									if ( !empty( $existingextrainfoid ) ) {
-										$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html( $data[12] ), 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ) );
+										$wpdb->update( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => $data[12], 'link_no_follow' => $nofollowvalue ), array( 'link_id' => $newlinkid ) );
 									} elseif ( empty( $existingextrainfoid ) ) {
-										$wpdb->insert( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => esc_html( $data[12] ), 'link_no_follow' => $nofollowvalue, 'link_id' => $newlinkid ) );
+										$wpdb->insert( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => $data[12], 'link_no_follow' => $nofollowvalue, 'link_id' => $newlinkid ) );
 									}
 
 									$successfulimport += 1;
@@ -4358,7 +4358,13 @@ class link_library_plugin_admin {
 			<tr>
 				<td><?php _e( 'Link Large Description', 'link-library' ); ?></td>
 				<td>
-					<textarea id="link_textfield" name="link_textfield" cols='66'><?php echo( isset( $extradata['link_textfield'] ) ? ( function_exists( 'esc_textarea' ) ? esc_textarea( stripslashes( $extradata['link_textfield'] ) ) : stripslashes( $extradata['link_textfield'] ) ) : '' ); ?></textarea>
+					<?php
+					$editorsettings = array( 'media_buttons' => false,
+											 'textarea_rows' => 5,
+											 'textarea_name' => 'link_textfield',
+											 'wpautop' => true );
+
+					wp_editor( isset( $extradata['link_textfield'] ) ? ( function_exists( 'esc_textarea' ) ? esc_textarea( stripslashes( $extradata['link_textfield'] ) ) : stripslashes( $extradata['link_textfield'] ) ) : '', 'link_textfield', $editorsettings ); ?>
 				</td>
 			</tr>
 			<tr>
@@ -4672,7 +4678,7 @@ class link_library_plugin_admin {
 			}
 
 			if ( isset( $_POST['link_textfield'] ) ) {
-				$updatearray['link_textfield'] = esc_html( $_POST['link_textfield'] );
+				$updatearray['link_textfield'] = $_POST['link_textfield'];
 			}
 
 			if ( isset( $_POST['link_no_follow'] ) && $_POST['link_no_follow'] == 'on' ) {
