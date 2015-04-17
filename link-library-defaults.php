@@ -255,6 +255,7 @@ function ll_reset_gen_settings( $setoptions = 'return' ) {
 	$genoptions['fullstylesheet']              = '';
 	$genoptions['thumbnailsize']               = '120x90';
 	$genoptions['thumbnailgenerator']          = 'robothumb';
+	$genoptions['survey2015']                  = false;
 
 	if ( 'return_and_set' == $setoptions ) {
 		$stylesheetlocation           = plugins_url( 'stylesheettemplate.css', __FILE__ );

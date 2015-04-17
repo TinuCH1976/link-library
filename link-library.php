@@ -3,7 +3,7 @@
 Plugin Name: Link Library
 Plugin URI: http://wordpress.org/extend/plugins/link-library/
 Description: Display links on pages with a variety of options
-Version: 5.9.5.4
+Version: 5.9.5.5
 Author: Yannick Lefebvre
 Author URI: http://ylefebvre.ca/
 
@@ -14,6 +14,7 @@ Translations:
 French Translation courtesy of Luc Capronnier
 Danish Translation courtesy of GeorgWP (http://wordpress.blogos.dk)
 Italian Translation courtesy of Gianni Diurno
+Serbian Translation courtesy of Ogi Djuraskovic (firstsiteguide.com)
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNUs General Public License

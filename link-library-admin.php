@@ -469,12 +469,14 @@ class link_library_plugin_admin {
 		//add_filter( 'attachment_fields_to_save', array( $this, 'save_custom_media_fields' ), null, 2 );
 
 		$genoptions = get_option( 'LinkLibraryGeneral' );
+		$genoptions = wp_parse_args( $genoptions, ll_reset_gen_settings( 'return' ) );
+		extract( $genoptions );
 
 		if ( !empty( $genoptions ) ) {
-			if ( empty( $genoptions['numberstylesets'] ) ) {
+			if ( empty( $numberstylesets ) ) {
 				$numberofsets = 1;
 			} else {
-				$numberofsets = $genoptions['numberstylesets'];
+				$numberofsets = $numberstylesets;
 			}
 
 			$thumbshotsactive = false;
@@ -488,8 +490,15 @@ class link_library_plugin_admin {
 				}
 			}
 
-			if ( $thumbshotsactive && empty( $genoptions['thumbshotscid'] ) && $genoptions['thumbnailgenerator'] == 'thumbshots' ) {
+			if ( $thumbshotsactive && empty( $thumbshotscid ) && $thumbnailgenerator == 'thumbshots' ) {
 				add_action( 'admin_notices', array( $this, 'll_thumbshots_warning' ) );
+			}
+
+			if ( !$survey2015 && !isset( $_GET['dismiss_ll_survey_2015'] ) ) {
+				add_action( 'admin_notices', array( $this, 'll_survey_2015' ) );
+			} elseif ( !$survey2015 && isset( $_GET['dismiss_ll_survey_2015'] ) ) {
+				$genoptions['survey2015'] = true;
+				update_option( 'LinkLibraryGeneral', $genoptions );
 			}
 		}
 	}
@@ -533,6 +542,11 @@ class link_library_plugin_admin {
 	function ll_missing_categories() {
 		echo "
         <div id='ll-warning' class='updated fade'><p><strong>" . __( 'Link Library: No Link Categories on your site', 'link-library' ) . "</strong></p> <p>" . __( 'There are currently no link categories defined in your WordPress site. Link Library will not work correctly without categories. Please create at least one before trying to use Link Library and make sure each link is assigned a category.', 'link-library' ) . "</p></div>";
+	}
+
+	function ll_survey_2015() {
+		echo "
+        <div id='ll-warning' class='updated fade'><p><strong><a href='http://goo.gl/forms/vPdhiI9hPG'>" . __( 'Participate in the Link Library User Survey', 'link-library' ) . "</a></strong></p> <p>" . __( '10 short questions to help shape future versions of Link Library and inform decisions on migrating its content to Custom Post Types for data storage. Important to users who use multiple link management plugins.', 'link-library' ) . "</p><p><a class='button' href='http://goo.gl/forms/vPdhiI9hPG' target='LinkLibrarySurvey'>Take Survey (opens in new tab)</a> <a class='button' href='" . add_query_arg( array( 'page' => 'link-library', 'dismiss_ll_survey_2015' => 1 ), admin_url( 'admin.php' ) ) . "'>Dismiss this message</a></p></div>";
 	}
 
 	function filter_mce_buttons( $buttons ) {

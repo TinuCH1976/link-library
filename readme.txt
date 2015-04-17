@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.5.5 =
+* Adds message to invite users to participate to Link Library User Survey. Message can be dismissed.
+
 = 5.9.5.4 =
 * Added new alphabetic category filter feature, configurable under Common Library Settings
 
