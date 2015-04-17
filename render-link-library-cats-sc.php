@@ -90,6 +90,19 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
             $order = substr( $order, 1 );
         }
 
+	    $currentcatletter = '';
+
+	    if ( $cat_letter_filter != 'no' ) {
+		    require_once plugin_dir_path( __FILE__ ) . 'render-link-library-alpha-filter.php';
+		    $result = RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $libraryoptions, $settings );
+
+		    $currentcatletter = $result['currentcatletter'];
+
+		    if ( 'beforecats' == $cat_letter_filter || 'beforecatsandlinks' == $cat_letter_filter ) {
+			    $output .= $result['output'];
+		    }
+	    }
+
         $linkcatquery = 'SELECT ';
 
         if ( $showcatlinkcount || $pagination ) {
@@ -112,6 +125,10 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
         $linkcatquery .= ' ) ';
 
         $linkcatquery .= 'WHERE tt.taxonomy = "link_category"';
+
+	    if ( !empty( $currentcatletter ) ) {
+		    $linkcatquery .= ' AND substring(t.name, 1, 1) = "' . $currentcatletter . '"';
+	    }
 
         if ( !empty( $categorylist ) ) {
             $linkcatquery .= ' AND t.term_id in ( ' . $categorylist . ' )';

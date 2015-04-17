@@ -25,7 +25,7 @@ function link_library_highlight_phrase( $str, $phrase, $tag_open = '<strong>', $
 }
 
 function link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber,
-                                          $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID ) {
+                                          $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID, $currentcatletter ) {
 
     $dotbelow = false;
     $dotabove = false;
@@ -36,6 +36,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
         unset ( $incomingget['page_id'] );
         unset ( $incomingget['linkresultpage'] );
         unset ( $incomingget['cat_id'] );
+	    unset ( $incomingget['catletter'] );
     }
 
     if ( 1 < $numberofpages ) {
@@ -45,7 +46,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
             $paginationoutput .= '<span class="previousnextactive">';
 
             if ( !$showonecatonly ) {
-                $argumentarray = array ( 'page_id' => get_the_ID(), 'linkresultpage' => $previouspagenumber );
+                $argumentarray = array ( 'page_id' => get_the_ID(), 'linkresultpage' => $previouspagenumber, 'catletter' => $currentcatletter );
                 $argumentarray = array_merge( $argumentarray, $incomingget );
                 $targetaddress = add_query_arg( $argumentarray );
 
@@ -83,7 +84,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 }
 
                 if ( !$showonecatonly ) {
-                    $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter );
+                    $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'catletter' => $currentcatletter );
                     $argumentarray = array_merge( $argumentarray, $incomingget );
                     $targetaddress = add_query_arg( $argumentarray );
 
@@ -126,7 +127,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
             $paginationoutput .= '<span class="previousnextactive">';
 
             if ( !$showonecatonly ) {
-                $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
+                $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber, 'catletter' => $currentcatletter );
                 $argumentarray = array_merge( $argumentarray, $incomingget );
                 $targetaddress = add_query_arg( $argumentarray );
 
@@ -234,7 +235,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $catquery .= 'LEFT JOIN ' . $LLPluginClass->db_prefix() . 'links_extrainfo le ON (l.link_id = le.link_id) ';
         $catquery .= 'WHERE tt.taxonomy = "link_category" ';
 
-        if ( $hide_if_empty ) {
+	    if ( $hide_if_empty ) {
             $catquery .= 'AND l.link_id is not NULL AND l.link_description not like "%LinkLibrary:AwaitingModeration:RemoveTextToApprove%" ';
         }
 
@@ -295,6 +296,19 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
     }
 
+	$currentcatletter = '';
+
+	if ( $cat_letter_filter != 'no' ) {
+		require_once plugin_dir_path( __FILE__ ) . 'render-link-library-alpha-filter.php';
+		$result = RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $libraryoptions, $settings );
+
+		$currentcatletter = $result['currentcatletter'];
+
+		if ( 'beforelinks' == $cat_letter_filter || 'beforecatsandlinks' == $cat_letter_filter ) {
+			$output .= $result['output'];
+		}
+	}
+
     $linkquery = 'SELECT distinct *, l.link_id as proper_link_id, UNIX_TIMESTAMP(l.link_updated) as link_date, ';
     $linkquery .= 'IF (DATE_ADD(l.link_updated, INTERVAL 120 MINUTE) >= NOW(), 1,0) as recently_updated ';
     $linkquery .= 'FROM ' . $LLPluginClass->db_prefix() . 'terms t ';
@@ -307,6 +321,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
     if ( $hide_if_empty ) {
         $linkquery .= 'AND l.link_id is not NULL AND l.link_description not like "%LinkLibrary:AwaitingModeration:RemoveTextToApprove%" ';
     }
+
+	if ( !empty( $currentcatletter ) ) {
+		$linkquery .= ' AND substring(t.name, 1, 1) = "' . $currentcatletter . '" ';
+	}
 
     if ( ( !empty( $categorylist ) || isset( $_GET['cat_id'] ) ) && empty( $singlelinkid ) ) {
         $linkquery .= ' AND t.term_id in (' . $categorylist. ')';
@@ -517,7 +535,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                 $AJAXcatid = $categorynamelist;
             }
 
-            $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
+            $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID, $currentcatletter );
         }
 
         if ( 'search' == $mode ) {
@@ -1348,7 +1366,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $nextpagenumber = $pagenumber + 1;
             $pageID = get_the_ID();
 
-            $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID );
+            $output .= link_library_display_pagination( $previouspagenumber, $nextpagenumber, $numberofpages, $pagenumber, $showonecatonly, $showonecatmode, $AJAXcatid, $settings, $pageID, $currentcatletter );
         }
 
         $xpath = $LLPluginClass->relativePath( dirname( __FILE__ ), ABSPATH );

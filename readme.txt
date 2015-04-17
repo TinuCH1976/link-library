@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.5.4 =
+* Added new alphabetic category filter feature, configurable under Common Library Settings
+
 = 5.9.5.3 =
 * Adds a new shortcode [link-library-count] to display the number of links that a library will show
 

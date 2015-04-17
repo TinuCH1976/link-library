@@ -1487,7 +1487,7 @@ class link_library_plugin_admin {
 					'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent', 'paginationposition',
 					'showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes', 'addlinkcustomcat',
 					'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
-					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription'
+					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription', 'cat_letter_filter'
 				) as $option_name
 			) {
 				if ( isset( $_POST[$option_name] ) ) {
@@ -1503,7 +1503,8 @@ class link_library_plugin_admin {
 					'pagination', 'hidecategorynames', 'showinvisible', 'showdate', 'showuserlinks', 'emailnewlink', 'usethumbshotsforimages', 'uselocalimagesoverthumbshots',
 					'addlinkreqlogin', 'showcatlinkcount', 'publishrssfeed', 'showname', 'enablerewrite', 'storelinksubmitter', 'showlinkhits', 'showcaptcha',
 					'showlargedescription', 'addlinknoaddress', 'featuredfirst', 'usetextareaforusersubmitnotes', 'showcatonsearchresults', 'shownameifnoimage',
-					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin', 'combineresults', 'showifreciprocalvalid'
+					'enable_link_popup', 'nocatonstartup', 'showlinksonclick', 'showinvisibleadmin', 'combineresults', 'showifreciprocalvalid',
+					'cat_letter_filter_autoselect', 'cat_letter_filter_showalloption'
 				)
 				as $option_name
 			) {
@@ -2492,7 +2493,7 @@ class link_library_plugin_admin {
 							echo ' checked="checked" ';
 						} ?>/>
 					</td>
-					<td class="lltooltip" title="<?php _e( 'Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link. The Permalinks option must be enabled for HTML GET + Permalink to work correctly.', 'link-library' ); ?>"><?php _e( 'Switching Method', 'link-library' ); ?></td>
+					<td style='width: 200px' class="lltooltip" title="<?php _e( 'Select if AJAX should be used to only reload the list of links without reloading the whole page or HTML GET to reload entire page with a new link. The Permalinks option must be enabled for HTML GET + Permalink to work correctly.', 'link-library' ); ?>"><?php _e( 'Switching Method', 'link-library' ); ?></td>
 					<td>
 						<select name="showonecatmode" id="showonecatmode" style="width:200px;">
 							<option value="AJAX"<?php if ( $options['showonecatmode'] == 'AJAX' || $options['showonecatmode'] == '' ) {
@@ -2598,6 +2599,22 @@ class link_library_plugin_admin {
 						<input type="text" id="rewritepage" name="rewritepage" size="40" value="<?php echo $options['rewritepage']; ?>" />
 					</td>
 				</tr>
+				<tr>
+					<td><?php _e( 'Display alphabetic cat filter', 'link-library' ); ?></td>
+					<td><?php $letterfilteroptions = array( 'no' => __( 'Do not display', 'link-library' ), 'beforecats' => __( 'Before Categories', 'link-library' ), 'beforelinks' => __( 'Before Links', 'link-library' ), 'beforecatsandlinks' => __( 'Before Categories and Links', 'link-library' )  ); ?>
+						<select name="cat_letter_filter" id="cat_letter_filter" style="width:200px;">
+							<?php foreach ( $letterfilteroptions as $letterfilteroption => $letteroptiontext ) { ?>
+							<option value="<?php echo $letterfilteroption; ?>" <?php selected( $options['cat_letter_filter'] == $letterfilteroption ); ?>><?php echo $letteroptiontext; ?></option>
+							<?php } ?>
+						</select>
+					</td>
+					<td><?php _e( 'Auto-select first alphabetic cat item', 'link-library' ); ?></td>
+					<td><input type="checkbox" id="cat_letter_filter_autoselect" name="cat_letter_filter_autoselect" <?php checked( $options['cat_letter_filter_autoselect'] ); ?>/></td>
+				</tr>
+				<tr>
+					<td><?php _e( 'Display ALL box in alphabetic cat filter', 'link-library' ); ?></td>
+					<td><input type="checkbox" id="cat_letter_filter_showalloption" name="cat_letter_filter_showalloption" <?php checked( $options['cat_letter_filter_showalloption'] ); ?>/></td>
+				</tr>
 			</table>
 		</div>
 
@@ -2677,16 +2694,12 @@ class link_library_plugin_admin {
 						<?php _e( 'Display link counts', 'link-library' ); ?>
 					</td>
 					<td>
-						<input type="checkbox" id="showcatlinkcount" name="showcatlinkcount" <?php if ( $options['showcatlinkcount'] ) {
-							echo ' checked="checked" ';
-						} ?>/>
+						<input type="checkbox" id="showcatlinkcount" name="showcatlinkcount" <?php checked( $options['showcatlinkcount'] ); ?>/>
 					</td>
 					<td style='width:100px'></td>
 					<td style='width:200px'><?php _e( 'Display categories with search results', 'link-library' ); ?>    </td>
 					<td>
-						<input type="checkbox" id="showcatonsearchresults" name="showcatonsearchresults" <?php if ( $options['showcatonsearchresults'] ) {
-							echo ' checked="checked" ';
-						} ?>/></td>
+						<input type="checkbox" id="showcatonsearchresults" name="showcatonsearchresults" <?php checked( $options['showcatonsearchresults'] ); ?>/></td>
 				</tr>
 				<tr>
 					<td class="lltooltip" title="<?php _e( 'This setting does not apply when selecting My Link Order for the order', 'link-library' ); ?>">
@@ -2694,12 +2707,8 @@ class link_library_plugin_admin {
 					</td>
 					<td class="lltooltip" title="<?php _e( 'This setting does not apply when selecting My Link Order for the order', 'link-library' ); ?>">
 						<select name="direction" id="direction" style="width:100px;">
-							<option value="ASC"<?php if ( $options['direction'] == 'ASC' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Ascending', 'link-library' ); ?></option>
-							<option value="DESC"<?php if ( $options['direction'] == 'DESC' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Descending', 'link-library' ); ?></option>
+							<option value="ASC"<?php selected( $options['direction'] == 'ASC' ); ?>><?php _e( 'Ascending', 'link-library' ); ?></option>
+							<option value="DESC"<?php selected( $options['direction'] == 'DESC' ); ?>><?php _e( 'Descending', 'link-library' ); ?></option>
 						</select>
 					</td>
 					<td></td>
@@ -2707,17 +2716,11 @@ class link_library_plugin_admin {
 						<?php _e( 'Show Category Description', 'link-library' ); ?>
 					</td>
 					<td class="lltooltip" title="<?php _e( 'Use [ and ] in the description to perform special actions using HTML such as inserting images instead of < and >', 'link-library' ); ?>">
-						<input type="checkbox" id="showcategorydescheaders" name="showcategorydescheaders" <?php if ( $options['showcategorydescheaders'] ) {
-							echo ' checked="checked" ';
-						} ?>/>
+						<input type="checkbox" id="showcategorydescheaders" name="showcategorydescheaders" <?php checked( $options['showcategorydescheaders'] ); ?>/>
 						<span style='margin-left: 17px'><?php _e( 'Position', 'link-library' ); ?>:</span>
 						<select name="catlistdescpos" id="catlistdescpos" style="width:100px;">
-							<option value="right"<?php if ( $options['catlistdescpos'] == 'right' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Right', 'link-library' ); ?></option>
-							<option value="left"<?php if ( $options['catlistdescpos'] == 'left' ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Left', 'link-library' ); ?></option>
+							<option value="right"<?php selected( $options['catlistdescpos'] == 'right' ); ?>><?php _e( 'Right', 'link-library' ); ?></option>
+							<option value="left"<?php selected( $options['catlistdescpos'] == 'left' ); ?>><?php _e( 'Left', 'link-library' ); ?></option>
 						</select>
 					</td>
 				</tr>
@@ -2734,17 +2737,11 @@ class link_library_plugin_admin {
 					</td>
 					<td class="lltooltip" title='<?php _e( 'Determines the number of alternating div tags that will be placed before and after each link category', 'link-library' ); ?>.<br /><br /><?php _e( 'These div tags can be used to style of position link categories on the link page', 'link-library' ); ?>.'>
 						<select name="catlistwrappers" id="catlistwrappers" style="width:200px;">
-							<option value="1"<?php if ( $options['catlistwrappers'] == 1 ) {
-								echo ' selected="selected"';
-							} ?>>1
+							<option value="1"<?php selected( $options['catlistwrappers'] == 1 ); ?>>1
 							</option>
-							<option value="2"<?php if ( $options['catlistwrappers'] == 2 ) {
-								echo ' selected="selected"';
-							} ?>>2
+							<option value="2"<?php selected( $options['catlistwrappers'] == 2 ); ?>>2
 							</option>
-							<option value="3"<?php if ( $options['catlistwrappers'] == 3 ) {
-								echo ' selected="selected"';
-							} ?>>3
+							<option value="3"<?php selected( $options['catlistwrappers'] == 3 ); ?>>3
 							</option>
 						</select>
 					</td>
@@ -2770,12 +2767,8 @@ class link_library_plugin_admin {
 					</td>
 					<td>
 						<select name="divorheader" id="divorheader" style="width:200px;">
-							<option value="false"<?php if ( $options['divorheader'] == false ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Div Class', 'link-library' ); ?></option>
-							<option value="true"<?php if ( $options['divorheader'] == true ) {
-								echo ' selected="selected"';
-							} ?>><?php _e( 'Heading Tag', 'link-library' ); ?></option>
+							<option value="false"<?php selected( $options['divorheader'] == false ); ?>><?php _e( 'Div Class', 'link-library' ); ?></option>
+							<option value="true"<?php selected( $options['divorheader'] == true ); ?>><?php _e( 'Heading Tag', 'link-library' ); ?></option>
 						</select>
 					</td>
 					<td></td>
@@ -2909,12 +2902,8 @@ class link_library_plugin_admin {
 				</td>
 				<td>
 					<select name="displayastable" id="displayastable" style="width:200px;">
-						<option value="true"<?php if ( $options['displayastable'] == true ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Table', 'link-library' ); ?></option>
-						<option value="false"<?php if ( $options['displayastable'] == false ) {
-							echo ' selected="selected"';
-						} ?>><?php _e( 'Unordered List', 'link-library' ); ?></option>
+						<option value="true"<?php selected( $options['displayastable'] ); ?>><?php _e( 'Table', 'link-library' ); ?></option>
+						<option value="false"<?php if ( !$options['displayastable'] ); ?>><?php _e( 'Unordered List', 'link-library' ); ?></option>
 					</select>
 				</td>
 			</tr>
@@ -2923,9 +2912,7 @@ class link_library_plugin_admin {
 					<?php _e( 'Show Column Headers', 'link-library' ); ?>
 				</td>
 				<td>
-					<input type="checkbox" id="showcolumnheaders" name="showcolumnheaders" <?php if ( $options['showcolumnheaders'] ) {
-						echo ' checked="checked" ';
-					} ?>/>
+					<input type="checkbox" id="showcolumnheaders" name="showcolumnheaders" <?php checked( $options['showcolumnheaders'] ); ?>/>
 				</td>
 				<td></td>
 				<td>
@@ -2970,16 +2957,14 @@ class link_library_plugin_admin {
 					<?php _e( 'Embed HTML anchors', 'link-library' ); ?>
 				</td>
 				<td class="lltooltip" title='<?php _e( 'Need to be active for Link Categories to work', 'link-library' ); ?>'>
-					<input type="checkbox" id="catanchor" name="catanchor" <?php if ( $options['catanchor'] ) {
-						echo ' checked="checked" ';
-					} ?>/>
+					<input type="checkbox" id="catanchor" name="catanchor" <?php checked( $options['catanchor'] ); ?>/>
 				</td>
 				<td></td>
 				<td>
 					<?php _e( 'Show Hidden Links to Admins/Editors', 'link-library' ); ?>
 				</td>
 				<td>
-					<input type="checkbox" id="showinvisibleadmin" name="showinvisibleadmin" <?php if ( isset( $options['showinvisibleadmin'] ) ) { checked( $options['showinvisibleadmin'] ); } ?>/>
+					<input type="checkbox" id="showinvisibleadmin" name="showinvisibleadmin" <?php checked( $options['showinvisibleadmin'] ); ?>/>
 				</td>
 			</tr>
 		</table>
