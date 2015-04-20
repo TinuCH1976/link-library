@@ -536,7 +536,7 @@ class link_library_plugin_admin {
 
 	function ll_thumbshots_warning() {
 		echo "
-        <div id='ll-warning' class='updated fade'><p><strong>" . __( 'Link Library: Missing Thumbshots API Key', 'link-library' ) . "</strong></p> <p>" . __( 'One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com API Key. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library' ) . " <a href='" . add_query_arg( array( 'page' => 'link-library' ), admin_url( 'admin.php' ) ) . "'>" . __( 'Jump to Link Library admin', 'link-library' ) . "</a></p></div>";
+        <div id='ll-warning' class='updated fade'><p><strong>" . __( 'Link Library: Missing Thumbshots API Key', 'link-library' ) . "</strong></p> <p>" . __( 'One of your link libraries is configured to use Thumbshots for link thumbails, but you have not entered your Thumbshots.com API Key. Please visit Thumbshots.com to apply for a free or paid account and enter your API in the Link Library admin panel.', 'link-library' ) . " <a href='" . esc_url( add_query_arg( array( 'page' => 'link-library' ), admin_url( 'admin.php' ) ) ) . "'>" . __( 'Jump to Link Library admin', 'link-library' ) . "</a></p></div>";
 	}
 
 	function ll_missing_categories() {
@@ -546,7 +546,7 @@ class link_library_plugin_admin {
 
 	function ll_survey_2015() {
 		echo "
-        <div id='ll-warning' class='updated fade'><p><strong><a href='http://goo.gl/forms/vPdhiI9hPG'>" . __( 'Participate in the Link Library User Survey', 'link-library' ) . "</a></strong></p> <p>" . __( '10 short questions to help shape future versions of Link Library and inform decisions on migrating its content to Custom Post Types for data storage. Important to users who use multiple link management plugins.', 'link-library' ) . "</p><p><a class='button' href='http://goo.gl/forms/vPdhiI9hPG' target='LinkLibrarySurvey'>Take Survey (opens in new tab)</a> <a class='button' href='" . add_query_arg( array( 'page' => 'link-library', 'dismiss_ll_survey_2015' => 1 ), admin_url( 'admin.php' ) ) . "'>Dismiss this message</a></p></div>";
+        <div id='ll-warning' class='updated fade'><p><strong><a href='http://goo.gl/forms/vPdhiI9hPG'>" . __( 'Participate in the Link Library User Survey', 'link-library' ) . "</a></strong></p> <p>" . __( '10 short questions to help shape future versions of Link Library and inform decisions on migrating its content to Custom Post Types for data storage. Important to users who use multiple link management plugins.', 'link-library' ) . "</p><p><a class='button' href='http://goo.gl/forms/vPdhiI9hPG' target='LinkLibrarySurvey'>Take Survey (opens in new tab)</a> <a class='button' href='" . esc_url( add_query_arg( array( 'page' => 'link-library', 'dismiss_ll_survey_2015' => 1 ), admin_url( 'admin.php' ) ) ) . "'>Dismiss this message</a></p></div>";
 	}
 
 	function filter_mce_buttons( $buttons ) {
@@ -919,32 +919,32 @@ class link_library_plugin_admin {
 								<img src="<?php echo plugins_url( 'icons/folder-beige-internet-icon32.png', __FILE__ ); ?>" /><span>Link Library</span>
 							</li>
 							<li class="link-library-page">
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library' ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library' ) {
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library' ), admin_url( 'admin.php' ) ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library' ) {
 									echo 'class="current"';
 								} ?>><?php _e( 'General Options', 'link-library' ); ?></a>
 							</li>
 							<li class="link-library-page">
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library-settingssets' ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-settingssets' ) {
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library-settingssets' ), admin_url( 'admin.php' ) ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-settingssets' ) {
 									echo 'class="current"';
 								} ?>><?php _e( 'Library Settings', 'link-library' ); ?></a>
 							</li>
 							<li class="link-library-page">
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library-moderate' ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-moderate' ) {
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library-moderate' ), admin_url( 'admin.php' ) ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-moderate' ) {
 									echo 'class="current"';
 								} ?>><?php _e( 'Moderate', 'link-library' ); ?></a>
 							</li>
 							<li class="link-library-page">
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library-stylesheet' ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-stylesheet' ) {
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library-stylesheet' ), admin_url( 'admin.php' ) ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-stylesheet' ) {
 									echo 'class="current"';
 								} ?>><?php _e( 'Stylesheet', 'link-library' ); ?></a>
 							</li>
 							<li class="link-library-page">
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library-reciprocal' ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-reciprocal' ) {
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library-reciprocal' ), admin_url( 'admin.php' ) ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-reciprocal' ) {
 									echo 'class="current"';
 								} ?>><?php _e( 'Reciprocal Check', 'link-library' ); ?></a>
 							</li>
 							<li class="link-library-page">
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library-faq' ), admin_url( 'admin.php' ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-faq' ) {
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library-faq' ), admin_url( 'admin.php' ) ) ); ?>" <?php if ( isset( $_GET['page'] ) && $_GET['page'] == 'link-library-faq' ) {
 									echo 'class="current"';
 								} ?>><?php _e( 'FAQ', 'link-library' ); ?></a>
 							</li>
@@ -1913,7 +1913,7 @@ class link_library_plugin_admin {
 						<tr>
 							<td class='lltooltip' title='<?php _e( 'The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library' ); ?>' style='width:200px'><?php _e( 'Stylesheet', 'link-library' ); ?></td>
 							<td class='lltooltip' title='<?php _e( 'The stylesheet is now defined and stored using the Link Library admin interface. This avoids problems with updates from one version to the next.', 'link-library' ); ?>'>
-								<a href="<?php echo add_query_arg( array( 'page' => 'link-library-stylesheet', 'section' => 'stylesheet' ), admin_url( 'admin.php' ) ); ?>"><?php _e( 'Editor', 'link-library' ); ?></a>
+								<a href="<?php echo esc_url( add_query_arg( array( 'page' => 'link-library-stylesheet', 'section' => 'stylesheet' ), admin_url( 'admin.php' ) ) ); ?>"><?php _e( 'Editor', 'link-library' ); ?></a>
 							</td>
 						</tr>
 						<tr>
@@ -2243,7 +2243,7 @@ class link_library_plugin_admin {
 					?>
 					<tr style='background: #FFF'>
 						<td><input type="checkbox" name="links[]" value="<?php echo $linkitem->true_link_id; ?>" /></td>
-						<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . add_query_arg( array( 'action' => 'edit', 'link_id' => $linkitem->true_link_id ), admin_url( 'link.php' ) ) . "'>" . $linkitem->link_name . "</a>"; ?></td>
+						<td><?php echo "<a title='Edit Link: " . $linkitem->link_name . "' href='" . esc_url( add_query_arg( array( 'action' => 'edit', 'link_id' => $linkitem->true_link_id ), admin_url( 'link.php' ) ) ) . "'>" . $linkitem->link_name . "</a>"; ?></td>
 						<td><?php echo $linkitem->name; ?></td>
 						<td><?php echo "<a href='" . $linkitem->link_url . "'>" . $linkitem->link_url . "</a>"; ?></td>
 						<td><?php echo $newlinkdesc; ?></td>
@@ -3828,7 +3828,7 @@ class link_library_plugin_admin {
 		<table>
 		<tr>
 			<td colspan=5 class="lltooltip" title='<?php _e( 'Following this link shows a list of all links awaiting moderation', 'link-library' ); ?>.'>
-				<a href="<?php echo add_query_arg( 's', 'LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove', admin_url( 'link-manager.php' ) ); ?>"><?php _e( 'View list of links awaiting moderation', 'link-library' ); ?></a>
+				<a href="<?php echo esc_url( add_query_arg( 's', 'LinkLibrary%3AAwaitingModeration%3ARemoveTextToApprove', admin_url( 'link-manager.php' ) ) ); ?>"><?php _e( 'View list of links awaiting moderation', 'link-library' ); ?></a>
 			</td>
 		</tr>
 		<tr>

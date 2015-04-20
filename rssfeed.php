@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 global $my_link_library_plugin;
 
 function link_library_generate_rss_feed () {

@@ -81,7 +81,7 @@ function RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $library
 
 			$argumentarray = array ( 'catletter' => urlencode($letter) );
 			$argumentarray = array_merge( $argumentarray, $incomingget );
-			$targetaddress = add_query_arg( $argumentarray );
+			$targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
 			$output .= '"><a href="' . $targetaddress . '">' . $letter . '</a></div>';
 		} else {
@@ -100,7 +100,7 @@ function RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $library
 
 		$argumentarray = array ( 'catletter' => '' );
 		$argumentarray = array_merge( $argumentarray, $incomingget );
-		$targetaddress = add_query_arg( $argumentarray );
+		$targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
 		$output .= '"><a href="' . $targetaddress . '">ALL</a></div>';
 	}

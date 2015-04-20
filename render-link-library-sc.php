@@ -46,9 +46,14 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
             $paginationoutput .= '<span class="previousnextactive">';
 
             if ( !$showonecatonly ) {
-                $argumentarray = array ( 'page_id' => get_the_ID(), 'linkresultpage' => $previouspagenumber, 'catletter' => $currentcatletter );
+                $argumentarray = array ( 'page_id' => get_the_ID(), 'linkresultpage' => $previouspagenumber );
+
+	            if ( !empty( $currentcatletter ) ) {
+		            $argumentarray['catletter'] = $currentcatletter;
+	            }
+
                 $argumentarray = array_merge( $argumentarray, $incomingget );
-                $targetaddress = add_query_arg( $argumentarray );
+                $targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
                 $paginationoutput .= '<a href="' . $targetaddress . '">' . __('Previous', 'link-library') . '</a>';
             } elseif ( $showonecatonly ) {
@@ -64,7 +69,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                     }
 
                     $argumentarray = array_merge( $argumentarray, $incomingget );
-                    $targetaddress = add_query_arg( $argumentarray );
+                    $targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
                     $paginationoutput .= '<a href="' . $targetaddress . '" >' . __('Previous', 'link-library') . '</a>';
                 }
@@ -84,9 +89,14 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 }
 
                 if ( !$showonecatonly ) {
-                    $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter, 'catletter' => $currentcatletter );
+                    $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $counter );
+
+	                if ( !empty( $currentcatletter ) ) {
+		                $argumentarray['catletter'] = $currentcatletter;
+	                }
+
                     $argumentarray = array_merge( $argumentarray, $incomingget );
-                    $targetaddress = add_query_arg( $argumentarray );
+                    $targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
                     $paginationoutput .= '<a href="' . $targetaddress . '">' . $counter . '</a>';
                 } elseif ( $showonecatonly ) {
@@ -102,7 +112,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                         }
 
                         $argumentarray = array_merge( $argumentarray, $incomingget );
-                        $targetaddress = add_query_arg( $argumentarray );
+                        $targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
                         $paginationoutput .= '<a href="' . $targetaddress . '" >' . $counter . '</a>';
                     }
@@ -127,9 +137,14 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
             $paginationoutput .= '<span class="previousnextactive">';
 
             if ( !$showonecatonly ) {
-                $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber, 'catletter' => $currentcatletter );
+                $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
+
+	            if ( !empty( $currentcatletter ) ) {
+		            $argumentarray['catletter'] = $currentcatletter;
+	            }
+
                 $argumentarray = array_merge( $argumentarray, $incomingget );
-                $targetaddress = add_query_arg( $argumentarray );
+                $targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
                 $paginationoutput .= '<a href="' . $targetaddress . '">' . __('Next', 'link-library') . '</a>';
             } elseif ( $showonecatonly ) {
@@ -138,7 +153,7 @@ function link_library_display_pagination( $previouspagenumber, $nextpagenumber, 
                 } elseif ( 'HTMLGET' == $showonecatmode || 'HTMLGETSLUG' == $showonecatmode || 'HTMLGETCATNAME' == $showonecatmode ) {
                     $argumentarray = array ( 'page_id' => $pageID, 'linkresultpage' => $nextpagenumber );
                     $argumentarray = array_merge( $argumentarray, $incomingget );
-                    $targetaddress = add_query_arg( $argumentarray );
+                    $targetaddress = esc_url( add_query_arg( $argumentarray ) );
 
                     $paginationoutput .= '<a href="' . $targetaddress . '" >' . __('Next', 'link-library') . '</a>';
                 }
@@ -1016,9 +1031,9 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     }
 
                                     if ( $showadmineditlinks && $linkeditoruser ) {
-                                        $output .= $between . '<a href="' . add_query_arg( array(
+                                        $output .= $between . '<a href="' . esc_url( add_query_arg( array(
                                                 'action' => 'edit', 'link_id' => $linkitem['proper_link_id'] ),
-                                                admin_url( 'link.php' ) ) . '">(' . __('Edit', 'link-library') . ')</a>';
+                                                admin_url( 'link.php' ) ) ) . '">(' . __('Edit', 'link-library') . ')</a>';
                                     }
 
                                     if ( $showupdated && $linkitem['recently_updated'] ) {
