@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.6.1 =
+* Improvements to alphabetic category filter to play nice with the search feature
+
 = 5.9.6 =
 * Fixed for add_query_arg potential XSS vulnerabilty issue
 

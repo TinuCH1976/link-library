@@ -217,6 +217,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
     $currentcategory = 1;
     $categoryname = '';
+	$mode = 'normal';
 
     if ( $showonecatonly && 'AJAX' == $showonecatmode && isset( $AJAXcatid ) && empty( $AJAXcatid ) ) {
         $AJAXnocatset = true;
@@ -311,11 +312,39 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
     }
 
+	$searchterms = '';
+
+	if ( isset($_GET['searchll'] ) && !empty( $_GET['searchll'] ) && empty( $singlelinkid ) ) {
+		$searchterms  = array();
+		$searchstring = $_GET['searchll'];
+
+		$offset = 0;
+		while ( false !== strpos( $searchstring, '"', $offset ) ) {
+			if ( 0 == $offset ) {
+				$offset = strpos( $searchstring, '"' );
+			} else {
+				$endpos        = strpos( $searchstring, '"', $offset + 1 );
+				$searchterms[] = substr( $searchstring, $offset + 1, $endpos - $offset - 2 );
+				$strlength     = ( $endpos + 1 ) - ( $offset + 1 );
+				$searchstring  = substr_replace( $searchstring, '', $offset - 1, $endpos + 2 - ( $offset ) );
+				$offset        = 0;
+			}
+		}
+
+		if ( ! empty( $searchstring ) ) {
+			$searchterms = array_merge( $searchterms, explode( " ", $searchstring ) );
+		}
+
+		if ( !empty( $searchterms ) ) {
+			$mode = 'search';
+		}
+	}
+
 	$currentcatletter = '';
 
 	if ( $cat_letter_filter != 'no' ) {
 		require_once plugin_dir_path( __FILE__ ) . 'render-link-library-alpha-filter.php';
-		$result = RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $libraryoptions, $settings );
+		$result = RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $libraryoptions, $settings, $mode );
 
 		$currentcatletter = $result['currentcatletter'];
 
@@ -337,7 +366,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $linkquery .= 'AND l.link_id is not NULL AND l.link_description not like "%LinkLibrary:AwaitingModeration:RemoveTextToApprove%" ';
     }
 
-	if ( !empty( $currentcatletter ) ) {
+	if ( !empty( $currentcatletter ) && $cat_letter_filter != 'no' ) {
 		$linkquery .= ' AND substring(t.name, 1, 1) = "' . $currentcatletter . '" ';
 	}
 
@@ -369,67 +398,43 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $linkquery .= ' AND l.link_visible != "N"';
     }
 
-    if ( isset($_GET['searchll'] ) && !empty( $_GET['searchll'] ) && empty( $singlelinkid ) ) {
-        $searchterms = array();
-        $searchstring = $_GET['searchll'];
+    if ( !empty( $searchterms ) ) {
+        $mode = 'search';
+        $termnb = 1;
 
-        $offset = 0;
-        while ( false !== strpos( $searchstring, '"', $offset ) ) {
-            if ( 0 == $offset ) {
-                $offset = strpos( $searchstring, '"' );
-            } else {
-                $endpos = strpos( $searchstring, '"', $offset + 1);
-                $searchterms[] = substr( $searchstring, $offset + 1, $endpos - $offset - 2 );
-                $strlength = ( $endpos + 1 ) - ( $offset + 1 );
-                $searchstring = substr_replace( $searchstring, '', $offset - 1, $endpos + 2 - ( $offset)  );
-                $offset = 0;
-            }
-        }
+        foreach( $searchterms as $searchterm ) {
+            if ( !empty( $searchterm ) ) {
+                $searchterm = str_replace( '--', '', $searchterm );
+                $searchterm = str_replace( ';', '', $searchterm );
+                $searchterm = esc_html( stripslashes( $searchterm ) );
+                if ( true == $searchterm ) {
+                    if ( 1 == $termnb ) {
+                        $linkquery .= ' AND (link_name like "%' . $searchterm . '%" ';
+                        $termnb++;
+                    } else {
+                        $linkquery .= ' OR link_name like "%' . $searchterm . '%" ';
+                    }
 
-        if ( !empty( $searchstring ) ) {
-            $searchterms = array_merge( $searchterms, explode( " ", $searchstring ) );
-        }
+                    if ( false == $hidecategorynames ) {
+                        $linkquery .= ' OR name like "%' . $searchterm . '%" ';
+                    }
 
-        if ( $searchterms ) {
-            $mode = 'search';
-            $termnb = 1;
+                    if ( $shownotes ) {
+                        $linkquery .= ' OR link_notes like "%' . $searchterm . '%" ';
+                    }
 
-            foreach( $searchterms as $searchterm ) {
-                if ( !empty( $searchterm ) ) {
-                    $searchterm = str_replace( '--', '', $searchterm );
-                    $searchterm = str_replace( ';', '', $searchterm );
-                    $searchterm = esc_html( stripslashes( $searchterm ) );
-                    if ( true == $searchterm ) {
-                        if ( 1 == $termnb ) {
-                            $linkquery .= ' AND (link_name like "%' . $searchterm . '%" ';
-                            $termnb++;
-                        } else {
-                            $linkquery .= ' OR link_name like "%' . $searchterm . '%" ';
-                        }
+                    if ( $showdescription ) {
+                        $linkquery .= ' OR link_description like "%' . $searchterm . '%" ';
+                    }
 
-                        if ( false == $hidecategorynames ) {
-                            $linkquery .= ' OR name like "%' . $searchterm . '%" ';
-                        }
-
-                        if ( $shownotes ) {
-                            $linkquery .= ' OR link_notes like "%' . $searchterm . '%" ';
-                        }
-
-                        if ( $showdescription ) {
-                            $linkquery .= ' OR link_description like "%' . $searchterm . '%" ';
-                        }
-
-                        if ( $showlargedescription ) {
-                            $linkquery .= ' OR link_textfield like "%' . $searchterm . '%" ';
-                        }
+                    if ( $showlargedescription ) {
+                        $linkquery .= ' OR link_textfield like "%' . $searchterm . '%" ';
                     }
                 }
             }
-
-            $linkquery .= ')';
         }
-    } else {
-        $mode = 'normal';
+
+        $linkquery .= ')';
     }
 
     $linkquery .= ' ORDER by ';
