@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.7 =
+* Fixed problem with Link Display Format not saving correctly in admin
+
 = 5.9.6.1 =
 * Improvements to alphabetic category filter to play nice with the search feature
 

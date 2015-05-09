@@ -2917,7 +2917,7 @@ class link_library_plugin_admin {
 				<td>
 					<select name="displayastable" id="displayastable" style="width:200px;">
 						<option value="true"<?php selected( $options['displayastable'] ); ?>><?php _e( 'Table', 'link-library' ); ?></option>
-						<option value="false"<?php if ( !$options['displayastable'] ); ?>><?php _e( 'Unordered List', 'link-library' ); ?></option>
+						<option value="false"<?php selected( !$options['displayastable'] ); ?>><?php _e( 'Unordered List', 'link-library' ); ?></option>
 					</select>
 				</td>
 			</tr>
