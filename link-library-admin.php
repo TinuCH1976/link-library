@@ -1501,7 +1501,7 @@ class link_library_plugin_admin {
 					'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent', 'paginationposition',
 					'showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes', 'addlinkcustomcat',
 					'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
-					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription', 'cat_letter_filter'
+					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription', 'cat_letter_filter', 'beforefirstlink', 'afterlastlink'
 				) as $option_name
 			) {
 				if ( isset( $_POST[$option_name] ) ) {
@@ -3069,6 +3069,14 @@ class link_library_plugin_admin {
 		<th style='width: 80px'><?php _e( 'Link Source', 'link-library' ); ?></th>
 		</thead>
 		<tr>
+			<td class="lltooltip" title='<?php _e( 'This column allows for the output of text/code before the first link in each category', 'link-library' ); ?>'><?php _e( 'Before first link', 'link-library' ); ?></td>
+			<td style='background: #FFF'></td>
+			<td style='background: #FFF' class="lltooltip" title='<?php _e( 'Output of text/code before the first link in each category', 'link-library' ); ?>'>
+				<input type="text" id="beforefirstlink" name="beforefirstlink" size="22" value="<?php echo stripslashes( $options['beforefirstlink'] ); ?>" />
+			</td>
+			<td style='background: #FFF'></td><td style='background: #FFF'></td><td style='background: #FFF'></td>
+		</tr>
+		<tr>
 			<td class="lltooltip" title='<?php _e( 'This column allows for the output of text/code before a number of links determined by the Display field', 'link-library' ); ?>'><?php _e( 'Intermittent Before Link', 'link-library' ); ?></td>
 			<td style='background: #FFF' class="lltooltip" title='<?php _e( 'Frequency of additional output before and after complete link group', 'link-library' ); ?>'>
 				<input type="text" id="linkaddfrequency" name="linkaddfrequency" size="10" value="<?php echo strval( $options['linkaddfrequency'] ); ?>" />
@@ -3430,6 +3438,14 @@ class link_library_plugin_admin {
 			</td>
 			<td style='background: #FFF'></td>
 			<td style='background: #FFF'></td>
+		</tr>
+		<tr>
+			<td class="lltooltip" title='<?php _e( 'This column allows for the output of text/code after the last link in each category', 'link-library' ); ?>'><?php _e( 'After last link', 'link-library' ); ?></td>
+			<td style='background: #FFF'></td><td style='background: #FFF'></td>
+			<td style='background: #FFF'>
+				<input type="text" id="afterlastlink" name="afterlastlink" size="22" value="<?php echo stripslashes( $options['afterlastlink'] ); ?>" />
+			</td>
+			<td style='background: #FFF'></td><td style='background: #FFF'></td>
 		</tr>
 		</table>
 		</table>

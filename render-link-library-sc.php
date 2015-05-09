@@ -592,6 +592,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                         $output .= '</div>';
                     }
 
+	                if ( !empty( $beforefirstlink ) ) {
+		                $output .= $afterlastlink;
+	                }
+
                     if ( $showlinksonclick ) {
                         $output .= '</div>';
                     }
@@ -820,6 +824,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                 }
 
                 $output .= $catstartlist;
+
+	            if ( !empty( $beforefirstlink ) ) {
+		            $output .= $beforefirstlink;
+	            }
             }
 
             $between = "\n";

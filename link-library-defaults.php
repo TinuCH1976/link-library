@@ -216,6 +216,8 @@ function ll_reset_options( $settings = 1, $layout = 'list', $setoptions = 'retur
 	$options['cat_letter_filter']             = 'no';
 	$options['cat_letter_filter_autoselect']  = true;
 	$options['cat_letter_filter_showalloption'] = true;
+	$options['beforefirstlink']                 = '';
+	$options['afterlastlink']                   = '';
 
 	if ( 'return_and_set' == $setoptions ) {
 		$settingsname = 'LinkLibraryPP' . $settings;
