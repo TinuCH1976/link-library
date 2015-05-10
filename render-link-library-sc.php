@@ -271,10 +271,6 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
         $catquery .= ' ORDER by ';
 
-        if ( true == $featuredfirst ) {
-            $catquery .= 'le.link_featured DESC, ';
-        }
-
         if ( !$combineresults ) {
             if ( 'name' == $order ) {
                 $catquery .= ' name ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
@@ -289,7 +285,11 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
             $catquery .= ', ';
         }
 
-        if ( 'name' == $linkorder ) {
+	    if ( true == $featuredfirst ) {
+		    $catquery .= ' , le.link_featured DESC, ';
+	    }
+
+	    if ( 'name' == $linkorder ) {
             $catquery .= 'link_name ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
         } elseif ( 'id' == $linkorder ) {
             $catquery .= 'link_id ' . ( in_array( $linkdirection, $validdirections ) ? $direction : 'ASC' );
@@ -439,10 +439,6 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
     $linkquery .= ' ORDER by ';
 
-    if ( $featuredfirst ) {
-        $linkquery .= 'link_featured DESC, ';
-    }
-
     if ( !$combineresults ) {
         if ( 'name' == $order ) {
             $linkquery .= ' name ' . ( in_array( $direction, $validdirections ) ? $direction : 'ASC' );
@@ -456,6 +452,10 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
 
         $linkquery .= ', ';
     }
+
+	if ( $featuredfirst ) {
+		$linkquery .= ' , link_featured DESC, ';
+	}
 
     if ( 'name' == $linkorder || 'random' == $linkorder ) {
         $linkquery .= 'l.link_name ' . ( in_array( $linkdirection, $validdirections ) ? $linkdirection : 'ASC' );

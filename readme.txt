@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.7.2 =
+* Fixed problem with featured link mode to make features links appear correctly in each category
+
 = 5.9.7.1 =
 * Adds options to specify code/text to be output before first link in each category and last link in each category
 
