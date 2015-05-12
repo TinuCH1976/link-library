@@ -286,7 +286,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         }
 
 	    if ( true == $featuredfirst ) {
-		    $catquery .= ' , le.link_featured DESC, ';
+		    $catquery .= ' le.link_featured DESC, ';
 	    }
 
 	    if ( 'name' == $linkorder ) {
@@ -454,7 +454,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
     }
 
 	if ( $featuredfirst ) {
-		$linkquery .= ' , link_featured DESC, ';
+		$linkquery .= ' link_featured DESC, ';
 	}
 
     if ( 'name' == $linkorder || 'random' == $linkorder ) {

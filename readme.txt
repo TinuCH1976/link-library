@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.7.3 =
+* Corrected issue where some library configurations led to no links being displayed after 5.9.7.2 update
+
 = 5.9.7.2 =
 * Fixed problem with featured link mode to make features links appear correctly in each category
 
