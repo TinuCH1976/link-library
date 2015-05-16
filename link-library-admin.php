@@ -833,7 +833,7 @@ class link_library_plugin_admin {
 							break;
 
 						case '4':
-							echo "<div id='message' class='updated fade'><p><strong>" . __( 'Invalid column count for link on row', 'link-library' ) . "</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . __( 'Invalid column count for link on row. Compare against template.', 'link-library' ) . "</strong></p></div>";
 							break;
 
 						case '5':
@@ -1232,7 +1232,7 @@ class link_library_plugin_admin {
 
 				$linkquery = "SELECT distinct l.link_name, l.link_url, l.link_rss, l.link_description, l.link_notes, ";
 				$linkquery .= "t.name, l.link_visible, le.link_second_url, le.link_telephone, le.link_email, le.link_reciprocal, ";
-				$linkquery .= "l.link_image, le.link_textfield, le.link_no_follow ";
+				$linkquery .= "l.link_image, le.link_textfield, le.link_no_follow, l.link_rating ";
 				$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
@@ -1314,7 +1314,7 @@ class link_library_plugin_admin {
 					}
 
 					if ( !$skiprow ) {
-						if ( count( $data ) == 14 ) {
+						if ( count( $data ) == 15 ) {
 							if ( !empty( $data[5] ) ) {
 								$existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
 								$existingcatquery .= "WHERE t.name = '" . esc_html( $data[5] ) . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
@@ -1334,6 +1334,13 @@ class link_library_plugin_admin {
 								} else {
 									$newlinkcat = array( $existingcat );
 								}
+								
+								$newrating = intval( $data[14] );
+								if ( $newrating < 0 ) {
+									$newrating = 0;
+								} elseif ( $newrating > 10 ) {
+									$newrating = 10;
+								}
 
 								$newlink = array(
 									"link_name"        => esc_html( stripslashes( $data[0] ) ),
@@ -1343,7 +1350,8 @@ class link_library_plugin_admin {
 									"link_notes"       => esc_html( stripslashes( $data[4] ) ),
 									"link_category"    => $newlinkcat,
 									"link_visible"     => $data[6],
-									"link_image"       => $data[11]
+									"link_image"       => $data[11],
+									"link_rating"	   => $newrating
 								);
 
 								$newlinkid = wp_insert_link( $newlink );
