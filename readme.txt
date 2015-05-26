@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.7.5 =
+* Fix problem with Alpha filter in link-library-cats shortcode
+
 = 5.9.7.4 =
 * Added ability to import and export link rating information
 

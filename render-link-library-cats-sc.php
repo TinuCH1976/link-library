@@ -94,7 +94,7 @@ function RenderLinkLibraryCategories( $LLPluginClass, $generaloptions, $libraryo
 
 	    if ( $cat_letter_filter != 'no' ) {
 		    require_once plugin_dir_path( __FILE__ ) . 'render-link-library-alpha-filter.php';
-		    $result = RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $libraryoptions, $settings );
+		    $result = RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $libraryoptions, $settings, 'normal' );
 
 		    $currentcatletter = $result['currentcatletter'];
 
