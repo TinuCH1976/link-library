@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.8 =
+* Add default stylesheet elements for alpha filter
+* Update french translation
+
 = 5.9.7.5 =
 * Fix problem with Alpha filter in link-library-cats shortcode
 
