@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.8.1 =
+* Add new field for link target in link export and import operations
+
 = 5.9.8 =
 * Add default stylesheet elements for alpha filter
 * Update french translation

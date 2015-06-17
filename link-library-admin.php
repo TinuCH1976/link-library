@@ -1232,7 +1232,7 @@ class link_library_plugin_admin {
 
 				$linkquery = "SELECT distinct l.link_name, l.link_url, l.link_rss, l.link_description, l.link_notes, ";
 				$linkquery .= "t.name, l.link_visible, le.link_second_url, le.link_telephone, le.link_email, le.link_reciprocal, ";
-				$linkquery .= "l.link_image, le.link_textfield, le.link_no_follow, l.link_rating ";
+				$linkquery .= "l.link_image, le.link_textfield, le.link_no_follow, l.link_rating, l.link_target ";
 				$linkquery .= "FROM " . $this->db_prefix() . "terms t ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_taxonomy tt ON (t.term_id = tt.term_id) ";
 				$linkquery .= "LEFT JOIN " . $this->db_prefix() . "term_relationships tr ON (tt.term_taxonomy_id = tr.term_taxonomy_id) ";
@@ -1314,7 +1314,7 @@ class link_library_plugin_admin {
 					}
 
 					if ( !$skiprow ) {
-						if ( count( $data ) == 15 ) {
+						if ( count( $data ) == 16 ) {
 							if ( !empty( $data[5] ) ) {
 								$existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
 								$existingcatquery .= "WHERE t.name = '" . esc_html( $data[5] ) . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
@@ -1351,7 +1351,8 @@ class link_library_plugin_admin {
 									"link_category"    => $newlinkcat,
 									"link_visible"     => $data[6],
 									"link_image"       => $data[11],
-									"link_rating"	   => $newrating
+									"link_rating"	   => $newrating,
+									"link_target"      => $data[15]
 								);
 
 								$newlinkid = wp_insert_link( $newlink );
