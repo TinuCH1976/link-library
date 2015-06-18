@@ -1403,7 +1403,7 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
         $output .= "<script type='text/javascript'>\n";
         $output .= "jQuery(document).ready(function()\n";
         $output .= "{\n";
-        $output .= "jQuery('a.track_this_link').click(function() {\n";
+        $output .= "jQuery('#linklist" . $settings . " a.track_this_link').click(function() {\n";
         $output .= "linkid = this.id;\n";
         $output .= "linkid = linkid.substring(5);";
         $output .= "path = '" . $xpath . "';";
