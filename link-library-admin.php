@@ -4386,7 +4386,7 @@ class link_library_plugin_admin {
 					$editorsettings = array( 'media_buttons' => false,
 											 'textarea_rows' => 5,
 											 'textarea_name' => 'link_textfield',
-											 'wpautop' => true );
+											 'wpautop' => false );
 
 					wp_editor( isset( $extradata['link_textfield'] ) ? ( function_exists( 'esc_textarea' ) ? esc_textarea( stripslashes( $extradata['link_textfield'] ) ) : stripslashes( $extradata['link_textfield'] ) ) : '', 'link_textfield', $editorsettings ); ?>
 				</td>

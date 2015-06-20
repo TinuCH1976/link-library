@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.8.3 =
+* Change to save paragraph indicators in large description field
+
 = 5.9.8.2 =
 * Fix for duplicate link visit counts when multiple instances of Link Library on a page
 
