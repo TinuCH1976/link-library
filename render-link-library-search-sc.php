@@ -33,5 +33,18 @@ function RenderLinkLibrarySearchForm( $libraryoptions ) {
 	$output .= "</div>\n";
 	$output .= "</form>\n\n";
 
+	$output .= "<script type='text/javascript'>\n";
+	$output .= "jQuery(document).ready(function () {\n";
+	$output .= "\tjQuery('#llsearch').submit(function () {\n";
+	$output .= "\t\tif (jQuery('#searchll').val() == '" . $searchfieldtext . "') {\n";
+	$output .= "\t\t\treturn false;\n";
+	$output .= "\t\t}\n";
+	$output .= "\t\telse {\n";
+	$output .= "\t\t\treturn true;\n";
+	$output .= "\t\t}\n";
+	$output .= "\t});\n";
+	$output .= "});\n";
+	$output .= "</script>";
+
 	return $output;
 }

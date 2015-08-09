@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.2 =
+* Prevent submission of search form if visitor has not changed search box content
+
 = 5.9.9.1 =
 * Modified importer to update links with same URL instead of creating new ones
 * Export of links and library settings now directly trigger file download
