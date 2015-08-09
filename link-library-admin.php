@@ -854,7 +854,7 @@ class link_library_plugin_admin {
 							break;
 
 						case '9':
-							echo "<div id='message' class='updated fade'><p><strong>" . $_GET['importrowscount'] . " " . __( 'row(s) found', 'link-library' ) . ". " . ( isset( $_GET['successimportcount'] ) ? $_GET['successimportcount'] : '0' ) . " " . __( 'link(s) imported successfully', 'link-library' ) . ".</strong></p></div>";
+							echo "<div id='message' class='updated fade'><p><strong>" . $_GET['importrowscount'] . " " . __( 'row(s) found', 'link-library' ) . ". " . ( isset( $_GET['successimportcount'] ) ? $_GET['successimportcount'] : '0' ) . " " . __( 'link(s) imported', 'link-library' ) . ", " . ( isset( $_GET['successupdatecount'] ) ? $_GET['successupdatecount'] : '0' ) . " " . __( 'link(s) updated', 'link-library' ) . ".</strong></p></div>";
 							break;
 
 						case '10':
@@ -1263,7 +1263,17 @@ class link_library_plugin_admin {
 
 					fclose( $fh );
 
-					$message = "2";
+					if (file_exists($myFile)) {
+						header('Content-Description: File Transfer');
+						header('Content-Type: application/octet-stream');
+						header('Content-Disposition: attachment; filename='.basename($myFile));
+						header('Expires: 0');
+						header('Cache-Control: must-revalidate');
+						header('Pragma: public');
+						header('Content-Length: ' . filesize($myFile));
+						readfile($myFile);
+						exit;
+                    }
 				}
 			} else {
 				$message = "3";
@@ -1293,6 +1303,7 @@ class link_library_plugin_admin {
 		$messages         = array();
 		$row              = 0;
 		$successfulimport = 0;
+		$successfulupdate = 0;
 
 		if ( isset( $_POST['importlinks'] ) ) {
 			wp_suspend_cache_addition( true );
@@ -1317,8 +1328,11 @@ class link_library_plugin_admin {
 						if ( count( $data ) == 16 ) {
 							if ( !empty( $data[5] ) ) {
 								$existingcatquery = "SELECT t.term_id FROM " . $this->db_prefix() . "terms t, " . $this->db_prefix() . "term_taxonomy tt ";
-								$existingcatquery .= "WHERE t.name = '" . esc_html( $data[5] ) . "' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
-								$existingcat = $wpdb->get_var( $existingcatquery );
+								$existingcatquery .= "WHERE t.name = '%s' AND t.term_id = tt.term_id AND tt.taxonomy = 'link_category'";
+
+								$existingcatqueryprepped = $wpdb->prepare( $existingcatquery, esc_html( $data[5] ) );
+
+								$existingcat = $wpdb->get_var( $existingcatqueryprepped );
 
 								if ( !$existingcat ) {
 									$newlinkcatdata = array( "cat_name" => $data[5], "category_description" => "", "category_nicename" => esc_sql( $data[5] ) );
@@ -1342,9 +1356,20 @@ class link_library_plugin_admin {
 									$newrating = 10;
 								}
 
+								$newlinkid = '';
+
+								if ( isset( $_POST['updatesameurl'] ) ) {
+									$existing_link_query = "SELECT l.link_id FROM " . $this->db_prefix() . "links l ";
+									$existing_link_query .= "WHERE l.link_url = '%s'";
+
+									$existing_link_query_prepped = $wpdb->prepare( $existing_link_query, esc_url( $data[1] ) );
+
+									$newlinkid = $wpdb->get_var( $existing_link_query_prepped );
+								}
+
 								$newlink = array(
 									"link_name"        => esc_html( stripslashes( $data[0] ) ),
-									"link_url"         => esc_html( stripslashes( $data[1] ) ),
+									"link_url"         => esc_url( stripslashes( $data[1] ) ),
 									"link_rss"         => esc_html( stripslashes( $data[2] ) ),
 									"link_description" => esc_html( stripslashes( $data[3] ) ),
 									"link_notes"       => esc_html( stripslashes( $data[4] ) ),
@@ -1355,7 +1380,15 @@ class link_library_plugin_admin {
 									"link_target"      => $data[15]
 								);
 
-								$newlinkid = wp_insert_link( $newlink );
+								if ( empty( $newlinkid ) ) {
+									$newlinkid = wp_insert_link( $newlink );
+									$successfulimport += 1;
+								} elseif ( !empty( $newlinkid ) ) {
+									unset ( $newlink['link_url'] );
+									$newlink['link_id'] = $newlinkid;
+									wp_update_link( $newlink );
+									$successfulupdate += 1;
+								}
 
 								if ( $newlinkid != 0 ) {
 									$extradatatable = $this->db_prefix() . "links_extrainfo";
@@ -1370,8 +1403,6 @@ class link_library_plugin_admin {
 									} elseif ( empty( $existingextrainfoid ) ) {
 										$wpdb->insert( $extradatatable, array( 'link_second_url' => $data[7], 'link_telephone' => $data[8], 'link_email' => $data[9], 'link_reciprocal' => $data[10], 'link_textfield' => $data[12], 'link_no_follow' => $nofollowvalue, 'link_id' => $newlinkid ) );
 									}
-
-									$successfulimport += 1;
 								}
 							} else {
 								$messages[] = '10';
@@ -1419,7 +1450,17 @@ class link_library_plugin_admin {
 
 				fclose( $fh );
 
-				$messages[] = '5';
+				if (file_exists($myFile)) {
+					header('Content-Description: File Transfer');
+					header('Content-Type: application/octet-stream');
+					header('Content-Disposition: attachment; filename='.basename($myFile));
+					header('Expires: 0');
+					header('Cache-Control: must-revalidate');
+					header('Pragma: public');
+					header('Content-Length: ' . filesize($myFile));
+					readfile($myFile);
+				exit;
+				}
 			} else {
 				$messages[] = '6';
 			}
@@ -1633,6 +1674,10 @@ class link_library_plugin_admin {
 
 		if ( $successfulimport != 0 ) {
 			$redirecturl .= "&successimportcount=" . $successfulimport;
+		}
+
+		if ( $successfulupdate != 0 ) {
+			$redirecturl .= "&successupdatecount=" . $successfulupdate;
 		}
 
 		if ( isset( $_POST['currenttab'] ) ) {
@@ -2019,7 +2064,7 @@ class link_library_plugin_admin {
 						</tr>
 						<tr>
 							<td>
-								<input type="submit" name="exportalllinks" value="<?php _e( 'Export All Links', 'link-library' ); ?>" />
+								<input type="submit" id="exportalllinks" name="exportalllinks" value="<?php _e( 'Export All Links', 'link-library' ); ?>" />
 							</td>
 						</tr>
 					</table>
@@ -4241,6 +4286,10 @@ class link_library_plugin_admin {
 			<tr>
 				<td><?php _e( 'First row contains column headers', 'link-library' ); ?></td>
 				<td><input type="checkbox" id="firstrowheaders" name="firstrowheaders" checked="checked" /></td>
+			</tr>
+			<tr>
+				<td><?php _e( 'Update items when URL is identical', 'link-library' ); ?></td>
+				<td><input type="checkbox" id="updatesameurl" name="updatesameurl" checked="checked" /></td>
 			</tr>
 		</table>
 

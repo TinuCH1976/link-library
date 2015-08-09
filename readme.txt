@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.1 =
+* Modified importer to update links with same URL instead of creating new ones
+* Export of links and library settings now directly trigger file download
+
 = 5.9.9 =
 * New option to specify search box initial text
 * New option to specify Category filter text
