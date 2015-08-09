@@ -1510,7 +1510,8 @@ class link_library_plugin_admin {
 					'rssfeedaddress', 'linklargedesclabel', 'flatlist', 'searchresultsaddress', 'link_popup_text', 'linktitlecontent', 'paginationposition',
 					'showaddlinkrss', 'showaddlinkdesc', 'showaddlinkcat', 'showaddlinknotes', 'addlinkcustomcat',
 					'showaddlinkreciprocal', 'showaddlinksecondurl', 'showaddlinktelephone', 'showaddlinkemail', 'showcustomcaptcha', 'showlinksubmittername',
-					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription', 'cat_letter_filter', 'beforefirstlink', 'afterlastlink'
+					'showaddlinksubmitteremail', 'showlinksubmittercomment', 'showuserlargedescription', 'cat_letter_filter', 'beforefirstlink', 'afterlastlink',
+					'searchfieldtext', 'catfilterlabel'
 				) as $option_name
 			) {
 				if ( isset( $_POST[$option_name] ) ) {
@@ -2637,6 +2638,8 @@ class link_library_plugin_admin {
 				<tr>
 					<td><?php _e( 'Display ALL box in alphabetic cat filter', 'link-library' ); ?></td>
 					<td><input type="checkbox" id="cat_letter_filter_showalloption" name="cat_letter_filter_showalloption" <?php checked( $options['cat_letter_filter_showalloption'] ); ?>/></td>
+					<td><?php _e( 'Cat filter label', 'link-library' ); ?></td>
+					<td><input type="text" id="catfilterlabel" name="catfilterlabel" size="20" value="<?php echo $options['catfilterlabel']; ?>" /></td>
 				</tr>
 			</table>
 		</div>
@@ -3745,12 +3748,24 @@ class link_library_plugin_admin {
 			<table>
 				<tr>
 					<td style='width:200px'><?php _e( 'Search Label', 'link-library' ); ?></td>
-					<?php if ( $options['searchlabel'] == "" ) {
+					<?php if ( empty( $options['searchlabel'] ) ) {
 						$options['searchlabel'] = __( 'Search', 'link-library' );
 					} ?>
 					<td style='padding-right:20px'>
 						<input type="text" id="searchlabel" name="searchlabel" size="30" value="<?php echo $options['searchlabel']; ?>" />
 					</td>
+				</tr>
+				<tr>
+					<td style='width:200px'><?php _e( 'Search Field Initial Text', 'link-library' ); ?></td>
+					<?php if ( empty( $options['searchfieldtext'] ) ) {
+						$options['searchfieldtext'] = __( 'Search', 'link-library' );
+					} ?>
+					<td style='padding-right:20px'>
+						<input type="text" id="searchfieldtext" name="searchfieldtext" size="30" value="<?php echo $options['searchfieldtext']; ?>" />
+					</td>
+				</tr>
+
+				<tr>
 					<td class="lltooltip" title='<?php _e( 'Leave empty when links are to be displayed on same page as search box', 'link-library' ); ?>'><?php _e( 'Results Page Address', 'link-library' ); ?></td>
 					<td class="lltooltip" title='<?php _e( 'Leave empty when links are to be displayed on same page as search box', 'link-library' ); ?>'>
 						<input type="text" id="searchresultsaddress" name="searchresultsaddress" size="80" value="<?php echo strval( esc_html( stripslashes( $options['searchresultsaddress'] ) ) ); ?>" />

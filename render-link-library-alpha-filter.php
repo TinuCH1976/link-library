@@ -50,7 +50,7 @@ function RenderLinkLibraryAlphaFilter( $LLPluginClass, $generaloptions, $library
 
 	$output = '<div class="catalphafilter">';
 
-	$output .= '<div class="catalphafiltertitle">' . __( 'Category Filter', 'link-library' ) . '</div>';
+	$output .= '<div class="catalphafiltertitle">' . $catfilterlabel . '</div>';
 
 	$currentcatletter = '';
 	if ( isset( $_GET['catletter'] ) && 'normal' == $searchmode ) {

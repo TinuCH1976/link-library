@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9 =
+* New option to specify search box initial text
+* New option to specify Category filter text
+
 = 5.9.8.3 =
 * Change to save paragraph indicators in large description field
 
