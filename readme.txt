@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.5 =
+* Fix to avoid re-writing .htacess file when you save settings
+
 = 5.9.9.4 =
 * Added span and class to edit link to facilitate positioning or hiding
 

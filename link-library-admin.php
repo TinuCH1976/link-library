@@ -1649,7 +1649,7 @@ class link_library_plugin_admin {
 				}
 			}
 			global $wp_rewrite;
-			$wp_rewrite->flush_rules();
+			$wp_rewrite->flush_rules( false );
 		}
 
 		//lets redirect the post request into get request (you may add additional params at the url, if you need to show save results
