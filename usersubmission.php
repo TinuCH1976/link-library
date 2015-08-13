@@ -257,7 +257,7 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 
 	$redirectaddress = '';
 
-	if ( isset( $_POST['thankyouurl'] ) && $_POST['thankyouurl'] != '' && $requiredcheck ) {
+	if ( isset( $_POST['thankyouurl'] ) && $_POST['thankyouurl'] != '' && $requiredcheck && $valid ) {
 		$redirectaddress = $_POST['thankyouurl'];
 	} else {
 		if ( isset ( $_POST['pageid'] ) && is_numeric( $_POST['pageid'] ) ) {
