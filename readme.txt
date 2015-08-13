@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.4 =
+* Added span and class to edit link to facilitate positioning or hiding
+
 = 5.9.9.3 =
 * Corrections to link importer
 * Fix for required field when using a Link Acknowledgement URL

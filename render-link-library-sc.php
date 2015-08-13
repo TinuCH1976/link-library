@@ -1044,9 +1044,9 @@ function RenderLinkLibrary( $LLPluginClass, $generaloptions, $libraryoptions, $s
                                     }
 
                                     if ( $showadmineditlinks && $linkeditoruser ) {
-                                        $output .= $between . '<a href="' . esc_url( add_query_arg( array(
+                                        $output .= $between . '<span class="editlink"><a href="' . esc_url( add_query_arg( array(
                                                 'action' => 'edit', 'link_id' => $linkitem['proper_link_id'] ),
-                                                admin_url( 'link.php' ) ) ) . '">(' . __('Edit', 'link-library') . ')</a>';
+                                                admin_url( 'link.php' ) ) ) . '">(' . __('Edit', 'link-library') . ')</a></span>';
                                     }
 
                                     if ( $showupdated && $linkitem['recently_updated'] ) {
