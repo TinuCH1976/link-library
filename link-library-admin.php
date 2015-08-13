@@ -1394,8 +1394,8 @@ class link_library_plugin_admin {
 									$extradatatable = $this->db_prefix() . "links_extrainfo";
 									$nofollowvalue  = ( $data[13] == 'Y' ? true : false );
 
-									$existingextrainfo = "SELECT linkid FROM " . $extradatatable . " ";
-									$existingextrainfo .= "WHERE linkid = '" . $newlinkid . "'";
+									$existingextrainfo = "SELECT link_id FROM " . $extradatatable . " ";
+									$existingextrainfo .= "WHERE link_id = '" . $newlinkid . "'";
 									$existingextrainfoid = $wpdb->get_var( $existingextrainfo );
 
 									if ( !empty( $existingextrainfoid ) ) {

@@ -59,6 +59,10 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.3 =
+* Corrections to link importer
+* Fix for required field when using a Link Acknowledgement URL
+
 = 5.9.9.2 =
 * Prevent submission of search form if visitor has not changed search box content
 
