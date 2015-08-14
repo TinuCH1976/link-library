@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.6 =
+* Fixes to category drop-down list display mode
+
 = 5.9.9.5 =
 * Fix to avoid re-writing .htacess file when you save settings
 
