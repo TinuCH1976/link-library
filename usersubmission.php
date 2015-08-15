@@ -183,7 +183,8 @@ function link_library_process_user_submission( $my_link_library_plugin ) {
 						"link_notes"       => esc_html( stripslashes( $captureddata['link_notes'] ) ),
 						"link_category"    => $newlinkcat,
 						"link_visible"     => $newlinkvisibility,
-						'link_target'      => $options['linktarget']
+						'link_target'      => $options['linktarget'],
+						'link_updated'     => date( "Y-m-d H:i", current_time( 'timestamp' ) )
 					);
 					$newlinkid = $my_link_library_plugin->link_library_insert_link( $newlink, false, $options['addlinknoaddress'] );
 

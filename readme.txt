@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.8 =
+* User-created links will now set the Updated Date field
+
 = 5.9.9.7 =
 * Fix for large description field HTML tags getting messed up on save
 
