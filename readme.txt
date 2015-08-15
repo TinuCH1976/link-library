@@ -59,6 +59,9 @@ Further configuration is available under the Link Library Settings panel.
 
 == Changelog ==
 
+= 5.9.9.7 =
+* Fix for large description field HTML tags getting messed up on save
+
 = 5.9.9.6 =
 * Fixes to category drop-down list display mode
 
